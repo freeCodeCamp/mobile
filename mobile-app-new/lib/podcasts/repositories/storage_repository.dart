@@ -48,7 +48,8 @@ const _legacyEpisodeKeys = <String, String>{
 const _episodesKey = 'episodes';
 const _idKey = '_id';
 
-@riverpod
+// NOTE: One instance per process, so every write shares one queue.
+@Riverpod(keepAlive: true)
 PodcastStorageRepository podcastStorageRepository(Ref ref) =>
     PodcastStorageRepository();
 

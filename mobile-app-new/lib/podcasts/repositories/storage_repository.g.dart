@@ -26,7 +26,7 @@ final class PodcastStorageRepositoryProvider
         argument: null,
         retry: null,
         name: r'podcastStorageRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class PodcastStorageRepositoryProvider
 }
 
 String _$podcastStorageRepositoryHash() =>
-    r'bda3ac43ee0a8ebfa3993c374904e090669f8d59';
+    r'159018925645b4d01ae8dd260c96133884d73571';

@@ -114,7 +114,7 @@ There are two graphs because the code is split the same way: audio on one side, 
 - **`downloads_controller` only reads.** It calls `library_controller.refresh()` after a download, because only the notifier can push new state to what the grid and tiles watch. `refresh()` assigns `AsyncData` directly, where `ref.invalidate` would flash a spinner.
 - **"Is this downloaded?" is answered by `playback_service.playbackUris()`** from the store row, not from the controller's cached state or the filesystem.
 - **`playback_service` runs off-screen and owns resume progress.** It holds raw stream subscriptions, so positions keep saving when no podcast screen is mounted.
-- **Nothing here is `keepAlive`.** `player_controller` holds a `KeepAliveLink` while the handler holds an episode, which also covers a pause (exactly as long as the media notification exists). `downloads_controller` holds one while a transfer is running. Everything below them stays alive through them. A failed download is not kept, so leaving the screen resets its retry icon.
+- **Only `storage_repository` is `keepAlive`**, so every write to `podcast-downloads.json` goes through one serialised queue, even after the rest of the chain has been disposed and rebuilt. `player_controller` holds a `KeepAliveLink` while the handler holds an episode, which also covers a pause (exactly as long as the media notification exists). `downloads_controller` holds one while a transfer is running. Everything below them stays alive through them. A failed download is not kept, so leaving the screen resets its retry icon.
 - **Both API repositories share one `Dio`** through `dioProvider`.
 
 ## News
