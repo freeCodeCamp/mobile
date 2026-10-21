@@ -6,13 +6,17 @@ part 'search_viewmodel.g.dart';
 
 @riverpod
 class NewsSearchNotifier extends _$NewsSearchNotifier {
+  // NOTE: Algolia drops a query identical to its last one, so a repeat is answered from here.
+  String? _lastTerm;
+  List<SearchPost>? _lastResults;
+
   @override
   AsyncValue<List<SearchPost>> build() {
     final subscription = ref
         .watch(newsSearchServiceProvider)
         .results
         .listen(
-          (results) => state = AsyncData(results),
+          (results) => state = AsyncData(_lastResults = results),
           onError: (Object error, StackTrace stackTrace) =>
               state = AsyncError(error, stackTrace),
         );
@@ -28,6 +32,13 @@ class NewsSearchNotifier extends _$NewsSearchNotifier {
       return;
     }
 
+    if (term == _lastTerm && _lastResults != null) {
+      state = AsyncData(_lastResults!);
+      return;
+    }
+
+    _lastTerm = term;
+    _lastResults = null;
     state = const AsyncLoading();
     ref.read(newsSearchServiceProvider).query(term);
   }

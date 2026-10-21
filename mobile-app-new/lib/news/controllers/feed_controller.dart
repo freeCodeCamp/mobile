@@ -28,8 +28,12 @@ abstract class NewsFeedState with _$NewsFeedState {
 
 @riverpod
 class NewsFeedNotifier extends _$NewsFeedNotifier {
+  // NOTE: A refresh keeps this notifier mounted, so a page fetched before it is told apart by this.
+  int _generation = 0;
+
   @override
   FutureOr<NewsFeedState> build(NewsFeedSource source) async {
+    _generation++;
     final page = await _fetch(ref.watch(newsApiServiceProvider), '');
 
     return NewsFeedState(
@@ -57,6 +61,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
     // A failed append waits for an explicit retry instead of refiring on scroll.
     if (current.loadMoreError != null && !isRetry) return;
 
+    final generation = _generation;
     state = AsyncData(
       current.copyWith(isLoadingMore: true, loadMoreError: null),
     );
@@ -66,7 +71,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
         ref.read(newsApiServiceProvider),
         current.cursor,
       );
-      if (!ref.mounted) return;
+      if (!ref.mounted || generation != _generation) return;
 
       state = AsyncData(
         current.copyWith(
@@ -77,7 +82,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
         ),
       );
     } catch (error) {
-      if (!ref.mounted) return;
+      if (!ref.mounted || generation != _generation) return;
       // Keep the loaded posts; only the append failed.
       state = AsyncData(
         current.copyWith(isLoadingMore: false, loadMoreError: error),

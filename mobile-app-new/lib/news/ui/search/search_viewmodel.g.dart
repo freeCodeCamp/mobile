@@ -43,7 +43,7 @@ final class NewsSearchNotifierProvider
 }
 
 String _$newsSearchNotifierHash() =>
-    r'c9774ff6d3b50f833b36425af89b45ee16143109';
+    r'9a71f563daa8cfb10e82dda064b58242bbdd5522';
 
 abstract class _$NewsSearchNotifier
     extends $Notifier<AsyncValue<List<SearchPost>>> {

@@ -50,6 +50,11 @@ class PodcastLibraryService {
 
     await _files.saveArtwork(podcast.id, podcast.imageLink);
 
+    if (cancelToken?.isCancelled ?? false) {
+      await _files.deleteEpisodeFile(episode.podcastId, episode.id);
+      return;
+    }
+
     await _repo.upsertEpisode(
       podcast: podcast.toJson(),
       episode: episode.toJson(),

@@ -79,6 +79,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
   // itself on interruptions and unplugging, so the flag follows playingStream.
   bool _resumeNeedsLiveEdge = false;
 
+  // NOTE: Every load takes a new id, so a load interrupted by a newer one
+  // returns without stopping, restoring or publishing over the newer source.
+  int _loadId = 0;
+
+  // NOTE: While a source is swapping, position events can still come from the
+  // old one, so no episode is reported until the new one is in place.
+  bool _loading = false;
+
   String? get codeRadioSongId =>
       _audioConfig is CodeRadioAudioConfig ? mediaItem.value?.id : null;
 
@@ -86,7 +94,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       _audioPlayer.playing && _audioConfig is CodeRadioAudioConfig;
 
   String? get episodeId => switch (_audioConfig) {
-    PodcastAudioConfig(:final episodeId) => episodeId,
+    PodcastAudioConfig(:final episodeId) when !_loading => episodeId,
     _ => null,
   };
 
@@ -119,6 +127,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() async {
+    _loadId++;
+    _loading = false;
     _audioConfig = null;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
@@ -173,7 +183,9 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }
 
   Future<void> loadCodeRadio(CodeRadio radio) async {
+    final load = ++_loadId;
     final previous = _audioConfig;
+    _loading = true;
 
     try {
       final song = _toMediaItem(radio.nowPlaying.song);
@@ -185,11 +197,16 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
       await _audioPlayer.setSpeed(_defaultSpeed);
       await _audioPlayer.setAudioSource(AudioSource.uri(url));
+      if (load != _loadId) return;
 
       _publish(song);
     } catch (e) {
+      if (load != _loadId) return;
+
       _audioConfig = previous;
       log('loadCodeRadio: Cannot play audio: $e');
+    } finally {
+      if (load == _loadId) _loading = false;
     }
   }
 
@@ -221,6 +238,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
       artUri: artUri,
     );
 
+    final load = ++_loadId;
+    _loading = true;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
     _audioConfig = PodcastAudioConfig(episode.id);
@@ -232,13 +251,18 @@ class AudioPlayerHandler extends BaseAudioHandler {
       if (startAt != null && startAt > Duration.zero) {
         await _audioPlayer.seek(startAt);
       }
+      if (load != _loadId) return false;
 
       _publish(item);
       return true;
     } catch (e) {
+      if (load != _loadId) return false;
+
       log('loadEpisode: Cannot play audio: $e');
       await stop();
       return false;
+    } finally {
+      if (load == _loadId) _loading = false;
     }
   }
 
@@ -251,6 +275,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
   }) async {
     final item = MediaItem(id: clipId, title: title, album: 'freeCodeCamp');
 
+    final load = ++_loadId;
+    _loading = true;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
     _audioConfig = CurriculumAudioConfig(clipId);
@@ -264,13 +290,18 @@ class AudioPlayerHandler extends BaseAudioHandler {
           child: AudioSource.uri(source),
         ),
       );
+      if (load != _loadId) return false;
 
       _publish(item);
       return true;
     } catch (e) {
+      if (load != _loadId) return false;
+
       log('loadCurriculumAudio: Cannot play audio: $e');
       await stop();
       return false;
+    } finally {
+      if (load == _loadId) _loading = false;
     }
   }
 

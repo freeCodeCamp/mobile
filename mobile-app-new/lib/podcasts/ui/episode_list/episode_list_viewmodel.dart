@@ -33,8 +33,12 @@ abstract class PodcastEpisodesState with _$PodcastEpisodesState {
 class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
   Podcast? _lastKnownPodcast;
 
+  // NOTE: A refresh keeps this notifier mounted, so a page fetched before it is told apart by this.
+  int _generation = 0;
+
   @override
   FutureOr<PodcastEpisodesState> build(PodcastEpisodeSource source) async {
+    _generation++;
     switch (source) {
       case RemoteEpisodes(:final podcastId):
         final page = await ref
@@ -81,6 +85,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
     if (current.loadMoreError != null && !isRetry) return;
 
     if (source case RemoteEpisodes(:final podcastId)) {
+      final generation = _generation;
       state = AsyncData(
         current.copyWith(isLoadingMore: true, loadMoreError: null),
       );
@@ -91,7 +96,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
         final page = await ref
             .read(podcastApiServiceProvider)
             .getEpisodes(podcastId, page: next);
-        if (!ref.mounted) return;
+        if (!ref.mounted || generation != _generation) return;
 
         state = AsyncData(
           current.copyWith(
@@ -102,7 +107,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
           ),
         );
       } catch (error) {
-        if (!ref.mounted) return;
+        if (!ref.mounted || generation != _generation) return;
         state = AsyncData(
           current.copyWith(isLoadingMore: false, loadMoreError: error),
         );

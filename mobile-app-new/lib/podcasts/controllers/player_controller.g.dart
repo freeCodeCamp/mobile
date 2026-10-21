@@ -77,7 +77,7 @@ final class PodcastPlayerNotifierProvider
 }
 
 String _$podcastPlayerNotifierHash() =>
-    r'6fcf9fed68135e6e8a3a8dbb7c472f2759f826e6';
+    r'd416e8d5664fa7e15b7d048126086d700024ba51';
 
 abstract class _$PodcastPlayerNotifier extends $Notifier<PodcastPlayerState> {
   PodcastPlayerState build();

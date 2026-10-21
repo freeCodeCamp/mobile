@@ -129,7 +129,7 @@ class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
 
       if (loaded) await handler.play();
     } finally {
-      if (ref.mounted) {
+      if (ref.mounted && state.loadingEpisodeId == episode.id) {
         state = state.copyWith(loadingEpisodeId: null);
         _syncKeepAlive();
       }
