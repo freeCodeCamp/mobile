@@ -43,8 +43,18 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
+      - name: Check generated files are up to date
+        script: |
+          dart run build_runner build
+          if [ -n "$(git status --porcelain -- .)" ]; then
+            git status --porcelain -- .
+            git diff -- .
+            echo "Generated files are out of date. Run 'dart run build_runner build' and commit the result."
+            exit 1
+          fi
+
       - name: Analyze code
-        script: flutter analyze --no-fatal-warnings
+        script: dart analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
@@ -122,8 +132,18 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
+      - name: Check generated files are up to date
+        script: |
+          dart run build_runner build
+          if [ -n "$(git status --porcelain -- .)" ]; then
+            git status --porcelain -- .
+            git diff -- .
+            echo "Generated files are out of date. Run 'dart run build_runner build' and commit the result."
+            exit 1
+          fi
+
       - name: Analyze code
-        script: flutter analyze --no-fatal-warnings
+        script: dart analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
