@@ -96,6 +96,8 @@ dev_dependencies:
   json_serializable: ^6.14.1
   go_router_builder: ^4.4.0
   riverpod_lint: 3.1.4
+  flutter_launcher_icons: 0.14.4
+  flutter_native_splash: 2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
