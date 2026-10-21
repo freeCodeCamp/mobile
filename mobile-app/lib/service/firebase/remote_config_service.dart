@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:freecodecamp/utils/upgrade_controller.dart';
 import 'package:upgrader/upgrader.dart';
@@ -13,17 +12,9 @@ class RemoteConfigService {
 
   static final remoteConfig = FirebaseRemoteConfig.instance;
   static const _activationOverridesKey = 'activation_overrides';
-  final String Function(String key) _getConfigString;
 
   factory RemoteConfigService() {
     return _instance;
-  }
-
-  @visibleForTesting
-  factory RemoteConfigService.withConfigReader(
-    String Function(String key) getConfigString,
-  ) {
-    return RemoteConfigService._internal(getConfigString: getConfigString);
   }
 
   Future<void> init() async {
@@ -66,9 +57,7 @@ class RemoteConfigService {
     }
   }
 
-  RemoteConfigService._internal({
-    String Function(String key)? getConfigString,
-  }) : _getConfigString = getConfigString ?? remoteConfig.getString;
+  RemoteConfigService._internal();
 
   bool isActive({
     required String superBlockDashedName,
@@ -110,7 +99,7 @@ class RemoteConfigService {
 
   Map<String, dynamic>? _getOverridesMap() {
     try {
-      final String rawConfig = _getConfigString(_activationOverridesKey);
+      final String rawConfig = remoteConfig.getString(_activationOverridesKey);
       if (rawConfig.trim().isEmpty) {
         return null;
       }

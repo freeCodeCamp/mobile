@@ -67,7 +67,6 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.4 # NOTE: 5.4.6+ is blocked by stacked_generator
   stacked_generator: 1.6.1
 
 flutter:
