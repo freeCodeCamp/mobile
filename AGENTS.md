@@ -4,26 +4,24 @@ freeCodeCamp's mobile app monorepo.
 
 | Folder | What it is |
 |---|---|
-| `mobile-app/` | v7 (Stacked MVVM), package `freecodecamp`. Still receives bug fixes. |
-| `mobile-app-new/` | v8 (Riverpod 3 + GoRouter + Freezed), package `mobile_app_new`. |
+| `mobile-app/` | Flutter app (Riverpod 3 + GoRouter + Freezed), package `freecodecamp`. |
 | `mobile-api/` | Node backend for podcasts (`/podcasts`, `/podcasts/{id}/episodes`). |
 
-v8 is the next version of the **same app**, not a separate product. When the migration is finished, `mobile-app-new/lib/` (plus `integration_test/`, `test_driver/` and assets) is copied into `mobile-app/`, and imports are rewritten from `package:mobile_app_new/` to `package:freecodecamp/`. Native `android/` and `ios/` config comes from v7 untouched. v8's `1.0.0+1` version and placeholder native config never ship.
-
-Everything below describes `mobile-app-new/` unless stated otherwise. The provider dependency graph is in [docs/LAYER_MAP.md](docs/LAYER_MAP.md).
+Everything below describes `mobile-app/`. The provider dependency graph is in [docs/LAYER_MAP.md](docs/LAYER_MAP.md).
 
 ## Commands
 
-Run from `mobile-app-new/`:
+Run from `mobile-app/`:
 
 ```sh
 dart run build_runner build        # after touching any @riverpod, @freezed, @JsonSerializable or @TypedGoRoute
-dart analyze                       # NOT flutter analyze, and NOT from a subdirectory
+dart analyze
+flutter analyze
 flutter drive --driver=test_driver/integration_test.dart --target=integration_test/<feature>/<name>_test.dart
 dart integration_test_runner.dart [--curriculum] [--ios]
 ```
 
-- Use `dart analyze` from the project root. `flutter analyze` and runs from inside `lib/` silently skip the `riverpod_lint` plugin and report "No issues found!".
+- Run both analyzers from the project root.
 - A clean analyze is not verification. Run the change on a device.
 - `.env` is bundled as an asset and must exist. Keys: `ALGOLIAAPPID`, `ALGOLIAKEY`, `HASHNODE_PUBLICATION_ID`, `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `DEVELOPMENT_MODE` (switches .org/.dev), `SHOW_ALL_SB` (show all superblocks).
 
@@ -82,17 +80,16 @@ Rules:
 
 ## Persisted data
 
-v8 reads what v7 wrote to the same documents directory and SharedPreferences, so **paths and keys are a migration contract**. Downgrades never happen, so v8 may write formats v7 can't read.
+Installed apps already hold this data in the documents directory and SharedPreferences, so **paths and keys never change**. Downgrades never happen, so a format may change as long as the previous one is still read.
 
 | Data | Location |
 |---|---|
-| Bookmarks | `storage/bookmarked-articles.json`, v7 keys `articleId`/`articleTitle`/`authorName`/`articleText` (mapped only in `bookmark_service.dart`) |
-| Podcast downloads | `storage/podcast-downloads.json` (version 2, API key names; v7's version 1 is normalised in memory on read), `episodes/`, `images/` |
+| Bookmarks | `storage/bookmarked-articles.json`, keys `articleId`/`articleTitle`/`authorName`/`articleText` (mapped only in `bookmark_service.dart`) |
+| Podcast downloads | `storage/podcast-downloads.json` (version 2, API key names; version 1 is normalised in memory on read), `episodes/`, `images/` |
 | Podcast resume | prefs `{episodeId}_progress`, LRU index `podcast_recent_episodes` (cap 10) |
 | Learn saved code | prefs `<challengeId>.<name>.<ext>` |
 
 - JSON files live inside the feature's own repository: an atomic write (`.tmp` then `rename`, no delete first), a serialised `Future` queue, and tolerant reads. Don't build a generic store.
-- Remote Config sets a minimum app version of 7.5.6, so data migrations older than that (SQLite → JSON) are not ported.
 - Podcast completion is signalled by the store row, never by file existence: dio writes the `.mp3` in place while downloading. The orphan sweep reads raw store entries, not parsed models.
 
 ## Audio
@@ -112,12 +109,12 @@ v8 reads what v7 wrote to the same documents directory and SharedPreferences, so
 ## Conventions
 
 - No `///` doc comments. Use plain one-line `//` only where a reader would otherwise change the code and break it.
-- Strings are hardcoded English. Localisation is not migrated.
+- Strings are hardcoded English. There is no localisation.
 - No unit tests yet. The curriculum e2e (`integration_test/test_runner/curriculum_test.dart`, run via `dart integration_test_runner.dart --curriculum`) is the required test. Other e2e tests live in `integration_test/<feature>/`:
   - Use type-based finders (`find.byType`, `tester.widget<T>().field`). Widgets used as finders (e.g. `NewsPostHeader`) stay public.
   - Device stdout is lossy on long runs. Return results through `binding.reportData`.
 - Use `ErrorRetry` (`lib/widgets/error_retry.dart`) for async error states.
 - Always give `CachedNetworkImage` explicit bounds. Unsized, it fills its constraints or jumps while loading.
 - Cover art (podcasts, Code Radio) is always square: use `AspectRatio(1)` and never crop.
-- Pin a dependency to v7's exact version when v7 already uses it; new dependencies take the latest version.
+- Pin every dependency to the exact version it was tested with (no `^`). New dependencies start at the latest version.
 - Hashnode's GraphQL API is slow upstream, and `graphql` 5.2.4 applies a 5s default request timeout.

@@ -1,6 +1,6 @@
 # Layer Map
 
-Every provider dependency in the v8 app (`mobile-app-new/lib/`): which controllers reach which services, which services own which repositories, and where each repository gets its data. Views are not drawn.
+Every provider dependency in the app (`mobile-app/lib/`): which controllers reach which services, which services own which repositories, and where each repository gets its data. Views are not drawn.
 
 ## Legend
 
@@ -364,7 +364,7 @@ flowchart TD
 
 ## Regenerating
 
-The edges come from resolving every `ref.watch` / `ref.read` / `ref.listen` in `lib/` back to the file that declares the provider (map each `final xProvider` in `*.g.dart` to its source file). From `mobile-app-new/`:
+The edges come from resolving every `ref.watch` / `ref.read` / `ref.listen` in `lib/` back to the file that declares the provider (map each `final xProvider` in `*.g.dart` to its source file). From `mobile-app/`:
 
 ```sh
 for f in $(find lib -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' | sort); do

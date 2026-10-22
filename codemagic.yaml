@@ -43,6 +43,11 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
+      - name: Analyze code
+        script: |
+          dart analyze --no-fatal-warnings
+          flutter analyze --no-fatal-warnings
+
       - name: Check generated files are up to date
         script: |
           dart run build_runner build
@@ -52,9 +57,6 @@ workflows:
             echo "Generated files are out of date. Run 'dart run build_runner build' and commit the result."
             exit 1
           fi
-
-      - name: Analyze code
-        script: dart analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |
@@ -132,6 +134,11 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
+      - name: Analyze code
+        script: |
+          dart analyze --no-fatal-warnings
+          flutter analyze --no-fatal-warnings
+
       - name: Check generated files are up to date
         script: |
           dart run build_runner build
@@ -141,9 +148,6 @@ workflows:
             echo "Generated files are out of date. Run 'dart run build_runner build' and commit the result."
             exit 1
           fi
-
-      - name: Analyze code
-        script: dart analyze --no-fatal-warnings
 
       - name: Install applesimutils
         script: |

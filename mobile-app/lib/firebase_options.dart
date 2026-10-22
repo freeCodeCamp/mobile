@@ -56,7 +56,6 @@ class DefaultFirebaseOptions {
     projectId: 'mobile-4ee8a',
     storageBucket: 'mobile-4ee8a.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCFcTnIuxW7AeskmoNwbrEZX_ZvYz-aAdw',
     appId: '1:363152234407:ios:17273b86fa3ff2e4738882',
@@ -65,5 +64,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'mobile-4ee8a.firebasestorage.app',
     iosBundleId: 'org.freecodecamp.ios',
   );
-
 }

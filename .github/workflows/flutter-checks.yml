@@ -46,6 +46,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Analyze
+        run: |
+          dart analyze --no-fatal-warnings
+          flutter analyze --no-fatal-warnings
+
       - name: Check generated files are up to date
         run: |
           dart run build_runner build
@@ -55,7 +60,3 @@ jobs:
             echo "::error::Generated files are out of date. Run 'dart run build_runner build' and commit the result."
             exit 1
           fi
-
-      # dart analyze, not flutter analyze: only dart analyze runs analyzer plugins such as riverpod_lint
-      - name: Analyze
-        run: dart analyze --no-fatal-warnings
