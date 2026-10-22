@@ -197,10 +197,13 @@ class LearnTestRunnerService {
   );
 }
 
-// NOTE: Babel syntax errors are expected in these steps (workshop-fcc-authors-page 27 and 28).
+// NOTE: Babel syntax errors are expected in these steps
 const _skipBabelErrorChallengeIds = {
-  '69e16a610b33e847d85be16e',
-  '69e1e83ac6424325f77331e8',
+  // workshop-fcc-authors-page
+  '69e16a610b33e847d85be16e', // step 27
+  '69e1e83ac6424325f77331e8', // step 28
+  // workshop-library-search
+  '6a1c49231334592cc5a4c6b0', // step 5
 };
 
 String syntaxErrorHint(BabelException error) {
