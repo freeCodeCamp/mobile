@@ -17,7 +17,7 @@ on:
 jobs:
   mobile-test:
     name: Test curriculum for mobile app
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
 
     strategy:
