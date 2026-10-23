@@ -10,12 +10,9 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
-    # Our generated files
-    - temp/**
-    - lib/app/app.dart
-    - lib/app/app.locator.dart
-    - lib/app/app.logger.dart
-    - lib/app/app.router.dart
+  language:
+    strict-raw-types: true
+    strict-casts: true
   errors:
     todo: info
 linter:
@@ -27,6 +24,9 @@ linter:
     avoid_relative_lib_imports: true
     directives_ordering: true
     sort_pub_dependencies: true
+
+plugins:
+  riverpod_lint: 3.1.4
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

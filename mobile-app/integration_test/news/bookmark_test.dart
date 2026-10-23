@@ -4,7 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
-import 'package:freecodecamp/ui/views/news/news-tutorial/news_tutorial_view.dart';
+import 'package:freecodecamp/news/ui/bookmark_feed/bookmark_feed_view.dart';
+import 'package:freecodecamp/news/ui/post/post_view.dart';
+import 'package:freecodecamp/news/ui/widgets/bookmark_button.dart';
+import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -13,111 +16,110 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding();
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('NEWS - should bookmark tutorial', (WidgetTester tester) async {
-    // Start app and navigate to news view
+  Future<void> pumpUntilFound(
+    WidgetTester tester,
+    Finder finder, {
+    Duration timeout = const Duration(seconds: 60),
+  }) async {
+    final deadline = DateTime.now().add(timeout);
+    while (DateTime.now().isBefore(deadline)) {
+      await tester.pump(const Duration(milliseconds: 250));
+      if (finder.evaluate().isNotEmpty) return;
+    }
+    fail('Timed out waiting for: $finder');
+  }
+
+  testWidgets('NEWS - should bookmark a post', (WidgetTester tester) async {
     tester.printToConsole('Test starting');
-    await app.main(testing: true);
+    await app.main();
     await binding.convertFlutterSurfaceToImage();
     await tester.pumpAndSettle();
 
-    final Finder drawer = find.byIcon(Icons.menu);
-    await tester.tap(drawer);
+    // Drawer -> Tutorials
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tutorials'));
     await tester.pumpAndSettle();
 
-    final Finder news = find.byKey(const Key('news'));
-    await tester.tap(news);
-    await tester.pumpAndSettle();
-
+    // News Feed
+    await pumpUntilFound(tester, find.byType(PostTile));
     await binding.takeScreenshot('news/news-feed');
 
-    // Tap on the first tutorial
-    final Finder firstTutorial = find
-        .descendant(
-          of: find.byKey(const Key('news-tutorial-0')),
-          matching: find.byType(InkWell),
-        )
-        .first;
-    final Finder firstTutorialImage = find
-        .descendant(
-          of: firstTutorial,
-          matching: find.byType(AspectRatio),
-        )
-        .first;
-    final ValueKey firstTutorialKey =
-        tester.firstWidget<InkWell>(firstTutorial).key! as ValueKey;
+    final firstTile = find.byType(PostTile).first;
+    expect(firstTile, findsOneWidget);
 
-    expect(firstTutorial, findsOneWidget);
-    expect(firstTutorialImage, findsOneWidget);
-    await tester.tap(firstTutorialImage);
+    final postId = (tester.widget<PostTile>(firstTile).key! as ValueKey).value;
+
+    await tester.tap(firstTile);
     await tester.pumpAndSettle();
+
+    // Post detail - wait for the body, then for the bottom bar to slide in.
+    await pumpUntilFound(tester, find.byType(NewsPostHeader));
     await tester.pumpAndSettle(const Duration(seconds: 3));
-    await binding.takeScreenshot('news/news-tutorial');
+    await binding.takeScreenshot('news/news-post');
 
-    // Tap on the bookmark button and store tutorial title and author
-    final Finder bookmarkButton = find.byKey(const Key('bookmark_btn'));
-    final Finder tutorialTitle = find.byKey(const Key('title'));
-    final Finder tutorialAuthor = find.descendant(
-        of: find.byType(NewsTutorialHeader),
-        matching: find.textContaining(RegExp(r'^Written by')));
-    await tester.pumpAndSettle();
+    final header = find.byType(NewsPostHeader);
+    expect(header, findsOneWidget);
+
+    final post = tester.widget<NewsPostHeader>(header).post;
+    final title = post.title;
+    final author = post.author.name;
+
+    // Bookmark the post
+    final bookmarkButton = find.byType(BookmarkButton);
     expect(bookmarkButton, findsOneWidget);
-    expect(tutorialTitle, findsOneWidget);
-    expect(tutorialAuthor, findsOneWidget);
-    Text title = tester.firstWidget(tutorialTitle);
-    String author = tester.firstWidget<Text>(tutorialAuthor).data!;
     await tester.tap(bookmarkButton);
     await tester.pumpAndSettle();
 
-    // Go to news bookmark view
+    // Back to the feed, then over to the Bookmarks tab
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Bookmarks'));
     await tester.pumpAndSettle();
+
+    await pumpUntilFound(
+      tester,
+      find.descendant(
+        of: find.byType(NewsBookmarkFeedView),
+        matching: find.byType(ListTile),
+      ),
+    );
     await binding.takeScreenshot('news/news-bookmark-feed');
 
-    // Check if tutorial is in bookmark view and it has same title and author
-    final Finder bookmarkTutorial =
-        find.byKey(const Key('bookmark_tutorial_0'));
-    final Finder bookmarkTutorialText = find.descendant(
-      of: bookmarkTutorial,
-      matching: find.byType(Text),
-    );
+    // Verify that the first row in the bookmarks feed matches the post we bookmarked
+    final firstRow = find
+        .descendant(
+          of: find.byType(NewsBookmarkFeedView),
+          matching: find.byType(ListTile),
+        )
+        .first;
+    expect(firstRow, findsOneWidget);
+
+    final rowText = find.descendant(of: firstRow, matching: find.byType(Text));
+    expect(tester.widget<Text>(rowText.first).data, title);
     expect(
-      tester.firstWidget<Text>(bookmarkTutorialText.first).data!,
-      title.data,
-    );
-    expect(
-      (tester.firstWidget<Text>(bookmarkTutorialText.last).data!)
-          .split('Written by: ')[1],
-      author.split('Written by ')[1],
+      tester.widget<Text>(rowText.last).data!.replaceFirst('Written by: ', ''),
+      author,
     );
 
-    // Check JSON store if record exists
+    // Check that the post is stored in the bookmarks JSON file
     final docsDir = await getApplicationDocumentsDirectory();
     final jsonFile = File(
       path.join(docsDir.path, 'storage', 'bookmarked-articles.json'),
     );
+    expect(await jsonFile.exists(), isTrue);
 
-    Map<String, dynamic>? found;
-    if (await jsonFile.exists()) {
-      final decoded = jsonDecode(await jsonFile.readAsString());
-      if (decoded is Map) {
-        final bookmarks = decoded['bookmarks'];
-        for (final entry in bookmarks) {
-          if (entry is! Map) continue;
-          final m = Map<String, dynamic>.from(entry);
-          if (m['articleId'] == firstTutorialKey.value) {
-            found = m;
-            break;
-          }
-        }
-      }
-    }
+    final decoded = jsonDecode(await jsonFile.readAsString()) as Map;
+    final stored = (decoded['bookmarks'] as List)
+        .cast<Map<String, dynamic>>()
+        .firstWhere(
+          (e) => e['articleId'] == postId,
+          orElse: () => <String, dynamic>{},
+        );
 
-    expect(found, isNotNull);
-    final result = found!;
-    expect(result['articleId'], firstTutorialKey.value);
-    expect(result['articleTitle'], title.data);
-    expect(result['authorName'], author.split('Written by ')[1]);
+    expect(stored, isNotEmpty, reason: 'no entry for $postId');
+    expect(stored['articleTitle'], title);
+    expect(stored['authorName'], author);
+    expect(stored['articleText'], isNotEmpty);
   });
 }

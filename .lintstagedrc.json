@@ -1,3 +1,6 @@
 {
-  "!(app.*)*": "flutter analyze --no-fatal-warnings"
+  "mobile-app/**/*.dart": [
+    "dart analyze --no-fatal-warnings",
+    "flutter analyze --no-fatal-warnings"
+  ]
 }

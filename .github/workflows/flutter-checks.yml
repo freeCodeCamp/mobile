@@ -1,0 +1,62 @@
+name: Flutter Checks
+
+on:
+  pull_request:
+    branches: [main, prod]
+    paths:
+      - "mobile-app/**"
+      - ".github/**"
+  push:
+    branches: [main, prod]
+
+jobs:
+  checks:
+    name: Generated Files and Analysis
+    defaults:
+      run:
+        working-directory: ./mobile-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter 3.44.x
+        uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2
+        with:
+          flutter-version: "3.44.x"
+          channel: "stable"
+          cache: true
+          cache-key: flutter-3.44.x
+          cache-path: ${{ runner.tool_cache }}/flutter
+
+      - name: Write .env
+        run: |
+          echo "HASHNODE_PUBLICATION_ID=$HASHNODE_PUBLICATION_ID" > .env
+          echo "ALGOLIAAPPID=$ALGOLIA_APP_ID" >> .env
+          echo "ALGOLIAKEY=$ALGOLIA_KEY" >> .env
+          echo "AUTH0_DOMAIN=$AUTH0_DOMAIN" >> .env
+          echo "AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID" >> .env
+        env:
+          HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
+          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: |
+          dart analyze --no-fatal-warnings
+          flutter analyze --no-fatal-warnings
+
+      - name: Check generated files are up to date
+        run: |
+          dart run build_runner build
+          if [ -n "$(git status --porcelain -- .)" ]; then
+            git status --porcelain -- .
+            git diff -- .
+            echo "::error::Generated files are out of date. Run 'dart run build_runner build' and commit the result."
+            exit 1
+          fi
