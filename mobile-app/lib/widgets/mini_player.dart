@@ -11,7 +11,9 @@ import 'package:freecodecamp/services/audio_service.dart';
 
 /// A view of the already loaded source. Observing it never starts playback.
 class MiniPlayer extends ConsumerWidget {
-  const MiniPlayer({super.key});
+  const MiniPlayer({super.key, this.beforeNavigate});
+
+  final Future<bool> Function()? beforeNavigate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -53,7 +55,12 @@ class MiniPlayer extends ConsumerWidget {
                 child: InkWell(
                   onTap: !canOpen
                       ? null
-                      : () {
+                      : () async {
+                          if (beforeNavigate != null &&
+                              !await beforeNavigate!()) {
+                            return;
+                          }
+                          if (!context.mounted) return;
                           if (isRadio) {
                             const CodeRadioRoute().go(context);
                           } else if (episode != null) {

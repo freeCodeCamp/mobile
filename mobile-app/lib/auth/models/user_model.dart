@@ -26,6 +26,42 @@ abstract class Portfolio with _$Portfolio {
 }
 
 @freezed
+abstract class Experience with _$Experience {
+  const factory Experience({
+    required String id,
+    required String title,
+    required String company,
+    required String startDate,
+    required String description,
+    @Default('') String location,
+    @Default('') String endDate,
+  }) = _Experience;
+
+  factory Experience.fromJson(Map<String, Object?> json) =>
+      _$ExperienceFromJson(json);
+}
+
+@freezed
+abstract class ProfileUI with _$ProfileUI {
+  const factory ProfileUI({
+    @Default(true) bool isLocked,
+    @Default(false) bool showAbout,
+    @Default(false) bool showCerts,
+    @Default(false) bool showDonation,
+    @Default(false) bool showHeatMap,
+    @Default(false) bool showLocation,
+    @Default(false) bool showName,
+    @Default(false) bool showPoints,
+    @Default(false) bool showPortfolio,
+    @Default(false) bool showExperience,
+    @Default(false) bool showTimeLine,
+  }) = _ProfileUI;
+
+  factory ProfileUI.fromJson(Map<String, Object?> json) =>
+      _$ProfileUIFromJson(json);
+}
+
+@freezed
 abstract class CompletedChallenge with _$CompletedChallenge {
   const factory CompletedChallenge({
     required String id,
@@ -79,6 +115,7 @@ abstract class FccUserModel with _$FccUserModel {
     String? githubProfile,
     String? linkedin,
     String? twitter,
+    String? bluesky,
     String? website,
     String? location,
     String? about,
@@ -115,6 +152,8 @@ abstract class FccUserModel with _$FccUserModel {
     @Default([]) List<CompletedDailyChallenge> completedDailyCodingChallenges,
     @Default([]) List<SavedChallenge> savedChallenges,
     @Default([]) List<Portfolio> portfolio,
+    @Default([]) List<Experience> experience,
+    @Default(ProfileUI()) ProfileUI profileUI,
     @JsonKey(fromJson: _yearsToStrings)
     @Default([])
     List<String> yearsTopContributor,

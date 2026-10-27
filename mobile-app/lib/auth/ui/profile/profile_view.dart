@@ -1,66 +1,289 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/auth/controllers/profile_controller.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/profile/profile_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-({int longest, int current}) _calculateStreak(Map<DateTime, int> days) {
-  final activeDays = days.entries
-      .where((entry) => entry.value > 0)
-      .map((entry) => entry.key)
-      .toSet();
-  final sorted = activeDays.toList()..sort();
-  var longest = 0;
-  var current = 0;
-  for (final day in sorted) {
-    final previous = DateTime(day.year, day.month, day.day - 1);
-    current = activeDays.contains(previous) ? current + 1 : 1;
-    if (current > longest) longest = current;
-  }
-  final now = DateTime.now();
-  final yesterday = DateTime(now.year, now.month, now.day - 1);
-  if (sorted.isEmpty || sorted.last.isBefore(yesterday)) current = 0;
-  return (longest: longest, current: current);
-}
-
-class ProfileView extends ConsumerWidget {
+class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends ConsumerState<ProfileView> {
+  bool _preview = false;
+
+  @override
+  Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final refresh = ref.watch(profileRefreshProvider);
     final user = auth.value;
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : const AccountRoute().go(context),
+    final preview = _preview && user != null;
+    return PopScope(
+      canPop: !preview,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && preview) setState(() => _preview = false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: BackButton(
+            onPressed: () {
+              if (preview) {
+                setState(() => _preview = false);
+              } else if (context.canPop()) {
+                context.pop();
+              } else {
+                const AccountRoute().go(context);
+              }
+            },
+          ),
+          title: Text(preview ? 'Profile' : 'Public profile'),
+          actions: [
+            if (user != null && !preview)
+              IconButton(
+                tooltip: 'Edit profile',
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => const EditProfileRoute().push<void>(context),
+              ),
+          ],
         ),
-        title: const Text('Public profile'),
-      ),
-      body: auth.isLoading && user == null
-          ? const Center(child: CircularProgressIndicator())
-          : auth.hasError || refresh.hasError
-          ? ErrorRetry(
-              message: 'Unable to load your profile.',
-              onRetry: () => ref.invalidate(profileRefreshProvider),
-            )
-          : user == null
-          ? const _GuestProfile()
-          : RefreshIndicator(
-              onRefresh: () => ref.refresh(profileRefreshProvider.future),
-              child: _ProfileBody(user: user),
+        bottomNavigationBar: const AppNavigationFooter(
+          selected: AppDestination.account,
+        ),
+        body: SafeArea(
+          top: false,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: auth.isLoading && user == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : auth.hasError || refresh.hasError
+                  ? ErrorRetry(
+                      message: 'Unable to load your profile.',
+                      onRetry: () => ref.invalidate(profileRefreshProvider),
+                    )
+                  : user == null
+                  ? const _GuestProfile()
+                  : Column(
+                      children: [
+                        if (preview)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                            child: _PreviewBanner(
+                              onDone: () => setState(() => _preview = false),
+                            ),
+                          ),
+                        Expanded(
+                          child: preview && user.profileUI.isLocked
+                              ? _PrivateProfile(username: user.username)
+                              : RefreshIndicator(
+                                  onRefresh: () => ref.refresh(
+                                    profileRefreshProvider.future,
+                                  ),
+                                  child: _ProfileBody(
+                                    key: ValueKey(preview),
+                                    user: user,
+                                    preview: preview,
+                                    onPreview: () =>
+                                        setState(() => _preview = true),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PrivateProfile extends StatelessWidget {
+  const _PrivateProfile({required this.username});
+  final String username;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 36),
+      children: [
+        Center(
+          child: CircleAvatar(
+            radius: 42,
+            backgroundColor: colors.surfaceContainer,
+            child: Icon(
+              Icons.person_outline,
+              size: 42,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Text(
+          '@$username',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.titleMedium?.copyWith(fontFamily: 'monospace'),
+        ),
+        const SizedBox(height: 38),
+        Center(
+          child: CircleAvatar(
+            radius: 26,
+            backgroundColor: colors.primaryContainer,
+            child: Icon(
+              Icons.lock_outline,
+              color: FccDesignColors.of(context).accentText,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'This profile is private',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.titleLarge,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'This camper has chosen to keep their profile private.',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewBanner extends StatelessWidget {
+  const _PreviewBanner({required this.onDone});
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.visibility_outlined,
+            color: FccDesignColors.of(context).accentText,
+          ),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text('Previewing your profile as others see it'),
+          ),
+          const SizedBox(width: 10),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: onDone,
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrivacyBanner extends StatelessWidget {
+  const _PrivacyBanner({required this.onPreview});
+  final VoidCallback onPreview;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final accent = FccDesignColors.of(context).accentText;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: colors.primary.withValues(alpha: 0.12),
+                child: Icon(Icons.lock_outline, color: accent, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Your profile is private.',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'This limits what other people can see.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.centerLeft,
+                        textStyle: theme.textTheme.bodySmall?.copyWith(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      onPressed: () =>
+                          const ProfileVisibilityRoute().push<void>(context),
+                      child: const Text('Change visibility'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: accent,
+              backgroundColor: Colors.transparent,
+              side: BorderSide(color: colors.primary.withValues(alpha: 0.4)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: onPreview,
+            icon: const Icon(Icons.visibility_outlined, size: 20),
+            label: const Text('View as others'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -132,69 +355,139 @@ class _GuestProfile extends StatelessWidget {
   }
 }
 
-class _ProfileBody extends StatelessWidget {
-  const _ProfileBody({required this.user});
+class _ProfileBody extends ConsumerWidget {
+  const _ProfileBody({
+    super.key,
+    required this.user,
+    required this.preview,
+    required this.onPreview,
+  });
   final FccUserModel user;
+  final bool preview;
+  final VoidCallback onPreview;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final days = user.heatMapCal;
-    final streak = _calculateStreak(days);
+    final streak = ref.watch(profileStreakProvider);
+    final visibility = user.profileUI;
+    final showActivity = !preview || visibility.showHeatMap;
     final statistics = [
-      (user.points, 'Points'),
-      (streak.current, 'Current streak'),
-      (streak.longest, 'Longest streak'),
+      if (!preview || visibility.showPoints) (user.points, 'Points'),
+      if (showActivity) ...[
+        (streak.current, 'Current streak'),
+        (streak.longest, 'Longest streak'),
+      ],
     ];
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
-        _Header(user: user),
-        const SizedBox(height: 14),
-        _Section(
-          padding: EdgeInsets.zero,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final textScale = MediaQuery.textScalerOf(context).scale(12) / 12;
-              final stacked = constraints.maxWidth < 240 * textScale;
-              if (stacked) {
-                return Column(
-                  children: [
-                    for (final (index, stat) in statistics.indexed) ...[
-                      if (index > 0) const Divider(),
-                      _Stat(value: stat.$1, label: stat.$2, horizontal: true),
-                    ],
-                  ],
-                );
-              }
-              return IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final (index, stat) in statistics.indexed) ...[
-                      if (index > 0) const VerticalDivider(width: 1),
-                      Expanded(
-                        child: _Stat(value: stat.$1, label: stat.$2),
-                      ),
-                    ],
-                  ],
+        if (!preview && visibility.isLocked) ...[
+          _PrivacyBanner(onPreview: onPreview),
+          const SizedBox(height: 14),
+        ],
+        _Header(user: user, preview: preview),
+        if (!preview && !visibility.isLocked) ...[
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 8,
+              children: [
+                TextButton(
+                  onPressed: () =>
+                      const ProfileVisibilityRoute().push<void>(context),
+                  child: const Text('Change visibility'),
                 ),
-              );
-            },
+                TextButton.icon(
+                  onPressed: onPreview,
+                  icon: const Icon(Icons.visibility_outlined, size: 20),
+                  label: const Text('View as others'),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 14),
-        _Section(child: _Heatmap(days: days)),
-        const SizedBox(height: 18),
-        _Certifications(user: user),
-        if (user.portfolio.isNotEmpty) ...[
+        ],
+        if (statistics.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          _Section(
+            padding: EdgeInsets.zero,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final textScale =
+                    MediaQuery.textScalerOf(context).scale(12) / 12;
+                final stacked =
+                    constraints.maxWidth < 80 * statistics.length * textScale;
+                if (stacked) {
+                  return Column(
+                    children: [
+                      for (final (index, stat) in statistics.indexed) ...[
+                        if (index > 0) const Divider(),
+                        _Stat(value: stat.$1, label: stat.$2, horizontal: true),
+                      ],
+                    ],
+                  );
+                }
+                return IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final (index, stat) in statistics.indexed) ...[
+                        if (index > 0) const VerticalDivider(width: 1),
+                        Expanded(
+                          child: _Stat(value: stat.$1, label: stat.$2),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+        if (showActivity) ...[
+          const SizedBox(height: 14),
+          _Section(child: _Heatmap(days: days)),
+        ],
+        if (!preview || visibility.showCerts) ...[
+          const SizedBox(height: 18),
+          _Certifications(user: user, preview: preview),
+        ],
+        if ((!preview || visibility.showPortfolio) &&
+            user.portfolio.isNotEmpty) ...[
           const SizedBox(height: 20),
           Text('Portfolio', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          for (final item in user.portfolio) ...[
-            _PortfolioCard(portfolio: item),
-            const SizedBox(height: 10),
-          ],
+          _Section(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (final (index, item) in user.portfolio.indexed) ...[
+                  if (index > 0) const Divider(),
+                  _PortfolioRow(portfolio: item),
+                ],
+              ],
+            ),
+          ),
+        ],
+        if ((!preview || visibility.showExperience) &&
+            user.experience.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          Text('Experience', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          _Section(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (final (index, item) in user.experience.indexed) ...[
+                  if (index > 0) const Divider(),
+                  _ExperienceRow(experience: item),
+                ],
+              ],
+            ),
+          ),
         ],
       ],
     );
@@ -217,19 +510,35 @@ class _Section extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.user});
+  const _Header({required this.user, required this.preview});
   final FccUserModel user;
+  final bool preview;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final visibility = user.profileUI;
+    final showName = !preview || visibility.showName;
+    final showDonation = !preview || visibility.showDonation;
+    final showSupporter = user.isDonating && showDonation;
+    final description = [
+      if (!preview || visibility.showAbout) ...[
+        if (user.about?.trim().isNotEmpty ?? false) user.about!.trim(),
+      ],
+      if ((!preview || visibility.showLocation) &&
+          (user.location?.trim().isNotEmpty ?? false))
+        user.location!.trim(),
+      if (!preview || visibility.showAbout)
+        'Joined ${Jiffy.parseFromDateTime(user.joinDate).yMMMM}',
+    ];
     final links = [
       if (user.githubProfile?.trim().isNotEmpty ?? false)
         ('GitHub', user.githubProfile!),
       if (user.linkedin?.trim().isNotEmpty ?? false)
         ('LinkedIn', user.linkedin!),
       if (user.twitter?.trim().isNotEmpty ?? false) ('X', user.twitter!),
+      if (user.bluesky?.trim().isNotEmpty ?? false) ('Bluesky', user.bluesky!),
       if (user.website?.trim().isNotEmpty ?? false) ('Website', user.website!),
     ];
     return _Section(
@@ -257,12 +566,20 @@ class _Header extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (showName)
+                      Text(
+                        user.name.trim().isNotEmpty ? user.name : user.username,
+                        style: theme.textTheme.titleLarge,
+                      ),
                     Text(
-                      user.name.trim().isNotEmpty ? user.name : user.username,
-                      style: theme.textTheme.titleLarge,
+                      '@${user.username}',
+                      style:
+                          (showName
+                                  ? theme.textTheme.bodySmall
+                                  : theme.textTheme.titleMedium)
+                              ?.copyWith(fontFamily: 'monospace'),
                     ),
-                    Text('@${user.username}', style: theme.textTheme.bodySmall),
-                    if (user.isDonating ||
+                    if (showSupporter ||
                         user.yearsTopContributor.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Container(
@@ -271,15 +588,15 @@ class _Header extends StatelessWidget {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: user.isDonating
+                          color: showSupporter
                               ? colors.tertiary.withValues(alpha: 0.12)
                               : colors.primaryContainer,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          user.isDonating ? 'Supporter' : 'Top contributor',
+                          showSupporter ? 'Supporter' : 'Top contributor',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: user.isDonating
+                            color: showSupporter
                                 ? colors.tertiary
                                 : FccDesignColors.of(context).accentText,
                           ),
@@ -291,16 +608,10 @@ class _Header extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          Text(
-            [
-              if (user.about?.trim().isNotEmpty ?? false) user.about!.trim(),
-              if (user.location?.trim().isNotEmpty ?? false)
-                user.location!.trim(),
-              'Joined ${Jiffy.parseFromDateTime(user.joinDate).yMMMM}',
-            ].join(' · '),
-            style: theme.textTheme.bodySmall,
-          ),
+          if (description.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Text(description.join(' · '), style: theme.textTheme.bodySmall),
+          ],
           if (links.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
@@ -512,8 +823,9 @@ class _Heatmap extends StatelessWidget {
 }
 
 class _Certifications extends StatelessWidget {
-  const _Certifications({required this.user});
+  const _Certifications({required this.user, required this.preview});
   final FccUserModel user;
+  final bool preview;
 
   @override
   Widget build(BuildContext context) {
@@ -570,8 +882,12 @@ class _Certifications extends StatelessWidget {
         Text('Certifications', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         if (current.isEmpty && legacy.isEmpty)
-          const _Section(
-            child: Text('You have not yet earned any certifications.'),
+          _Section(
+            child: Text(
+              preview
+                  ? 'This camper has not yet earned any certifications.'
+                  : 'You have not yet earned any certifications.',
+            ),
           ),
         if (current.isNotEmpty)
           _CertificateList(certificates: current, username: user.username),
@@ -687,61 +1003,167 @@ class _CertificateList extends StatelessWidget {
   }
 }
 
-class _PortfolioCard extends StatelessWidget {
-  const _PortfolioCard({required this.portfolio});
+class _PortfolioRow extends StatelessWidget {
+  const _PortfolioRow({required this.portfolio});
   final Portfolio portfolio;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final accent = FccDesignColors.of(context).accentText;
     final url = portfolio.url?.trim() ?? '';
-    final link = url.isEmpty ? null : Uri.tryParse(url);
-    final image = portfolio.image;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: link == null ? null : () => launchUrl(link).ignore(),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (image != null && image.isNotEmpty) ...[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, _, _) => const SizedBox.shrink(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-              Text(
-                portfolio.title ?? '',
-                style: Theme.of(context).textTheme.titleMedium,
+    final link = Uri.tryParse(url);
+    final canOpen =
+        link != null &&
+        link.host.isNotEmpty &&
+        (link.scheme == 'http' || link.scheme == 'https');
+    final image = portfolio.image?.trim() ?? '';
+    final fallback = ColoredBox(
+      color: colors.surfaceContainer,
+      child: Icon(Icons.code, color: colors.onSurfaceVariant, size: 30),
+    );
+    final thumbnail = ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: SizedBox(
+        width: 88,
+        height: 68,
+        child: image.isEmpty
+            ? fallback
+            : CachedNetworkImage(
+                imageUrl: image,
+                width: 88,
+                height: 68,
+                fit: BoxFit.cover,
+                placeholder: (_, _) => fallback,
+                errorWidget: (_, _, _) => fallback,
               ),
-              if (portfolio.description?.isNotEmpty ?? false) ...[
-                const SizedBox(height: 8),
-                Text(
-                  portfolio.description!,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-              if (link != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  url,
-                  style: TextStyle(
-                    color: FccDesignColors.of(context).accentText,
-                  ),
+      ),
+    );
+    final details = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (portfolio.title?.trim().isNotEmpty ?? false)
+          Text(portfolio.title!, style: theme.textTheme.titleMedium),
+        if (portfolio.description?.trim().isNotEmpty ?? false) ...[
+          const SizedBox(height: 4),
+          Text(portfolio.description!, style: theme.textTheme.bodySmall),
+        ],
+        if (canOpen) ...[
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Flexible(
+                child: Text(
+                  url.replaceFirst(RegExp(r'^https?://'), ''),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                    color: accent,
+                  ),
                 ),
-              ],
+              ),
+              const SizedBox(width: 5),
+              Icon(Icons.open_in_new, size: 14, color: accent),
             ],
           ),
+        ],
+      ],
+    );
+    return InkWell(
+      onTap: canOpen ? () => launchUrl(link).ignore() : null,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: LayoutBuilder(
+          builder: (context, constraints) => constraints.maxWidth < 240
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [thumbnail, const SizedBox(height: 12), details],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    thumbnail,
+                    const SizedBox(width: 14),
+                    Expanded(child: details),
+                  ],
+                ),
         ),
+      ),
+    );
+  }
+}
+
+class _ExperienceRow extends StatelessWidget {
+  const _ExperienceRow({required this.experience});
+  final Experience experience;
+
+  String _monthYear(String value) {
+    final match = RegExp(r'^(\d{2})/(\d{4})$').firstMatch(value);
+    if (match == null) return value;
+    final month = int.parse(match.group(1)!);
+    if (month < 1 || month > 12) return value;
+    return Jiffy.parseFromDateTime(
+      DateTime(int.parse(match.group(2)!), month),
+    ).format(pattern: 'MMM yyyy');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final company = [
+      experience.company.trim(),
+      if (experience.location.trim().isNotEmpty) experience.location.trim(),
+    ].where((part) => part.isNotEmpty).join(' · ');
+    final start = _monthYear(experience.startDate.trim());
+    final end = experience.endDate.trim().isEmpty
+        ? 'Present'
+        : _monthYear(experience.endDate.trim());
+    return Padding(
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colors.primaryContainer,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.work_outline,
+              color: FccDesignColors.of(context).accentText,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(experience.title, style: theme.textTheme.titleMedium),
+                if (company.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(company, style: theme.textTheme.bodySmall),
+                ],
+                if (start.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text('$start – $end', style: theme.textTheme.bodySmall),
+                ],
+                if (experience.description.trim().isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    experience.description,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

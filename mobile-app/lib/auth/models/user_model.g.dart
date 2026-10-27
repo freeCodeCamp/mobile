@@ -23,6 +23,56 @@ Map<String, dynamic> _$PortfolioToJson(_Portfolio instance) =>
       'description': instance.description,
     };
 
+_Experience _$ExperienceFromJson(Map<String, dynamic> json) => _Experience(
+  id: json['id'] as String,
+  title: json['title'] as String,
+  company: json['company'] as String,
+  startDate: json['startDate'] as String,
+  description: json['description'] as String,
+  location: json['location'] as String? ?? '',
+  endDate: json['endDate'] as String? ?? '',
+);
+
+Map<String, dynamic> _$ExperienceToJson(_Experience instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'company': instance.company,
+      'startDate': instance.startDate,
+      'description': instance.description,
+      'location': instance.location,
+      'endDate': instance.endDate,
+    };
+
+_ProfileUI _$ProfileUIFromJson(Map<String, dynamic> json) => _ProfileUI(
+  isLocked: json['isLocked'] as bool? ?? true,
+  showAbout: json['showAbout'] as bool? ?? false,
+  showCerts: json['showCerts'] as bool? ?? false,
+  showDonation: json['showDonation'] as bool? ?? false,
+  showHeatMap: json['showHeatMap'] as bool? ?? false,
+  showLocation: json['showLocation'] as bool? ?? false,
+  showName: json['showName'] as bool? ?? false,
+  showPoints: json['showPoints'] as bool? ?? false,
+  showPortfolio: json['showPortfolio'] as bool? ?? false,
+  showExperience: json['showExperience'] as bool? ?? false,
+  showTimeLine: json['showTimeLine'] as bool? ?? false,
+);
+
+Map<String, dynamic> _$ProfileUIToJson(_ProfileUI instance) =>
+    <String, dynamic>{
+      'isLocked': instance.isLocked,
+      'showAbout': instance.showAbout,
+      'showCerts': instance.showCerts,
+      'showDonation': instance.showDonation,
+      'showHeatMap': instance.showHeatMap,
+      'showLocation': instance.showLocation,
+      'showName': instance.showName,
+      'showPoints': instance.showPoints,
+      'showPortfolio': instance.showPortfolio,
+      'showExperience': instance.showExperience,
+      'showTimeLine': instance.showTimeLine,
+    };
+
 _CompletedChallenge _$CompletedChallengeFromJson(Map<String, dynamic> json) =>
     _CompletedChallenge(
       id: json['id'] as String,
@@ -90,6 +140,7 @@ _FccUserModel _$FccUserModelFromJson(
   githubProfile: json['githubProfile'] as String?,
   linkedin: json['linkedin'] as String?,
   twitter: json['twitter'] as String?,
+  bluesky: json['bluesky'] as String?,
   website: json['website'] as String?,
   location: json['location'] as String?,
   about: json['about'] as String?,
@@ -150,6 +201,14 @@ _FccUserModel _$FccUserModelFromJson(
           ?.map((e) => Portfolio.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
+  experience:
+      (json['experience'] as List<dynamic>?)
+          ?.map((e) => Experience.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  profileUI: json['profileUI'] == null
+      ? const ProfileUI()
+      : ProfileUI.fromJson(json['profileUI'] as Map<String, dynamic>),
   yearsTopContributor: json['yearsTopContributor'] == null
       ? const []
       : _yearsToStrings(json['yearsTopContributor'] as List),
@@ -166,6 +225,7 @@ Map<String, dynamic> _$FccUserModelToJson(_FccUserModel instance) =>
       'githubProfile': instance.githubProfile,
       'linkedin': instance.linkedin,
       'twitter': instance.twitter,
+      'bluesky': instance.bluesky,
       'website': instance.website,
       'location': instance.location,
       'about': instance.about,
@@ -201,5 +261,7 @@ Map<String, dynamic> _$FccUserModelToJson(_FccUserModel instance) =>
       'completedDailyCodingChallenges': instance.completedDailyCodingChallenges,
       'savedChallenges': instance.savedChallenges,
       'portfolio': instance.portfolio,
+      'experience': instance.experience,
+      'profileUI': instance.profileUI,
       'yearsTopContributor': instance.yearsTopContributor,
     };

@@ -1,4 +1,5 @@
 import 'package:freecodecamp/auth/models/user_model.dart';
+import 'package:freecodecamp/auth/services/profile_service.dart';
 import 'package:freecodecamp/auth/services/session_service.dart';
 import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,15 +41,41 @@ class AuthNotifier extends _$AuthNotifier {
       ref.invalidateSelf();
       return;
     }
-    if (!state.isLoggedIn) return;
+    final userId = state.value?.id;
+    if (userId == null) return;
 
     final user = await _session.restoreSession();
-    if (ref.mounted && state.isLoggedIn) state = AsyncData(user);
+    if (ref.mounted &&
+        state.value?.id == userId &&
+        (user == null || user.id == userId)) {
+      state = AsyncData(user);
+    }
   }
 
   Future<void> signOut() async {
     await _session.logout();
     state = const AsyncData(null);
+  }
+
+  Future<ProfileSaveResult> saveProfile({
+    required FccUserModel original,
+    required FccUserModel draft,
+  }) async {
+    final result = await ref
+        .read(profileServiceProvider)
+        .save(
+          original: original,
+          draft: draft,
+          isCurrentUser: () => ref.mounted && state.value?.id == original.id,
+        );
+    final user = result.user;
+    if (ref.mounted &&
+        user != null &&
+        user.id == original.id &&
+        state.value?.id == original.id) {
+      state = AsyncData(user);
+    }
+    return result;
   }
 
   Future<void> deleteAccount() async {

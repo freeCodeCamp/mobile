@@ -11,8 +11,13 @@ import 'package:freecodecamp/widgets/mini_player.dart';
 enum AppDestination { learn, tutorials, donate, listen, account }
 
 class AppBottomNavigation extends StatelessWidget {
-  const AppBottomNavigation({super.key, required this.selected});
+  const AppBottomNavigation({
+    super.key,
+    required this.selected,
+    this.beforeNavigate,
+  });
   final AppDestination selected;
+  final Future<bool> Function()? beforeNavigate;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -25,6 +30,12 @@ class AppBottomNavigation extends StatelessWidget {
       selectedIndex: selected.index,
       height: 72 + (MediaQuery.textScalerOf(context).scale(12) - 12),
       onDestinationSelected: (index) async {
+        if (AppDestination.values[index] != AppDestination.donate &&
+            beforeNavigate != null &&
+            !await beforeNavigate!()) {
+          return;
+        }
+        if (!context.mounted) return;
         switch (AppDestination.values[index]) {
           case AppDestination.learn:
             const LearnLandingRoute().go(context);
@@ -78,16 +89,16 @@ class AppBottomNavigation extends StatelessWidget {
   );
 }
 
-/// Keeps loaded audio accessible while browsing. A full radio player suppresses
-/// only its own mini player, so a podcast remains controllable before switching.
 class AppNavigationFooter extends ConsumerWidget {
   const AppNavigationFooter({
     super.key,
     required this.selected,
     this.hideRadioPlayer = false,
+    this.beforeNavigate,
   });
   final AppDestination selected;
   final bool hideRadioPlayer;
+  final Future<bool> Function()? beforeNavigate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -99,8 +110,11 @@ class AppNavigationFooter extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (!hideRadioPlayer || handler.codeRadioSongId == null)
-            const MiniPlayer(),
-          AppBottomNavigation(selected: selected),
+            MiniPlayer(beforeNavigate: beforeNavigate),
+          AppBottomNavigation(
+            selected: selected,
+            beforeNavigate: beforeNavigate,
+          ),
         ],
       ),
     );
