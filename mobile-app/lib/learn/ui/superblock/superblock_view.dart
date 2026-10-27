@@ -227,6 +227,11 @@ class _CourseHero extends ConsumerWidget {
             const SizedBox(height: 14),
             FilledButton.icon(
               style: FilledButton.styleFrom(
+                textStyle: const TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
