@@ -41,11 +41,13 @@ class AuthNotifier extends _$AuthNotifier {
       ref.invalidateSelf();
       return;
     }
-    final userId = state.value?.id;
+    final previous = state.value;
+    final userId = previous?.id;
     if (userId == null) return;
 
     final user = await _session.restoreSession();
     if (ref.mounted &&
+        identical(state.value, previous) &&
         state.value?.id == userId &&
         (user == null || user.id == userId)) {
       state = AsyncData(user);

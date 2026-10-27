@@ -371,9 +371,9 @@ class _ProfileBody extends ConsumerWidget {
     final days = user.heatMapCal;
     final streak = ref.watch(profileStreakProvider);
     final visibility = user.profileUI;
-    final showActivity = !preview || visibility.showHeatMap;
+    final showActivity = visibility.showHeatMap;
     final statistics = [
-      if (!preview || visibility.showPoints) (user.points, 'Points'),
+      if (visibility.showPoints) (user.points, 'Points'),
       if (showActivity) ...[
         (streak.current, 'Current streak'),
         (streak.longest, 'Longest streak'),
@@ -387,7 +387,7 @@ class _ProfileBody extends ConsumerWidget {
           _PrivacyBanner(onPreview: onPreview),
           const SizedBox(height: 14),
         ],
-        _Header(user: user, preview: preview),
+        _Header(user: user),
         if (!preview && !visibility.isLocked) ...[
           const SizedBox(height: 10),
           Align(
@@ -451,12 +451,11 @@ class _ProfileBody extends ConsumerWidget {
           const SizedBox(height: 14),
           _Section(child: _Heatmap(days: days)),
         ],
-        if (!preview || visibility.showCerts) ...[
+        if (visibility.showCerts) ...[
           const SizedBox(height: 18),
           _Certifications(user: user, preview: preview),
         ],
-        if ((!preview || visibility.showPortfolio) &&
-            user.portfolio.isNotEmpty) ...[
+        if (visibility.showPortfolio && user.portfolio.isNotEmpty) ...[
           const SizedBox(height: 20),
           Text('Portfolio', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
@@ -472,8 +471,7 @@ class _ProfileBody extends ConsumerWidget {
             ),
           ),
         ],
-        if ((!preview || visibility.showExperience) &&
-            user.experience.isNotEmpty) ...[
+        if (visibility.showExperience && user.experience.isNotEmpty) ...[
           const SizedBox(height: 20),
           Text('Experience', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
@@ -510,26 +508,25 @@ class _Section extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.user, required this.preview});
+  const _Header({required this.user});
   final FccUserModel user;
-  final bool preview;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final visibility = user.profileUI;
-    final showName = !preview || visibility.showName;
-    final showDonation = !preview || visibility.showDonation;
+    final showName = visibility.showName;
+    final showDonation = visibility.showDonation;
     final showSupporter = user.isDonating && showDonation;
     final description = [
-      if (!preview || visibility.showAbout) ...[
+      if (visibility.showAbout) ...[
         if (user.about?.trim().isNotEmpty ?? false) user.about!.trim(),
       ],
-      if ((!preview || visibility.showLocation) &&
+      if (visibility.showLocation &&
           (user.location?.trim().isNotEmpty ?? false))
         user.location!.trim(),
-      if (!preview || visibility.showAbout)
+      if (visibility.showAbout)
         'Joined ${Jiffy.parseFromDateTime(user.joinDate).yMMMM}',
     ];
     final links = [
