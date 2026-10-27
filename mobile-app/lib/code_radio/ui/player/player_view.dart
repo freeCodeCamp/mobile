@@ -1,13 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/code_radio/models/code_radio_model.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
-import 'package:freecodecamp/widgets/drawer/drawer.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/app_page_title.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-
-const _nextSongMinHeight = 600.0;
+import 'package:freecodecamp/widgets/listen_tabs.dart';
 
 class CodeRadioPlayerView extends ConsumerWidget {
   const CodeRadioPlayerView({super.key});
@@ -17,19 +19,41 @@ class CodeRadioPlayerView extends ConsumerWidget {
     final nowPlaying = ref.watch(codeRadioNowPlayingProvider);
 
     return Scaffold(
-      backgroundColor: FccColors.gray90,
-      appBar: AppBar(title: const Text('Code Radio')),
-      drawer: const DrawerWidget(),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: switch (nowPlaying) {
-          AsyncData(:final value) => _Player(radio: value),
-          AsyncError() => ErrorRetry(
-            message: 'Unable to load Code Radio.\nPlease try again.',
-            onRetry: () => ref.invalidate(codeRadioNowPlayingProvider),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: false,
+            toolbarHeight: AppPageTitle.toolbarHeight(context),
+            title: const AppPageTitle('Listen'),
           ),
-          AsyncLoading() => const Center(child: CircularProgressIndicator()),
-        },
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: ListenTabs(isRadio: true),
+            ),
+          ),
+          switch (nowPlaying) {
+            AsyncData(:final value) => SliverToBoxAdapter(
+              child: _Player(radio: value),
+            ),
+            AsyncError() => SliverFillRemaining(
+              hasScrollBody: false,
+              child: ErrorRetry(
+                message: 'Unable to load Code Radio.\nPlease try again.',
+                onRetry: () => ref.invalidate(codeRadioNowPlayingProvider),
+              ),
+            ),
+            AsyncLoading() => const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          },
+        ],
+      ),
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.listen,
+        hideRadioPlayer: true,
       ),
     );
   }
@@ -42,27 +66,24 @@ class _Player extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CodeRadioAlbumArt(radio: radio),
-        Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: CodeRadioNowPlaying(radio: radio),
-        ),
-        if (MediaQuery.sizeOf(context).height > _nextSongMinHeight)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: CodeRadioNextSong(song: radio.playingNext.song),
-          ),
-        const Expanded(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Row(children: [Expanded(child: CodeRadioPlayPauseButton())]),
+              CodeRadioAlbumArt(radio: radio),
+              const SizedBox(height: 18),
+              CodeRadioNowPlaying(radio: radio),
+              const SizedBox(height: 20),
+              const CodeRadioPlayPauseButton(),
+              const SizedBox(height: 20),
+              CodeRadioNextSong(song: radio.playingNext.song),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -74,34 +95,26 @@ class CodeRadioAlbumArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.45,
+    final colors = Theme.of(context).colorScheme;
+    final size = math.min(240.0, MediaQuery.sizeOf(context).width * 0.58);
+
+    return Container(
+      width: size,
+      height: size,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: colors.surfaceContainer,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: colors.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: colors.primary.withValues(alpha: 0.15),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: ColoredBox(
-              color: FccColors.gray80,
-              child: CachedNetworkImage(
-                imageUrl: radio.nowPlaying.song.art,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-        Text(
-          '${radio.listeners.total} listening right now',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Color.fromRGBO(1, 1, 1, 0.5),
-            fontSize: 36,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
+        ],
+      ),
+      child: _RadioArtwork(url: radio.nowPlaying.song.art, iconSize: 64),
     );
   }
 }
@@ -113,38 +126,42 @@ class CodeRadioNowPlaying extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      color: FccColors.gray80,
-      child: Column(
-        children: [
-          Text(
-            radio.nowPlaying.song.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              height: 1.5,
+    final colors = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        Text(
+          radio.nowPlaying.song.title,
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 6),
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6,
+          runSpacing: 4,
+          children: [
+            Text(
+              '${radio.nowPlaying.song.artist} ·',
+              style: TextStyle(color: colors.onSurfaceVariant),
             ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  radio.nowPlaying.song.artist,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16, height: 1.5),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: CodeRadioProgressBar(duration: radio.nowPlaying.duration),
-          ),
-        ],
-      ),
+            Icon(
+              Icons.circle,
+              color: FccDesignColors.of(context).success,
+              size: 8,
+            ),
+            Text(
+              'Live · ${radio.listeners.total} listening',
+              style: TextStyle(color: colors.onSurfaceVariant),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        CodeRadioProgressBar(duration: radio.nowPlaying.duration),
+      ],
     );
   }
 }
@@ -154,24 +171,45 @@ class CodeRadioProgressBar extends ConsumerWidget {
 
   final int duration;
 
+  static String _format(int seconds) {
+    final clamped = math.max(0, seconds);
+    return '${clamped ~/ 60}:${(clamped % 60).toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPlaying = ref.watch(codeRadioPlayerProvider);
+    final colors = Theme.of(context).colorScheme;
+    final elapsed = ref.watch(codeRadioElapsedProvider).value ?? 0;
+    final current = elapsed.clamp(0, math.max(0, duration)).toInt();
 
-    if (!isPlaying) {
-      return const Visibility(
-        visible: false,
-        maintainSize: true,
-        maintainAnimation: true,
-        maintainState: true,
-        child: LinearProgressIndicator(value: 0),
-      );
-    }
-
-    final elapsed = ref.watch(codeRadioElapsedProvider).value;
-
-    return LinearProgressIndicator(
-      value: duration == 0 ? null : (elapsed ?? 0) / duration,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        children: [
+          LinearProgressIndicator(
+            value: duration <= 0 ? 0 : current / duration,
+            minHeight: 6,
+            borderRadius: BorderRadius.circular(6),
+            color: colors.primary,
+            backgroundColor: colors.outlineVariant,
+            semanticsLabel: 'Live song progress',
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _format(current),
+                style: TextStyle(color: colors.onSurfaceVariant),
+              ),
+              Text(
+                duration > 0 ? '-${_format(duration - current)}' : 'Live',
+                style: TextStyle(color: colors.onSurfaceVariant),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -183,42 +221,148 @@ class CodeRadioNextSong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: const Text('Next Song'),
-      subtitle: Row(
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              '${song.title}\n${song.album}',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Text(
+            'Up next',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox.square(
+                  dimension: 48,
+                  child: ColoredBox(
+                    color: colors.surfaceContainer,
+                    child: _RadioArtwork(url: song.art),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      song.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      song.artist,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: colors.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
-      ),
-      tileColor: FccColors.gray80,
-      isThreeLine: true,
-      titleAlignment: ListTileTitleAlignment.center,
-      leading: SizedBox.square(
-        dimension: 56,
-        child: CachedNetworkImage(imageUrl: song.art, fit: BoxFit.cover),
       ),
     );
   }
 }
 
-class CodeRadioPlayPauseButton extends ConsumerWidget {
+class CodeRadioPlayPauseButton extends ConsumerStatefulWidget {
   const CodeRadioPlayPauseButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CodeRadioPlayPauseButton> createState() =>
+      _CodeRadioPlayPauseButtonState();
+}
+
+class _CodeRadioPlayPauseButtonState
+    extends ConsumerState<CodeRadioPlayPauseButton> {
+  bool _busy = false;
+  Future<void> _toggle() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(codeRadioPlayerProvider.notifier).toggle();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not play Code Radio. Please try again.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final isPlaying = ref.watch(codeRadioPlayerProvider);
 
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(backgroundColor: FccColors.gray80),
-      onPressed: () => ref.read(codeRadioPlayerProvider.notifier).toggle(),
-      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-      label: Text(isPlaying ? 'Pause' : 'Play'),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: colors.secondary.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: IconButton.filled(
+        tooltip: isPlaying ? 'Pause Code Radio' : 'Play Code Radio',
+        onPressed: _busy ? null : _toggle,
+        style: IconButton.styleFrom(
+          backgroundColor: colors.secondary,
+          foregroundColor: colors.onSecondary,
+          fixedSize: const Size.square(76),
+        ),
+        icon: Icon(
+          isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+          size: 38,
+        ),
+      ),
     );
+  }
+}
+
+class _RadioArtwork extends StatelessWidget {
+  const _RadioArtwork({required this.url, this.iconSize = 24});
+
+  final String url;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final fallback = Icon(
+      Icons.music_note_rounded,
+      size: iconSize,
+      color: Theme.of(context).colorScheme.primary,
+    );
+
+    return url.isEmpty
+        ? fallback
+        : CachedNetworkImage(
+            imageUrl: url,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => fallback,
+            errorWidget: (context, url, error) => fallback,
+          );
   }
 }

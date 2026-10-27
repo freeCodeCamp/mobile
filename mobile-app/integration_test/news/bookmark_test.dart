@@ -23,8 +23,14 @@ void main() {
   }) async {
     final deadline = DateTime.now().add(timeout);
     while (DateTime.now().isBefore(deadline)) {
-      await tester.pump(const Duration(milliseconds: 250));
-      if (finder.evaluate().isNotEmpty) return;
+      await tester
+          .pump(const Duration(milliseconds: 250))
+          .timeout(const Duration(seconds: 10));
+      if (binding.sendFramesToEngine &&
+          binding.firstFrameRasterized &&
+          finder.evaluate().isNotEmpty) {
+        return;
+      }
     }
     fail('Timed out waiting for: $finder');
   }
@@ -32,14 +38,17 @@ void main() {
   testWidgets('NEWS - should bookmark a post', (WidgetTester tester) async {
     tester.printToConsole('Test starting');
     await app.main();
-    await binding.convertFlutterSurfaceToImage();
-    await tester.pumpAndSettle();
 
-    // Drawer -> Tutorials
-    await tester.tap(find.byIcon(Icons.menu));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Tutorials'));
-    await tester.pumpAndSettle();
+    final articlesDestination = find.byWidgetPredicate(
+      (widget) =>
+          widget is NavigationDestination && widget.label == 'Articles',
+    );
+    await pumpUntilFound(tester, articlesDestination.hitTestable());
+    await binding
+        .convertFlutterSurfaceToImage()
+        .timeout(const Duration(seconds: 10));
+    await tester.pump().timeout(const Duration(seconds: 10));
+    await tester.tap(articlesDestination);
 
     // News Feed
     await pumpUntilFound(tester, find.byType(PostTile));
@@ -48,14 +57,12 @@ void main() {
     final firstTile = find.byType(PostTile).first;
     expect(firstTile, findsOneWidget);
 
-    final postId = (tester.widget<PostTile>(firstTile).key! as ValueKey).value;
+    final postId = tester.widget<PostTile>(firstTile).post.id;
 
     await tester.tap(firstTile);
-    await tester.pumpAndSettle();
 
-    // Post detail - wait for the body, then for the bottom bar to slide in.
+    // Post detail - wait for the reader body.
     await pumpUntilFound(tester, find.byType(NewsPostHeader));
-    await tester.pumpAndSettle(const Duration(seconds: 3));
     await binding.takeScreenshot('news/news-post');
 
     final header = find.byType(NewsPostHeader);
@@ -68,39 +75,58 @@ void main() {
     // Bookmark the post
     final bookmarkButton = find.byType(BookmarkButton);
     expect(bookmarkButton, findsOneWidget);
+    await pumpUntilFound(tester, bookmarkButton.hitTestable());
     await tester.tap(bookmarkButton);
-    await tester.pumpAndSettle();
-
-    // Back to the feed, then over to the Bookmarks tab
-    await tester.tap(find.byTooltip('Back'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Bookmarks'));
-    await tester.pumpAndSettle();
-
     await pumpUntilFound(
       tester,
       find.descendant(
-        of: find.byType(NewsBookmarkFeedView),
-        matching: find.byType(ListTile),
+        of: bookmarkButton,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is IconButton &&
+              widget.tooltip == 'Remove saved article' &&
+              widget.onPressed != null,
+        ),
       ),
+    );
+
+    // Back to the feed, then open Saved articles
+    await tester.tap(find.byType(BackButton));
+    final viewBookmarks = find.ancestor(
+      of: find.text('View bookmarks'),
+      matching: find.byWidgetPredicate((widget) => widget is OutlinedButton),
+    );
+    await pumpUntilFound(tester, viewBookmarks.hitTestable());
+    await tester.tap(viewBookmarks);
+
+    final savedFeed = find.byType(NewsBookmarkFeedView);
+    final savedPost = find.descendant(
+      of: savedFeed,
+      matching: find.byKey(ValueKey(postId)),
+    );
+    await pumpUntilFound(
+      tester,
+      find.descendant(of: savedPost, matching: find.text(title)),
     );
     await binding.takeScreenshot('news/news-bookmark-feed');
 
-    // Verify that the first row in the bookmarks feed matches the post we bookmarked
-    final firstRow = find
-        .descendant(
-          of: find.byType(NewsBookmarkFeedView),
-          matching: find.byType(ListTile),
-        )
-        .first;
-    expect(firstRow, findsOneWidget);
-
-    final rowText = find.descendant(of: firstRow, matching: find.byType(Text));
-    expect(tester.widget<Text>(rowText.first).data, title);
     expect(
-      tester.widget<Text>(rowText.last).data!.replaceFirst('Written by: ', ''),
-      author,
+      find.descendant(of: savedFeed, matching: find.text(title)),
+      findsOneWidget,
     );
+    expect(
+      find.descendant(
+        of: savedPost,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Text &&
+              (widget.data == author ||
+                  widget.data?.startsWith('$author · ') == true),
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Saved articles can be read offline'), findsOneWidget);
 
     // Check that the post is stored in the bookmarks JSON file
     final docsDir = await getApplicationDocumentsDirectory();

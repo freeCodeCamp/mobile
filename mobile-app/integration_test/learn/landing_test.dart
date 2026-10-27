@@ -7,6 +7,8 @@ import 'package:freecodecamp/learn/ui/landing/landing_view.dart';
 import 'package:freecodecamp/learn/ui/landing/superblock_button.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/app_page_title.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
@@ -20,8 +22,14 @@ void main() {
   }) async {
     final deadline = DateTime.now().add(timeout);
     while (DateTime.now().isBefore(deadline)) {
-      await tester.pump(const Duration(milliseconds: 250));
-      if (finder.evaluate().isNotEmpty) return;
+      await tester
+          .pump(const Duration(milliseconds: 250))
+          .timeout(const Duration(seconds: 10));
+      if (binding.sendFramesToEngine &&
+          binding.firstFrameRasterized &&
+          finder.evaluate().isNotEmpty) {
+        return;
+      }
     }
     fail('Timed out waiting for: $finder');
   }
@@ -31,14 +39,15 @@ void main() {
   ) async {
     tester.printToConsole('Test starting');
     await app.main();
-    await binding.convertFlutterSurfaceToImage();
-    await tester.pumpAndSettle();
 
     final keyed = find.byWidgetPredicate(
       (widget) => widget is SuperBlockButton && widget.key is ValueKey<String>,
     );
     await pumpUntilFound(tester, keyed);
-    await tester.pumpAndSettle();
+    await binding
+        .convertFlutterSurfaceToImage()
+        .timeout(const Duration(seconds: 10));
+    await tester.pump().timeout(const Duration(seconds: 10));
     await binding.takeScreenshot('learn/learn-landing');
 
     final response = await Dio().get<Map<String, dynamic>>(
@@ -69,6 +78,15 @@ void main() {
     }
 
     expect(await container.read(authProvider.future), isNull);
-    expect(find.text('Sign in to save your progress'), findsOneWidget);
+    expect(
+      tester.widget<AppPageTitle>(find.byType(AppPageTitle)).title,
+      'Courses',
+    );
+    expect(
+      tester
+          .widget<AppBottomNavigation>(find.byType(AppBottomNavigation))
+          .selected,
+      AppDestination.learn,
+    );
   });
 }

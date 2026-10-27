@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
-import 'package:freecodecamp/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/task_explanation.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
 import 'package:html/parser.dart';
 
-const _wordStyle = TextStyle(fontSize: 20, letterSpacing: 0);
+const _wordStyle = TextStyle(fontSize: 24, height: 1.5, letterSpacing: 0);
 
 String _plain(String html) => parseFragment(html).text ?? '';
 
@@ -57,88 +56,190 @@ class _EnglishViewState extends State<EnglishView> {
   @override
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
-    final gray = {
-      '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-        color: FccColors.gray05,
-      ),
-    };
-    final results = _results;
-    final firstWrong = results?.indexOf(false) ?? -1;
+    final colors = Theme.of(context).colorScheme;
+    final firstWrong = _results?.indexOf(false) ?? -1;
     final feedback = firstWrong == -1 ? '' : _blanks[firstWrong].feedback;
-
+    final dialogue = challenge.challengeType == 21;
+    // Fill-in-the-blank tasks carry their teaching note in description, while
+    // some curriculum versions also provide a separate explanation.
+    final explanation = {
+      if (!dialogue) challenge.description.trim(),
+      challenge.explanation.trim(),
+    }.where((html) => html.isNotEmpty).join('\n');
     return Scaffold(
-      backgroundColor: FccColors.gray90,
-      appBar: AppBar(
-        backgroundColor: FccColors.gray90,
-        title: Text(challengeTitle(challenge, widget.block)),
+      appBar: challengeAppBar(
+        context,
+        title: challenge.title,
+        subtitle: widget.block.name,
       ),
       body: SafeArea(
+        bottom: false,
         child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            ChallengeCard(
-              title: challenge.title,
+            if (challenge.scene case final scene?)
+              SceneView(scene: scene, title: challenge.title, edgeToEdge: true),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ParsedHtml(challenge.description, customStyles: gray),
-                  ParsedHtml(challenge.instructions, customStyles: gray),
+                  if (dialogue && challenge.description.isNotEmpty)
+                    ParsedHtml(challenge.description),
+                  if (challenge.instructions.isNotEmpty)
+                    ParsedHtml(challenge.instructions),
+                  if (challenge.assignments.isNotEmpty)
+                    ChallengeCard(
+                      title: 'Assignments',
+                      child: Column(
+                        children: [
+                          for (final (i, assignment)
+                              in challenge.assignments.indexed)
+                            AssignmentTile(
+                              label: assignment,
+                              value: _assignments[i],
+                              onToggle: () => setState(
+                                () => _assignments[i] = !_assignments[i],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  if (challenge.fillInTheBlank case final fill?) ...[
+                    if (challenge.instructions.isNotEmpty)
+                      const SizedBox(height: 12),
+                    Text(
+                      'Fill in the blank',
+                      style: TextStyle(
+                        fontFamily: 'Lato',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: FccDesignColors.of(context).accentText,
+                      ),
+                    ),
+                    ..._sentences(fill.sentence),
+                    const SizedBox(height: 24),
+                  ],
+                  if (_results != null)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color:
+                            (_allCorrect
+                                    ? FccDesignColors.of(context).success
+                                    : colors.error)
+                                .withValues(alpha: .1),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color:
+                              (_allCorrect
+                                      ? FccDesignColors.of(context).success
+                                      : colors.error)
+                                  .withValues(alpha: .3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _allCorrect ? 'Correct!' : 'Not quite',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: _allCorrect
+                                  ? FccDesignColors.of(context).success
+                                  : colors.error,
+                            ),
+                          ),
+                          if (feedback.isNotEmpty)
+                            ParsedHtml(feedback, outlinedInlineCode: true)
+                          else if (!_allCorrect)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Check the highlighted words and try again.',
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  if (explanation.isNotEmpty)
+                    TaskExplanation(html: explanation),
+                  if (challenge.transcript.isNotEmpty)
+                    HtmlCard(
+                      title: 'Transcript',
+                      html: challenge.transcript,
+                      collapsible: !dialogue,
+                    )
+                  else if (dialogue && challenge.scene != null)
+                    ChallengeCard(
+                      title: 'Transcript',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (final command in challenge.scene!.commands)
+                            if (command.dialogue case final line?)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      command.character,
+                                      style: TextStyle(
+                                        color: FccDesignColors.of(
+                                          context,
+                                        ).accentText,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    ParsedHtml(line.text),
+                                  ],
+                                ),
+                              ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
-            ),
-            if (challenge.scene case final scene?)
-              ChallengeCard(
-                title: 'Scene',
-                child: SceneView(scene: scene, title: challenge.title),
-              ),
-            if (challenge.assignments.isNotEmpty)
-              ChallengeCard(
-                title: 'Assignments',
-                child: Column(
-                  children: [
-                    for (final (i, assignment) in challenge.assignments.indexed)
-                      AssignmentTile(
-                        label: assignment,
-                        value: _assignments[i],
-                        onToggle: () =>
-                            setState(() => _assignments[i] = !_assignments[i]),
-                      ),
-                  ],
-                ),
-              ),
-            if (challenge.fillInTheBlank case final fill?)
-              ChallengeCard(
-                title: 'Fill in the Blank',
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(children: _sentences(fill.sentence)),
-                ),
-              ),
-            if (feedback.isNotEmpty)
-              HtmlCard(title: 'Feedback', html: feedback),
-            if (challenge.explanation.isNotEmpty)
-              HtmlCard(
-                title: 'Explanation',
-                html: challenge.explanation,
-                collapsible: true,
-              ),
-            if (_blanks.isEmpty || _allCorrect)
-              CompleteButton(
-                challenge: challenge,
-                block: widget.block,
-                label: 'Go to Next Challenge',
-                enabled: _assignments.every((done) => done),
-              )
-            else
-              ChallengeButton(label: 'Check Answers', onPressed: _check),
-            ChallengeButton(
-              label: 'Ask for Help',
-              onPressed: () =>
-                  showHelpDialog(context, challenge, widget.block.name),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: ChallengeFooter(
+        padding: const EdgeInsets.all(12),
+        child: _blanks.isEmpty || _allCorrect
+            ? CompleteButton(
+                challenge: challenge,
+                block: widget.block,
+                label: dialogue ? 'Start tasks' : 'Continue',
+                buttonStyle: _buttonStyle,
+                enabled: _assignments.every((done) => done),
+              )
+            : ChallengeButton(
+                label: _results == null ? 'Check answer' : 'Check again',
+                style: _buttonStyle,
+                onPressed:
+                    _inputs.every((input) => input.text.trim().isNotEmpty)
+                    ? _check
+                    : null,
+              ),
+      ),
     );
   }
+
+  ButtonStyle get _buttonStyle => FilledButton.styleFrom(
+    minimumSize: const Size(double.infinity, 50),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    textStyle: const TextStyle(
+      fontFamily: 'Lato',
+      fontSize: 16,
+      fontWeight: FontWeight.w800,
+    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  );
 
   // NOTE: A blank can be glued to the words around it ("BLANK," or "(BLANK)"), so each word splits on it.
   List<Widget> _sentences(String sentence) {
@@ -151,6 +252,7 @@ class _EnglishViewState extends State<EnglishView> {
           child: Align(
             alignment: Alignment.topLeft,
             child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
               spacing: 3,
               runSpacing: 3,
               children: [
@@ -171,37 +273,60 @@ class _EnglishViewState extends State<EnglishView> {
   }
 
   Widget _input(int index) {
+    if (index >= _inputs.length) return const Text('____', style: _wordStyle);
     final result = _results?[index];
-    final border = OutlineInputBorder(
+    final border = UnderlineInputBorder(
       borderSide: switch (result) {
-        null => const BorderSide(color: FccColors.blue50),
-        true => const BorderSide(width: 2, color: Colors.green),
-        false => const BorderSide(width: 2, color: Colors.red),
+        null => BorderSide(
+          width: 2,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        true => BorderSide(
+          width: 2,
+          color: FccDesignColors.of(context).success,
+        ),
+        false => BorderSide(
+          width: 2,
+          color: Theme.of(context).colorScheme.error,
+        ),
       },
     );
     final painter = TextPainter(
-      // NOTE: Two extra characters of leeway, so a typo or the cursor isn't clipped.
       text: TextSpan(text: '${_blanks[index].answer}mm', style: _wordStyle),
       textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
     )..layout();
     final answerWidth = painter.width;
     painter.dispose();
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      width: answerWidth,
-      child: TextField(
-        controller: _inputs[index],
-        cursorHeight: 19,
-        autocorrect: false,
-        smartQuotesType: SmartQuotesType.disabled,
-        spellCheckConfiguration: const SpellCheckConfiguration.disabled(),
-        style: const TextStyle(fontSize: 19, letterSpacing: 0),
-        decoration: InputDecoration(
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-          enabledBorder: border,
-          focusedBorder: border,
+    return Semantics(
+      label: 'Blank ${index + 1}',
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5),
+        width: (answerWidth + 24).clamp(
+          64,
+          MediaQuery.sizeOf(context).width - 48,
+        ),
+        child: TextField(
+          controller: _inputs[index],
+          onChanged: (_) => setState(() => _results = null),
+          textInputAction: index == _inputs.length - 1
+              ? TextInputAction.done
+              : TextInputAction.next,
+          cursorHeight: 24,
+          autocorrect: false,
+          smartQuotesType: SmartQuotesType.disabled,
+          spellCheckConfiguration: const SpellCheckConfiguration.disabled(),
+          style: _wordStyle,
+          decoration: InputDecoration(
+            isDense: true,
+            filled: false,
+            hintText: '…',
+            isCollapsed: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            enabledBorder: border,
+            focusedBorder: border,
+          ),
         ),
       ),
     );

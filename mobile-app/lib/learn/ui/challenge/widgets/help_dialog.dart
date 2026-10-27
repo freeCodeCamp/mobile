@@ -10,7 +10,7 @@ const _forum = 'https://forum.freecodecamp.org';
 const _readSearchAsk =
     '$_forum/t/how-to-get-help-when-you-are-stuck-coding/19514';
 const _minDescription = 50;
-// NOTE: Above this the forum rejects the URL, so the post body falls back to a shorter template.
+// Keep the draft editable when the encoded URL exceeds the forum limit.
 const _maxUrlLength = 8000;
 
 Future<void> showHelpDialog(
@@ -23,20 +23,25 @@ Future<void> showHelpDialog(
     '$_forum/search?q=${Uri.encodeComponent('$blockName - ${challenge.title} in:title')}',
   );
 
-  final proceed = await showDialog<bool>(
+  final proceed = await showModalBottomSheet<bool>(
     context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Theme.of(context).colorScheme.surface,
     builder: (context) => _HelpDialog(search: search),
   );
   if (proceed != true || !context.mounted) return;
 
-  final description = await showDialog<String>(
+  await showDialog<void>(
     context: context,
+    useSafeArea: false,
     barrierDismissible: false,
-    builder: (context) => _CreatePostDialog(search: search),
+    builder: (context) => _CreatePostDialog(
+      search: search,
+      postUrl: (description) =>
+          _forumPostUrl(challenge, blockName, description, code),
+    ),
   );
-  if (description == null) return;
-
-  await launchUrl(_forumPostUrl(challenge, blockName, description, code));
 }
 
 Uri _forumPostUrl(
@@ -55,50 +60,12 @@ Uri _forumPostUrl(
   final body =
       "**Tell us what's happening:**\nDescribe your issue in detail here. \n\n$description \n\n"
       '${code.isEmpty ? '' : '**Your code so far**$code\n\n'}$ending';
-  final shortBody = "**Tell us what's happening:**\n\n\n\n$ending";
 
   final base =
       '$_forum/new-topic?category=${Uri.encodeComponent(challenge.helpCategory)}&title=${Uri.encodeComponent(title)}&body=';
   final url = '$base${Uri.encodeComponent(body)}';
 
-  return Uri.parse(
-    url.length < _maxUrlLength ? url : '$base${Uri.encodeComponent(shortBody)}',
-  );
-}
-
-TextSpan _link(String text, Uri url) => TextSpan(
-  text: text,
-  style: const TextStyle(
-    color: FccColors.gray00,
-    decoration: TextDecoration.underline,
-    decorationColor: FccColors.gray00,
-  ),
-  recognizer: TapGestureRecognizer()..onTap = () => launchUrl(url),
-);
-
-class _DialogButton extends StatelessWidget {
-  const _DialogButton({required this.label, required this.onPressed});
-
-  final String label;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        backgroundColor: FccColors.gray75,
-        foregroundColor: FccColors.gray00,
-        side: const BorderSide(width: 2, color: FccColors.gray00),
-        shape: const RoundedRectangleBorder(),
-      ),
-      onPressed: onPressed,
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
+  return Uri.parse(url);
 }
 
 class _HelpDialog extends StatelessWidget {
@@ -108,53 +75,78 @@ class _HelpDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const body = TextStyle(fontSize: 16, color: FccColors.gray05);
-
-    return Dialog(
-      backgroundColor: FccColors.gray90,
-      shape: const RoundedRectangleBorder(),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-          runSpacing: 20,
+    final colors = Theme.of(context).colorScheme;
+    return SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Ask for Help',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text.rich(
-              TextSpan(
-                style: body,
-                children: [
-                  const TextSpan(text: "If you've already tried the "),
-                  _link('Read-Search-Ask', Uri.parse(_readSearchAsk)),
-                  const TextSpan(
-                    text:
-                        ' method, then you can ask for help on the freeCodeCamp forum.',
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: colors.primaryContainer,
+                  foregroundColor: FccDesignColors.of(context).accentText,
+                  radius: 22,
+                  child: const Icon(Icons.chat_bubble_outline),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Stuck? Get help',
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _HelpStep(
+              number: 1,
+              child: _LinkedText(
+                before: 'Try ',
+                link: 'Read-Search-Ask',
+                after: ' first.',
+                url: Uri.parse(_readSearchAsk),
               ),
             ),
-            Text.rich(
-              TextSpan(
-                style: body,
-                children: [
-                  const TextSpan(text: 'Before making a new post please '),
-                  _link(
-                    'check if your question has already been answered on the forum',
-                    search,
-                  ),
-                  const TextSpan(text: '.'),
-                ],
+            const SizedBox(height: 12),
+            const _HelpStep(
+              number: 2,
+              child: Text('Search the forum for your question.'),
+            ),
+            const SizedBox(height: 12),
+            const _HelpStep(
+              number: 3,
+              child: Text(
+                'Still stuck? Create a post. We add your device information and the challenge link.',
               ),
             ),
-            _DialogButton(
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: colors.surfaceContainer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () => launchUrl(search),
+              icon: const Icon(Icons.search),
+              label: const Text('Search the forum'),
+            ),
+            const SizedBox(height: 12),
+            _PrimaryButton(
               label: 'Create a post',
               onPressed: () => Navigator.of(context).pop(true),
             ),
-            _DialogButton(
-              label: 'Cancel',
+            const SizedBox(height: 12),
+            TextButton(
               onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'Not now',
+                style: TextStyle(color: colors.onSurfaceVariant),
+              ),
             ),
           ],
         ),
@@ -163,10 +155,44 @@ class _HelpDialog extends StatelessWidget {
   }
 }
 
+class _HelpStep extends StatelessWidget {
+  const _HelpStep({required this.number, required this.child});
+
+  final int number;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 14,
+          backgroundColor: colors.surfaceContainer,
+          foregroundColor: colors.onSurface,
+          child: Text(
+            '$number',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: DefaultTextStyle.merge(
+            style: Theme.of(context).textTheme.bodyLarge,
+            child: child,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _CreatePostDialog extends StatefulWidget {
-  const _CreatePostDialog({required this.search});
+  const _CreatePostDialog({required this.search, required this.postUrl});
 
   final Uri search;
+  final Uri Function(String description) postUrl;
 
   @override
   State<_CreatePostDialog> createState() => _CreatePostDialogState();
@@ -176,6 +202,32 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
   final _description = TextEditingController();
   bool _triedReadSearchAsk = false;
   bool _searched = false;
+  bool _opening = false;
+  String? _launchError;
+
+  Future<void> _openForum() async {
+    setState(() {
+      _opening = true;
+      _launchError = null;
+    });
+    try {
+      final opened = await launchUrl(widget.postUrl(_description.text));
+      if (!mounted) return;
+      if (opened) {
+        Navigator.of(context).pop();
+        return;
+      }
+    } catch (_) {
+      // Retain the draft if the browser cannot be opened.
+    }
+    if (mounted) {
+      setState(() {
+        _opening = false;
+        _launchError =
+            'Could not open the forum. Your draft is still here. Try again.';
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -185,107 +237,275 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final remaining = _minDescription - _description.text.length;
-    final canSubmit = _triedReadSearchAsk && _searched && remaining <= 0;
+    final tooLong =
+        widget.postUrl(_description.text).toString().length >= _maxUrlLength;
+    final canSubmit =
+        _triedReadSearchAsk &&
+        _searched &&
+        remaining <= 0 &&
+        !tooLong &&
+        !_opening;
 
-    return Dialog(
-      backgroundColor: FccColors.gray90,
-      shape: const RoundedRectangleBorder(),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-          runSpacing: 20,
-          children: [
-            const Text(
-              'Create a post',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'You must confirm the following statements before you can submit your post to the forum.',
-              style: TextStyle(fontSize: 16, color: FccColors.gray05),
-            ),
-            _Statement(
-              value: _triedReadSearchAsk,
-              onChanged: (v) => setState(() => _triedReadSearchAsk = v),
-              text: TextSpan(
-                children: [
-                  const TextSpan(text: 'I have tried the '),
-                  _link('Read-Search-Ask', Uri.parse(_readSearchAsk)),
-                  const TextSpan(text: ' method'),
-                ],
-              ),
-            ),
-            _Statement(
-              value: _searched,
-              onChanged: (v) => setState(() => _searched = v),
-              text: TextSpan(
-                children: [
-                  const TextSpan(text: 'I have searched for '),
-                  _link(
-                    'similar questions that have already been answered on the forum',
-                    widget.search,
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Close',
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: const Text('Create a post'),
+        ),
+        body: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Before you post, please confirm:',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _Statement(
+                        value: _triedReadSearchAsk,
+                        onChanged: (v) =>
+                            setState(() => _triedReadSearchAsk = v),
+                        child: _LinkedText(
+                          before: 'I have tried the ',
+                          link: 'Read-Search-Ask',
+                          after: ' method',
+                          url: Uri.parse(_readSearchAsk),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _Statement(
+                        value: _searched,
+                        onChanged: (v) => setState(() => _searched = v),
+                        child: _LinkedText(
+                          before: 'I have searched for ',
+                          link:
+                              'similar questions that have already been answered on the forum',
+                          url: widget.search,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Describe your issue',
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _description,
+                        onChanged: (_) => setState(() => _launchError = null),
+                        minLines: 5,
+                        maxLines: 8,
+                        decoration: InputDecoration(
+                          errorMaxLines: 4,
+                          errorText: tooLong
+                              ? 'This description is too long to open on the forum. Shorten it before continuing; your text has been kept.'
+                              : null,
+                          hintText: 'What did you try, and what happened?',
+                        ),
+                      ),
+                      if (tooLong || remaining > 0) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          tooLong
+                              ? 'Shorten your description to continue.'
+                              : 'Add at least $remaining more characters.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: tooLong
+                                ? colors.error
+                                : colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "We'll attach automatically",
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              const _Attachment('Your device information'),
+                              const _Attachment(
+                                'The challenge and a link to it',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-            if (remaining > 0)
-              Text(
-                'Please enter at least $remaining more characters.',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      !_triedReadSearchAsk || !_searched
+                          ? 'Tick both boxes to continue.'
+                          : 'Review and publish your post on the forum.',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    if (_launchError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          _launchError!,
+                          style: TextStyle(color: colors.error),
+                        ),
+                      ),
+                    _PrimaryButton(
+                      label: _opening ? 'Opening forum…' : 'Continue to forum',
+                      onPressed: canSubmit ? _openForum : null,
+                    ),
+                  ],
+                ),
               ),
-            TextField(
-              controller: _description,
-              onChanged: (_) => setState(() {}),
-              maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Describe your issue in detail here...',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            _DialogButton(
-              label: 'Submit',
-              onPressed: canSubmit
-                  ? () => Navigator.of(context).pop(_description.text)
-                  : null,
-            ),
-            _DialogButton(
-              label: 'Cancel',
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+class _Attachment extends StatelessWidget {
+  const _Attachment(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 3),
+    child: Row(
+      children: [
+        Icon(Icons.check, size: 18, color: FccDesignColors.of(context).success),
+        const SizedBox(width: 8),
+        Expanded(child: Text(text)),
+      ],
+    ),
+  );
+}
+
 class _Statement extends StatelessWidget {
   const _Statement({
     required this.value,
     required this.onChanged,
-    required this.text,
+    required this.child,
   });
 
   final bool value;
   final ValueChanged<bool> onChanged;
-  final TextSpan text;
+  final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Checkbox(
+        value: value,
+        onChanged: (v) => onChanged(v ?? false),
+        activeColor: Theme.of(context).colorScheme.primary,
+        checkColor: Theme.of(context).colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      ),
+      const SizedBox(width: 4),
+      Expanded(
+        child: Padding(padding: const EdgeInsets.only(top: 10), child: child),
+      ),
+    ],
+  );
+}
+
+class _PrimaryButton extends StatelessWidget {
+  const _PrimaryButton({required this.label, required this.onPressed});
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => FilledButton(
+    style: FilledButton.styleFrom(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      minimumSize: const Size(double.infinity, 48),
+      disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      disabledForegroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+    ),
+    onPressed: onPressed,
+    child: Text(
+      label,
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    ),
+  );
+}
+
+class _LinkedText extends StatefulWidget {
+  const _LinkedText({
+    required this.before,
+    required this.link,
+    this.after = '',
+    required this.url,
+  });
+  final String before;
+  final String link;
+  final String after;
+  final Uri url;
+
+  @override
+  State<_LinkedText> createState() => _LinkedTextState();
+}
+
+class _LinkedTextState extends State<_LinkedText> {
+  late final _recognizer = TapGestureRecognizer()
+    ..onTap = () => launchUrl(widget.url);
+
+  @override
+  void dispose() {
+    _recognizer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Text.rich(
+    TextSpan(
       children: [
-        Checkbox(
-          value: value,
-          onChanged: (v) => onChanged(v ?? false),
-          activeColor: FccColors.gray00,
-        ),
-        Flexible(
-          child: Text.rich(
-            text,
-            style: const TextStyle(fontSize: 14, color: FccColors.gray00),
+        TextSpan(text: widget.before),
+        TextSpan(
+          text: widget.link,
+          recognizer: _recognizer,
+          style: TextStyle(
+            color: FccDesignColors.of(context).accentText,
+            decoration: TextDecoration.underline,
+            decorationColor: FccDesignColors.of(context).accentText,
           ),
         ),
+        TextSpan(text: widget.after),
       ],
-    );
-  }
+    ),
+    style: Theme.of(context).textTheme.bodyLarge,
+  );
 }

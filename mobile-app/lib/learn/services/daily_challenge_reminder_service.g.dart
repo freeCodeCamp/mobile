@@ -59,4 +59,4 @@ final class LearnDailyChallengeReminderServiceProvider
 }
 
 String _$learnDailyChallengeReminderServiceHash() =>
-    r'f6f66188b5f1e447a59f166e6bdfa898c42ca392';
+    r'e87cccf4064ece8261420794c2e6e6d09d318703';

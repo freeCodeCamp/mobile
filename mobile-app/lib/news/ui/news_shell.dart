@@ -1,52 +1,106 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/routing/news.dart';
-import 'package:freecodecamp/widgets/drawer/drawer.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/app_page_title.dart';
 import 'package:go_router/go_router.dart';
-
-typedef _Tab = ({String title, String path, IconData icon});
 
 class NewsShell extends StatelessWidget {
   const NewsShell({super.key, required this.child});
 
   final Widget child;
 
-  static const List<_Tab> _tabs = [
-    (
-      title: 'Bookmarks',
-      path: newsBookmarksPath,
-      icon: Icons.bookmark_outline_sharp,
-    ),
-    (title: 'Tutorials', path: newsFeedPath, icon: Icons.article_sharp),
-    (title: 'Search', path: newsSearchPath, icon: Icons.search_sharp),
-  ];
-
-  static const _feedIndex = 1;
-
-  int _currentIndex(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    final index = _tabs.indexWhere((tab) => tab.path == location);
-    return index == -1 ? _feedIndex : index;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final index = _currentIndex(context);
+    final location = GoRouterState.of(context).uri.path;
+    final isSaved = location == newsBookmarksPath;
+    final isSearch = location == newsSearchPath;
+    final colors = Theme.of(context).colorScheme;
+    final scaler = MediaQuery.textScalerOf(context);
+    const bookmarkStyle = TextStyle(
+      fontFamily: 'Lato',
+      fontSize: 14,
+      height: 1.3,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0,
+    );
+    double textWidth(String text, TextStyle style) {
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: scaler,
+      )..layout();
+      final width = painter.width;
+      painter.dispose();
+      return width;
+    }
+
+    final bookmarkHeight = math.max(48.0, scaler.scale(14) * 1.3 + 24);
+    final stackBookmarks =
+        textWidth(
+              'Articles',
+              const TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+              ),
+            ) +
+            textWidth('View bookmarks', bookmarkStyle) +
+            108 >
+        MediaQuery.sizeOf(context).width -
+            MediaQuery.paddingOf(context).horizontal;
+    final viewBookmarks = OutlinedButton.icon(
+      onPressed: () => context.go(newsBookmarksPath),
+      icon: const Icon(Icons.bookmark_border_rounded, size: 20),
+      label: const Text('View bookmarks'),
+      style: OutlinedButton.styleFrom(
+        backgroundColor: colors.surface,
+        foregroundColor: colors.onSurface,
+        side: BorderSide(color: colors.outline),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        minimumSize: Size(48, bookmarkHeight),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        textStyle: bookmarkStyle,
+      ),
+    );
 
     return Scaffold(
-      appBar: AppBar(title: Text(_tabs[index].title)),
-      drawer: const DrawerWidget(),
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: index,
-        onTap: (i) => context.go(_tabs[i].path),
-        items: [
-          for (final tab in _tabs)
-            BottomNavigationBarItem(
-              icon: Icon(tab.icon),
-              label: tab.title,
-              tooltip: tab.title,
+      appBar: isSearch
+          ? null
+          : AppBar(
+              automaticallyImplyLeading: false,
+              leading: isSaved
+                  ? BackButton(onPressed: () => context.go(newsFeedPath))
+                  : null,
+              title: isSaved
+                  ? const Text('Saved articles')
+                  : const AppPageTitle('Articles'),
+              toolbarHeight: isSaved ? 64 : AppPageTitle.toolbarHeight(context),
+              bottom: !isSaved && stackBookmarks
+                  ? PreferredSize(
+                      preferredSize: Size.fromHeight(bookmarkHeight + 12),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: viewBookmarks,
+                        ),
+                      ),
+                    )
+                  : null,
+              actions: isSaved || stackBookmarks
+                  ? null
+                  : [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: viewBookmarks,
+                      ),
+                    ],
             ),
-        ],
+      body: SafeArea(top: isSearch, bottom: false, child: child),
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.tutorials,
       ),
     );
   }

@@ -1,31 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/ui/widgets/dialogue_block_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:freecodecamp/widgets/drawer/scroll_shadow.dart';
 import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
-
-const _cardColor = FccColors.gray85;
-const _borderColor = FccColors.gray75;
-const _tileColor = FccColors.gray80;
-const _completedTileColor = FccColors.blue90Translucent;
-const _completedBorderColor = FccColors.blue10;
-
-(IconData?, Color) _labelStyle(BlockLabel label) => switch (label) {
-  BlockLabel.lecture => (Icons.menu_book_outlined, FccColors.blue30),
-  BlockLabel.quiz => (Icons.help_outline, FccColors.orange30),
-  BlockLabel.lab => (Icons.science_outlined, FccColors.green40),
-  BlockLabel.workshop => (Icons.build_outlined, FccColors.purple10),
-  BlockLabel.exam => (Icons.school, FccColors.red15),
-  BlockLabel.review => (Icons.edit_document, FccColors.yellow10),
-  BlockLabel.warmup => (Icons.fitbit_outlined, FccColors.blue30),
-  BlockLabel.learn => (Icons.school_outlined, FccColors.green40),
-  BlockLabel.practice => (Icons.edit_outlined, FccColors.purple10),
-  BlockLabel.legacy => (null, FccColors.blue05),
-};
 
 void _openChallenge(BuildContext context, Block block, String challengeId) {
   LearnChallengeRoute(
@@ -39,43 +23,56 @@ void _showUnavailable(BuildContext context) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      const SnackBar(
-        content: Text('Temporarily unavailable, come back soon.'),
-        duration: Duration(milliseconds: 2500),
-      ),
+      const SnackBar(content: Text('Temporarily unavailable, come back soon.')),
     );
 }
 
-class BlockList extends StatefulWidget {
-  const BlockList({super.key, required this.blocks, required this.padding});
+class BlockList extends ConsumerStatefulWidget {
+  const BlockList({
+    super.key,
+    required this.blocks,
+    required this.padding,
+    this.header,
+  });
 
   final List<Block> blocks;
   final EdgeInsets padding;
+  final Widget? header;
 
   @override
-  State<BlockList> createState() => _BlockListState();
+  ConsumerState<BlockList> createState() => _BlockListState();
 }
 
-class _BlockListState extends State<BlockList> {
-  final _toggled = <String>{};
+class _BlockListState extends ConsumerState<BlockList> {
+  final _open = <String, bool>{};
 
   @override
   Widget build(BuildContext context) {
+    final completed = ref.watch(
+      authProvider.select(
+        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
+      ),
+    );
+    final active = widget.blocks.indexWhere(
+      (b) =>
+          !b.isDisabledByOverride &&
+          b.challenges.any((c) => !completed.contains(c.id)),
+    );
+    final headerCount = widget.header == null ? 0 : 1;
     return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: widget.padding,
-      itemCount: widget.blocks.length,
+      itemCount: widget.blocks.length + headerCount,
       itemBuilder: (context, index) {
-        final block = widget.blocks[index];
-
+        if (index < headerCount) return widget.header!;
+        final blockIndex = index - headerCount;
+        final block = widget.blocks[blockIndex];
+        final isOpen = _open[block.dashedName] ?? blockIndex == active;
         return BlockCard(
           key: ValueKey(block.dashedName),
           block: block,
-          isOpen: (index == 0) != _toggled.contains(block.dashedName),
-          onToggle: () => setState(() {
-            if (!_toggled.remove(block.dashedName)) {
-              _toggled.add(block.dashedName);
-            }
-          }),
+          isOpen: isOpen,
+          onToggle: () => setState(() => _open[block.dashedName] = !isOpen),
         );
       },
     );
@@ -96,409 +93,387 @@ class BlockCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final completedChallenges = ref.watch(
-      authProvider.select((s) => s.value?.completedChallenges),
-    );
-    final completed = {...?completedChallenges?.map((c) => c.id)};
-
-    final (icon, color) = _labelStyle(block.label);
-    final isDisabled = block.isDisabledByOverride;
-    final isOpen = this.isOpen && !isDisabled;
-    final onToggle = isDisabled
-        ? () => _showUnavailable(context)
-        : this.onToggle;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Opacity(
-        opacity: isDisabled ? 0.7 : 1,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: _borderColor),
-            color: _cardColor,
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (icon != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Icon(icon, color: color, size: 30),
-                    ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        block.name,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              ...switch (block.layout) {
-                BlockLayout.challengeGrid => [
-                  _Progress(block: block, completed: completed, color: color),
-                  _Description(block: block),
-                  _ToggleButton(
-                    isOpen: isOpen,
-                    noun: 'Steps',
-                    onPressed: onToggle,
-                  ),
-                  if (isOpen) _StepGrid(block: block, completed: completed),
-                ],
-                BlockLayout.challengeList => [
-                  _Progress(
-                    block: block,
-                    completed: completed,
-                    color: FccColors.blue30,
-                  ),
-                  _Description(block: block),
-                  _ToggleButton(
-                    isOpen: isOpen,
-                    noun: 'Steps',
-                    onPressed: onToggle,
-                  ),
-                  if (isOpen)
-                    for (final challenge in block.challenges)
-                      _ChallengeCard(
-                        title: challenge.title,
-                        isCompleted: completed.contains(challenge.id),
-                        onTap: () =>
-                            _openChallenge(context, block, challenge.id),
-                      ),
-                ],
-                BlockLayout.challengeDialogue => [
-                  _Description(block: block),
-                  _ToggleButton(
-                    isOpen: isOpen,
-                    noun: 'Tasks',
-                    onPressed: onToggle,
-                  ),
-                  if (isOpen) _Dialogues(block: block, completed: completed),
-                ],
-                BlockLayout.challengeLink => [
-                  if (block.challenges.every((c) => completed.contains(c.id)))
-                    _CompletedLabel(color: color),
-                  _Description(block: block),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: TextButton(
-                        onPressed: isDisabled || block.challenges.isEmpty
-                            ? () => _showUnavailable(context)
-                            : () => _openChallenge(
-                                context,
-                                block,
-                                block.challenges.first.id,
-                              ),
-                        style: TextButton.styleFrom(
-                          backgroundColor: color,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        child: const Text(
-                          'Start',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: FccColors.gray90,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              },
-            ],
-          ),
-        ),
+    if (block.layout == BlockLayout.challengeDialogue) {
+      return DialogueBlockCard(block: block);
+    }
+    final colors = Theme.of(context).colorScheme;
+    final completed = ref.watch(
+      authProvider.select(
+        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
       ),
     );
-  }
-}
-
-class _CompletedLabel extends StatelessWidget {
-  const _CompletedLabel({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Icon(Icons.check_circle, color: color),
-          ),
-          Text(
-            'Completed',
-            style: TextStyle(color: color, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Progress extends StatelessWidget {
-  const _Progress({
-    required this.block,
-    required this.completed,
-    required this.color,
-  });
-
-  final Block block;
-  final Set<String> completed;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final total = block.challenges.length;
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
-    if (done == total) return _CompletedLabel(color: color);
+    final total = block.challenges.length;
+    final complete = total > 0 && done == total;
+    final disabled = block.isDisabledByOverride;
+    final expanded = isOpen && !disabled;
+    final color = blockLabelColor(context, block.label);
+    final next = block.challenges
+        .where((c) => !completed.contains(c.id))
+        .firstOrNull;
+    final unit = blockUnit(block);
+    final progress = '$done of ${countLabel(total, unit)}';
+    final toggle = disabled ? () => _showUnavailable(context) : onToggle;
 
     return Padding(
-      padding: const EdgeInsets.all(10),
-      child: LinearProgressIndicator(
-        minHeight: 12,
-        value: done == 0 ? 0.01 : done / total,
-        valueColor: AlwaysStoppedAnimation<Color>(color),
-        backgroundColor: _tileColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
-}
-
-class _Description extends StatelessWidget {
-  const _Description({required this.block});
-
-  final Block block;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: HTMLParser(context: context).parse(
-        '<p>${block.description.join(' ')}</p>',
-        isSelectable: false,
-        customStyles: {
-          '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-            color: FccColors.gray05,
-          ),
-          'p': Style(margin: Margins.zero),
-        },
-      ),
-    );
-  }
-}
-
-class _ToggleButton extends StatelessWidget {
-  const _ToggleButton({
-    required this.isOpen,
-    required this.noun,
-    required this.onPressed,
-  });
-
-  final bool isOpen;
-  final String noun;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          backgroundColor: _cardColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-            side: const BorderSide(color: _borderColor),
-          ),
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: colors.outlineVariant),
         ),
-        child: Text(isOpen ? 'Hide $noun' : 'Show $noun'),
-      ),
-    );
-  }
-}
-
-class _ChallengeCard extends StatelessWidget {
-  const _ChallengeCard({
-    required this.title,
-    required this.isCompleted,
-    required this.onTap,
-    this.isHeader = false,
-  });
-
-  final String title;
-  final bool isCompleted;
-  final VoidCallback onTap;
-  final bool isHeader;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-        side: BorderSide(
-          color: isCompleted ? _completedBorderColor : _borderColor,
-        ),
-      ),
-      color: isCompleted ? _completedTileColor : _tileColor,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: isHeader ? FontWeight.bold : null,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TileGrid extends StatelessWidget {
-  const _TileGrid({
-    required this.block,
-    required this.challenges,
-    required this.completed,
-    this.scrollable = false,
-  });
-
-  final Block block;
-  final List<ChallengeOrder> challenges;
-  final Set<String> completed;
-  final bool scrollable;
-
-  int _stepNumber(ChallengeOrder challenge, int index) {
-    final match = RegExp(r'\d+').firstMatch(challenge.title);
-    return match != null ? int.parse(match.group(0)!) : index + 1;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      physics: scrollable
-          ? const AlwaysScrollableScrollPhysics()
-          : const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 6,
-        mainAxisSpacing: 3,
-        crossAxisSpacing: 3,
-      ),
-      itemCount: challenges.length,
-      itemBuilder: (context, index) {
-        final challenge = challenges[index];
-        final isCompleted = completed.contains(challenge.id);
-
-        return TextButton(
-          onPressed: () => _openChallenge(context, block, challenge.id),
-          style: TextButton.styleFrom(
-            backgroundColor: isCompleted ? _completedTileColor : _tileColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-              side: BorderSide(
-                color: isCompleted ? _completedBorderColor : _borderColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            InkWell(
+              onTap: toggle,
+              child: Semantics(
+                button: true,
+                expanded: expanded,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      if (!expanded) ...[
+                        LearnStatus(
+                          complete: complete,
+                          active: done > 0 && !complete,
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (expanded && done > 0)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: LearnEyebrow(
+                                      block.label.value,
+                                      color: color,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Align(
+                                      alignment: Alignment.topRight,
+                                      heightFactor: 1,
+                                      child: Text(
+                                        progress,
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: colors.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              LearnEyebrow(block.label.value, color: color),
+                            SizedBox(height: expanded ? 12 : 6),
+                            Text(
+                              block.name,
+                              style: expanded
+                                  ? Theme.of(context).textTheme.titleLarge
+                                  : Theme.of(context).textTheme.titleMedium,
+                            ),
+                            if (!expanded && (disabled || done > 0)) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                disabled ? 'Temporarily unavailable' : progress,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      if (!expanded) ...[
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.chevron_right,
+                          color: colors.onSurfaceVariant,
+                          size: 22,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
             ),
+            if (expanded)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LearnProgress(done: done, total: total, color: color),
+                    const SizedBox(height: 12),
+                    ...HTMLParser(context: context).parse(
+                      '<p>${block.description.join(' ')}</p>',
+                      isSelectable: false,
+                      customStyles: {
+                        'body': Style(
+                          margin: Margins.zero,
+                          padding: HtmlPaddings.zero,
+                        ),
+                        'p': Style(
+                          margin: Margins.zero,
+                          fontSize: FontSize(15),
+                          lineHeight: const LineHeight(1.45),
+                          color: colors.onSurfaceVariant,
+                        ),
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    if (total == 0)
+                      const Text('No challenges available right now.')
+                    else ...[
+                      switch (block.layout) {
+                        BlockLayout.challengeGrid => _StepGrid(
+                          block: block,
+                          challenges: block.challenges,
+                          completed: completed,
+                        ),
+                        BlockLayout.challengeDialogue =>
+                          const SizedBox.shrink(),
+                        BlockLayout.challengeList => Column(
+                          children: [
+                            for (final (index, challenge)
+                                in block.challenges.indexed)
+                              _ChallengeTile(
+                                block: block,
+                                challenge: challenge,
+                                index: index + 1,
+                                completed: completed.contains(challenge.id),
+                                active: challenge == next,
+                              ),
+                          ],
+                        ),
+                        BlockLayout.challengeLink => const SizedBox.shrink(),
+                      },
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                          textStyle: const TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () => _openChallenge(
+                          context,
+                          block,
+                          (next ?? block.challenges.first).id,
+                        ),
+                        child: Text(
+                          complete
+                              ? 'Review ${unit == 'step' ? 'steps' : block.label.value}'
+                              : done > 0 && unit == 'step'
+                              ? 'Continue step ${block.challenges.indexOf(next!) + 1}'
+                              : done > 0
+                              ? 'Continue ${block.label.value}'
+                              : 'Start ${block.label.value == 'legacy' ? 'learning' : block.label.value}',
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChallengeTile extends StatelessWidget {
+  const _ChallengeTile({
+    required this.block,
+    required this.challenge,
+    required this.index,
+    required this.completed,
+    required this.active,
+  });
+  final Block block;
+  final ChallengeOrder challenge;
+  final int index;
+  final bool completed;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: active ? colors.primaryContainer : colors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: active ? colors.primary : colors.outline),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _openChallenge(context, block, challenge.id),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                if (completed)
+                  const LearnStatus(complete: true)
+                else
+                  CircleAvatar(
+                    radius: 14,
+                    backgroundColor: colors.surfaceContainer,
+                    child: Text(
+                      '$index',
+                      style: TextStyle(fontSize: 12, color: colors.onSurface),
+                    ),
+                  ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    challenge.title,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Text(
-            '${_stepNumber(challenge, index)}',
-            semanticsLabel:
-                '${challenge.title}${isCompleted ? ', completed' : ''}',
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
 class _StepGrid extends StatelessWidget {
-  const _StepGrid({required this.block, required this.completed});
-
+  const _StepGrid({
+    required this.block,
+    required this.challenges,
+    required this.completed,
+  });
   final Block block;
+  final List<ChallengeOrder> challenges;
   final Set<String> completed;
 
   @override
   Widget build(BuildContext context) {
-    // NOTE: Past four rows the grid scrolls inside a fixed height.
-    final scrollable = block.challenges.length > 24;
-
-    return Container(
-      padding: const EdgeInsets.all(8),
-      constraints: const BoxConstraints(maxHeight: 300),
-      child: ScrollShadow(
-        child: _TileGrid(
-          block: block,
-          challenges: block.challenges,
-          completed: completed,
-          scrollable: scrollable,
-        ),
-      ),
-    );
-  }
-}
-
-class _Dialogues extends StatelessWidget {
-  const _Dialogues({required this.block, required this.completed});
-
-  final Block block;
-  final Set<String> completed;
-
-  @override
-  Widget build(BuildContext context) {
-    final sections = <({ChallengeOrder header, List<ChallengeOrder> tasks})>[];
-    for (final (index, challenge) in block.challenges.indexed) {
-      if (index == 0 || challenge.title.contains('Dialogue')) {
-        sections.add((header: challenge, tasks: []));
-      } else {
-        sections.last.tasks.add(challenge);
-      }
-    }
-
-    return Column(
-      children: [
-        for (final (:header, :tasks) in sections) ...[
-          _ChallengeCard(
-            title: header.title,
-            isHeader: true,
-            isCompleted: completed.contains(header.id),
-            onTap: () => _openChallenge(context, block, header.id),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 4, 8, 12),
-            child: _TileGrid(
-              block: block,
-              challenges: tasks,
-              completed: completed,
+    final colors = Theme.of(context).colorScheme;
+    final design = FccDesignColors.of(context);
+    final next = challenges.where((c) => !completed.contains(c.id)).firstOrNull;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final digits = challenges.indexed.fold<int>(1, (longest, entry) {
+          final number =
+              RegExp(r'\d+').firstMatch(entry.$2.title)?.group(0) ??
+              '${entry.$1 + 1}';
+          return math.max(longest, number.length);
+        });
+        final numeral = TextPainter(
+          text: TextSpan(
+            text: '8' * digits,
+            style: const TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ],
+          textScaler: MediaQuery.textScalerOf(context),
+          textDirection: Directionality.of(context),
+        )..layout();
+        // Preserve a compact 48px touch target until the scaled number needs
+        // more room. Scaling the entire tile made small numbers look lost.
+        final minimumSide = math.max(
+          48.0,
+          math.max(numeral.width, numeral.height) + 16,
+        );
+        numeral.dispose();
+        final columns = math.max(
+          1,
+          ((constraints.maxWidth + 6) / (minimumSide + 6)).floor(),
+        );
+        final side = (constraints.maxWidth - (columns - 1) * 6) / columns;
+        return ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 300),
+          child: GridView.builder(
+            shrinkWrap: true,
+            primary: false,
+            padding: EdgeInsets.zero,
+            physics: (challenges.length / columns).ceil() * (side + 6) - 6 > 300
+                ? const ClampingScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columns,
+              childAspectRatio: 1,
+              mainAxisSpacing: 6,
+              crossAxisSpacing: 6,
+            ),
+            itemCount: challenges.length,
+            itemBuilder: (context, index) {
+              final challenge = challenges[index];
+              final done = completed.contains(challenge.id);
+              final active = challenge == next;
+              final number =
+                  RegExp(r'\d+').firstMatch(challenge.title)?.group(0) ??
+                  '${index + 1}';
+              return Semantics(
+                label: '${challenge.title}${done ? ', completed' : ''}',
+                button: true,
+                excludeSemantics: true,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    backgroundColor: done
+                        ? design.successContainer
+                        : active
+                        ? colors.surfaceContainer
+                        : colors.surface,
+                    foregroundColor: done
+                        ? design.onSuccessContainer
+                        : colors.onSurface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: done
+                          ? colors.brightness == Brightness.dark
+                                ? BorderSide(
+                                    color: design.onSuccessContainer,
+                                    width: 1.5,
+                                  )
+                                : BorderSide.none
+                          : BorderSide(
+                              color: active
+                                  ? colors.primary
+                                  : colors.outlineVariant,
+                            ),
+                    ),
+                  ),
+                  onPressed: () => _openChallenge(context, block, challenge.id),
+                  child: done
+                      ? const Icon(Icons.check, size: 20)
+                      : Text(
+                          number,
+                          style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

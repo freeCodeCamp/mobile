@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/podcasts/constants.dart';
+import 'package:freecodecamp/podcasts/models/podcast_model.dart';
+import 'package:freecodecamp/podcasts/ui/downloads/downloads_view.dart';
 import 'package:freecodecamp/podcasts/ui/podcast_list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_grid_tile.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
-import 'package:freecodecamp/widgets/error_retry.dart';
 
 class PodcastListView extends ConsumerWidget {
   const PodcastListView({super.key});
@@ -12,36 +13,96 @@ class PodcastListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final podcasts = ref.watch(podcastListProvider);
-
-    return ColoredBox(
-      color: FccColors.gray80,
-      child: podcasts.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => ErrorRetry(
-          message: 'Unable to load podcasts.',
-          onRetry: () => ref.invalidate(podcastListProvider),
-        ),
-        data: (podcasts) => RefreshIndicator(
-          onRefresh: () => ref
-              .refresh(podcastListProvider.future)
-              .then((_) {}, onError: (_) {}),
-          backgroundColor: FccColors.gray90,
-          color: Colors.white,
-          child: GridView.count(
-            crossAxisCount: 2,
-            childAspectRatio: 1,
+    return podcasts.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => PodcastDownloadsView(
+        offline: true,
+        onRetry: () => ref.invalidate(podcastListProvider),
+      ),
+      data: (podcasts) {
+        final fcc = podcasts
+            .where((p) => fccPodcastUrls.contains(p.feedUrl))
+            .toList();
+        final community = podcasts
+            .where((p) => !fccPodcastUrls.contains(p.feedUrl))
+            .toList();
+        return RefreshIndicator(
+          onRefresh: () async {
+            await ref
+                .refresh(podcastListProvider.future)
+                .then<void>((_) {}, onError: (_) {});
+          },
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),
+            physics: const AlwaysScrollableScrollPhysics(),
             children: [
-              for (final podcast in podcasts)
-                PodcastGridTile(
-                  key: ValueKey(podcast.id),
-                  podcast: podcast,
-                  onTap: () => PodcastEpisodeListRoute(
-                    podcastId: podcast.id,
-                  ).push(context),
+              if (fcc.isNotEmpty)
+                _PodcastGroup(title: 'From freeCodeCamp', podcasts: fcc),
+              if (community.isNotEmpty)
+                _PodcastGroup(
+                  title: 'More developer podcasts',
+                  podcasts: community,
+                ),
+              if (podcasts.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(child: Text('No podcasts available yet.')),
                 ),
             ],
           ),
-        ),
+        );
+      },
+    );
+  }
+}
+
+class _PodcastGroup extends StatelessWidget {
+  const _PodcastGroup({required this.title, required this.podcasts});
+  final String title;
+  final List<Podcast> podcasts;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+          Material(
+            color: colors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: colors.outlineVariant),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                for (var i = 0; i < podcasts.length; i++) ...[
+                  if (i > 0) Divider(height: 1, color: colors.outlineVariant),
+                  PodcastGridTile(
+                    key: ValueKey(podcasts[i].id),
+                    podcast: podcasts[i],
+                    onTap: () => PodcastEpisodeListRoute(
+                      podcastId: podcasts[i].id,
+                    ).push(context),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

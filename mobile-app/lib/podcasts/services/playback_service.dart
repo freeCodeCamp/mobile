@@ -55,6 +55,14 @@ class PodcastPlaybackService {
   Duration? _duration;
   Duration _lastWritten = Duration.zero;
   bool _wasPlaying = false;
+  bool _suspended = false;
+  Future<void> _pendingWrites = Future<void>.value();
+
+  /// Stop new progress writes and drain existing writes before clearing prefs.
+  Future<void> suspendForReset() async {
+    _suspended = true;
+    await _pendingWrites;
+  }
 
   void start() {
     _positionSub ??= _handler.positionStream.listen(_onPosition);
@@ -112,6 +120,7 @@ class PodcastPlaybackService {
   }
 
   void _onPosition(Duration position) {
+    if (_suspended) return;
     final episodeId = _handler.episodeId;
 
     if (episodeId == null) return;
@@ -127,10 +136,11 @@ class PodcastPlaybackService {
     if ((position - _lastWritten).abs() < _writeInterval) return;
 
     _lastWritten = position;
-    unawaited(_savePosition(episodeId, position, _duration));
+    _queueSave(episodeId, position, _duration);
   }
 
   void _onPlaybackState(PlaybackState state) {
+    if (_suspended) return;
     final wasPlaying = _wasPlaying;
     _wasPlaying = state.playing;
 
@@ -140,7 +150,15 @@ class PodcastPlaybackService {
     if (episodeId == null) return;
 
     _lastWritten = _position;
-    unawaited(_savePosition(episodeId, _position, _duration));
+    _queueSave(episodeId, _position, _duration);
+  }
+
+  void _queueSave(String id, Duration position, Duration? duration) {
+    _pendingWrites = _pendingWrites
+        .then((_) => _savePosition(id, position, duration))
+        .catchError((Object error) {
+          log('Podcast playback: could not save progress ($error)');
+        });
   }
 
   Future<void> _savePosition(

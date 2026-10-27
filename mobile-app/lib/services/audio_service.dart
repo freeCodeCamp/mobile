@@ -46,13 +46,13 @@ AudioPlayerHandler audioHandler(Ref ref) => throw UnimplementedError(
 
 Future<AudioPlayerHandler> initAudioService() => AudioService.init(
   builder: () => AudioPlayerHandler(),
-  config: const AudioServiceConfig(
+  config: AudioServiceConfig(
     androidNotificationChannelId: 'org.freecodecamp.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
     androidStopForegroundOnPause: true,
     androidNotificationIcon: 'drawable/notification_icon',
-    notificationColor: FccColors.gray90,
+    notificationColor: FccTheme.themeLight.colorScheme.onSurface,
   ),
 );
 
@@ -69,6 +69,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   AudioTypeConfig? _audioConfig;
+
+  (Podcast, Episode)? _currentPodcastEpisode;
+
+  // The loaded models let the persistent player reopen the episode screen.
+  (Podcast, Episode)? get currentPodcastEpisode =>
+      episodeId == _currentPodcastEpisode?.$2.id
+      ? _currentPodcastEpisode
+      : null;
 
   Uri? _codeRadioUrl;
 
@@ -130,6 +138,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     _loadId++;
     _loading = false;
     _audioConfig = null;
+    _currentPodcastEpisode = null;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
 
@@ -199,12 +208,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
       await _audioPlayer.setAudioSource(AudioSource.uri(url));
       if (load != _loadId) return;
 
+      _currentPodcastEpisode = null;
       _publish(song);
     } catch (e) {
       if (load != _loadId) return;
 
       _audioConfig = previous;
       log('loadCodeRadio: Cannot play audio: $e');
+      rethrow;
     } finally {
       if (load == _loadId) _loading = false;
     }
@@ -253,6 +264,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       }
       if (load != _loadId) return false;
 
+      _currentPodcastEpisode = (podcast, episode);
       _publish(item);
       return true;
     } catch (e) {
