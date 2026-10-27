@@ -402,75 +402,93 @@ class _StepGrid extends StatelessWidget {
           1,
           ((constraints.maxWidth + 6) / (minimumSide + 6)).floor(),
         );
-        final side = (constraints.maxWidth - (columns - 1) * 6) / columns;
-        return ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 300),
-          child: GridView.builder(
-            shrinkWrap: true,
-            primary: false,
-            padding: EdgeInsets.zero,
-            physics: (challenges.length / columns).ceil() * (side + 6) - 6 > 300
-                ? const ClampingScrollPhysics()
-                : const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columns,
-              childAspectRatio: 1,
-              mainAxisSpacing: 6,
-              crossAxisSpacing: 6,
+        final side = math.min(minimumSide, constraints.maxWidth);
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 300,
+              maxWidth: columns * side + (columns - 1) * 6,
             ),
-            itemCount: challenges.length,
-            itemBuilder: (context, index) {
-              final challenge = challenges[index];
-              final done = completed.contains(challenge.id);
-              final active = challenge == next;
-              final number =
-                  RegExp(r'\d+').firstMatch(challenge.title)?.group(0) ??
-                  '${index + 1}';
-              return Semantics(
-                label: '${challenge.title}${done ? ', completed' : ''}',
-                button: true,
-                excludeSemantics: true,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    backgroundColor: done
-                        ? design.successContainer
-                        : active
-                        ? colors.surfaceContainer
-                        : colors.surface,
-                    foregroundColor: done
-                        ? design.onSuccessContainer
-                        : colors.onSurface,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: done
-                          ? colors.brightness == Brightness.dark
-                                ? BorderSide(
-                                    color: design.onSuccessContainer,
-                                    width: 1.5,
-                                  )
-                                : BorderSide.none
-                          : BorderSide(
-                              color: active
-                                  ? colors.primary
-                                  : colors.outlineVariant,
-                            ),
+            child: GridView.builder(
+              shrinkWrap: true,
+              primary: false,
+              padding: EdgeInsets.zero,
+              physics:
+                  (challenges.length / columns).ceil() * (side + 6) - 6 > 300
+                  ? const ClampingScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                childAspectRatio: 1,
+                mainAxisSpacing: 6,
+                crossAxisSpacing: 6,
+              ),
+              itemCount: challenges.length,
+              itemBuilder: (context, index) {
+                final challenge = challenges[index];
+                final done = completed.contains(challenge.id);
+                final active = challenge == next;
+                final number =
+                    RegExp(r'\d+').firstMatch(challenge.title)?.group(0) ??
+                    '${index + 1}';
+                return Semantics(
+                  label: '${challenge.title}${done ? ', completed' : ''}',
+                  button: true,
+                  excludeSemantics: true,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      backgroundColor: done
+                          ? design.successContainer
+                          : colors.surface,
+                      foregroundColor: done
+                          ? design.onSuccessContainer
+                          : colors.onSurface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        side: done
+                            ? BorderSide(
+                                color: design.onSuccessContainer,
+                                width: colors.brightness == Brightness.dark
+                                    ? 1.5
+                                    : 1,
+                              )
+                            : BorderSide(
+                                color: active
+                                    ? colors.primary
+                                    : colors.outlineVariant,
+                              ),
+                      ),
                     ),
-                  ),
-                  onPressed: () => _openChallenge(context, block, challenge.id),
-                  child: done
-                      ? const Icon(Icons.check, size: 20)
-                      : Text(
-                          number,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                    onPressed: () =>
+                        _openChallenge(context, block, challenge.id),
+                    child: done
+                        ? Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: design.onSuccessContainer,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              size: 16,
+                              color: colors.surface,
+                            ),
+                          )
+                        : Text(
+                            number,
+                            style: const TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                ),
-              );
-            },
+                  ),
+                );
+              },
+            ),
           ),
         );
       },

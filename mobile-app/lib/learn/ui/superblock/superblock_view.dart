@@ -225,20 +225,22 @@ class _CourseHero extends ConsumerWidget {
           ),
           if (nextBlock != null) ...[
             const SizedBox(height: 14),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                onPressed: () => LearnChallengeRoute(
-                  superBlock: nextBlock.superBlock,
-                  block: nextBlock.dashedName,
-                  challengeId: nextBlock.challenges
-                      .firstWhere((c) => !completed.contains(c.id))
-                      .id,
-                ).push<void>(context),
-                icon: const Icon(Icons.arrow_forward, size: 18),
-                iconAlignment: IconAlignment.end,
-                label: Text(done > 0 ? 'Continue' : 'Start learning'),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
+              onPressed: () => LearnChallengeRoute(
+                superBlock: nextBlock.superBlock,
+                block: nextBlock.dashedName,
+                challengeId: nextBlock.challenges
+                    .firstWhere((c) => !completed.contains(c.id))
+                    .id,
+              ).push<void>(context),
+              icon: const Icon(Icons.arrow_forward, size: 18),
+              iconAlignment: IconAlignment.end,
+              label: Text(done > 0 ? 'Continue' : 'Start learning'),
             ),
           ],
         ],

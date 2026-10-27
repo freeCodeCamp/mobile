@@ -1370,10 +1370,11 @@ packages:
   phone_ide:
     dependency: "direct main"
     description:
-      name: phone_ide
-      sha256: b5d76e9f44de06d8a6cf83671736508b5f1dd2045d3f923c6b0a55a7609a498b
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: "279f4d513d43d348a0b5ded39b01f3e181ec0302"
+      resolved-ref: "279f4d513d43d348a0b5ded39b01f3e181ec0302"
+      url: "https://github.com/Sembauke/PhoneIDE.git"
+    source: git
     version: "3.0.0"
   photo_view:
     dependency: "direct main"

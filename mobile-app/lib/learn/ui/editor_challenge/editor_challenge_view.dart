@@ -14,6 +14,7 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
+import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
 import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -42,6 +43,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   final _subscriptions = <StreamSubscription<Object>>[];
   final _modifiedFiles = <String>{};
   Editor? _editor;
+  ThemeData? _editorTheme;
   TextFieldData? _focused;
   _EditorSheet? _sheet;
   bool _instructionsExpanded = true;
@@ -59,6 +61,28 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   void initState() {
     super.initState();
     _loadEditor(ref.read(_provider).file);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final theme = Theme.of(context);
+    final current = _editor;
+    if (current != null && _editorTheme != theme) {
+      final editor = Editor(
+        key: current.key,
+        defaultLanguage: current.defaultLanguage,
+        defaultValue: current.defaultValue,
+        path: current.path,
+        options: phoneIdeOptions(
+          context,
+          regionOptions: current.options.regionOptions,
+        ),
+      );
+      _subscribeToEditor(editor, ref.read(_provider).file);
+      _editor = editor;
+    }
+    _editorTheme = theme;
   }
 
   @override
@@ -115,14 +139,26 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       defaultLanguage: file.ext.name,
       defaultValue: contents,
       path: LearnCodeService.editorPath(challenge, file),
-      options: EditorOptions(
-        fontFamily: 'Hack',
+      options: phoneIdeOptions(
+        context,
         regionOptions: region.isEmpty
             ? null
             : EditorRegionOptions(start: region[0], end: region[1]),
       ),
     );
 
+    _subscribeToEditor(editor, file);
+    setState(() {
+      contents != file.contents
+          ? _modifiedFiles.add(file.fileName)
+          : _modifiedFiles.remove(file.fileName);
+      _editor = editor;
+      _editorTheme = Theme.of(context);
+      _focused = null;
+    });
+  }
+
+  void _subscribeToEditor(Editor editor, ChallengeFile file) {
     _cancelSubscriptions();
     _subscriptions.addAll([
       editor.onTextChange.stream.listen((text) {
@@ -141,13 +177,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       }),
       editor.textfieldData.stream.listen((data) => _focused = data),
     ]);
-    setState(() {
-      contents != file.contents
-          ? _modifiedFiles.add(file.fileName)
-          : _modifiedFiles.remove(file.fileName);
-      _editor = editor;
-      _focused = null;
-    });
   }
 
   void _insertSymbol(String symbol) {
