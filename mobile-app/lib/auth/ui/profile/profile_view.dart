@@ -137,7 +137,9 @@ class _PrivateProfile extends StatelessWidget {
         Text(
           '@$username',
           textAlign: TextAlign.center,
-          style: theme.textTheme.titleMedium?.copyWith(fontFamily: 'monospace'),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontFamily: 'JetBrains Mono',
+          ),
         ),
         const SizedBox(height: 38),
         Center(
@@ -177,16 +179,17 @@ class _PreviewBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
       decoration: BoxDecoration(
         color: colors.primaryContainer,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: FccDesignColors.of(context).heatmapLow),
       ),
       child: Row(
         children: [
           Icon(
             Icons.visibility_outlined,
+            size: 18,
             color: FccDesignColors.of(context).accentText,
           ),
           const SizedBox(width: 10),
@@ -195,12 +198,17 @@ class _PreviewBanner extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           FilledButton(
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
+            style:
+                FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  minimumSize: const Size(48, 44),
+                ).copyWith(
+                  shape: FccTheme.focusShape(
+                    context,
+                    radius: 10,
+                    color: colors.onSecondary,
+                  ),
+                ),
             onPressed: onDone,
             child: const Text('Done'),
           ),
@@ -270,13 +278,8 @@ class _PrivacyBanner extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: accent,
-              backgroundColor: Colors.transparent,
-              side: BorderSide(color: colors.primary.withValues(alpha: 0.4)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+            style: const ButtonStyle().copyWith(
+              shape: FccTheme.focusShape(context, radius: 10, color: accent),
             ),
             onPressed: onPreview,
             icon: const Icon(Icons.visibility_outlined, size: 20),
@@ -338,11 +341,7 @@ class _GuestProfile extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                  style: FilledButton.styleFrom(),
                   onPressed: () => const LoginRoute().push<void>(context),
                   child: const Text('Sign in'),
                 ),
@@ -385,34 +384,13 @@ class _ProfileBody extends ConsumerWidget {
       children: [
         if (!preview && visibility.isLocked) ...[
           _PrivacyBanner(onPreview: onPreview),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
         ],
         _Header(user: user),
-        if (!preview && !visibility.isLocked) ...[
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Wrap(
-              alignment: WrapAlignment.end,
-              spacing: 8,
-              children: [
-                TextButton(
-                  onPressed: () =>
-                      const ProfileVisibilityRoute().push<void>(context),
-                  child: const Text('Change visibility'),
-                ),
-                TextButton.icon(
-                  onPressed: onPreview,
-                  icon: const Icon(Icons.visibility_outlined, size: 20),
-                  label: const Text('View as others'),
-                ),
-              ],
-            ),
-          ),
-        ],
         if (statistics.isNotEmpty) ...[
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           _Section(
+            radius: 14,
             padding: EdgeInsets.zero,
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -448,16 +426,22 @@ class _ProfileBody extends ConsumerWidget {
           ),
         ],
         if (showActivity) ...[
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           _Section(child: _Heatmap(days: days)),
         ],
         if (visibility.showCerts) ...[
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
           _Certifications(user: user, preview: preview),
         ],
         if (visibility.showPortfolio && user.portfolio.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          Text('Portfolio', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
+          Text(
+            'Portfolio',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           const SizedBox(height: 8),
           _Section(
             padding: EdgeInsets.zero,
@@ -472,8 +456,14 @@ class _ProfileBody extends ConsumerWidget {
           ),
         ],
         if (visibility.showExperience && user.experience.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          Text('Experience', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
+          Text(
+            'Experience',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           const SizedBox(height: 8),
           _Section(
             padding: EdgeInsets.zero,
@@ -496,12 +486,15 @@ class _Section extends StatelessWidget {
   const _Section({
     required this.child,
     this.padding = const EdgeInsets.all(16),
+    this.radius = 16,
   });
   final Widget child;
   final EdgeInsets padding;
+  final double radius;
 
   @override
   Widget build(BuildContext context) => Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
     clipBehavior: Clip.antiAlias,
     child: Padding(padding: padding, child: child),
   );
@@ -545,7 +538,7 @@ class _Header extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                radius: 30,
+                radius: 36,
                 backgroundColor: colors.primaryContainer,
                 backgroundImage: user.picture.isEmpty
                     ? null
@@ -566,15 +559,18 @@ class _Header extends StatelessWidget {
                     if (showName)
                       Text(
                         user.name.trim().isNotEmpty ? user.name : user.username,
-                        style: theme.textTheme.titleLarge,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     Text(
                       '@${user.username}',
-                      style:
-                          (showName
-                                  ? theme.textTheme.bodySmall
-                                  : theme.textTheme.titleMedium)
-                              ?.copyWith(fontFamily: 'monospace'),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontFamily: 'JetBrains Mono',
+                        fontSize: 13,
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                     if (showSupporter ||
                         user.yearsTopContributor.isNotEmpty) ...[
@@ -582,17 +578,19 @@ class _Header extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                          vertical: 3,
+                          vertical: 2,
                         ),
                         decoration: BoxDecoration(
                           color: showSupporter
-                              ? colors.tertiary.withValues(alpha: 0.12)
+                              ? FccDesignColors.of(context).donateContainer
                               : colors.primaryContainer,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           showSupporter ? 'Supporter' : 'Top contributor',
                           style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
                             color: showSupporter
                                 ? colors.tertiary
                                 : FccDesignColors.of(context).accentText,
@@ -607,22 +605,39 @@ class _Header extends StatelessWidget {
           ),
           if (description.isNotEmpty) ...[
             const SizedBox(height: 14),
-            Text(description.join(' · '), style: theme.textTheme.bodySmall),
+            Text(
+              description.join(' · '),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 14,
+                height: 1.5,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
           ],
           if (links.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
-              spacing: 6,
-              runSpacing: 6,
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 for (final (label, url) in links)
                   OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      minimumSize: const Size(48, 40),
-                      side: BorderSide(color: colors.outlineVariant),
-                      shape: const StadiumBorder(),
-                      textStyle: theme.textTheme.bodySmall,
+                    style: FccTheme.compactOutlineStyle(context).copyWith(
+                      padding: const WidgetStatePropertyAll(
+                        EdgeInsets.symmetric(horizontal: 12),
+                      ),
+                      shape: FccTheme.focusShape(
+                        context,
+                        radius: 999,
+                        color: FccDesignColors.of(context).accentText,
+                      ),
+                      textStyle: const WidgetStatePropertyAll(
+                        TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                     onPressed: () {
                       final uri = Uri.tryParse(url);
@@ -657,11 +672,24 @@ class _Stat extends StatelessWidget {
     final valueText = FittedBox(
       fit: BoxFit.scaleDown,
       alignment: horizontal ? Alignment.centerRight : Alignment.centerLeft,
-      child: Text('$value', style: Theme.of(context).textTheme.titleLarge),
+      child: Text(
+        '$value',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
     );
-    final labelText = Text(label, style: Theme.of(context).textTheme.bodySmall);
+    final labelText = Text(
+      label,
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    );
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: horizontal
           ? Row(
               children: [
@@ -700,17 +728,19 @@ class _Heatmap extends StatelessWidget {
       today.day - (today.weekday - 1),
     );
     final start = DateTime(weekStart.year, weekStart.month, weekStart.day - 77);
+    final design = FccDesignColors.of(context);
     Color shade(int points) => points == 0
         ? colors.surfaceContainerHighest
-        : Color.lerp(
-            colors.primaryContainer,
-            colors.primary,
-            points >= 8
-                ? 1
-                : points >= 4
-                ? 0.65
-                : 0.3,
-          )!;
+        : points >= 8
+        ? design.heatmapHigh
+        : points >= 4
+        ? design.heatmapMid
+        : design.heatmapLow;
+    final legendStyle = theme.textTheme.labelSmall?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      color: colors.onSurfaceVariant,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -723,8 +753,20 @@ class _Heatmap extends StatelessWidget {
             spacing: 12,
             runSpacing: 4,
             children: [
-              Text('Activity', style: theme.textTheme.titleMedium),
-              Text('Last 12 weeks', style: theme.textTheme.bodySmall),
+              Text(
+                'Activity',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                'Last 12 weeks',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: 13,
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),
@@ -756,31 +798,15 @@ class _Heatmap extends StatelessWidget {
                                   ? SizedBox(width: cell, height: cell)
                                   : Semantics(
                                       label: label,
-                                      button: true,
                                       child: Tooltip(
                                         message: label,
-                                        child: InkWell(
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                          onTap: () =>
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  duration: const Duration(
-                                                    seconds: 2,
-                                                  ),
-                                                  content: Text(label),
-                                                ),
-                                              ),
-                                          child: Container(
-                                            width: cell,
-                                            height: cell,
-                                            decoration: BoxDecoration(
-                                              color: shade(points),
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
+                                        child: Container(
+                                          width: cell,
+                                          height: cell,
+                                          decoration: BoxDecoration(
+                                            color: shade(points),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
                                             ),
                                           ),
                                         ),
@@ -799,19 +825,19 @@ class _Heatmap extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text('Less', style: theme.textTheme.labelSmall),
+            Text('Less', style: legendStyle),
             for (final points in [0, 1, 4, 8])
               Container(
-                width: 11,
-                height: 11,
-                margin: const EdgeInsets.only(left: 3),
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.only(left: 4),
                 decoration: BoxDecoration(
                   color: shade(points),
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
             const SizedBox(width: 4),
-            Text('More', style: theme.textTheme.labelSmall),
+            Text('More', style: legendStyle),
           ],
         ),
       ],
@@ -874,9 +900,15 @@ class _Certifications extends StatelessWidget {
       if (user.isFullStackCert) ('Full Stack', 'full-stack'),
     ];
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Certifications', style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          'Certifications',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         const SizedBox(height: 8),
         if (current.isEmpty && legacy.isEmpty)
           _Section(
@@ -889,7 +921,7 @@ class _Certifications extends StatelessWidget {
         if (current.isNotEmpty)
           _CertificateList(certificates: current, username: user.username),
         if (legacy.isNotEmpty) ...[
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Text(
             'Legacy certifications',
             style: Theme.of(context).textTheme.titleSmall,
@@ -943,7 +975,10 @@ class _CertificateList extends StatelessWidget {
                       Expanded(
                         child: Text(
                           certificate.$1,
-                          style: theme.textTheme.bodyMedium,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],
@@ -951,17 +986,7 @@ class _CertificateList extends StatelessWidget {
                   final viewButton = Semantics(
                     label: 'View ${certificate.$1} certification',
                     child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        minimumSize: const Size(48, 44),
-                        side: BorderSide(
-                          color: theme.colorScheme.outlineVariant,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        textStyle: theme.textTheme.bodySmall,
-                      ),
+                      style: FccTheme.compactOutlineStyle(context),
                       onPressed: () => openInCustomTab(
                         Uri.https(
                           'www.freecodecamp.org',
@@ -1021,16 +1046,16 @@ class _PortfolioRow extends StatelessWidget {
       child: Icon(Icons.code, color: colors.onSurfaceVariant, size: 30),
     );
     final thumbnail = ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
       child: SizedBox(
-        width: 88,
-        height: 68,
+        width: 96,
+        height: 64,
         child: image.isEmpty
             ? fallback
             : CachedNetworkImage(
                 imageUrl: image,
-                width: 88,
-                height: 68,
+                width: 96,
+                height: 64,
                 fit: BoxFit.cover,
                 placeholder: (_, _) => fallback,
                 errorWidget: (_, _, _) => fallback,
@@ -1041,10 +1066,19 @@ class _PortfolioRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (portfolio.title?.trim().isNotEmpty ?? false)
-          Text(portfolio.title!, style: theme.textTheme.titleMedium),
+          Text(
+            portfolio.title!,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         if (portfolio.description?.trim().isNotEmpty ?? false) ...[
           const SizedBox(height: 4),
-          Text(portfolio.description!, style: theme.textTheme.bodySmall),
+          Text(
+            portfolio.description!,
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+          ),
         ],
         if (canOpen) ...[
           const SizedBox(height: 6),
@@ -1056,7 +1090,7 @@ class _PortfolioRow extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
+                    fontFamily: 'JetBrains Mono',
                     color: accent,
                   ),
                 ),
@@ -1071,7 +1105,7 @@ class _PortfolioRow extends StatelessWidget {
     return InkWell(
       onTap: canOpen ? () => launchUrl(link).ignore() : null,
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: LayoutBuilder(
           builder: (context, constraints) => constraints.maxWidth < 240
               ? Column(
@@ -1082,7 +1116,7 @@ class _PortfolioRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     thumbnail,
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 12),
                     Expanded(child: details),
                   ],
                 ),
@@ -1141,20 +1175,38 @@ class _ExperienceRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(experience.title, style: theme.textTheme.titleMedium),
+                Text(
+                  experience.title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 if (company.isNotEmpty) ...[
                   const SizedBox(height: 3),
-                  Text(company, style: theme.textTheme.bodySmall),
+                  Text(
+                    company,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      color: colors.onSurface,
+                    ),
+                  ),
                 ],
                 if (start.isNotEmpty) ...[
                   const SizedBox(height: 3),
-                  Text('$start – $end', style: theme.textTheme.bodySmall),
+                  Text(
+                    '$start – $end',
+                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+                  ),
                 ],
                 if (experience.description.trim().isNotEmpty) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
                   Text(
                     experience.description,
-                    style: theme.textTheme.bodySmall,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      height: 1.45,
+                    ),
                   ),
                 ],
               ],
