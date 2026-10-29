@@ -217,9 +217,11 @@ class FccTheme {
       ),
     ),
     side: WidgetStateProperty.resolveWith(
-      (states) => !outlined || states.contains(WidgetState.disabled)
+      (states) => states.contains(WidgetState.disabled)
           ? BorderSide.none
-          : BorderSide(color: foreground, width: 1.5),
+          : outlined
+          ? BorderSide(color: foreground, width: 1.5)
+          : null,
     ),
     shape: WidgetStateProperty.resolveWith(
       (states) => _FocusRingBorder(
@@ -572,6 +574,27 @@ class _FocusRingBorder extends RoundedRectangleBorder {
     borderRadius: borderRadius ?? this.borderRadius,
     ring: ring,
   );
+
+  @override
+  ShapeBorder? lerpFrom(ShapeBorder? a, double t) {
+    if (a is _FocusRingBorder)
+      return _FocusRingBorder(
+        borderRadius: BorderRadiusGeometry.lerp(
+          a.borderRadius,
+          borderRadius,
+          t,
+        )!,
+        side: BorderSide.lerp(a.side, side, t),
+        ring: Color.lerp(a.ring, ring, t),
+      );
+    return super.lerpFrom(a, t);
+  }
+
+  @override
+  ShapeBorder? lerpTo(ShapeBorder? b, double t) {
+    if (b is _FocusRingBorder) return b.lerpFrom(this, t);
+    return super.lerpTo(b, t);
+  }
 
   @override
   void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {

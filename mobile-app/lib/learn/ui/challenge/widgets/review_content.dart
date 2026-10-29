@@ -105,7 +105,6 @@ class _ReviewTopicsState extends State<ReviewTopics> {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
     builder: (context, _) {
-      final colors = Theme.of(context).colorScheme;
       return Semantics(
         label: 'Review topics',
         container: true,
@@ -121,12 +120,6 @@ class _ReviewTopicsState extends State<ReviewTopics> {
                     key: _keys[index],
                     label: Text(section.title!),
                     selected: index == controller.selected,
-                    showCheckmark: false,
-                    labelStyle: TextStyle(
-                      color: index == controller.selected
-                          ? colors.onPrimary
-                          : colors.onSurface,
-                    ),
                     tooltip:
                         'Jump to topic ${index + 1} of ${controller.topicCount}',
                     onSelected: (_) => controller.select(index),

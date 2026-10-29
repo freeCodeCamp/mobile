@@ -96,7 +96,7 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: FccDesignColors.of(context).codeSurface,
         border: Border.all(color: colors.outlineVariant),
         borderRadius: BorderRadius.circular(12),
       ),

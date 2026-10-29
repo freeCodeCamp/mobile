@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_canvas.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_controls.dart';
@@ -62,9 +63,9 @@ class _SceneFullscreenViewState extends State<SceneFullscreenView> {
               ),
               child: IconButton(
                 tooltip: 'Exit fullscreen',
-                icon: const Icon(
+                icon: Icon(
                   Icons.fullscreen_exit,
-                  color: Color(0xFFFFF8EC),
+                  color: FccDesignColors.of(context).heroForeground,
                   size: 32,
                 ),
                 onPressed: () => context.pop(),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/routing/news.dart';

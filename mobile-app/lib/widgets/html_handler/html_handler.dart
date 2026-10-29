@@ -55,7 +55,10 @@ final Map<String, Style> defaultStyles = {
   'th strong': Style(fontSize: FontSize.medium),
   'figure': Style(margin: Margins.zero, textAlign: TextAlign.center),
   'figcaption': Style(fontSize: FontSize.medium),
-  'code': Style(fontFamily: 'monospace', fontSize: FontSize.xLarge),
+  'code': Style(
+    fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
+    fontSize: FontSize.xLarge,
+  ),
   'pre': Style(fontFamily: 'monospace'),
 };
 
@@ -151,7 +154,7 @@ class HTMLParser {
         child: Text(
           parsed,
           style: TextStyle(
-            fontFamily: 'monospace',
+            fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
             color: colors.onSurface,
             fontSize: customStyles['code']?.fontSize?.value ?? 16,
             letterSpacing: 0,

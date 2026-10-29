@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 
 Future<bool> showQuizLeaveDialog(
   BuildContext context, {
@@ -65,11 +66,8 @@ Future<bool> showQuizLeaveDialog(
                       padding: const EdgeInsets.all(12),
                       textStyle: const TextStyle(
                         fontFamily: 'Lato',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     onPressed: () => Navigator.pop(context, false),
@@ -80,19 +78,11 @@ Future<bool> showQuizLeaveDialog(
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                      padding: const EdgeInsets.all(12),
-                      foregroundColor: colors.error,
-                      side: BorderSide(color: colors.outline),
-                      textStyle: const TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                    style: FccTheme.dangerOutlineStyle(context).copyWith(
+                      minimumSize: const WidgetStatePropertyAll(
+                        Size(double.infinity, 50),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
                     ),
                     onPressed: () => Navigator.pop(context, true),
                     child: const Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 
 // Resolves to true only when the confirm button is tapped.
 Future<bool> showConfirmDialog(
@@ -28,12 +29,19 @@ Future<bool> showConfirmDialog(
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: destructive
-                ? FilledButton.styleFrom(
-                    backgroundColor: colors.error,
-                    foregroundColor: colors.onError,
-                  )
-                : null,
+            style:
+                (destructive
+                        ? FccTheme.dangerStyle(context)
+                        : const ButtonStyle())
+                    .copyWith(
+                      textStyle: const WidgetStatePropertyAll(
+                        TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 17,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
             onPressed: () => Navigator.pop(context, true),
             child: Text(confirmLabel),
           ),

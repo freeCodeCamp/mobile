@@ -28,7 +28,9 @@ class SceneControls extends ConsumerWidget {
     final sceneState = ref.watch(sceneProvider(scene, title));
     final showCaptions = sceneState.showCaptions;
     final active = sceneState.isActive;
-    final foreground = fullscreen ? const Color(0xFFFFF8EC) : colors.onSurface;
+    final foreground = fullscreen
+        ? FccDesignColors.of(context).heroForeground
+        : colors.onSurface;
 
     return StreamBuilder<PlaybackState>(
       stream: handler.playbackState,
