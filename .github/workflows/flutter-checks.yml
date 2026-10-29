@@ -11,7 +11,7 @@ on:
 
 jobs:
   checks:
-    name: Generated Files and Analysis
+    name: Generated Files, Analysis and Unit Tests
     defaults:
       run:
         working-directory: ./mobile-app
@@ -60,3 +60,6 @@ jobs:
             echo "::error::Generated files are out of date. Run 'dart run build_runner build' and commit the result."
             exit 1
           fi
+
+      - name: Unit tests
+        run: flutter test
