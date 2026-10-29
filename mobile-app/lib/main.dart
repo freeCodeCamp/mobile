@@ -15,6 +15,7 @@ import 'package:freecodecamp/routing/router.dart';
 import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/services/experiment_service.dart';
 import 'package:freecodecamp/services/notification_service.dart';
 import 'package:freecodecamp/services/remote_config_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -58,6 +59,7 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final _upgrader = Upgrader();
+  StreamSubscription<NotificationKind?>? _notificationTaps;
 
   @override
   void initState() {
@@ -74,6 +76,11 @@ class _MyAppState extends ConsumerState<MyApp> {
           ),
         ),
       );
+    }, fireImmediately: true);
+    ref.listenManual(authProvider, (_, next) {
+      if (next.hasValue) {
+        unawaited(ref.read(analyticsProvider).setSignedIn(next.value != null));
+      }
     }, fireImmediately: true);
 
     unawaited(
@@ -92,26 +99,42 @@ class _MyAppState extends ConsumerState<MyApp> {
       unawaited(_scheduleReminders());
       // NOTE: Deletes audio and artwork that no store row points at
       unawaited(ref.read(podcastLibraryServiceProvider).sweepOrphanedFiles());
+      ref.read(experimentsProvider.notifier).logExposure(Experiment.aaTest);
+      unawaited(logInstallationIdForTesting());
+      unawaited(_trackNotificationTaps());
     });
   }
 
+  Future<void> _trackNotificationTaps() async {
+    final notifications = ref.read(notificationServiceProvider);
+    final analytics = ref.read(analyticsProvider);
+    _notificationTaps = notifications.opened.listen(
+      (kind) => unawaited(analytics.notificationOpened(kind)),
+    );
+    final launch = await notifications.launchedFrom();
+    if (launch != null) await analytics.notificationOpened(launch.kind);
+  }
+
   Future<void> _scheduleReminders() async {
-    await ref.read(notificationServiceProvider).requestPermission();
+    final granted = await ref
+        .read(notificationServiceProvider)
+        .requestPermission();
+    unawaited(
+      ref
+          .read(analyticsProvider)
+          .reportNotificationPermission(granted: granted),
+    );
     final user = await ref.read(authProvider.future).catchError((_) => null);
     await ref.read(learnDailyChallengeReminderServiceProvider).reschedule(user);
   }
 
-  void _logScreenView() {
-    unawaited(
-      ref
-          .read(analyticsProvider)
-          .logScreenView(screenName: router.state.matchedLocation),
-    );
-  }
+  void _logScreenView() =>
+      unawaited(ref.read(analyticsProvider).screenView(screenViewOf(router)));
 
   @override
   void dispose() {
     router.routerDelegate.removeListener(_logScreenView);
+    unawaited(_notificationTaps?.cancel());
     super.dispose();
   }
 

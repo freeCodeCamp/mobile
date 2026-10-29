@@ -15,11 +15,11 @@ final analyticsProvider = AnalyticsProvider._();
 final class AnalyticsProvider
     extends
         $FunctionalProvider<
-          FirebaseAnalytics,
-          FirebaseAnalytics,
-          FirebaseAnalytics
+          AnalyticsService,
+          AnalyticsService,
+          AnalyticsService
         >
-    with $Provider<FirebaseAnalytics> {
+    with $Provider<AnalyticsService> {
   AnalyticsProvider._()
     : super(
         from: null,
@@ -36,22 +36,21 @@ final class AnalyticsProvider
 
   @$internal
   @override
-  $ProviderElement<FirebaseAnalytics> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<AnalyticsService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  FirebaseAnalytics create(Ref ref) {
+  AnalyticsService create(Ref ref) {
     return analytics(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(FirebaseAnalytics value) {
+  Override overrideWithValue(AnalyticsService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<FirebaseAnalytics>(value),
+      providerOverride: $SyncValueProvider<AnalyticsService>(value),
     );
   }
 }
 
-String _$analyticsHash() => r'8fb06ce3653ba0d954e4379b42d73d731065c520';
+String _$analyticsHash() => r'64f9d8121c21306097a3b7c1301e9dc942d9fbcd';

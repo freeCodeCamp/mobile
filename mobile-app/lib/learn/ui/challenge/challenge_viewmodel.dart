@@ -9,6 +9,7 @@ import 'package:freecodecamp/learn/services/code_service.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
+import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -49,9 +50,13 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
   AsyncValue<void> build(String challengeId) => const AsyncData(null);
 
   Future<bool> submit(Challenge challenge, {String? solution}) async {
-    if (!ref.read(authProvider).isLoggedIn) return true;
-
     final isDaily = const {28, 29}.contains(challenge.challengeType);
+    // NOTE: Signed-out users complete challenges too; only the save is skipped.
+    if (!ref.read(authProvider).isLoggedIn) {
+      _logCompleted(challenge, isDaily: isDaily);
+      return true;
+    }
+
     state = const AsyncLoading();
     final link = ref.keepAlive();
     try {
@@ -79,6 +84,7 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
               .reschedule(ref.read(authProvider).value),
         );
       }
+      _logCompleted(challenge, isDaily: isDaily);
       if (ref.mounted) state = const AsyncData(null);
       return true;
     } catch (e, stack) {
@@ -87,6 +93,21 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
     } finally {
       link.close();
     }
+  }
+
+  void _logCompleted(Challenge challenge, {required bool isDaily}) {
+    final analytics = ref.read(analyticsProvider);
+    unawaited(
+      isDaily
+          ? analytics.dailyChallengeCompleted(
+              language: challenge.challengeType == 29 ? 'python' : 'javascript',
+            )
+          : analytics.challengeCompleted(
+              superBlock: challenge.superBlock,
+              block: challenge.block,
+              challengeType: challenge.challengeType,
+            ),
+    );
   }
 }
 
