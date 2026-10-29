@@ -53,3 +53,6 @@ jobs:
 
       - name: Check generated files are up to date
         run: dart run build_runner build --only-check
+
+      - name: Unit tests
+        run: flutter test
