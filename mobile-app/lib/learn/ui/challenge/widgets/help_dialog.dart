@@ -90,13 +90,16 @@ class _HelpDialog extends StatelessWidget {
                   backgroundColor: colors.primaryContainer,
                   foregroundColor: FccDesignColors.of(context).accentText,
                   radius: 22,
-                  child: const Icon(Icons.chat_bubble_outline),
+                  child: const Icon(Icons.feedback_outlined),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     'Stuck? Get help',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
               ],
@@ -120,17 +123,11 @@ class _HelpDialog extends StatelessWidget {
             const _HelpStep(
               number: 3,
               child: Text(
-                'Still stuck? Create a post. We add your device information and the challenge link.',
+                'Still stuck? Post it. We add your code and the challenge link.',
               ),
             ),
             const SizedBox(height: 24),
             OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: colors.surfaceContainer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               onPressed: () => launchUrl(search),
               icon: const Icon(Icons.search),
               label: const Text('Search the forum'),
@@ -145,7 +142,12 @@ class _HelpDialog extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(
                 'Not now',
-                style: TextStyle(color: colors.onSurfaceVariant),
+                style: TextStyle(
+                  color: FccDesignColors.of(context).accentText,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
           ],
@@ -179,7 +181,9 @@ class _HelpStep extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: DefaultTextStyle.merge(
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontSize: 15),
             child: child,
           ),
         ),
@@ -257,7 +261,10 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: const Text('Create a post'),
+          title: const Text(
+            'Create a post',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
         ),
         body: SafeArea(
           top: false,
@@ -277,6 +284,8 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       ),
                       const SizedBox(height: 16),
                       _Statement(
+                        semanticLabel:
+                            'I have tried the Read-Search-Ask method',
                         value: _triedReadSearchAsk,
                         onChanged: (v) =>
                             setState(() => _triedReadSearchAsk = v),
@@ -289,6 +298,8 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       ),
                       const SizedBox(height: 16),
                       _Statement(
+                        semanticLabel:
+                            'I have searched for similar questions that have already been answered on the forum',
                         value: _searched,
                         onChanged: (v) => setState(() => _searched = v),
                         child: _LinkedText(
@@ -301,7 +312,9 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       const SizedBox(height: 24),
                       Text(
                         'Describe your issue',
-                        style: theme.textTheme.titleMedium,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
@@ -314,24 +327,24 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                           errorText: tooLong
                               ? 'This description is too long to open on the forum. Shorten it before continuing; your text has been kept.'
                               : null,
-                          hintText: 'What did you try, and what happened?',
+                          hintText: 'Describe your issue in detail here...',
                         ),
                       ),
-                      if (tooLong || remaining > 0) ...[
+                      if (tooLong) ...[
                         const SizedBox(height: 8),
                         Text(
-                          tooLong
-                              ? 'Shorten your description to continue.'
-                              : 'Add at least $remaining more characters.',
+                          'Shorten your description to continue.',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: tooLong
-                                ? colors.error
-                                : colors.onSurfaceVariant,
+                            color: colors.error,
                           ),
                         ),
                       ],
                       const SizedBox(height: 16),
                       Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: colors.outlineVariant),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -341,9 +354,11 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                                 "We'll attach automatically",
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   color: colors.onSurfaceVariant,
+                                  fontSize: 13,
                                 ),
                               ),
                               const SizedBox(height: 8),
+                              const _Attachment('Your code so far'),
                               const _Attachment('Your device information'),
                               const _Attachment(
                                 'The challenge and a link to it',
@@ -363,9 +378,7 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      !_triedReadSearchAsk || !_searched
-                          ? 'Tick both boxes to continue.'
-                          : 'Review and publish your post on the forum.',
+                      'Tick both boxes to post.',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colors.onSurfaceVariant,
@@ -381,7 +394,7 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                         ),
                       ),
                     _PrimaryButton(
-                      label: _opening ? 'Opening forum…' : 'Continue to forum',
+                      label: _opening ? 'Opening forum…' : 'Post to the forum',
                       onPressed: canSubmit ? _openForum : null,
                     ),
                   ],
@@ -414,12 +427,14 @@ class _Attachment extends StatelessWidget {
 
 class _Statement extends StatelessWidget {
   const _Statement({
+    required this.semanticLabel,
     required this.value,
     required this.onChanged,
     required this.child,
   });
 
   final bool value;
+  final String semanticLabel;
   final ValueChanged<bool> onChanged;
   final Widget child;
 
@@ -427,12 +442,41 @@ class _Statement extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Checkbox(
-        value: value,
-        onChanged: (v) => onChanged(v ?? false),
-        activeColor: Theme.of(context).colorScheme.primary,
-        checkColor: Theme.of(context).colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      Semantics(
+        label: semanticLabel,
+        checked: value,
+        child: InkWell(
+          onTap: () => onChanged(!value),
+          borderRadius: BorderRadius.circular(7),
+          child: SizedBox.square(
+            dimension: 44,
+            child: Center(
+              child: Container(
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: value
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: value
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: value
+                    ? Icon(
+                        Icons.check,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      )
+                    : null,
+              ),
+            ),
+          ),
+        ),
       ),
       const SizedBox(width: 4),
       Expanded(
@@ -450,16 +494,15 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FilledButton(
     style: FilledButton.styleFrom(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       minimumSize: const Size(double.infinity, 48),
-      disabledBackgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-      disabledForegroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+      textStyle: const TextStyle(
+        fontFamily: 'Lato',
+        fontSize: 17,
+        fontWeight: FontWeight.w900,
+      ),
     ),
     onPressed: onPressed,
-    child: Text(
-      label,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-    ),
+    child: Text(label),
   );
 }
 
@@ -506,6 +549,6 @@ class _LinkedTextState extends State<_LinkedText> {
         TextSpan(text: widget.after),
       ],
     ),
-    style: Theme.of(context).textTheme.bodyLarge,
+    style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15),
   );
 }
