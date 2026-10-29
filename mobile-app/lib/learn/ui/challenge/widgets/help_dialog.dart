@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
+import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _forum = 'https://forum.freecodecamp.org';
@@ -34,8 +37,17 @@ Future<void> showHelpDialog(
     barrierDismissible: false,
     builder: (context) => _CreatePostDialog(search: search),
   );
-  if (description == null) return;
+  if (description == null || !context.mounted) return;
 
+  unawaited(
+    ProviderScope.containerOf(context, listen: false)
+        .read(analyticsProvider)
+        .helpRequested(
+          superBlock: challenge.superBlock,
+          block: challenge.block,
+          challengeType: challenge.challengeType,
+        ),
+  );
   await launchUrl(_forumPostUrl(challenge, blockName, description, code));
 }
 

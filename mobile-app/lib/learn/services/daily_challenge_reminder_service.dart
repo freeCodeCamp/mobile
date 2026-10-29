@@ -67,6 +67,7 @@ class LearnDailyChallengeReminderService {
           body: "Today's coding challenge is ready. Can you solve it?",
           at: at,
           details: _details,
+          kind: NotificationKind.dailyChallenge,
         );
       }
     } catch (e) {
