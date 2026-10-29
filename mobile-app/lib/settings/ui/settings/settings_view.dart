@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
@@ -128,7 +129,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               children: [
                                 Text(
                                   'Theme',
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  style: Theme.of(context).textTheme.bodyLarge
+                                      ?.copyWith(fontWeight: FontWeight.w700),
                                 ),
                                 const SizedBox(height: 8),
                                 if (preferences.isLoading)
@@ -147,7 +149,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                   Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: colors.surfaceContainer,
+                                      color: colors.surface,
+                                      border: Border.all(
+                                        color: colors.outlineVariant,
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: LayoutBuilder(
@@ -215,12 +220,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                             ),
                             title: Text(
                               'Daily challenge reminder',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge?.copyWith(height: 1.35),
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    height: 1.35,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                             ),
                             subtitle: Text(
-                              'A daily nudge to learn at 9:00 AM',
+                              'A nudge when a new challenge is out',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             value: current?.dailyReminder ?? false,
@@ -234,9 +241,27 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                     isReminder: true,
                                   ),
                           ),
+                          const _UnavailableModeTile(title: 'Socrates mode'),
+                          const _UnavailableModeTile(title: 'Campfire mode'),
                           const _SettingsTile(
                             title: 'Language',
                             trailingLabel: 'English',
+                          ),
+                        ],
+                      ),
+                      _Group(
+                        title: 'Privacy',
+                        children: [
+                          _SettingsTile(
+                            title: 'Profile visibility',
+                            subtitle: auth.isLoggedIn
+                                ? null
+                                : 'Sign in to manage profile visibility',
+                            onTap: () => auth.isLoggedIn
+                                ? const ProfileVisibilityRoute().push<void>(
+                                    context,
+                                  )
+                                : const LoginRoute().push<void>(context),
                           ),
                         ],
                       ),
@@ -262,7 +287,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                           _SettingsTile(
                             title: 'Reset app data',
-                            subtitle: 'Remove local data and sign out',
+                            subtitle: 'Clears all local data and progress',
                             destructive: true,
                             onTap: _confirmReset,
                           ),
@@ -380,22 +405,56 @@ class _ThemeChoice extends StatelessWidget {
     return Semantics(
       selected: selected,
       child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-          backgroundColor: selected
-              ? colors.primaryContainer
-              : Colors.transparent,
-          foregroundColor: selected
-              ? colors.onSurface
-              : colors.onSurfaceVariant,
-          textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-            fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-          ),
-          side: selected
-              ? BorderSide(color: colors.primary, width: 1.5)
-              : BorderSide.none,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
+        style:
+            OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+              backgroundColor: selected
+                  ? colors.primaryContainer
+                  : Colors.transparent,
+              foregroundColor: selected
+                  ? colors.onSurface
+                  : colors.onSurfaceVariant,
+              textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: 15,
+                fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+              ),
+              side: selected
+                  ? BorderSide(
+                      color: FccDesignColors.of(context).accentText,
+                      width: 1.5,
+                    )
+                  : BorderSide.none,
+            ).copyWith(
+              shape: FccTheme.focusShape(
+                context,
+                radius: 8,
+                color: selected ? colors.onSurface : colors.onSurfaceVariant,
+              ),
+              foregroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? colors.outline
+                    : selected
+                    ? colors.onSurface
+                    : colors.onSurfaceVariant,
+              ),
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? colors.surfaceContainer
+                    : selected || states.contains(WidgetState.pressed)
+                    ? colors.primaryContainer
+                    : Colors.transparent,
+              ),
+              side: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? BorderSide.none
+                    : selected
+                    ? BorderSide(
+                        color: FccDesignColors.of(context).accentText,
+                        width: 1.5,
+                      )
+                    : BorderSide.none,
+              ),
+            ),
         onPressed: onPressed,
         child: Text(switch (mode) {
           ThemeMode.system => 'System',
@@ -423,6 +482,8 @@ class _Group extends StatelessWidget {
             title,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 8),
@@ -467,14 +528,26 @@ class _SettingsTile extends StatelessWidget {
       title,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
         height: 1.35,
+        fontWeight: FontWeight.w700,
         color: destructive ? Theme.of(context).colorScheme.error : null,
       ),
     ),
     subtitle: subtitle == null
         ? null
-        : Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
+        : Text(
+            subtitle!,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontSize: 13),
+          ),
     trailing: trailingLabel != null
-        ? Text(trailingLabel!, style: Theme.of(context).textTheme.bodySmall)
+        ? Text(
+            trailingLabel!,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          )
         : onTap == null
         ? null
         : Icon(
@@ -483,5 +556,28 @@ class _SettingsTile extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
     onTap: onTap,
+  );
+}
+
+class _UnavailableModeTile extends StatelessWidget {
+  const _UnavailableModeTile({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => SwitchListTile.adaptive(
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+    minTileHeight: 76,
+    title: Text(
+      title,
+      style: Theme.of(
+        context,
+      ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+    ),
+    subtitle: Text(
+      'Not available in the app yet',
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 13),
+    ),
+    value: false,
+    onChanged: null,
   );
 }
