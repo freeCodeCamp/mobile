@@ -718,7 +718,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                             decoration: BoxDecoration(
                               color: switch (file.ext) {
                                 Ext.css => design.lecture,
-                                Ext.js => design.workshop,
+                                Ext.js => design.javascriptMarker,
                                 _ => colors.primary,
                               },
                               borderRadius: BorderRadius.circular(2),

@@ -24,6 +24,7 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
     required this.lab,
     required this.lecture,
     required this.quiz,
+    required this.javascriptMarker,
   });
 
   final Color success;
@@ -47,6 +48,7 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
   final Color lab;
   final Color lecture;
   final Color quiz;
+  final Color javascriptMarker;
 
   static FccDesignColors of(BuildContext context) =>
       Theme.of(context).extension<FccDesignColors>()!;
@@ -74,6 +76,7 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
     Color? lab,
     Color? lecture,
     Color? quiz,
+    Color? javascriptMarker,
   }) => FccDesignColors(
     success: success ?? this.success,
     successContainer: successContainer ?? this.successContainer,
@@ -96,6 +99,7 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
     lab: lab ?? this.lab,
     lecture: lecture ?? this.lecture,
     quiz: quiz ?? this.quiz,
+    javascriptMarker: javascriptMarker ?? this.javascriptMarker,
   );
 
   @override
@@ -135,6 +139,11 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
       lab: Color.lerp(lab, other.lab, t)!,
       lecture: Color.lerp(lecture, other.lecture, t)!,
       quiz: Color.lerp(quiz, other.quiz, t)!,
+      javascriptMarker: Color.lerp(
+        javascriptMarker,
+        other.javascriptMarker,
+        t,
+      )!,
     );
   }
 }
@@ -559,6 +568,7 @@ class FccTheme {
           lab: Color(dark ? 0xFF5FD3D6 : 0xFF1E7F46),
           lecture: Color(dark ? 0xFF8EC5FF : 0xFF1F6FD1),
           quiz: Color(dark ? 0xFFFFAF85 : 0xFFB93D0A),
+          javascriptMarker: Color(dark ? 0xFFFFD978 : 0xFF5D4900),
         ),
       ],
     );
@@ -581,7 +591,7 @@ class _FocusRingBorder extends RoundedRectangleBorder {
 
   @override
   ShapeBorder? lerpFrom(ShapeBorder? a, double t) {
-    if (a is _FocusRingBorder)
+    if (a is _FocusRingBorder) {
       return _FocusRingBorder(
         borderRadius: BorderRadiusGeometry.lerp(
           a.borderRadius,
@@ -591,6 +601,7 @@ class _FocusRingBorder extends RoundedRectangleBorder {
         side: BorderSide.lerp(a.side, side, t),
         ring: Color.lerp(a.ring, ring, t),
       );
+    }
     return super.lerpFrom(a, t);
   }
 
