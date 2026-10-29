@@ -34,9 +34,14 @@ void _open(BuildContext context, Block block, ChallengeOrder challenge) {
 
 // Dialogue watches and numbered tasks have separate completion states.
 class DialogueBlockCard extends ConsumerWidget {
-  const DialogueBlockCard({super.key, required this.block});
+  const DialogueBlockCard({
+    super.key,
+    required this.block,
+    this.showAction = true,
+  });
 
   final Block block;
+  final bool showAction;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -95,6 +100,7 @@ class DialogueBlockCard extends ConsumerWidget {
                     section: section,
                     completed: completed,
                     initiallyExpanded: section == active,
+                    showAction: showAction,
                   ),
                 ],
             ],
@@ -112,12 +118,14 @@ class _DialogueCard extends StatefulWidget {
     required this.section,
     required this.completed,
     required this.initiallyExpanded,
+    required this.showAction,
   });
 
   final Block block;
   final _Dialogue section;
   final Set<String> completed;
   final bool initiallyExpanded;
+  final bool showAction;
 
   @override
   State<_DialogueCard> createState() => _DialogueCardState();
@@ -250,28 +258,27 @@ class _DialogueCardState extends State<_DialogueCard> {
                       maxVisibleItems: _showAll ? null : 12,
                       maxHeight: double.infinity,
                     ),
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      style: FilledButton.styleFrom(
-                        textStyle: const TextStyle(
-                          fontFamily: 'Lato',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                    if (widget.showAction) ...[
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                          textStyle: const TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        onPressed: () =>
+                            _open(context, widget.block, next ?? tasks.first),
+                        child: Text(
+                          next == null
+                              ? 'Review tasks'
+                              : done > 0
+                              ? 'Continue task ${RegExp(r'\d+').firstMatch(next.title)?.group(0) ?? tasks.indexOf(next) + 1}'
+                              : 'Start tasks',
                         ),
                       ),
-                      onPressed: () =>
-                          _open(context, widget.block, next ?? tasks.first),
-                      child: Text(
-                        next == null
-                            ? 'Review tasks'
-                            : done > 0
-                            ? 'Continue task ${RegExp(r'\d+').firstMatch(next.title)?.group(0) ?? tasks.indexOf(next) + 1}'
-                            : 'Start tasks',
-                      ),
-                    ),
+                    ],
                   ],
                 ],
               ),

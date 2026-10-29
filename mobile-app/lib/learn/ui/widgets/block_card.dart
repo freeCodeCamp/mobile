@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
 import 'package:freecodecamp/learn/ui/widgets/dialogue_block_card.dart';
@@ -31,11 +32,13 @@ class BlockList extends ConsumerStatefulWidget {
     required this.blocks,
     required this.padding,
     this.header,
+    this.showActions = true,
   });
 
   final List<Block> blocks;
   final EdgeInsets padding;
   final Widget? header;
+  final bool showActions;
 
   @override
   ConsumerState<BlockList> createState() => _BlockListState();
@@ -70,6 +73,7 @@ class _BlockListState extends ConsumerState<BlockList> {
           key: ValueKey(block.dashedName),
           block: block,
           isOpen: isOpen,
+          showAction: widget.showActions,
           onToggle: () => setState(() => _open[block.dashedName] = !isOpen),
         );
       },
@@ -83,16 +87,18 @@ class BlockCard extends ConsumerWidget {
     required this.block,
     required this.isOpen,
     required this.onToggle,
+    this.showAction = true,
   });
 
   final Block block;
   final bool isOpen;
   final VoidCallback onToggle;
+  final bool showAction;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (block.layout == BlockLayout.challengeDialogue) {
-      return DialogueBlockCard(block: block);
+      return DialogueBlockCard(block: block, showAction: showAction);
     }
     final colors = Theme.of(context).colorScheme;
     final completed = ref.watch(
@@ -118,8 +124,13 @@ class BlockCard extends ConsumerWidget {
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: BorderSide(color: colors.outlineVariant),
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: done > 0 && !complete
+                ? colors.primary
+                : colors.outlineVariant,
+            width: done > 0 && !complete ? 2 : 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -178,15 +189,25 @@ class BlockCard extends ConsumerWidget {
                               block.name,
                               style: expanded
                                   ? Theme.of(context).textTheme.titleLarge
-                                  : Theme.of(context).textTheme.titleMedium,
+                                  : Theme.of(context).textTheme.titleMedium
+                                        ?.copyWith(fontSize: 17),
                             ),
-                            if (!expanded && (disabled || done > 0)) ...[
+                            if (!expanded) ...[
                               const SizedBox(height: 4),
                               Text(
-                                disabled ? 'Temporarily unavailable' : progress,
+                                disabled
+                                    ? 'Temporarily unavailable'
+                                    : done > 0
+                                    ? progress
+                                    : countLabel(total, unit),
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: colors.onSurfaceVariant,
+                                  fontWeight: done > 0 && !complete
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  color: done > 0 && !complete
+                                      ? FccDesignColors.of(context).accentText
+                                      : colors.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -258,33 +279,10 @@ class BlockCard extends ConsumerWidget {
                         ),
                         BlockLayout.challengeLink => const SizedBox.shrink(),
                       },
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        style: FilledButton.styleFrom(
-                          textStyle: const TextStyle(
-                            fontFamily: 'Lato',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () => _openChallenge(
-                          context,
-                          block,
-                          (next ?? block.challenges.first).id,
-                        ),
-                        child: Text(
-                          complete
-                              ? 'Review ${unit == 'step' ? 'steps' : block.label.value}'
-                              : done > 0 && unit == 'step'
-                              ? 'Continue step ${block.challenges.indexOf(next!) + 1}'
-                              : done > 0
-                              ? 'Continue ${block.label.value}'
-                              : 'Start ${block.label.value == 'legacy' ? 'learning' : block.label.value}',
-                        ),
-                      ),
+                      if (showAction) ...[
+                        const SizedBox(height: 12),
+                        BlockActionButton(block: block, completed: completed),
+                      ],
                     ],
                   ],
                 ),
@@ -336,7 +334,11 @@ class _ChallengeTile extends StatelessWidget {
                     backgroundColor: colors.surfaceContainer,
                     child: Text(
                       '$index',
-                      style: TextStyle(fontSize: 12, color: colors.onSurface),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: colors.onSurface,
+                      ),
                     ),
                   ),
                 const SizedBox(width: 10),
@@ -350,6 +352,53 @@ class _ChallengeTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class BlockActionButton extends StatelessWidget {
+  const BlockActionButton({
+    super.key,
+    required this.block,
+    required this.completed,
+    this.height = 48,
+  });
+  final Block block;
+  final Set<String> completed;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final next = block.challenges
+        .where((c) => !completed.contains(c.id))
+        .firstOrNull;
+    final done = block.challenges.where((c) => completed.contains(c.id)).length;
+    final unit = blockUnit(block);
+    return FilledButton(
+      style: FilledButton.styleFrom(
+        minimumSize: Size(double.infinity, height),
+        textStyle: const TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 17,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      onPressed: block.challenges.isEmpty
+          ? null
+          : () => _openChallenge(
+              context,
+              block,
+              (next ?? block.challenges.first).id,
+            ),
+      child: Text(
+        next == null
+            ? 'Review ${unit == 'step' ? 'steps' : block.label.value}'
+            : done > 0 && unit == 'step'
+            ? 'Continue step ${block.challenges.indexOf(next) + 1}'
+            : done > 0
+            ? 'Continue ${block.label.value}'
+            : 'Start ${block.label == BlockLabel.legacy ? 'learning' : block.label.value}',
       ),
     );
   }

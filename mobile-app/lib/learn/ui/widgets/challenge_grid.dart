@@ -40,7 +40,7 @@ class ChallengeGrid extends StatelessWidget {
           text: TextSpan(
             text: '8' * digits,
             style: const TextStyle(
-              fontFamily: 'monospace',
+              fontFamily: 'JetBrains Mono',
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -108,22 +108,20 @@ class ChallengeGrid extends StatelessWidget {
                       foregroundColor: done
                           ? design.onSuccessContainer
                           : colors.onSurface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                        side: done
-                            ? BorderSide(
-                                color: design.onSuccessContainer,
-                                width: colors.brightness == Brightness.dark
-                                    ? 1.5
-                                    : 1,
-                              )
-                            : BorderSide(
-                                color: active
-                                    ? colors.primary
-                                    : colors.outlineVariant,
-                              ),
-                      ),
-                    ),
+                      side: done
+                          ? BorderSide(
+                              color: design.onSuccessContainer,
+                              width: colors.brightness == Brightness.dark
+                                  ? 1.5
+                                  : 1,
+                            )
+                          : BorderSide(
+                              color: active
+                                  ? colors.primary
+                                  : colors.outlineVariant,
+                              width: active ? 2 : 1,
+                            ),
+                    ).copyWith(shape: FccTheme.focusShape(context, radius: 8)),
                     onPressed: () => onSelected(challenge),
                     child: done
                         ? Container(
@@ -142,7 +140,7 @@ class ChallengeGrid extends StatelessWidget {
                         : Text(
                             number,
                             style: const TextStyle(
-                              fontFamily: 'monospace',
+                              fontFamily: 'JetBrains Mono',
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
