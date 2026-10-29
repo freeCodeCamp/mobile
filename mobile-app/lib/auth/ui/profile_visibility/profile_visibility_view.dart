@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/profile_visibility/profile_visibility_viewmodel.dart';
-import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileVisibilityView extends ConsumerStatefulWidget {
   const ProfileVisibilityView({super.key});
@@ -16,105 +17,172 @@ class ProfileVisibilityView extends ConsumerStatefulWidget {
 }
 
 class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
-  final _scaffoldKey = GlobalKey<ProfileFormScaffoldState>();
+  Future<void> _save([ProfileUI? draft]) async {
+    final notifier = ref.read(profileVisibilityProvider.notifier);
+    if (draft != null) notifier.update(draft);
+    if (await notifier.save() && mounted) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Saved')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final state = ref.watch(profileVisibilityProvider);
     final notifier = ref.read(profileVisibilityProvider.notifier);
-    return ProfileFormScaffold(
-      key: _scaffoldKey,
-      title: 'Profile visibility',
-      isDirty: state?.isDirty ?? false,
-      saving: state?.saving ?? false,
-      onSave: state == null || !state.isDirty || state.needsRefresh
-          ? null
-          : () async {
-              if (await notifier.save() && mounted) {
-                await _scaffoldKey.currentState?.close();
-              }
-            },
-      child: auth.isLoading && state == null
-          ? const Center(child: CircularProgressIndicator())
-          : auth.hasError
-          ? ErrorRetry(
-              message: 'Unable to load your profile.',
-              onRetry: () => ref.invalidate(authProvider),
-            )
-          : state == null
-          ? Center(
-              child: TextButton(
-                onPressed: () => const LoginRoute().go(context),
-                child: const Text('Sign in to edit your profile'),
-              ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (state.error != null) ...[
-                  ErrorRetry(
-                    message: state.error!,
-                    onRetry: state.saving
-                        ? null
-                        : () async {
-                            if (state.needsRefresh) {
-                              await notifier.refresh();
-                            } else {
-                              await notifier.save();
-                            }
-                          },
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                _VisibilityCard(
-                  children: [
-                    SwitchListTile.adaptive(
-                      title: const Text('Private profile'),
-                      subtitle: const Text(
-                        'Only you can see your profile details when this is on.',
+    final theme = Theme.of(context);
+    final enabled = state != null && !state.saving && !state.needsRefresh;
+    return PopScope(
+      canPop: !(state?.saving ?? false),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile visibility'),
+          leading: BackButton(
+            onPressed: state?.saving ?? false
+                ? null
+                : () => context.canPop()
+                      ? context.pop()
+                      : const ProfileRoute().go(context),
+          ),
+        ),
+        bottomNavigationBar: AppNavigationFooter(
+          selected: AppDestination.account,
+          beforeNavigate: () async =>
+              !(ref.read(profileVisibilityProvider)?.saving ?? false),
+        ),
+        body: SafeArea(
+          top: false,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: auth.isLoading && state == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : auth.hasError
+                  ? ErrorRetry(
+                      message: 'Unable to load your profile.',
+                      onRetry: () => ref.invalidate(authProvider),
+                    )
+                  : state == null
+                  ? Center(
+                      child: TextButton(
+                        onPressed: () => const LoginRoute().go(context),
+                        child: const Text('Sign in to edit your profile'),
                       ),
-                      value: state.draft.isLocked,
-                      onChanged: state.saving || state.needsRefresh
-                          ? null
-                          : (value) => notifier.update(
-                              state.draft.copyWith(isLocked: value),
+                    )
+                  : ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        if (state.error != null) ...[
+                          ErrorRetry(
+                            message: state.error!,
+                            onRetry: state.saving
+                                ? null
+                                : () async {
+                                    if (state.needsRefresh) {
+                                      await notifier.refresh();
+                                    } else {
+                                      await _save();
+                                    }
+                                  },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        Text(
+                          'Who can see your profile',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        SegmentedButton<bool>(
+                          segments: const [
+                            ButtonSegment(
+                              value: false,
+                              icon: Icon(Icons.public),
+                              label: Text('Public'),
                             ),
+                            ButtonSegment(
+                              value: true,
+                              icon: Icon(Icons.lock_outline),
+                              label: Text('Private'),
+                            ),
+                          ],
+                          selected: {state.draft.isLocked},
+                          showSelectedIcon: false,
+                          onSelectionChanged: enabled
+                              ? (selection) => _save(
+                                  state.draft.copyWith(
+                                    isLocked: selection.single,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          state.draft.isLocked
+                              ? 'Only you can see your profile.'
+                              : 'Anyone can see your profile at freecodecamp.org/${state.original.username}.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          'Show on your public profile',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        if (state.draft.isLocked) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'These choices apply when your profile is public.',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                        for (final group in _visibilityGroups) ...[
+                          const SizedBox(height: 16),
+                          Text(
+                            group.title,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          _VisibilityCard(
+                            children: [
+                              for (final (index, field)
+                                  in group.fields.indexed) ...[
+                                if (index > 0) const Divider(height: 1),
+                                SwitchListTile.adaptive(
+                                  title: Text(
+                                    field.label,
+                                    style: theme.textTheme.bodyLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  subtitle: field.subtitle == null
+                                      ? null
+                                      : Text(
+                                          field.subtitle!,
+                                          style: theme.textTheme.bodySmall,
+                                        ),
+                                  value: field.value(state.draft),
+                                  onChanged: enabled
+                                      ? (value) => _save(
+                                          field.update(state.draft, value),
+                                        )
+                                      : null,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Visible on your public profile',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                if (state.draft.isLocked) ...[
-                  Text(
-                    'These choices apply when your profile is public.',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                _VisibilityCard(
-                  children: [
-                    for (final field in _visibilityFields) ...[
-                      if (field != _visibilityFields.first)
-                        const Divider(height: 1),
-                      SwitchListTile.adaptive(
-                        title: Text(field.label),
-                        value: field.value(state.draft),
-                        onChanged: state.saving || state.needsRefresh
-                            ? null
-                            : (value) => notifier.update(
-                                field.update(state.draft, value),
-                              ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
             ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -124,12 +192,12 @@ class _VisibilityCard extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => Material(
     clipBehavior: Clip.antiAlias,
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
+    color: Theme.of(context).colorScheme.surface,
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
     ),
     child: Column(children: children),
   );
@@ -137,59 +205,92 @@ class _VisibilityCard extends StatelessWidget {
 
 typedef _VisibilityField = ({
   String label,
+  String? subtitle,
   bool Function(ProfileUI) value,
   ProfileUI Function(ProfileUI, bool) update,
 });
 
-final List<_VisibilityField> _visibilityFields = [
+typedef _VisibilityGroup = ({String title, List<_VisibilityField> fields});
+
+final List<_VisibilityGroup> _visibilityGroups = [
   (
-    label: 'Name',
-    value: (p) => p.showName,
-    update: (p, v) => p.copyWith(showName: v),
+    title: 'About you',
+    fields: [
+      (
+        label: 'Name',
+        subtitle: null,
+        value: (p) => p.showName,
+        update: (p, v) => p.copyWith(showName: v),
+      ),
+      (
+        label: 'About',
+        subtitle: null,
+        value: (p) => p.showAbout,
+        update: (p, v) => p.copyWith(showAbout: v),
+      ),
+      (
+        label: 'Location',
+        subtitle: null,
+        value: (p) => p.showLocation,
+        update: (p, v) => p.copyWith(showLocation: v),
+      ),
+    ],
   ),
   (
-    label: 'About and join date',
-    value: (p) => p.showAbout,
-    update: (p, v) => p.copyWith(showAbout: v),
+    title: 'Progress',
+    fields: [
+      (
+        label: 'Points',
+        subtitle: null,
+        value: (p) => p.showPoints,
+        update: (p, v) => p.copyWith(showPoints: v),
+      ),
+      (
+        label: 'Activity heatmap',
+        subtitle: null,
+        value: (p) => p.showHeatMap,
+        update: (p, v) => p.copyWith(showHeatMap: v),
+      ),
+      (
+        label: 'Certifications',
+        subtitle: null,
+        value: (p) => p.showCerts,
+        update: (p, v) => p.copyWith(showCerts: v),
+      ),
+      (
+        label: 'Timeline',
+        subtitle: null,
+        value: (p) => p.showTimeLine,
+        update: (p, v) => p.copyWith(showTimeLine: v),
+      ),
+    ],
   ),
   (
-    label: 'Location',
-    value: (p) => p.showLocation,
-    update: (p, v) => p.copyWith(showLocation: v),
+    title: 'Work',
+    fields: [
+      (
+        label: 'Portfolio',
+        subtitle: null,
+        value: (p) => p.showPortfolio,
+        update: (p, v) => p.copyWith(showPortfolio: v),
+      ),
+      (
+        label: 'Experience',
+        subtitle: null,
+        value: (p) => p.showExperience,
+        update: (p, v) => p.copyWith(showExperience: v),
+      ),
+    ],
   ),
   (
-    label: 'Supporter status',
-    value: (p) => p.showDonation,
-    update: (p, v) => p.copyWith(showDonation: v),
-  ),
-  (
-    label: 'Points',
-    value: (p) => p.showPoints,
-    update: (p, v) => p.copyWith(showPoints: v),
-  ),
-  (
-    label: 'Activity and streaks',
-    value: (p) => p.showHeatMap,
-    update: (p, v) => p.copyWith(showHeatMap: v),
-  ),
-  (
-    label: 'Certifications',
-    value: (p) => p.showCerts,
-    update: (p, v) => p.copyWith(showCerts: v),
-  ),
-  (
-    label: 'Portfolio',
-    value: (p) => p.showPortfolio,
-    update: (p, v) => p.copyWith(showPortfolio: v),
-  ),
-  (
-    label: 'Experience',
-    value: (p) => p.showExperience,
-    update: (p, v) => p.copyWith(showExperience: v),
-  ),
-  (
-    label: 'Completed challenges',
-    value: (p) => p.showTimeLine,
-    update: (p, v) => p.copyWith(showTimeLine: v),
+    title: 'Support',
+    fields: [
+      (
+        label: 'Supporter badge',
+        subtitle: 'Shows that you donate to freeCodeCamp',
+        value: (p) => p.showDonation,
+        update: (p, v) => p.copyWith(showDonation: v),
+      ),
+    ],
   ),
 ];
