@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/profile_experience/profile_experience_viewmodel.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 
 class ProfileExperienceView extends ConsumerStatefulWidget {
   const ProfileExperienceView({super.key, this.experienceId});
@@ -87,7 +88,6 @@ class _ProfileExperienceViewState extends ConsumerState<ProfileExperienceView> {
       profileExperienceProvider(widget.experienceId).notifier,
     );
     final available = form != null && form.available;
-    final colors = Theme.of(context).colorScheme;
     return ProfileFormScaffold(
       key: _formKey,
       title: widget.experienceId == null ? 'Add experience' : 'Edit experience',
@@ -148,9 +148,10 @@ class _ProfileExperienceViewState extends ConsumerState<ProfileExperienceView> {
             ),
             ProfileFormField(
               label: 'Description',
+              hintText: 'What you did and what you learned',
               controller: _description,
               maxLength: 500,
-              maxLines: 6,
+              maxLines: 4,
               errorText: form.errors['description'],
               enabled: !form.saving,
               onChanged: (value) => notifier.update(description: value),
@@ -158,14 +159,7 @@ class _ProfileExperienceViewState extends ConsumerState<ProfileExperienceView> {
             if (widget.experienceId != null) ...[
               OutlinedButton.icon(
                 onPressed: form.saving ? null : _delete,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: colors.error,
-                  backgroundColor: Colors.transparent,
-                  side: BorderSide(color: colors.outlineVariant),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                style: FccTheme.dangerOutlineStyle(context),
                 icon: const Icon(Icons.delete_outline),
                 label: const Text('Delete experience'),
               ),
@@ -238,7 +232,7 @@ class _MonthYearField extends StatelessWidget {
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(
-        color: errorText == null ? colors.outlineVariant : colors.error,
+        color: errorText == null ? colors.outline : colors.error,
       ),
     );
     final decoration = InputDecoration(
@@ -255,7 +249,7 @@ class _MonthYearField extends StatelessWidget {
       ),
     );
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -273,7 +267,7 @@ class _MonthYearField extends StatelessWidget {
                 TextButton(
                   onPressed: enabled ? () => onChanged('') : null,
                   style: TextButton.styleFrom(
-                    minimumSize: const Size(0, 24),
+                    minimumSize: const Size(44, 44),
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),

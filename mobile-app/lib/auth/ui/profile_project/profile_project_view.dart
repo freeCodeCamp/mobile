@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/profile_project/profile_project_viewmodel.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 
 class ProfileProjectView extends ConsumerStatefulWidget {
   const ProfileProjectView({super.key, this.projectId});
@@ -101,36 +101,55 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
                 message: message,
                 onDismiss: notifier.dismissError,
               ),
-            if (image.isNotEmpty) ...[
-              Text(
-                'Project image',
-                style: Theme.of(
-                  context,
-                ).textTheme.labelLarge?.copyWith(color: colors.onSurface),
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: image,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => ColoredBox(
-                    color: colors.surfaceContainer,
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => ColoredBox(
-                    color: colors.surfaceContainer,
-                    child: Icon(
-                      Icons.image_outlined,
-                      color: colors.onSurfaceVariant,
+            Text(
+              'Project image',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 8),
+            ProfileDashedBorder(
+              color: colors.outline,
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    OutlinedButton.icon(
+                      style: FccTheme.compactOutlineStyle(context).copyWith(
+                        shape: FccTheme.focusShape(
+                          context,
+                          radius: 999,
+                          color: FccDesignColors.of(context).accentText,
+                        ),
+                      ),
+                      onPressed: null,
+                      icon: const Icon(Icons.image_outlined, size: 18),
+                      label: Text(image.isEmpty ? 'Add image' : 'Change image'),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Optional. Landscape images work best.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 13,
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-            ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Project image changes are not available in the app yet.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 18),
             ProfileFormField(
               label: 'Project title',
               hintText: 'e.g. Weather dashboard',
@@ -150,9 +169,10 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
             ),
             ProfileFormField(
               label: 'Description',
+              hintText: 'What it does and what you used to build it',
               controller: _description,
               maxLength: 288,
-              maxLines: 6,
+              maxLines: 4,
               errorText: form.errors['description'],
               enabled: !form.saving,
               onChanged: (value) => notifier.update(description: value),
@@ -160,14 +180,7 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
             if (widget.projectId != null) ...[
               OutlinedButton.icon(
                 onPressed: form.saving ? null : _delete,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: colors.error,
-                  backgroundColor: Colors.transparent,
-                  side: BorderSide(color: colors.outlineVariant),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                style: FccTheme.dangerOutlineStyle(context),
                 icon: const Icon(Icons.delete_outline),
                 label: const Text('Delete project'),
               ),
