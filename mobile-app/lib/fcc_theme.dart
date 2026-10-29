@@ -544,8 +544,12 @@ class FccTheme {
           dangerPressed: Color(dark ? 0xFF880B09 : 0xFFC2185B),
           dangerOutlinePressed: Color(dark ? 0xFF5F0705 : 0xFFFFE8F0),
           donateContainer: Color(dark ? 0xFF5B0928 : 0xFFFFE8F0),
-          heatmapLow: Color(dark ? 0xFF3E329C : 0xFFB8ADF1),
-          heatmapMid: Color(dark ? 0xFF8381FF : 0xFF8978E5),
+          heatmapLow: dark
+              ? const Color(0xFF3E329C)
+              : Color.lerp(tint, accent, .3)!,
+          heatmapMid: dark
+              ? const Color(0xFF8381FF)
+              : Color.lerp(tint, accent, .65)!,
           heatmapHigh: Color(dark ? 0xFFBBBFFF : 0xFF5B4BDB),
           successBorder: Color(dark ? 0xFF03572B : 0xFF02743B),
           heroForeground: const Color(0xFFFFF8EC),
