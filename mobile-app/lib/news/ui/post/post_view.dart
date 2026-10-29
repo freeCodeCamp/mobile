@@ -7,7 +7,7 @@ import 'package:freecodecamp/news/ui/widgets/bookmark_button.dart';
 import 'package:freecodecamp/news/ui/widgets/news_image.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/routing/news.dart';
-import 'package:freecodecamp/utils/date_utils.dart';
+import 'package:freecodecamp/news/news_format.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 
 class NewsPostHeader extends StatelessWidget {
@@ -27,16 +27,16 @@ class NewsPostHeader extends StatelessWidget {
             TagButton(
               tagName: post.tags.first.name,
               tagSlug: post.tags.first.slug,
-              compact: true,
+              variant: TagButtonVariant.articleEyebrow,
             ),
             const SizedBox(height: 10),
           ],
           Text(
             post.title,
             style: const TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               height: 1.25,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 18),
@@ -50,8 +50,8 @@ class NewsPostHeader extends StatelessWidget {
                 NewsImage(
                   url: post.author.profilePicture,
                   isAvatar: true,
-                  width: 42,
-                  height: 42,
+                  width: 40,
+                  height: 40,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -60,13 +60,16 @@ class NewsPostHeader extends StatelessWidget {
                     children: [
                       Text(
                         post.author.name,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '${parseDate(post.publishedAt).toLowerCase()} · ${post.readTimeInMinutes} min read',
+                        '${newsDate(post.publishedAt)} · ${post.readTimeInMinutes} min read',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: colors.onSurfaceVariant,
                         ),
                       ),
@@ -133,7 +136,7 @@ class NewsPostView extends ConsumerWidget {
                         'More on these topics',
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                       const SizedBox(height: 12),

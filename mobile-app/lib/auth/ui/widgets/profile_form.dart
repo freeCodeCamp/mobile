@@ -24,13 +24,14 @@ Future<bool> confirmProfileDiscard(BuildContext context) async =>
             children: [
               FilledButton(
                 style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   textStyle: const TextStyle(
                     fontFamily: 'Lato',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
                 onPressed: () => Navigator.pop(context, false),
@@ -38,20 +39,7 @@ Future<bool> confirmProfileDiscard(BuildContext context) async =>
               ),
               const SizedBox(height: 10),
               OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.error,
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  textStyle: const TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                style: FccTheme.dangerOutlineStyle(context),
                 onPressed: () => Navigator.pop(context, true),
                 child: const Text('Discard'),
               ),
@@ -203,10 +191,10 @@ class ProfileFormField extends StatelessWidget {
     final colors = theme.colorScheme;
     final edge = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: colors.outlineVariant),
+      borderSide: BorderSide(color: colors.outline),
     );
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -224,7 +212,24 @@ class ProfileFormField extends StatelessWidget {
             maxLength: maxLength,
             maxLines: maxLines,
             keyboardType: keyboardType,
-            style: style,
+            style: theme.textTheme.bodyLarge
+                ?.copyWith(height: 1.5, letterSpacing: 0)
+                .merge(style),
+            buildCounter: maxLength == null
+                ? null
+                : (
+                    context, {
+                    required currentLength,
+                    required isFocused,
+                    maxLength,
+                  }) => Text(
+                    '$currentLength / $maxLength characters',
+                    textAlign: TextAlign.right,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 13,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
             autocorrect: keyboardType != TextInputType.url,
             textInputAction: maxLines > 1
                 ? TextInputAction.newline
@@ -238,7 +243,11 @@ class ProfileFormField extends StatelessWidget {
               helperMaxLines: 3,
               filled: true,
               fillColor: colors.surface,
-              contentPadding: const EdgeInsets.all(14),
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: maxLines > 1 ? 18 : 12,
+              ),
               border: edge,
               enabledBorder: edge,
               focusedBorder: edge.copyWith(
@@ -409,7 +418,7 @@ class ProfileFormSectionTitle extends StatelessWidget {
     child: Text(
       title,
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-        color: FccDesignColors.of(context).accentText,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
     ),
   );

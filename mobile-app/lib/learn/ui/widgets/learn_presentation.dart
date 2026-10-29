@@ -3,15 +3,12 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 
 Color blockLabelColor(BuildContext context, BlockLabel label) {
-  final dark = Theme.of(context).brightness == Brightness.dark;
+  final design = FccDesignColors.of(context);
   return switch (label) {
-    BlockLabel.workshop ||
-    BlockLabel.practice => Color(dark ? 0xFFC8B0FF : 0xFF8B3FD9),
-    BlockLabel.lab || BlockLabel.learn => Color(dark ? 0xFF5FD3D6 : 0xFF1E7F46),
-    BlockLabel.quiz ||
-    BlockLabel.review ||
-    BlockLabel.exam => Color(dark ? 0xFFFFAF85 : 0xFFB93D0A),
-    _ => Color(dark ? 0xFF8EC5FF : 0xFF1F6FD1),
+    BlockLabel.workshop || BlockLabel.practice => design.workshop,
+    BlockLabel.lab || BlockLabel.learn => design.lab,
+    BlockLabel.quiz || BlockLabel.review || BlockLabel.exam => design.quiz,
+    _ => design.lecture,
   };
 }
 
@@ -40,10 +37,10 @@ class LearnEyebrow extends StatelessWidget {
     text.isEmpty ? text : '${text[0].toUpperCase()}${text.substring(1)}',
     style: TextStyle(
       fontFamily: 'Lato',
-      fontSize: 11,
+      fontSize: 13,
       height: 1.4,
       letterSpacing: 0,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
     ),
   );
@@ -65,7 +62,7 @@ class LearnProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LinearProgressIndicator(
     value: total == 0 ? 0 : done / total,
-    minHeight: 5,
+    minHeight: 6,
     borderRadius: BorderRadius.circular(8),
     color: color ?? Theme.of(context).colorScheme.primary,
     backgroundColor:
@@ -75,17 +72,25 @@ class LearnProgress extends StatelessWidget {
 }
 
 class LearnStatus extends StatelessWidget {
-  const LearnStatus({super.key, required this.complete, this.active = false});
+  const LearnStatus({
+    super.key,
+    required this.complete,
+    this.active = false,
+    this.module = false,
+    this.icon,
+  });
   final bool complete;
   final bool active;
+  final bool module;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final success = FccDesignColors.of(context).success;
     return Container(
-      width: 28,
-      height: 28,
+      width: 26,
+      height: 26,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: complete ? success : colors.surface,
@@ -94,15 +99,17 @@ class LearnStatus extends StatelessWidget {
               ? success
               : active
               ? colors.primary
-              : colors.outlineVariant,
-          width: active ? 2 : 1.5,
+              : colors.outline,
+          width: module ? 3 : 2,
         ),
       ),
       child: complete
           ? Icon(Icons.check, size: 18, color: colors.surface)
           : active
-          ? Icon(Icons.circle, size: 11, color: colors.primary)
-          : null,
+          ? Icon(Icons.circle, size: 8, color: colors.primary)
+          : icon == null
+          ? null
+          : Icon(icon, size: 16, color: colors.onSurfaceVariant),
     );
   }
 }

@@ -28,7 +28,7 @@ class PostTile extends StatelessWidget {
       maxLines: featured ? 4 : 3,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
-        fontSize: featured ? 23 : 17,
+        fontSize: featured ? 20 : 15,
         fontWeight: FontWeight.w700,
         height: 1.3,
         color: colors.onSurface,
@@ -57,7 +57,12 @@ class PostTile extends StatelessWidget {
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  NewsImage(url: post.coverImage?.url, width: 104, height: 80),
+                  NewsImage(
+                    url: post.coverImage?.url,
+                    width: 104,
+                    height: 70,
+                    radius: 8,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -67,7 +72,7 @@ class PostTile extends StatelessWidget {
                           TagButton(
                             tagName: tag.name,
                             tagSlug: tag.slug,
-                            compact: true,
+                            variant: TagButtonVariant.listEyebrow,
                           ),
                         title,
                         const SizedBox(height: 6),
@@ -94,8 +99,8 @@ class PostTile extends StatelessWidget {
             NewsImage(
               url: post.author.profilePicture,
               isAvatar: true,
-              width: 28,
-              height: 28,
+              width: 24,
+              height: 24,
             ),
             const SizedBox(width: 8),
           ],
@@ -105,7 +110,7 @@ class PostTile extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: withAvatar ? 14 : 13,
                 height: 1.4,
                 color: colors.onSurfaceVariant,
               ),

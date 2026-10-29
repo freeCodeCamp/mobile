@@ -2,51 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/news.dart';
 
+enum TagButtonVariant { listEyebrow, articleEyebrow, link }
+
 class TagButton extends StatelessWidget {
   const TagButton({
     super.key,
     required this.tagName,
     required this.tagSlug,
-    this.compact = false,
+    this.variant = TagButtonVariant.link,
   });
 
   final String tagName;
   final String tagSlug;
-  final bool compact;
+  final TagButtonVariant variant;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final link = variant == TagButtonVariant.link;
+    final listEyebrow = variant == TagButtonVariant.listEyebrow;
     return Padding(
-      padding: EdgeInsets.only(right: 6, bottom: compact ? 0 : 8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(30),
-        onTap: () =>
-            NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context),
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width * (compact ? .5 : .7),
+      padding: EdgeInsets.only(right: 6, bottom: link ? 8 : 0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * (link ? .7 : .5),
+        ),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            minimumSize: const Size(44, 44),
+            padding: EdgeInsets.zero,
+            foregroundColor: FccDesignColors.of(context).accentText,
+            textStyle: TextStyle(
+              fontFamily: listEyebrow ? 'JetBrains Mono' : 'Lato',
+              fontSize: listEyebrow
+                  ? 12
+                  : link
+                  ? 15
+                  : 14,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0,
+              decoration: link ? TextDecoration.underline : TextDecoration.none,
+            ),
           ),
-          padding: compact
-              ? const EdgeInsets.symmetric(vertical: 3)
-              : const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-          decoration: compact
-              ? null
-              : ShapeDecoration(
-                  color: colors.surfaceContainer,
-                  shape: const StadiumBorder(),
-                ),
+          onPressed: () =>
+              NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context),
           child: Text(
             '#$tagName',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: 'Lato',
-              fontSize: compact ? 12 : 13,
-              fontWeight: compact ? FontWeight.w500 : FontWeight.w600,
-              color: FccDesignColors.of(context).accentText,
-              letterSpacing: 0,
-            ),
           ),
         ),
       ),
