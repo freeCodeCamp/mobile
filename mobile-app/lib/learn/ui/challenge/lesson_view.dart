@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
@@ -15,17 +16,19 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/questions.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/review_content.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/task_explanation.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
+import 'package:freecodecamp/services/auth_service.dart';
 
-class LessonView extends StatefulWidget {
+class LessonView extends ConsumerStatefulWidget {
   const LessonView({super.key, required this.challenge, required this.block});
   final Challenge challenge;
   final Block block;
   @override
-  State<LessonView> createState() => _LessonViewState();
+  ConsumerState<LessonView> createState() => _LessonViewState();
 }
 
-class _LessonViewState extends State<LessonView> {
+class _LessonViewState extends ConsumerState<LessonView> {
   late final _questions = widget.challenge.questions.map(questionItem).toList();
   late final _selected = List<int?>.filled(_questions.length, null);
   late final _checked = List.filled(_questions.length, false);
@@ -80,6 +83,13 @@ class _LessonViewState extends State<LessonView> {
   @override
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
+    final completed = ref.watch(
+      authProvider.select(
+        (auth) =>
+            auth.value?.completedChallenges.any((c) => c.id == challenge.id) ??
+            false,
+      ),
+    );
     final colors = Theme.of(context).colorScheme;
     final current = _current;
     final review = challenge.challengeType == 31;
@@ -155,6 +165,16 @@ class _LessonViewState extends State<LessonView> {
     final scaffold = Scaffold(
       appBar: challengeAppBar(
         context,
+        actions: [
+          if (completed)
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Tooltip(
+                message: 'Lesson completed',
+                child: LearnStatus(complete: true),
+              ),
+            ),
+        ],
         leading: current == null
             ? null
             : BackButton(onPressed: () => _show(null)),
@@ -255,6 +275,10 @@ class _LessonViewState extends State<LessonView> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (current != null && _questions.length > 1) ...[
+              _questionNavigation(context, current),
+              const SizedBox(height: 8),
+            ],
             if (current == null && review && !shortViewport)
               ..._reviewConfirmations(),
             if (current == null && _questions.isNotEmpty)
@@ -301,7 +325,7 @@ class _LessonViewState extends State<LessonView> {
                     ),
                     onPressed: () => _show(null),
                   );
-                  final next = _passed
+                  final checkAnswer = _passed
                       ? CompleteButton(
                           challenge: challenge,
                           block: widget.block,
@@ -315,42 +339,25 @@ class _LessonViewState extends State<LessonView> {
                               _checked[current] &&
                                   _selected[current] ==
                                       _questions[current].solution
-                              ? 'Next question'
+                              ? 'Answer checked'
                               : _checked[current]
                               ? 'Pick another answer'
                               : 'Check answer',
                           onPressed:
-                              _selected[current] == null ||
-                                  (_checked[current] &&
-                                      _selected[current] !=
-                                          _questions[current].solution)
+                              _selected[current] == null || _checked[current]
                               ? null
-                              : () {
-                                  if (_checked[current]) {
-                                    final next =
-                                        List.generate(
-                                          _questions.length,
-                                          (i) =>
-                                              (current + i + 1) %
-                                              _questions.length,
-                                        ).firstWhere(
-                                          (i) =>
-                                              !_checked[i] ||
-                                              _selected[i] !=
-                                                  _questions[i].solution,
-                                        );
-                                    _show(next);
-                                  } else {
-                                    setState(() => _checked[current] = true);
-                                  }
-                                },
+                              : () => setState(() => _checked[current] = true),
                         );
                   if (constraints.maxWidth < 360 &&
                       MediaQuery.textScalerOf(context).scale(16) > 20) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
-                      children: [lesson, const SizedBox(height: 8), next],
+                      children: [
+                        lesson,
+                        const SizedBox(height: 8),
+                        checkAnswer,
+                      ],
                     );
                   }
                   return Row(
@@ -358,7 +365,7 @@ class _LessonViewState extends State<LessonView> {
                     children: [
                       Expanded(child: lesson),
                       const SizedBox(width: 8),
-                      Expanded(flex: 2, child: next),
+                      Expanded(flex: 2, child: checkAnswer),
                     ],
                   );
                 },
@@ -375,6 +382,42 @@ class _LessonViewState extends State<LessonView> {
       child: scaffold,
     );
   }
+
+  Widget _questionNavigation(BuildContext context, int current) =>
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final previous = ChallengeButton(
+            label: 'Previous',
+            secondary: true,
+            style: _buttonStyle(context),
+            onPressed: current == 0 ? null : () => _show(current - 1),
+          );
+          final next = ChallengeButton(
+            label: 'Next question',
+            secondary: true,
+            style: _buttonStyle(context),
+            trailingIcon: Icons.arrow_forward,
+            onPressed: current == _questions.length - 1
+                ? null
+                : () => _show(current + 1),
+          );
+          if (constraints.maxWidth < 360 &&
+              MediaQuery.textScalerOf(context).scale(16) > 20) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [previous, const SizedBox(height: 8), next],
+            );
+          }
+          return Row(
+            children: [
+              Expanded(child: previous),
+              const SizedBox(width: 8),
+              Expanded(flex: 2, child: next),
+            ],
+          );
+        },
+      );
 
   ButtonStyle _buttonStyle(BuildContext context) => FilledButton.styleFrom(
     minimumSize: const Size(double.infinity, 50),

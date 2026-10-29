@@ -1,9 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
@@ -33,7 +32,7 @@ void _open(BuildContext context, Block block, ChallengeOrder challenge) {
   ).push<void>(context);
 }
 
-/// Dialogue watches and numbered tasks have separate completion states.
+// Dialogue watches and numbered tasks have separate completion states.
 class DialogueBlockCard extends ConsumerWidget {
   const DialogueBlockCard({super.key, required this.block});
 
@@ -153,6 +152,12 @@ class _DialogueCardState extends State<_DialogueCard> {
     final done = tasks
         .where((task) => widget.completed.contains(task.id))
         .length;
+    final next = tasks
+        .where((task) => !widget.completed.contains(task.id))
+        .firstOrNull;
+    final watched = widget.completed.contains(header.id);
+    final complete = watched && done == tasks.length;
+    final active = watched || done > 0;
     final progress = done == 0
         ? countLabel(tasks.length, 'task')
         : '$done of ${countLabel(tasks.length, 'task')}';
@@ -178,6 +183,18 @@ class _DialogueCardState extends State<_DialogueCard> {
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
+                    if (!expanded) ...[
+                      Semantics(
+                        label: complete
+                            ? 'Completed'
+                            : active
+                            ? 'In progress'
+                            : 'Not started',
+                        excludeSemantics: true,
+                        child: LearnStatus(complete: complete, active: active),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,15 +239,38 @@ class _DialogueCardState extends State<_DialogueCard> {
                   _WatchDialogue(
                     block: widget.block,
                     challenge: header,
-                    watched: widget.completed.contains(header.id),
+                    watched: watched,
                   ),
                   if (tasks.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    _TaskGrid(
-                      block: widget.block,
-                      tasks: tasks,
+                    ChallengeGrid(
+                      challenges: tasks,
                       completed: widget.completed,
-                      showAll: _showAll,
+                      onSelected: (task) => _open(context, widget.block, task),
+                      maxVisibleItems: _showAll ? null : 12,
+                      maxHeight: double.infinity,
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        textStyle: const TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () =>
+                          _open(context, widget.block, next ?? tasks.first),
+                      child: Text(
+                        next == null
+                            ? 'Review tasks'
+                            : done > 0
+                            ? 'Continue task ${RegExp(r'\d+').firstMatch(next.title)?.group(0) ?? tasks.indexOf(next) + 1}'
+                            : 'Start tasks',
+                      ),
                     ),
                   ],
                 ],
@@ -365,119 +405,6 @@ class _WatchDialogue extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _TaskGrid extends StatelessWidget {
-  const _TaskGrid({
-    required this.block,
-    required this.tasks,
-    required this.completed,
-    required this.showAll,
-  });
-
-  final Block block;
-  final List<ChallengeOrder> tasks;
-  final Set<String> completed;
-  final bool showAll;
-
-  String _number(int index) =>
-      RegExp(r'\d+').firstMatch(tasks[index].title)?.group(0) ?? '${index + 1}';
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final design = FccDesignColors.of(context);
-    final current = tasks
-        .where((task) => !completed.contains(task.id))
-        .firstOrNull;
-    const style = TextStyle(fontSize: 14, fontWeight: FontWeight.w700);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final digits = List.generate(
-          tasks.length,
-          _number,
-        ).fold(1, (length, number) => math.max(length, number.length));
-        final numeral = TextPainter(
-          text: TextSpan(
-            text: '8' * digits,
-            style: style.copyWith(fontFamily: 'Lato'),
-          ),
-          textScaler: MediaQuery.textScalerOf(context),
-          textDirection: Directionality.of(context),
-        )..layout();
-        final minSide = math.max(
-          44.0,
-          math.max(numeral.width, numeral.height) + 16,
-        );
-        numeral.dispose();
-        final columns = math.max(
-          1,
-          ((constraints.maxWidth + 6) / (minSide + 6)).floor(),
-        );
-        return GridView.builder(
-          shrinkWrap: true,
-          primary: false,
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
-            childAspectRatio: 1,
-            mainAxisSpacing: 6,
-            crossAxisSpacing: 6,
-          ),
-          itemCount: showAll ? tasks.length : math.min(12, tasks.length),
-          itemBuilder: (context, index) {
-            final task = tasks[index];
-            final done = completed.contains(task.id);
-            final active = task == current;
-            return Semantics(
-              label:
-                  '${task.title}${done
-                      ? ', completed'
-                      : active
-                      ? ', current'
-                      : ''}',
-              button: true,
-              excludeSemantics: true,
-              onTap: () => _open(context, block, task),
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  foregroundColor: done
-                      ? design.onSuccessContainer
-                      : colors.onSurface,
-                  backgroundColor: done
-                      ? design.successContainer
-                      : colors.surface,
-                  textStyle: style.copyWith(fontFamily: 'Lato'),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(9),
-                    side: done
-                        ? colors.brightness == Brightness.dark
-                              ? BorderSide(
-                                  color: design.onSuccessContainer,
-                                  width: 1.5,
-                                )
-                              : BorderSide.none
-                        : BorderSide(
-                            color: active
-                                ? colors.primary
-                                : colors.outlineVariant,
-                            width: active ? 2 : 1,
-                          ),
-                  ),
-                ),
-                onPressed: () => _open(context, block, task),
-                child: Text(_number(index)),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }

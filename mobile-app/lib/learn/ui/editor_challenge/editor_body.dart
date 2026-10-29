@@ -5,6 +5,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+import 'package:freecodecamp/learn/ui/widgets/socrates_icon.dart';
 import 'package:html/parser.dart' as html_parser;
 
 class TestList extends StatelessWidget {
@@ -62,7 +63,7 @@ class TestList extends StatelessWidget {
                           fontWeight: FontWeight.w800,
                         ),
                       ),
-                      icon: const Icon(Icons.auto_awesome, size: 18),
+                      icon: SocratesIcon(color: accent),
                       label: const Text(
                         'Ask Socrates for a hint',
                         textAlign: TextAlign.center,
@@ -147,11 +148,7 @@ class _HintPreview extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 14,
                   backgroundColor: colors.primary,
-                  child: Icon(
-                    Icons.auto_awesome,
-                    size: 16,
-                    color: colors.onPrimary,
-                  ),
+                  child: SocratesIcon(size: 16, color: colors.onPrimary),
                 ),
               ),
               const SizedBox(width: 10),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/controllers/profile_controller.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
+import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
@@ -24,6 +25,8 @@ class _AccountViewState extends ConsumerState<AccountView> {
 
   Future<void> _signOut() async {
     if (_signingOut) return;
+    final confirmed = await showLogOutDialog(context);
+    if (!confirmed || !mounted || _signingOut) return;
     setState(() => _signingOut = true);
     try {
       await ref.read(authProvider.notifier).signOut();

@@ -15,6 +15,7 @@ import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
+import 'package:freecodecamp/learn/ui/widgets/socrates_icon.dart';
 import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -790,11 +791,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                         CircleAvatar(
                           radius: 14,
                           backgroundColor: colors.primary,
-                          child: Icon(
-                            Icons.auto_awesome_outlined,
-                            color: colors.onPrimary,
-                            size: 18,
-                          ),
+                          child: SocratesIcon(color: colors.onPrimary),
                         ),
                         const SizedBox(width: 8),
                       ],

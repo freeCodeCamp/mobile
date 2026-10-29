@@ -121,243 +121,249 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 : _close,
           ),
         ),
-        body: Stack(
-          children: [
-            SafeArea(
-              top: false,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 520),
-                    child: AutofillGroup(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            state.showOtpField
-                                ? 'Check your email'
-                                : 'Sign in to freeCodeCamp',
-                            style: theme.textTheme.headlineMedium,
-                          ),
-                          const SizedBox(height: 14),
-                          if (state.showOtpField) ...[
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  const TextSpan(
-                                    text: 'We sent a 6-digit code to ',
-                                  ),
-                                  TextSpan(
-                                    text: _emailController.text.trim(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const TextSpan(text: '.'),
-                                ],
-                              ),
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colors.onSurfaceVariant,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: state.isLoading ? null : _changeEmail,
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                              ),
-                              child: const Text('Change email'),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Sign-in code',
-                              style: theme.textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            _CodeInput(
-                              controller: _otpController,
-                              enabled: !state.isLoading,
-                              incorrect: state.incorrectOtp,
-                              onSubmitted: (_) {
-                                if (_otpPattern.hasMatch(_otpController.text)) {
-                                  _verifyOtp();
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            OutlinedButton.icon(
-                              onPressed: state.isLoading ? null : _pasteCode,
-                              icon: const Icon(Icons.content_paste, size: 18),
-                              label: const Text('Paste code'),
-                            ),
-                          ] else ...[
-                            for (final provider in const [
-                              ('Google', 'google-oauth2', 'google'),
-                              ('GitHub', 'github', 'github'),
-                              ('Apple', 'apple', 'apple'),
-                            ]) ...[
-                              _ProviderButton(
-                                label: 'Continue with ${provider.$1}',
-                                logo: 'assets/images/${provider.$3}-logo.png',
-                                monochrome: provider.$3 != 'google',
-                                onPressed: state.isLoading
-                                    ? null
-                                    : () => _loginWithProvider(provider.$2),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Row(
-                                children: [
-                                  const Expanded(child: Divider()),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    child: Text(
-                                      'or use your email',
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: colors.onSurfaceVariant,
-                                          ),
-                                    ),
-                                  ),
-                                  const Expanded(child: Divider()),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text('Email', style: theme.textTheme.titleMedium),
-                            const SizedBox(height: 8),
-                            TextField(
-                              enabled: !state.isLoading,
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.done,
-                              autofillHints: const [AutofillHints.email],
-                              autocorrect: false,
-                              decoration: const InputDecoration(
-                                hintText: 'you@example.com',
-                              ),
-                              onSubmitted: (_) {
-                                if (_emailPattern.hasMatch(
-                                  _emailController.text.trim(),
-                                )) {
-                                  _sendOtp();
-                                }
-                              },
-                            ),
-                          ],
-                          const SizedBox(height: 16),
-                          ListenableBuilder(
-                            listenable: Listenable.merge([
-                              _emailController,
-                              _otpController,
-                            ]),
-                            builder: (context, _) {
-                              final canSubmit =
-                                  !state.isLoading &&
-                                  (state.showOtpField
-                                      ? _otpPattern.hasMatch(
-                                          _otpController.text,
-                                        )
-                                      : _emailPattern.hasMatch(
-                                          _emailController.text.trim(),
-                                        ));
-                              return SizedBox(
-                                width: double.infinity,
-                                child: FilledButton(
-                                  style: FilledButton.styleFrom(
-                                    minimumSize: const Size.fromHeight(52),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: canSubmit
-                                      ? state.showOtpField
-                                            ? _verifyOtp
-                                            : _sendOtp
-                                      : null,
-                                  child: Text(
-                                    state.showOtpField
-                                        ? 'Sign in'
-                                        : 'Email me a sign-in code',
+        body: AbsorbPointer(
+          absorbing: state.isLoading,
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.showOtpField
+                              ? 'Check your email'
+                              : 'Sign in to freeCodeCamp',
+                          style: theme.textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 14),
+                        if (state.showOtpField) ...[
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'We sent a 6-digit code to ',
+                                ),
+                                TextSpan(
+                                  text: _emailController.text.trim(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              );
+                                const TextSpan(text: '.'),
+                              ],
+                            ),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: colors.onSurfaceVariant,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: state.isLoading ? null : _changeEmail,
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Text('Change email'),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Sign-in code',
+                            style: theme.textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          _CodeInput(
+                            controller: _otpController,
+                            enabled: !state.isLoading,
+                            incorrect: state.incorrectOtp,
+                            onSubmitted: (_) {
+                              if (_otpPattern.hasMatch(_otpController.text)) {
+                                _verifyOtp();
+                              }
                             },
                           ),
-                          const SizedBox(height: 20),
-                          if (state.showOtpField)
-                            Center(
-                              child: TextButton(
-                                onPressed: state.isLoading
-                                    ? null
-                                    : () => _sendOtp(resend: true),
-                                child: const Text('Resend code'),
-                              ),
-                            )
-                          else
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  const TextSpan(
-                                    text:
-                                        'freeCodeCamp is free and your account is private by default. '
-                                        'We use your email address to connect you to your account. '
-                                        'You must be at least 13 years old to create an account. '
-                                        'By continuing, you agree to our ',
-                                  ),
-                                  TextSpan(
-                                    text: 'Terms of Service',
-                                    style: TextStyle(
-                                      color: FccDesignColors.of(
-                                        context,
-                                      ).accentText,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                    recognizer: _termsRecognizer,
-                                  ),
-                                  const TextSpan(text: ' and '),
-                                  TextSpan(
-                                    text: 'Privacy Policy',
-                                    style: TextStyle(
-                                      color: FccDesignColors.of(
-                                        context,
-                                      ).accentText,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                    recognizer: _privacyRecognizer,
-                                  ),
-                                  const TextSpan(text: '.'),
-                                ],
-                              ),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                height: 1.6,
-                              ),
+                          const SizedBox(height: 12),
+                          OutlinedButton.icon(
+                            onPressed: state.isLoading ? null : _pasteCode,
+                            icon: const Icon(Icons.content_paste, size: 18),
+                            label: const Text('Paste code'),
+                          ),
+                        ] else ...[
+                          for (final provider in const [
+                            ('Google', 'google-oauth2', 'google'),
+                            ('GitHub', 'github', 'github'),
+                            ('Apple', 'apple', 'apple'),
+                          ]) ...[
+                            _ProviderButton(
+                              label: 'Continue with ${provider.$1}',
+                              logo: 'assets/images/${provider.$3}-logo.png',
+                              monochrome: provider.$3 != 'google',
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () => _loginWithProvider(provider.$2),
                             ),
+                            const SizedBox(height: 12),
+                          ],
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              children: [
+                                const Expanded(child: Divider()),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  child: Text(
+                                    'or use your email',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: colors.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                                const Expanded(child: Divider()),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text('Email', style: theme.textTheme.titleMedium),
+                          const SizedBox(height: 8),
+                          TextField(
+                            enabled: !state.isLoading,
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.done,
+                            autofillHints: const [AutofillHints.email],
+                            autocorrect: false,
+                            decoration: const InputDecoration(
+                              hintText: 'you@example.com',
+                            ),
+                            onSubmitted: (_) {
+                              if (_emailPattern.hasMatch(
+                                _emailController.text.trim(),
+                              )) {
+                                _sendOtp();
+                              }
+                            },
+                          ),
                         ],
-                      ),
+                        const SizedBox(height: 16),
+                        ListenableBuilder(
+                          listenable: Listenable.merge([
+                            _emailController,
+                            _otpController,
+                          ]),
+                          builder: (context, _) {
+                            final canSubmit =
+                                !state.isLoading &&
+                                (state.showOtpField
+                                    ? _otpPattern.hasMatch(_otpController.text)
+                                    : _emailPattern.hasMatch(
+                                        _emailController.text.trim(),
+                                      ));
+                            return SizedBox(
+                              width: double.infinity,
+                              child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                  disabledBackgroundColor: state.isLoading
+                                      ? colors.secondary
+                                      : null,
+                                  disabledForegroundColor: state.isLoading
+                                      ? colors.onSecondary
+                                      : null,
+                                  minimumSize: const Size.fromHeight(52),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: canSubmit
+                                    ? state.showOtpField
+                                          ? _verifyOtp
+                                          : _sendOtp
+                                    : null,
+                                child: state.isLoading
+                                    ? SizedBox.square(
+                                        dimension: 22,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: colors.onSecondary,
+                                          semanticsLabel: 'Please wait',
+                                        ),
+                                      )
+                                    : Text(
+                                        state.showOtpField
+                                            ? 'Sign in'
+                                            : 'Email me a sign-in code',
+                                      ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        if (state.showOtpField)
+                          Center(
+                            child: TextButton(
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () => _sendOtp(resend: true),
+                              child: const Text('Resend code'),
+                            ),
+                          )
+                        else
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text:
+                                      'freeCodeCamp is free and your account is private by default. '
+                                      'We use your email address to connect you to your account. '
+                                      'You must be at least 13 years old to create an account. '
+                                      'By continuing, you agree to our ',
+                                ),
+                                TextSpan(
+                                  text: 'Terms of Service',
+                                  style: TextStyle(
+                                    color: FccDesignColors.of(
+                                      context,
+                                    ).accentText,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: _termsRecognizer,
+                                ),
+                                const TextSpan(text: ' and '),
+                                TextSpan(
+                                  text: 'Privacy Policy',
+                                  style: TextStyle(
+                                    color: FccDesignColors.of(
+                                      context,
+                                    ).accentText,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: _privacyRecognizer,
+                                ),
+                                const TextSpan(text: '.'),
+                              ],
+                            ),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              height: 1.6,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-            if (state.isLoading) ...[
-              const ModalBarrier(dismissible: false, color: Colors.black38),
-              const Center(child: CircularProgressIndicator()),
-            ],
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// A single accessible text field keeps paste, selection and OS autofill intact;
-/// the six cells below only present its value.
+// One text field preserves paste, selection and autofill across the six cells.
 class _CodeInput extends StatefulWidget {
   const _CodeInput({
     required this.controller,

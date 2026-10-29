@@ -124,9 +124,11 @@ class _MyAppState extends ConsumerState<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: FccTheme.themeLight,
       darkTheme: FccTheme.themeDark,
-      themeMode:
-          ref.watch(appPreferencesProvider).value?.themeMode ??
-          ThemeMode.system,
+      themeMode: ref.watch(
+        appPreferencesProvider.select(
+          (preferences) => preferences.value?.themeMode ?? ThemeMode.system,
+        ),
+      ),
       builder: (context, child) => UpgradeAlert(
         navigatorKey: router.routerDelegate.navigatorKey,
         dialogStyle: Platform.isIOS

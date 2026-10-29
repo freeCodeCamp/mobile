@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
@@ -20,6 +21,7 @@ class SettingsView extends ConsumerStatefulWidget {
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
   bool _busy = false;
+  bool _savingReminder = false;
 
   void _message(String message) {
     if (!mounted) return;
@@ -28,9 +30,15 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _change(Future<void> Function() action) async {
+  Future<void> _change(
+    Future<void> Function() action, {
+    bool isReminder = false,
+  }) async {
     if (_busy) return;
-    setState(() => _busy = true);
+    setState(() {
+      _busy = true;
+      _savingReminder = isReminder;
+    });
     try {
       await action();
     } on ReminderPermissionDenied {
@@ -40,7 +48,12 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     } catch (_) {
       _message('Could not save this change. Please try again.');
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _savingReminder = false;
+        });
+      }
     }
   }
 
@@ -65,6 +78,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  Future<void> _confirmLogOut() async {
+    if (_busy) return;
+    final confirmed = await showLogOutDialog(context);
+    if (!confirmed || !mounted || _busy) return;
+    await _change(() => ref.read(authProvider.notifier).signOut());
   }
 
   @override
@@ -204,12 +224,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             value: current?.dailyReminder ?? false,
-                            onChanged: current == null || _busy
+                            onChanged:
+                                current == null || (_busy && !_savingReminder)
                                 ? null
                                 : (enabled) => _change(
                                     () => ref
                                         .read(appPreferencesProvider.notifier)
                                         .setDailyReminder(enabled),
+                                    isReminder: true,
                                   ),
                           ),
                           const _SettingsTile(
@@ -272,11 +294,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               ? [
                                   _SettingsTile(
                                     title: 'Log out',
-                                    onTap: () => _change(
-                                      () => ref
-                                          .read(authProvider.notifier)
-                                          .signOut(),
-                                    ),
+                                    onTap: _confirmLogOut,
                                   ),
                                   _SettingsTile(
                                     title: 'Delete account',
@@ -314,12 +332,22 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
           ),
           if (_busy) ...[
-            const ModalBarrier(dismissible: false, color: Colors.black26),
-            const Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: 'Updating settings',
-              ),
+            ModalBarrier(
+              dismissible: false,
+              color: _savingReminder ? Colors.transparent : Colors.black26,
             ),
+            if (_savingReminder)
+              Semantics(
+                liveRegion: true,
+                label: 'Saving reminder',
+                child: const SizedBox.shrink(),
+              )
+            else
+              const Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: 'Updating settings',
+                ),
+              ),
           ],
         ],
       ),
