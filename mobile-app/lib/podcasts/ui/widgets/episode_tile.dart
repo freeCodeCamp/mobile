@@ -45,12 +45,12 @@ class PodcastEpisodeTile extends StatelessWidget {
               PodcastArtwork(podcast: podcast, size: 52)
             else
               Container(
-                width: 52,
-                height: 52,
+                width: 64,
+                height: 64,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: colors.surfaceContainer,
-                  borderRadius: BorderRadius.circular(13),
+                  color: colors.primaryContainer,
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(6),
@@ -63,8 +63,8 @@ class PodcastEpisodeTile extends StatelessWidget {
                       semanticsLabel: 'Episode $number',
                       style: TextStyle(
                         color: FccDesignColors.of(context).accentText,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                   ),
@@ -79,7 +79,7 @@ class PodcastEpisodeTile extends StatelessWidget {
                     Text(
                       podcastDate(episode.publicationDate!),
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 13,
                         color: colors.onSurfaceVariant,
                       ),
                     ),
@@ -87,8 +87,10 @@ class PodcastEpisodeTile extends StatelessWidget {
                   ],
                   Text(
                     title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       height: 1.35,
                     ),

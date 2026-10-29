@@ -40,13 +40,6 @@ class PodcastsShell extends StatelessWidget {
                         ChoiceChip(
                           label: const Text('All'),
                           selected: !downloaded,
-                          showCheckmark: false,
-                          selectedColor: colors.primary,
-                          labelStyle: TextStyle(
-                            color: !downloaded
-                                ? colors.onPrimary
-                                : colors.onSurface,
-                          ),
                           onSelected: (_) => context.go(podcastListPath),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
@@ -58,18 +51,12 @@ class PodcastsShell extends StatelessWidget {
                           avatar: Icon(
                             Icons.download_rounded,
                             size: 18,
-                            color: downloaded
-                                ? colors.onPrimary
-                                : colors.onSurface,
+                            color: colors.onSurfaceVariant,
                           ),
                           selected: downloaded,
                           showCheckmark: false,
                           selectedColor: colors.primary,
-                          labelStyle: TextStyle(
-                            color: downloaded
-                                ? colors.onPrimary
-                                : colors.onSurface,
-                          ),
+                          labelStyle: TextStyle(color: colors.onSurfaceVariant),
                           onSelected: (_) => context.go(podcastDownloadsPath),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,

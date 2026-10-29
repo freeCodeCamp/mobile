@@ -25,16 +25,34 @@ class PodcastGridTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
         child: Row(
           children: [
-            PodcastArtwork(podcast: podcast, artwork: artwork, size: 60),
+            PodcastArtwork(
+              podcast: podcast,
+              artwork: artwork,
+              size: 52,
+              radius: 8,
+            ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(
-                podcast.title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  height: 1.3,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    podcast.title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${podcast.numOfEps} ${podcast.numOfEps == 1 ? 'episode' : 'episodes'}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 8),

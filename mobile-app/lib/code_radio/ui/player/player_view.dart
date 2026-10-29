@@ -44,9 +44,8 @@ class CodeRadioPlayerView extends ConsumerWidget {
                 onRetry: () => ref.invalidate(codeRadioNowPlayingProvider),
               ),
             ),
-            AsyncLoading() => const SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(child: CircularProgressIndicator()),
+            AsyncLoading() => const SliverToBoxAdapter(
+              child: CodeRadioSkeleton(),
             ),
           },
         ],
@@ -200,11 +199,21 @@ class CodeRadioProgressBar extends ConsumerWidget {
             children: [
               Text(
                 _format(current),
-                style: TextStyle(color: colors.onSurfaceVariant),
+                style: TextStyle(
+                  fontFamily: 'JetBrains Mono',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: colors.onSurfaceVariant,
+                ),
               ),
               Text(
                 duration > 0 ? '-${_format(duration - current)}' : 'Live',
-                style: TextStyle(color: colors.onSurfaceVariant),
+                style: TextStyle(
+                  fontFamily: 'JetBrains Mono',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -328,11 +337,24 @@ class _CodeRadioPlayPauseButtonState
       child: IconButton.filled(
         tooltip: isPlaying ? 'Pause Code Radio' : 'Play Code Radio',
         onPressed: _busy ? null : _toggle,
-        style: IconButton.styleFrom(
-          backgroundColor: colors.secondary,
-          foregroundColor: colors.onSecondary,
-          fixedSize: const Size.square(76),
-        ),
+        style:
+            IconButton.styleFrom(
+              backgroundColor: colors.secondary,
+              foregroundColor: colors.onSecondary,
+              disabledBackgroundColor: colors.surfaceContainer,
+              disabledForegroundColor: colors.outline,
+              fixedSize: const Size.square(76),
+            ).copyWith(
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.disabled))
+                  return colors.surfaceContainer;
+                if (states.contains(WidgetState.pressed)) {
+                  return FccDesignColors.of(context).primaryPressed;
+                }
+                return colors.secondary;
+              }),
+              shape: FccTheme.focusShape(context, radius: 999),
+            ),
         icon: Icon(
           isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
           size: 38,
@@ -364,5 +386,62 @@ class _RadioArtwork extends StatelessWidget {
             placeholder: (context, url) => fallback,
             errorWidget: (context, url, error) => fallback,
           );
+  }
+}
+
+class CodeRadioSkeleton extends StatelessWidget {
+  const CodeRadioSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final artworkSize = math.min(240.0, MediaQuery.sizeOf(context).width * .58);
+    Widget placeholder({
+      double? width,
+      required double height,
+      double radius = 8,
+    }) => Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: colors.surfaceContainer,
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+    return ExcludeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Column(
+              children: [
+                placeholder(
+                  width: artworkSize,
+                  height: artworkSize,
+                  radius: 22,
+                ),
+                const SizedBox(height: 18),
+                FractionallySizedBox(
+                  widthFactor: .7,
+                  child: placeholder(height: 24),
+                ),
+                const SizedBox(height: 6),
+                FractionallySizedBox(
+                  widthFactor: .5,
+                  child: placeholder(height: 18),
+                ),
+                const SizedBox(height: 24),
+                placeholder(height: 6),
+                const SizedBox(height: 20),
+                placeholder(width: 76, height: 76, radius: 38),
+                const SizedBox(height: 20),
+                placeholder(height: 108, radius: 18),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

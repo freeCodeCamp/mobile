@@ -49,7 +49,6 @@ class PodcastDownloadButton extends ConsumerWidget {
           strokeWidth: 2,
           value: progress,
           semanticsLabel: 'Downloading episode',
-          semanticsValue: '${(progress * 100).round()} percent',
         ),
       ),
       DownloadFailed() => Icon(Icons.refresh_rounded, color: colors.error),
@@ -57,17 +56,22 @@ class PodcastDownloadButton extends ConsumerWidget {
         Icons.check_circle_rounded,
         color: FccDesignColors.of(context).success,
       ),
-      null => Icon(Icons.download_rounded, color: colors.onSurfaceVariant),
+      null => Icon(
+        Icons.download_rounded,
+        color: outlined ? null : colors.onSurfaceVariant,
+      ),
     };
 
     return IconButton(
       tooltip: label,
       iconSize: size,
-      style: IconButton.styleFrom(
-        backgroundColor: outlined ? colors.surface : null,
-        side: outlined ? BorderSide(color: colors.outline) : null,
-        fixedSize: outlined ? const Size(52, 48) : null,
-      ),
+      style: outlined
+          ? FccTheme.compactOutlineStyle(context).copyWith(
+              minimumSize: const WidgetStatePropertyAll(Size(52, 48)),
+              fixedSize: const WidgetStatePropertyAll(Size(52, 48)),
+              shape: FccTheme.focusShape(context),
+            )
+          : null,
       icon: icon,
       onPressed: () async {
         try {

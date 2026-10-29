@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/podcasts/constants.dart';
+import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
 import 'package:freecodecamp/podcasts/controllers/player_controller.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
@@ -102,22 +103,13 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
               widget.episode.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
                 height: 1.25,
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              [
-                if (widget.episode.publicationDate != null)
-                  podcastDate(widget.episode.publicationDate!),
-                if (widget.episode.duration != null)
-                  podcastDuration(widget.episode.duration),
-              ].join(' · '),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: colors.onSurfaceVariant),
-            ),
+            PodcastEpisodeMetadata(episode: widget.episode),
             const SizedBox(height: 12),
             _Scrubber(
               episode: widget.episode,
@@ -245,6 +237,9 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackHeight: 6,
+              thumbShape: const PodcastSeekThumb(),
+              thumbColor: colors.primary,
+              disabledThumbColor: colors.primary,
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
               inactiveTrackColor: colors.outlineVariant,
             ),
@@ -281,16 +276,18 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
             Text(
               podcastTimestamp(elapsed),
               style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 13,
+                fontFamily: 'JetBrains Mono',
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
                 color: colors.onSurfaceVariant,
               ),
             ),
             Text(
               hasDuration ? '-${podcastTimestamp(total - elapsed)}' : '--:--',
               style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 13,
+                fontFamily: 'JetBrains Mono',
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
                 color: colors.onSurfaceVariant,
               ),
             ),
@@ -308,7 +305,6 @@ class _Controls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).colorScheme;
     final player = ref.watch(podcastPlayerProvider);
     final canControl =
         player.isCurrent(episode.id) && !player.isBusyWith(episode.id);
@@ -318,11 +314,12 @@ class _Controls extends ConsumerWidget {
       children: [
         Flexible(
           child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: colors.surface,
-              minimumSize: const Size(52, 48),
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              foregroundColor: colors.onSurface,
+            style: FccTheme.compactOutlineStyle(context).copyWith(
+              minimumSize: const WidgetStatePropertyAll(Size(52, 48)),
+              padding: const WidgetStatePropertyAll(
+                EdgeInsets.symmetric(horizontal: 6),
+              ),
+              shape: FccTheme.focusShape(context),
             ),
             onPressed: canControl
                 ? () => _speedSheet(context, ref, speed)
@@ -336,10 +333,9 @@ class _Controls extends ConsumerWidget {
           ),
         ),
         Flexible(
-          child: IconButton(
-            tooltip: 'Rewind 10 seconds',
-            iconSize: 30,
-            icon: const Icon(Icons.replay_10_rounded),
+          child: PodcastSkipButton(
+            seconds: 10,
+            forward: false,
             onPressed: canControl
                 ? () {
                     if (ref.read(podcastPlayerProvider).isCurrent(episode.id)) {
@@ -351,10 +347,9 @@ class _Controls extends ConsumerWidget {
         ),
         EpisodePlayButton(podcast: podcast, episode: episode, prominent: true),
         Flexible(
-          child: IconButton(
-            tooltip: 'Forward 30 seconds',
-            iconSize: 30,
-            icon: const Icon(Icons.forward_30_rounded),
+          child: PodcastSkipButton(
+            seconds: 30,
+            forward: true,
             onPressed: canControl
                 ? () {
                     if (ref.read(podcastPlayerProvider).isCurrent(episode.id)) {
@@ -407,21 +402,12 @@ class _Controls extends ConsumerWidget {
                         children: [
                           ChoiceChip(
                             selected: speed == option,
-                            showCheckmark: false,
-                            selectedColor: colors.primary,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 14,
                             ),
                             label: Text(
                               '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
-                              style: TextStyle(
-                                color: speed == option
-                                    ? colors.onPrimary
-                                    : colors.onSurface,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ),
                             ),
                             onSelected: (_) =>
                                 Navigator.of(context).pop(option),
@@ -432,7 +418,7 @@ class _Controls extends ConsumerWidget {
                               child: Text(
                                 'Normal',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   color: colors.onSurfaceVariant,
                                 ),
                               ),
@@ -451,5 +437,130 @@ class _Controls extends ConsumerWidget {
     if (ref.read(podcastPlayerProvider).isCurrent(episode.id)) {
       await ref.read(podcastPlayerProvider.notifier).setSpeed(value);
     }
+  }
+}
+
+class PodcastEpisodeMetadata extends ConsumerWidget {
+  const PodcastEpisodeMetadata({super.key, required this.episode});
+  final Episode episode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final downloaded = ref.watch(
+      podcastLibraryProvider.select(
+        (library) =>
+            library.value?.episodesByPodcastId[episode.podcastId]?.any(
+              (saved) => saved.id == episode.id,
+            ) ??
+            false,
+      ),
+    );
+    return Text(
+      [
+        if (episode.publicationDate != null)
+          podcastDate(episode.publicationDate!),
+        if (episode.duration != null) podcastDuration(episode.duration),
+        if (downloaded) 'Downloaded',
+      ].join(' · '),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 13,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+}
+
+class PodcastSkipButton extends StatelessWidget {
+  const PodcastSkipButton({
+    super.key,
+    required this.seconds,
+    required this.forward,
+    required this.onPressed,
+  });
+  final int seconds;
+  final bool forward;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final label = '${forward ? 'Forward' : 'Rewind'} $seconds seconds';
+    return Tooltip(
+      message: label,
+      child: Semantics(
+        label: label,
+        child: TextButton(
+          onPressed: onPressed,
+          style: ButtonStyle(
+            foregroundColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.disabled)
+                  ? colors.outline
+                  : colors.onSurface,
+            ),
+            minimumSize: const WidgetStatePropertyAll(Size(44, 52)),
+            padding: const WidgetStatePropertyAll(EdgeInsets.all(4)),
+            shape: FccTheme.focusShape(context, radius: 10),
+          ),
+          child: ExcludeSemantics(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Transform.flip(
+                  flipX: forward,
+                  child: const Icon(Icons.replay_rounded, size: 30),
+                ),
+                Text(
+                  '$seconds',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PodcastSeekThumb extends SliderComponentShape {
+  const PodcastSeekThumb();
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) => const Size(18, 18);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final circle = Path()..addOval(Rect.fromCircle(center: center, radius: 9));
+    context.canvas.drawShadow(circle, Colors.black, 2, true);
+    context.canvas.drawCircle(
+      center,
+      9,
+      Paint()..color = sliderTheme.thumbColor!,
+    );
+    context.canvas.drawCircle(
+      center,
+      7.5,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
   }
 }

@@ -54,16 +54,13 @@ class EpisodePlayButton extends ConsumerWidget {
     final playing = player.isPlayingEpisode(episode.id);
     final busy = player.isBusyWith(episode.id);
     final current = player.isCurrent(episode.id);
-    final foreground = prominent
+    final foreground = busy
+        ? colors.outline
+        : prominent
         ? colors.onSecondary
         : playing
-        ? colors.onPrimary
+        ? colors.onSurface
         : FccDesignColors.of(context).accentText;
-    final background = prominent
-        ? colors.secondary
-        : playing
-        ? colors.primary
-        : colors.surfaceContainer;
     final icon = busy
         ? SizedBox.square(
             dimension: compact ? 13 : 24,
@@ -94,21 +91,35 @@ class EpisodePlayButton extends ConsumerWidget {
           : podcastDuration(duration);
       return Tooltip(
         message: playing ? 'Pause episode' : 'Play episode',
-        child: FilledButton.icon(
-          style: FilledButton.styleFrom(
-            backgroundColor: background,
-            foregroundColor: foreground,
-            disabledBackgroundColor: background,
-            minimumSize: const Size(0, 34),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: OutlinedButton.icon(
+          style: FccTheme.compactOutlineStyle(context).copyWith(
+            backgroundColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.disabled)
+                  ? colors.surfaceContainer
+                  : playing || states.contains(WidgetState.pressed)
+                  ? colors.primaryContainer
+                  : Colors.transparent,
+            ),
+            foregroundColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.disabled)
+                  ? colors.outline
+                  : foreground,
+            ),
+            minimumSize: const WidgetStatePropertyAll(Size(44, 36)),
+            fixedSize: const WidgetStatePropertyAll(Size.fromHeight(36)),
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 10),
+            ),
+            visualDensity: const VisualDensity(vertical: -1),
             tapTargetSize: MaterialTapTargetSize.padded,
+            shape: FccTheme.focusShape(context, radius: 999),
+            textStyle: const WidgetStatePropertyAll(
+              TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+            ),
           ),
           onPressed: action,
           icon: icon,
-          label: Text(
-            label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-          ),
+          label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
       );
     }
@@ -116,16 +127,28 @@ class EpisodePlayButton extends ConsumerWidget {
     return IconButton.filled(
       tooltip: playing ? 'Pause episode' : 'Play episode',
       onPressed: action,
-      style: IconButton.styleFrom(
-        backgroundColor: prominent
-            ? colors.secondary
-            : colors.secondaryContainer,
-        foregroundColor: prominent ? colors.onSecondary : colors.onSurface,
-        disabledBackgroundColor: prominent
-            ? colors.secondary
-            : colors.secondaryContainer,
-        fixedSize: Size.square(prominent ? 80 : 48),
-      ),
+      style:
+          IconButton.styleFrom(
+            backgroundColor: prominent
+                ? colors.secondary
+                : colors.secondaryContainer,
+            foregroundColor: prominent ? colors.onSecondary : colors.onSurface,
+            disabledBackgroundColor: colors.surfaceContainer,
+            disabledForegroundColor: colors.outline,
+            fixedSize: Size.square(prominent ? 80 : 48),
+          ).copyWith(
+            backgroundColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.disabled))
+                return colors.surfaceContainer;
+              if (states.contains(WidgetState.pressed)) {
+                return prominent
+                    ? FccDesignColors.of(context).primaryPressed
+                    : colors.surfaceContainer;
+              }
+              return prominent ? colors.secondary : colors.secondaryContainer;
+            }),
+            shape: FccTheme.focusShape(context, radius: 999),
+          ),
       icon: icon,
     );
   }

@@ -341,14 +341,14 @@ class _Header extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          PodcastArtwork(podcast: podcast, size: 150, radius: 20),
+          PodcastArtwork(podcast: podcast, size: 168, radius: 20),
           const SizedBox(height: 18),
           Text(
             podcast.title,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 23,
-              fontWeight: FontWeight.w700,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
               height: 1.2,
             ),
           ),
@@ -358,8 +358,11 @@ class _Header extends ConsumerWidget {
             children: [
               FilledButton.icon(
                 style: FilledButton.styleFrom(
-                  backgroundColor: colors.secondary,
-                  foregroundColor: colors.onSecondary,
+                  minimumSize: const Size(48, 48),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 12,
@@ -370,10 +373,7 @@ class _Header extends ConsumerWidget {
                     : () =>
                           togglePodcastEpisode(context, ref, podcast, latest!),
                 icon: const Icon(Icons.play_arrow_rounded, size: 19),
-                label: const Text(
-                  'Play latest',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
+                label: const Text('Play latest'),
               ),
               const SizedBox(width: 8),
               Builder(
