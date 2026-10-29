@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/services/profile_service.dart';
 import 'package:freecodecamp/auth/services/session_service.dart';
+import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,12 +31,16 @@ class AuthNotifier extends _$AuthNotifier {
 
   AuthSessionService get _session => ref.read(authSessionServiceProvider);
 
+  AnalyticsService get _analytics => ref.read(analyticsProvider);
+
   Future<void> loginWithProvider(String connection) async {
     state = AsyncData(await _session.loginWithProvider(connection));
+    unawaited(_analytics.login(LoginMethod.fromConnection(connection)));
   }
 
   Future<void> loginWithEmailOtp(String email, String otp) async {
     state = AsyncData(await _session.loginWithEmailOtp(email, otp));
+    unawaited(_analytics.login(LoginMethod.email));
   }
 
   Future<void> refresh() async {
@@ -57,6 +64,7 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> signOut() async {
     await _session.logout();
     state = const AsyncData(null);
+    unawaited(_analytics.logout());
   }
 
   Future<ProfileSaveResult> saveProfile({
@@ -83,5 +91,6 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> deleteAccount() async {
     await _session.deleteAccount();
     state = const AsyncData(null);
+    unawaited(_analytics.accountDeleted());
   }
 }
