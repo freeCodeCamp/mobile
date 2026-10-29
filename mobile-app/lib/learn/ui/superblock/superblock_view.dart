@@ -47,7 +47,32 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.learn,
       ),
-      appBar: AppBar(title: const Text('Courses')),
+      appBar: AppBar(
+        leadingWidth: 44,
+        titleSpacing: 0,
+        leading: IconButton(
+          tooltip: 'Back to Courses',
+          icon: Icon(
+            Icons.chevron_left,
+            color: FccDesignColors.of(context).accentText,
+          ),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              const LearnLandingRoute().go(context);
+            }
+          },
+        ),
+        title: Text(
+          'Courses',
+          style: TextStyle(
+            color: FccDesignColors.of(context).accentText,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
       body: superBlock.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => ErrorRetry(
@@ -120,7 +145,7 @@ class _Chapters extends ConsumerWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       children: [
-        _CourseHero(title: title, blocks: blocks),
+        _CourseHero(title: title, blocks: blocks, chapters: this.chapters),
         if (chapters.isEmpty)
           const Padding(
             padding: EdgeInsets.all(24),
@@ -143,29 +168,63 @@ class _Chapters extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  LearnEyebrow('Chapter ${this.chapters.indexOf(exam) + 1}'),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Certification Exam',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.emoji_events_outlined,
+                          color: FccDesignColors.of(context).accentText,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LearnEyebrow(
+                              'Chapter ${this.chapters.indexOf(exam) + 1}',
+                            ),
+                            const Text(
+                              'Certification Exam',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _locked(exam)
                         ? 'This exam is coming soon.'
-                        : 'Complete the exam on freeCodeCamp.org to earn your certification.',
+                        : "Take it on the website when you're ready.",
                   ),
                   const SizedBox(height: 12),
-                  OutlinedButton.icon(
-                    onPressed: _locked(exam)
-                        ? null
-                        : () => openLearningWebsite(
-                            context,
-                            superBlock,
-                            chapter: exam.dashedName,
-                          ),
-                    icon: const Icon(Icons.open_in_new, size: 18),
-                    label: const Text('Open exam on website'),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: _locked(exam)
+                          ? null
+                          : () => openLearningWebsite(
+                              context,
+                              superBlock,
+                              chapter: exam.dashedName,
+                            ),
+                      icon: const Icon(Icons.open_in_new, size: 18),
+                      label: const Text(
+                        'Open',
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -177,13 +236,13 @@ class _Chapters extends ConsumerWidget {
 }
 
 class _CourseHero extends ConsumerWidget {
-  const _CourseHero({required this.title, required this.blocks});
+  const _CourseHero({required this.title, required this.blocks, this.chapters});
   final String title;
   final List<Block> blocks;
+  final List<Chapter>? chapters;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).colorScheme;
     final completed = ref.watch(
       authProvider.select(
         (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
@@ -200,40 +259,53 @@ class _CourseHero extends ConsumerWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: FccDesignColors.of(context).hero,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(color: const Color(0xFFFFF8EC)),
+            title.replaceFirst(
+              RegExp(r'\s+Certification$', caseSensitive: false),
+              '',
+            ),
+            style: TextStyle(
+              color: FccDesignColors.of(context).heroForeground,
+              fontSize: 26,
+              height: 1.2,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 14),
-          LearnProgress(
-            done: done,
-            total: challenges.length,
-            color: colors.secondary,
-            backgroundColor: Colors.white24,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '$done of ${challenges.length} steps complete',
-            style: const TextStyle(color: Color(0xFFFFF8EC), fontSize: 12),
-          ),
+          if (chapters != null && chapters!.isNotEmpty)
+            Row(
+              children: [
+                for (final (index, chapter) in chapters!.indexed) ...[
+                  if (index > 0) const SizedBox(width: 3),
+                  Expanded(
+                    child: _ChapterProgress(
+                      chapter: chapter,
+                      completed: completed,
+                    ),
+                  ),
+                ],
+              ],
+            )
+          else
+            LearnProgress(
+              done: done,
+              total: challenges.length,
+              color: Colors.white,
+              backgroundColor: Colors.white.withValues(alpha: .22),
+            ),
           if (nextBlock != null) ...[
             const SizedBox(height: 14),
             FilledButton.icon(
               style: FilledButton.styleFrom(
                 textStyle: const TextStyle(
                   fontFamily: 'Lato',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
               onPressed: () => LearnChallengeRoute(
@@ -254,7 +326,7 @@ class _CourseHero extends ConsumerWidget {
   }
 }
 
-class _ChapterCard extends ConsumerWidget {
+class _ChapterCard extends ConsumerStatefulWidget {
   const _ChapterCard({
     super.key,
     required this.superBlock,
@@ -270,7 +342,20 @@ class _ChapterCard extends ConsumerWidget {
   final bool isLocked;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ChapterCard> createState() => _ChapterCardState();
+}
+
+class _ChapterCardState extends ConsumerState<_ChapterCard> {
+  bool? _expanded;
+  @override
+  Widget build(BuildContext context) {
+    final chapter = widget.chapter;
+    final active = widget.active;
+    final isLocked = widget.isLocked;
+    final number = widget.number;
+    final superBlock = widget.superBlock;
+    final expanded = _expanded ?? (active && !isLocked);
+
     final colors = Theme.of(context).colorScheme;
     final completed = ref.watch(
       authProvider.select(
@@ -283,11 +368,29 @@ class _ChapterCard extends ConsumerWidget {
           .expand((b) => b.challenges)
           .any((c) => !completed.contains(c.id)),
     );
+    bool moduleComplete(Module module) {
+      final challenges = module.blocks.expand((b) => b.challenges).toList();
+      return challenges.isNotEmpty &&
+          challenges.every((c) => completed.contains(c.id));
+    }
+
+    final doneModules = modules.where(moduleComplete).length;
+    final complete = modules.isNotEmpty && doneModules == modules.length;
+    final hasProgress = modules
+        .expand((m) => m.blocks)
+        .expand((b) => b.challenges)
+        .any((c) => completed.contains(c.id));
+    final design = FccDesignColors.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Card(
         clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: colors.outlineVariant),
+        ),
         child: ExpansionTile(
+          onExpansionChanged: (value) => setState(() => _expanded = value),
           key: PageStorageKey(chapter.dashedName),
           initiallyExpanded: active && !isLocked,
           enabled: !isLocked,
@@ -296,37 +399,81 @@ class _ChapterCard extends ConsumerWidget {
           shape: const Border(),
           collapsedShape: const Border(),
           leading: Container(
-            width: 40,
-            height: 40,
+            width: 48,
+            height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: active ? colors.primary : colors.primaryContainer,
-              borderRadius: BorderRadius.circular(12),
+              color: colors.primaryContainer,
+              borderRadius: BorderRadius.circular(14),
+              border: expanded
+                  ? Border.all(color: design.accentText, width: 1.5)
+                  : null,
             ),
-            child: Text(
-              '$number',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: active
-                    ? colors.onPrimary
-                    : FccDesignColors.of(context).accentText,
-              ),
-            ),
+            child: complete
+                ? Icon(Icons.check, color: design.success)
+                : Text(
+                    '$number',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: design.accentText,
+                    ),
+                  ),
           ),
           title: Text(
             chapter.name,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
           ),
           subtitle: isLocked
               ? Text(
                   'Coming soon',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: colors.onSurfaceVariant,
                   ),
                 )
-              : null,
+              : expanded
+              ? null
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final module in modules)
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: moduleComplete(module)
+                                  ? design.success
+                                  : design.hero,
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (hasProgress) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        complete
+                            ? 'Done'
+                            : '$doneModules of ${modules.length} modules',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: complete
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                          color: complete
+                              ? design.success
+                              : colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
           children: [
             Stack(
               children: [
@@ -335,7 +482,7 @@ class _ChapterCard extends ConsumerWidget {
                     left: 25,
                     top: 28,
                     bottom: 28,
-                    child: Container(width: 2, color: colors.outlineVariant),
+                    child: Container(width: 3, color: design.hero),
                   ),
                 Column(
                   children: [
@@ -379,20 +526,30 @@ class _ModuleButton extends ConsumerWidget {
     final done = challenges.where((c) => completed.contains(c.id)).length;
     final complete = challenges.isNotEmpty && done == challenges.length;
     final isReview = blocks.firstOrNull?.label == BlockLabel.review;
+    final completedBlocks = blocks
+        .where(
+          (b) =>
+              b.challenges.isNotEmpty &&
+              b.challenges.every((c) => completed.contains(c.id)),
+        )
+        .length;
     final subtitle = module.moduleType == ModuleType.certProject
         ? 'Certification project'
-        : isReview
-        ? RegExp(r'\breview\b', caseSensitive: false).hasMatch(module.name)
-              ? null
-              : 'Review'
-        : '$done/${challenges.length} steps';
+        : active
+        ? '$completedBlocks of ${blocks.length} blocks'
+        : null;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
         color: active ? colors.primaryContainer : Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: active ? colors.primary : Colors.transparent),
+          side: BorderSide(
+            color: active
+                ? FccDesignColors.of(context).accentText
+                : Colors.transparent,
+            width: active ? 1.5 : 1,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -419,7 +576,16 @@ class _ModuleButton extends ConsumerWidget {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                LearnStatus(complete: complete, active: active),
+                LearnStatus(
+                  complete: complete,
+                  active: active,
+                  module: true,
+                  icon: module.moduleType == ModuleType.certProject
+                      ? Icons.flag_outlined
+                      : isReview || module.moduleType == ModuleType.review
+                      ? Icons.loop
+                      : null,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -429,7 +595,7 @@ class _ModuleButton extends ConsumerWidget {
                         module.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                       ),
                       if (subtitle != null) ...[
@@ -437,14 +603,20 @@ class _ModuleButton extends ConsumerWidget {
                         Text(
                           subtitle,
                           style: TextStyle(
-                            fontSize: 12,
-                            color: colors.onSurfaceVariant,
+                            fontSize: 13,
+                            color: active
+                                ? FccDesignColors.of(context).accentText
+                                : colors.onSurfaceVariant,
                           ),
                         ),
                       ],
                       if (active) ...[
                         const SizedBox(height: 6),
-                        LearnProgress(done: done, total: challenges.length),
+                        LearnProgress(
+                          done: done,
+                          total: challenges.length,
+                          backgroundColor: colors.primaryContainer,
+                        ),
                       ],
                     ],
                   ),
@@ -460,6 +632,28 @@ class _ModuleButton extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ChapterProgress extends StatelessWidget {
+  const _ChapterProgress({required this.chapter, required this.completed});
+  final Chapter chapter;
+  final Set<String> completed;
+  @override
+  Widget build(BuildContext context) {
+    final challenges = chapter.modules
+        .expand((m) => m.blocks)
+        .expand((b) => b.challenges)
+        .toList();
+    final done = challenges.where((c) => completed.contains(c.id)).length;
+    return LinearProgressIndicator(
+      value: challenges.isEmpty ? 0 : done / challenges.length,
+      minHeight: 10,
+      borderRadius: BorderRadius.circular(5),
+      color: Colors.white,
+      backgroundColor: Colors.white.withValues(alpha: .22),
+      semanticsLabel: '${chapter.name}: $done of ${challenges.length} complete',
     );
   }
 }
