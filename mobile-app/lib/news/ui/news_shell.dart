@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/app_page_title.dart';
@@ -16,13 +17,12 @@ class NewsShell extends StatelessWidget {
     final location = GoRouterState.of(context).uri.path;
     final isSaved = location == newsBookmarksPath;
     final isSearch = location == newsSearchPath;
-    final colors = Theme.of(context).colorScheme;
     final scaler = MediaQuery.textScalerOf(context);
     const bookmarkStyle = TextStyle(
       fontFamily: 'Lato',
       fontSize: 14,
       height: 1.3,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       letterSpacing: 0,
     );
     double textWidth(String text, TextStyle style) {
@@ -36,14 +36,14 @@ class NewsShell extends StatelessWidget {
       return width;
     }
 
-    final bookmarkHeight = math.max(48.0, scaler.scale(14) * 1.3 + 24);
+    final bookmarkHeight = math.max(44.0, scaler.scale(14) * 1.3 + 20);
     final stackBookmarks =
         textWidth(
               'Articles',
               const TextStyle(
                 fontFamily: 'Lato',
-                fontSize: 32,
-                fontWeight: FontWeight.w800,
+                fontSize: 30,
+                fontWeight: FontWeight.w900,
               ),
             ) +
             textWidth('View bookmarks', bookmarkStyle) +
@@ -54,14 +54,12 @@ class NewsShell extends StatelessWidget {
       onPressed: () => context.go(newsBookmarksPath),
       icon: const Icon(Icons.bookmark_border_rounded, size: 20),
       label: const Text('View bookmarks'),
-      style: OutlinedButton.styleFrom(
-        backgroundColor: colors.surface,
-        foregroundColor: colors.onSurface,
-        side: BorderSide(color: colors.outline),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        minimumSize: Size(48, bookmarkHeight),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        textStyle: bookmarkStyle,
+      style: FccTheme.compactOutlineStyle(context).copyWith(
+        minimumSize: WidgetStatePropertyAll(Size(44, bookmarkHeight)),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        textStyle: const WidgetStatePropertyAll(bookmarkStyle),
       ),
     );
 

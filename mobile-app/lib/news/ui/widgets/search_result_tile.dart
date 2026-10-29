@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/news/models/search_post_model.dart';
 import 'package:freecodecamp/news/ui/widgets/news_image.dart';
 import 'package:freecodecamp/routing/news.dart';
-import 'package:freecodecamp/utils/date_utils.dart';
+import 'package:freecodecamp/utils/article_date.dart';
 
 class SearchResultTile extends StatelessWidget {
   const SearchResultTile({super.key, required this.post});
@@ -20,7 +20,7 @@ class SearchResultTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            NewsImage(url: post.featureImage, width: 104, height: 80),
+            NewsImage(url: post.featureImage, width: 104, height: 70),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -31,7 +31,7 @@ class SearchResultTile extends StatelessWidget {
                     maxLines: 4,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       height: 1.3,
                       color: colors.onSurface,
@@ -39,7 +39,7 @@ class SearchResultTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '${post.author.name}${date == null ? '' : ' · ${parseDate(date).toLowerCase()}'}',
+                    '${post.author.name}${date == null ? '' : ' · ${articleDate(date)}'}',
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,

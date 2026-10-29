@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
 import 'package:freecodecamp/news/ui/widgets/news_image.dart';
 import 'package:freecodecamp/news/ui/widgets/offline_banner.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 
 class NewsBookmarkFeedView extends ConsumerWidget {
@@ -30,49 +32,17 @@ class NewsBookmarkFeedView extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20),
           children: [
-            const OfflineBanner(),
-            const SizedBox(height: 16),
             if (posts.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 72,
-                ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.bookmark_border_rounded,
-                      color: colors.primary,
-                      size: 40,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'No saved articles',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Open an article and tap the bookmark icon to save it.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: colors.onSurfaceVariant,
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
+              const NewsSavedEmptyState()
+            else ...[
+              const OfflineBanner(),
+              const SizedBox(height: 16),
               Container(
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: colors.surface,
                   border: Border.all(color: colors.outlineVariant),
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   children: [
@@ -87,6 +57,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
                   ],
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -135,7 +106,12 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            NewsImage(url: post.coverImageUrl, width: 64, height: 72),
+            NewsImage(
+              url: post.coverImageUrl,
+              width: 64,
+              height: 64,
+              radius: 10,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -144,7 +120,7 @@ class _SavedTutorialState extends ConsumerState<_SavedTutorial> {
                   Text(
                     post.title,
                     style: const TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       height: 1.3,
                     ),
@@ -185,4 +161,86 @@ String _savedLabel(DateTime value) {
     return 'Saved today';
   }
   return 'Saved ${Jiffy.parseFromDateTime(saved).format(pattern: 'MMM d, yyyy')}';
+}
+
+class NewsSavedEmptyState extends StatelessWidget {
+  const NewsSavedEmptyState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return CustomPaint(
+      foregroundPainter: _DashedCardBorder(colors.outlineVariant),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: colors.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.bookmark_border_rounded,
+                color: FccDesignColors.of(context).accentText,
+                size: 40,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'No saved articles',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap the bookmark on an article to save it.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: colors.onSurfaceVariant, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => context.go(newsFeedPath),
+              child: const Text('Browse articles'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DashedCardBorder extends CustomPainter {
+  const _DashedCardBorder(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          (Offset.zero & size).deflate(.5),
+          const Radius.circular(16),
+        ),
+      );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (final metric in path.computeMetrics()) {
+      for (double offset = 0; offset < metric.length; offset += 10) {
+        canvas.drawPath(metric.extractPath(offset, offset + 6), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedCardBorder oldDelegate) =>
+      color != oldDelegate.color;
 }

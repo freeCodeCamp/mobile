@@ -6,13 +6,13 @@ class OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = FccDesignColors.of(context).success;
+    final design = FccDesignColors.of(context);
+    final foreground = design.success;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: foreground.withValues(alpha: dark ? .15 : .1),
-        border: Border.all(color: foreground.withValues(alpha: .25)),
+        color: design.successContainer,
+        border: Border.all(color: design.successBorder),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -22,7 +22,11 @@ class OfflineBanner extends StatelessWidget {
           Expanded(
             child: Text(
               'Saved articles can be read offline',
-              style: TextStyle(color: foreground, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: foreground,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

@@ -41,28 +41,34 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
             child: Material(
               color: colors.surfaceContainer,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 side: BorderSide(color: colors.outline),
               ),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () => context.go(newsSearchPath),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.search_rounded),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Search articles',
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: Theme.of(context).hintColor,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.search_rounded),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Search articles',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).hintColor,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -86,21 +92,11 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
 
   Widget _filter(BuildContext context, String label, Tag? tag) {
     final selected = _selectedTag?.slug == tag?.slug;
-    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: ChoiceChip(
         label: Text(label),
         selected: selected,
-        showCheckmark: false,
-        selectedColor: colors.primary,
-        backgroundColor: colors.surface,
-        labelStyle: TextStyle(
-          color: selected ? colors.onPrimary : colors.onSurface,
-          fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-        ),
-        side: BorderSide(color: selected ? colors.primary : colors.outline),
-        shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
         onSelected: (_) => setState(() => _selectedTag = tag),
       ),

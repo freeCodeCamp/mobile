@@ -9,12 +9,14 @@ class NewsImage extends StatelessWidget {
     this.isAvatar = false,
     this.width,
     this.height,
+    this.radius = 12,
   });
 
   final String? url;
   final bool isAvatar;
   final double? width;
   final double? height;
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class NewsImage extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: colors.surfaceContainer,
-        borderRadius: BorderRadius.circular(isAvatar ? 100 : 12),
+        borderRadius: BorderRadius.circular(isAvatar ? 100 : radius),
         border: Border.all(color: colors.outlineVariant),
       ),
       child: url == null || url!.isEmpty

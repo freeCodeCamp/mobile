@@ -7,7 +7,7 @@ import 'package:freecodecamp/news/ui/widgets/bookmark_button.dart';
 import 'package:freecodecamp/news/ui/widgets/news_image.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/routing/news.dart';
-import 'package:freecodecamp/news/news_format.dart';
+import 'package:freecodecamp/utils/article_date.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 
 class NewsPostHeader extends StatelessWidget {
@@ -67,7 +67,7 @@ class NewsPostHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '${newsDate(post.publishedAt)} · ${post.readTimeInMinutes} min read',
+                        '${articleDate(post.publishedAt)} · ${post.readTimeInMinutes} min read',
                         style: TextStyle(
                           fontSize: 13,
                           color: colors.onSurfaceVariant,

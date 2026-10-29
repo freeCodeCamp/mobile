@@ -62,11 +62,15 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
                     fillColor: colors.surfaceContainer,
                     filled: true,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: colors.outline),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colors.primary, width: 2),
                     ),
                   ),
                 ),
@@ -92,22 +96,26 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
     data: (posts) => CustomScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-          sliver: SliverToBoxAdapter(
-            child: Text(
-              '${posts.length} ${posts.length == 1 ? 'result' : 'results'} for “${_searchBarController.text.trim()}”',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+        if (posts.isNotEmpty)
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                '${posts.length} ${posts.length == 1 ? 'result' : 'results'} for “${_searchBarController.text.trim()}”',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
-        ),
         if (posts.isEmpty)
-          const SliverFillRemaining(
+          SliverFillRemaining(
             hasScrollBody: false,
-            child: Center(
-              child: Text('No articles found. Try another search.'),
+            child: NewsSearchEmptyState(
+              onSuggestion: (term) {
+                _searchBarController.text = term;
+                _search(term);
+              },
             ),
           )
         else
@@ -125,4 +133,56 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
       ],
     ),
   );
+}
+
+class NewsSearchEmptyState extends StatelessWidget {
+  const NewsSearchEmptyState({super.key, required this.onSuggestion});
+  final ValueChanged<String> onSuggestion;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: colors.surfaceContainer,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.search_rounded),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No articles found',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try a shorter search or a different word.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 15, color: colors.onSurfaceVariant),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              for (final term in const ['JavaScript', 'Python', 'CSS'])
+                ActionChip(
+                  label: Text(term),
+                  onPressed: () => onSuggestion(term),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

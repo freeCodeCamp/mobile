@@ -29,7 +29,7 @@ class _ArticleReaderState extends State<ArticleReader> {
   final _scrollController = ScrollController();
   final _progress = ValueNotifier<double>(0);
   final _shareButtonKey = GlobalKey();
-  double _fontSize = 18;
+  double _fontSize = 17;
   List<Widget>? _htmlWidgets;
 
   @override
@@ -88,14 +88,16 @@ class _ArticleReaderState extends State<ArticleReader> {
           lineHeight: const LineHeight(1.65),
         ),
         'code': Style(fontSize: FontSize(_fontSize - 2)),
-        'pre': Style(fontSize: FontSize(_fontSize - 5)),
+        'pre': Style(
+          fontSize: FontSize((_fontSize - 5).clamp(13, double.infinity)),
+        ),
         'h1': Style(
           fontSize: FontSize(_fontSize + 12),
           fontWeight: FontWeight.w800,
         ),
         'h2': Style(
-          fontSize: FontSize(_fontSize + 6),
-          fontWeight: FontWeight.w800,
+          fontSize: FontSize(_fontSize + 3),
+          fontWeight: FontWeight.w900,
         ),
         'h3': Style(
           fontSize: FontSize(_fontSize + 3),
@@ -121,7 +123,7 @@ class _ArticleReaderState extends State<ArticleReader> {
             itemBuilder: (_) => [
               for (final option in [
                 (16.0, 'Small'),
-                (18.0, 'Default'),
+                (17.0, 'Default'),
                 (22.0, 'Large'),
               ])
                 CheckedPopupMenuItem(
@@ -142,12 +144,12 @@ class _ArticleReaderState extends State<ArticleReader> {
           const SizedBox(width: 8),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(3),
+          preferredSize: const Size.fromHeight(4),
           child: ValueListenableBuilder<double>(
             valueListenable: _progress,
             builder: (_, value, _) => LinearProgressIndicator(
               value: value,
-              minHeight: 3,
+              minHeight: 4,
               color: colors.primary,
               backgroundColor: colors.outlineVariant,
             ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
 import 'package:freecodecamp/news/ui/widgets/author_post_tile.dart';
 import 'package:freecodecamp/news/ui/widgets/news_load_error.dart';
+import 'package:freecodecamp/news/ui/widgets/post_feed_skeleton.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 
@@ -60,7 +61,8 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
     return ColoredBox(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: feedAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () =>
+            PostFeedSkeleton(header: widget.header, featured: widget.featured),
         error: (error, stack) =>
             NewsLoadError(onRetry: () => ref.invalidate(_provider)),
         data: (feed) => RefreshIndicator(

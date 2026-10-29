@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
@@ -152,10 +153,11 @@ class _NewsImageViewState extends State<NewsImageView> {
                           ),
                           const SizedBox(height: 6),
                         ],
-                        const Text(
+                        Text(
                           'Double-tap to zoom · Swipe down to close',
                           style: TextStyle(
-                            color: Color(0xFFCABEEA),
+                            color:
+                                FccTheme.themeDark.colorScheme.onSurfaceVariant,
                             height: 1.4,
                           ),
                         ),
