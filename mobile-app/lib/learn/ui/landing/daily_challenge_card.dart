@@ -6,6 +6,7 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class DailyChallengeCard extends ConsumerStatefulWidget {
@@ -56,7 +57,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: colors.outlineVariant),
         ),
         child: Column(
@@ -106,49 +107,100 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'Daily challenge',
-            style: TextStyle(
-              color: colors.onSurface,
-              fontFamily: 'Lato',
-              letterSpacing: 0,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              height: 1.2,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 52,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colors.outline, width: 1.5),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      color: colors.surfaceContainer,
+                      alignment: Alignment.center,
+                      child: Text(
+                        Jiffy.parseFromDateTime(
+                          challenge.date,
+                        ).format(pattern: 'MMM'),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          height: 1.4,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          '${challenge.date.day}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            height: 1,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      showArchiveLink ? 'Daily challenge' : 'Today',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isCompleted
+                          ? "Today's challenge completed!"
+                          : challenge.title,
+                      style: TextStyle(
+                        color: colors.onSurface,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            isCompleted ? "Today's challenge completed!" : challenge.title,
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              height: 1.25,
+          if (isCompleted) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Come back tomorrow for a new challenge.',
+              style: TextStyle(
+                color: colors.onSurfaceVariant,
+                fontSize: 14,
+                height: 1.45,
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            isCompleted
-                ? 'Come back tomorrow for a new challenge.'
-                : 'Solve it in JavaScript or Python.',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 14,
-              height: 1.45,
-            ),
-          ),
+          ],
           const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
-              final button = FilledButton(
-                style: FilledButton.styleFrom(
+              final button = OutlinedButton(
+                style: OutlinedButton.styleFrom(
                   minimumSize: const Size(48, 44),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -156,14 +208,9 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
                   ),
                   textStyle: const TextStyle(
                     fontFamily: 'Lato',
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     height: 1.25,
-                  ),
-                  backgroundColor: colors.secondary,
-                  foregroundColor: colors.onSecondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 onPressed: () => LearnDailyChallengeRoute(
@@ -174,8 +221,6 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
                   textAlign: TextAlign.center,
                 ),
               );
-              // Give the primary action the remaining row width. At narrow
-              // widths or large text, stack instead of squeezing either label.
               if (!showArchiveLink ||
                   constraints.maxWidth < 300 ||
                   MediaQuery.textScalerOf(context).scale(16) > 20) {
@@ -219,7 +264,7 @@ class _ArchiveLink extends StatelessWidget {
       textStyle: const TextStyle(
         fontFamily: 'Lato',
         fontSize: 16,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         decoration: TextDecoration.underline,
       ),
     ),
