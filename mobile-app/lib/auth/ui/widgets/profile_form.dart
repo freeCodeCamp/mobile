@@ -25,9 +25,6 @@ Future<bool> confirmProfileDiscard(BuildContext context) async =>
               FilledButton(
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   textStyle: const TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 17,
