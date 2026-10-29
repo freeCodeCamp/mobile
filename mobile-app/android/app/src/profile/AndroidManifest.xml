@@ -3,4 +3,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <application>
+        <!-- Without this the native SDK uploads first_open and session_start before main() turns collection off. -->
+        <meta-data android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
+    </application>
 </manifest>
