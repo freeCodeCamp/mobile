@@ -16,6 +16,7 @@ import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmode
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
 import 'package:freecodecamp/learn/ui/widgets/socrates_icon.dart';
+import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
@@ -26,12 +27,14 @@ class EditorChallengeView extends ConsumerStatefulWidget {
     required this.challenge,
     this.block,
     this.selector,
+    this.dailyChallengeNumber,
   });
 
   final Challenge challenge;
   // Daily challenges belong to no block and select a language instead of a file.
   final Block? block;
   final Widget? selector;
+  final int? dailyChallengeNumber;
 
   @override
   ConsumerState<EditorChallengeView> createState() =>
@@ -55,6 +58,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   int _editorLoad = 0;
   int _codeEdit = 0;
 
+  bool get _daily => widget.dailyChallengeNumber != null;
+
   EditorChallengeNotifierProvider get _provider =>
       editorChallengeProvider(widget.challenge);
 
@@ -77,6 +82,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         path: current.path,
         options: phoneIdeOptions(
           context,
+          daily: _daily,
           regionOptions: current.options.regionOptions,
         ),
       );
@@ -142,6 +148,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       path: LearnCodeService.editorPath(challenge, file),
       options: phoneIdeOptions(
         context,
+        daily: _daily,
         regionOptions: region.isEmpty
             ? null
             : EditorRegionOptions(start: region[0], end: region[1]),
@@ -339,20 +346,35 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                         ),
                         _fileSelector(state),
                         Expanded(
-                          child: LayoutBuilder(
-                            builder: (context, editorSpace) => Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                _editor ??
-                                    const Center(
-                                      child: CircularProgressIndicator(),
+                          child: Container(
+                            margin: _daily ? const EdgeInsets.all(12) : null,
+                            decoration: _daily
+                                ? BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                  )
+                                : null,
+                            clipBehavior: _daily ? Clip.antiAlias : Clip.none,
+                            child: LayoutBuilder(
+                              builder: (context, editorSpace) => Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  _editor ??
+                                      const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                  if (_sheet != null && keyboard == 0)
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: _panel(
+                                        state,
+                                        editorSpace.maxHeight,
+                                      ),
                                     ),
-                                if (_sheet != null && keyboard == 0)
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: _panel(state, editorSpace.maxHeight),
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -373,7 +395,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final block = widget.block;
     final index =
         block?.challenges.indexWhere((c) => c.id == widget.challenge.id) ?? -1;
-    final title = index >= 0
+    final title = _daily
+        ? 'Challenge ${widget.dailyChallengeNumber}'
+        : index >= 0
         ? 'Step ${index + 1} of ${block!.challenges.length}'
         : widget.challenge.title;
     final scale = MediaQuery.textScalerOf(context);
@@ -383,7 +407,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         onPressed: () => Navigator.of(context).maybePop(),
         icon: const Icon(Icons.chevron_left_rounded),
       ),
-      leadingWidth: 40,
+      leadingWidth: 44,
       titleSpacing: 8,
       toolbarHeight: math.max(56, scale.scale(16) + scale.scale(12) + 14),
       title: Column(
@@ -395,20 +419,28 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
           ),
-          if (block != null)
+          if (block != null || _daily)
             Text(
-              block.name,
+              _daily ? 'Daily coding challenge' : block!.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
         ],
       ),
       actions: [
-        if (keyboard)
+        if (_daily)
+          TextButton(
+            onPressed: _help,
+            child: const Text(
+              'Get help',
+              style: TextStyle(decoration: TextDecoration.underline),
+            ),
+          )
+        else if (keyboard)
           TextFieldTapRegion(
             child: ExcludeFocus(
               child: Row(
@@ -476,8 +508,13 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   }
 
   Widget _instructions(double defaultBodyHeight, double maxBodyHeight) {
+    if (_daily) {
+      return DailyInstructionCard(
+        challenge: widget.challenge,
+        maxHeight: defaultBodyHeight + 44,
+      );
+    }
     final colors = Theme.of(context).colorScheme;
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final customHeight = _instructionDragHeight ?? _instructionHeight;
     final bodyHeight = (customHeight ?? defaultBodyHeight).clamp(
       0.0,
@@ -489,7 +526,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         ).text?.replaceAll(RegExp(r'\s+'), ' ').trim() ??
         '';
     return Material(
-      color: Color(dark ? 0xFF29216C : 0xFFF6F6FE),
+      color: FccDesignColors.of(context).editorHighlight,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -591,6 +628,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   }
 
   Widget _fileSelector(EditorChallengeState state) {
+    if (_daily && widget.selector != null) return widget.selector!;
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final shadow = theme.colorScheme.shadow;
@@ -627,6 +665,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
 
   Widget _fileTabs(EditorChallengeState state) {
     final colors = Theme.of(context).colorScheme;
+    final design = FccDesignColors.of(context);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -678,18 +717,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                             height: 8,
                             decoration: BoxDecoration(
                               color: switch (file.ext) {
-                                Ext.css => Color(
-                                  Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? 0xFF8EC5FF
-                                      : 0xFF1F6FD1,
-                                ),
-                                Ext.js => Color(
-                                  Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? 0xFFFFD978
-                                      : 0xFF5D4900,
-                                ),
+                                Ext.css => design.lecture,
+                                Ext.js => design.workshop,
                                 _ => colors.primary,
                               },
                               borderRadius: BorderRadius.circular(2),
@@ -902,7 +931,10 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   }
 
   Widget _bottomBar(EditorChallengeState state, bool keyboard) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final design = FccDesignColors.of(context);
+    final signedIn = ref.watch(authProvider).value != null;
     final workerType = workerTypeOf(widget.challenge.challengeType);
     final runner = ref.watch(learnTestRunnerServiceProvider(workerType));
     final failed = runner.hasError && !runner.isLoading;
@@ -917,16 +949,65 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         : index >= 0 && index < block.challenges.length - 1
         ? 'Next step'
         : 'Finish';
-    final actionStyle = FilledButton.styleFrom(
-      minimumSize: const Size(96, 48),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      textStyle: const TextStyle(
-        fontFamily: 'Lato',
-        fontSize: 16,
-        fontWeight: FontWeight.w800,
+    final actionStyle = theme.filledButtonTheme.style!.copyWith(
+      minimumSize: const WidgetStatePropertyAll(Size(96, 48)),
+      padding: const WidgetStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: const WidgetStatePropertyAll(
+        TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 17,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
     );
+    if (_daily) {
+      final example = widget.challenge.tests.firstOrNull;
+      final dailyStyle = actionStyle.copyWith(
+        minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 50)),
+      );
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (example != null) ...[
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 80),
+                child: SingleChildScrollView(
+                  child: DailyChallengeExample(test: example),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (state.passed)
+              CompleteButton(
+                challenge: widget.challenge,
+                block: null,
+                label: nextLabel,
+                buttonStyle: dailyStyle,
+              )
+            else
+              FilledButton(
+                style: dailyStyle,
+                onPressed: busy
+                    ? null
+                    : failed
+                    ? () => _retryRunner(workerType)
+                    : _runTests,
+                child: Text(
+                  state.testsRunning
+                      ? 'Checking…'
+                      : failed
+                      ? 'Retry'
+                      : 'Check your code',
+                ),
+              ),
+          ],
+        ),
+      );
+    }
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -948,7 +1029,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       children: [
                         _ToolButton(
                           label: 'Tests',
-                          icon: Icons.checklist_rounded,
+                          icon: Icons.fact_check_outlined,
+                          selectedIcon: Icons.fact_check_rounded,
                           active:
                               _sheet == _EditorSheet.tests ||
                               _sheet == _EditorSheet.pass,
@@ -956,10 +1038,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                               ? null
                               : '$passing/${widget.challenge.tests.length}',
                           badgeColor: state.passed
-                              ? Theme.of(
-                                  context,
-                                ).extension<FccDesignColors>()!.success
-                              : colors.error,
+                              ? design.successBorder
+                              : design.dangerFill,
                           onPressed: () => _showSheet(
                             _sheet == _EditorSheet.tests ||
                                     _sheet == _EditorSheet.pass
@@ -973,6 +1053,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                           _ToolButton(
                             label: 'Preview',
                             icon: Icons.visibility_outlined,
+                            selectedIcon: Icons.visibility,
                             active: _sheet == _EditorSheet.preview,
                             onPressed: () => _showSheet(
                               _sheet == _EditorSheet.preview
@@ -982,7 +1063,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                           ),
                         _ToolButton(
                           label: 'Console',
-                          icon: Icons.terminal_rounded,
+                          icon: Icons.terminal_outlined,
+                          selectedIcon: Icons.terminal_rounded,
                           active: _sheet == _EditorSheet.console,
                           onPressed: () => _showSheet(
                             _sheet == _EditorSheet.console
@@ -1013,15 +1095,17 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       block: block,
                       label: nextLabel,
                       trailingIcon: Icons.arrow_forward_rounded,
-                      buttonStyle: actionStyle.copyWith(
-                        backgroundColor: WidgetStatePropertyAll(colors.surface),
-                        foregroundColor: WidgetStatePropertyAll(
-                          colors.onSurface,
-                        ),
-                        side: WidgetStatePropertyAll(
-                          BorderSide(color: colors.primary, width: 1.5),
-                        ),
-                      ),
+                      buttonStyle: signedIn
+                          ? actionStyle
+                          : theme.outlinedButtonTheme.style!.copyWith(
+                              textStyle: const WidgetStatePropertyAll(
+                                TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
                     ),
                   )
                 : FilledButton(
@@ -1073,6 +1157,7 @@ class _ToolButton extends StatelessWidget {
   const _ToolButton({
     required this.label,
     required this.icon,
+    required this.selectedIcon,
     required this.active,
     required this.onPressed,
     this.badge,
@@ -1080,6 +1165,7 @@ class _ToolButton extends StatelessWidget {
   });
   final String label;
   final IconData icon;
+  final IconData selectedIcon;
   final bool active;
   final VoidCallback onPressed;
   final String? badge;
@@ -1090,37 +1176,55 @@ class _ToolButton extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return TextButton(
       onPressed: onPressed,
-      style: TextButton.styleFrom(
-        foregroundColor: active
-            ? Theme.of(context).brightness == Brightness.dark
-                  ? colors.onPrimary
-                  : colors.primary
-            : colors.onSurfaceVariant,
-        backgroundColor: active
-            ? Theme.of(context).brightness == Brightness.dark
-                  ? colors.primary
-                  : colors.primaryContainer
-            : Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        minimumSize: const Size(60, 64),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      ),
+      style:
+          TextButton.styleFrom(
+            foregroundColor: active
+                ? colors.onSurface
+                : colors.onSurfaceVariant,
+            backgroundColor: Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            minimumSize: const Size(60, 64),
+          ).copyWith(
+            shape: FccTheme.focusShape(
+              context,
+              color: active ? colors.onSurface : colors.onSurfaceVariant,
+            ),
+          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Badge(
             isLabelVisible: badge != null,
-            label: Text(badge ?? ''),
-            backgroundColor: badgeColor,
-            textColor: Theme.of(context).brightness == Brightness.dark
-                ? colors.surface
-                : Colors.white,
-            child: Icon(icon, size: 22),
+            label: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: badgeColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  width: 2,
+                ),
+              ),
+              child: Text(
+                badge ?? '',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            backgroundColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+            child: Icon(active ? selectedIcon : icon, size: 22),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: active ? FontWeight.w900 : FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -1149,7 +1253,6 @@ class _SymbolBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -1162,11 +1265,6 @@ class _SymbolBar extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(44, 48),
                   padding: const EdgeInsets.all(10),
-                  backgroundColor: colors.surface,
-                  side: BorderSide(color: colors.outline),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
                 ),
                 child: symbol == 'Tab'
                     ? const Icon(Icons.keyboard_tab_rounded, size: 20)

@@ -5,13 +5,14 @@ import 'package:phone_ide/phone_ide.dart';
 EditorOptions phoneIdeOptions(
   BuildContext context, {
   EditorRegionOptions? regionOptions,
+  bool daily = false,
 }) {
   final theme = Theme.of(context);
   final colors = theme.colorScheme;
   final design = theme.extension<FccDesignColors>()!;
   final dark = theme.brightness == Brightness.dark;
   final background = colors.surface;
-  final highlight = Color(dark ? 0xFF29216C : 0xFFF6F6FE);
+  final highlight = design.editorHighlight;
   return EditorOptions(
     backgroundColor: background,
     regionOptions: regionOptions == null
@@ -22,9 +23,9 @@ EditorOptions phoneIdeOptions(
             color: highlight,
             borderColor: colors.primary,
           ),
-    linebarColor: theme.scaffoldBackgroundColor,
+    linebarColor: daily ? colors.surface : theme.scaffoldBackgroundColor,
     linebarTextColor: colors.onSurfaceVariant,
-    linebarBorderColor: colors.outlineVariant,
+    linebarBorderColor: daily ? Colors.transparent : colors.outlineVariant,
     textColor: colors.onSurface,
     cursorColor: colors.primary,
     selectionColor: theme.textSelectionTheme.selectionColor,

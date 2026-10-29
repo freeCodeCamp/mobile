@@ -56,7 +56,7 @@ final Map<String, Style> defaultStyles = {
   'figure': Style(margin: Margins.zero, textAlign: TextAlign.center),
   'figcaption': Style(fontSize: FontSize.medium),
   'code': Style(
-    fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
+    fontFamily: 'monospace',
     fontSize: FontSize.xLarge,
   ),
   'pre': Style(fontFamily: 'monospace'),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge/daily_challenge_viewmodel.dart';
@@ -20,10 +19,11 @@ class DailyChallengeView extends ConsumerWidget {
     return switch ((challenge, language)) {
       (AsyncData(value: final daily), AsyncData(value: final language)) =>
         EditorChallengeView(
+          dailyChallengeNumber: daily.challengeNumber,
           challenge: ref
               .watch(learnDailyChallengeServiceProvider)
               .toChallenge(daily, language),
-          selector: _LanguageSelector(
+          selector: DailyChallengeLanguageSelector(
             selected: language,
             onSelected: (language) => ref
                 .read(dailyChallengeLanguageProvider.notifier)
@@ -49,60 +49,29 @@ class DailyChallengeView extends ConsumerWidget {
   }
 }
 
-class _LanguageSelector extends StatelessWidget {
-  const _LanguageSelector({required this.selected, required this.onSelected});
+class DailyChallengeLanguageSelector extends StatelessWidget {
+  const DailyChallengeLanguageSelector({
+    super.key,
+    required this.selected,
+    required this.onSelected,
+  });
 
   final DailyChallengeLanguage selected;
   final ValueChanged<DailyChallengeLanguage> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    Text label(DailyChallengeLanguage language) => Text(
-      language.label,
-      style: TextStyle(
-        fontSize: 16,
-        color: language == selected
-            ? FccDesignColors.of(context).accentText
-            : colors.onSurface,
-        fontWeight: language == selected ? FontWeight.w700 : FontWeight.w400,
-      ),
-    );
-
-    return Container(
-      constraints: const BoxConstraints(minHeight: 44),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        border: Border(bottom: BorderSide(color: colors.outlineVariant)),
-      ),
-      child: DropdownButton<DailyChallengeLanguage>(
-        isExpanded: true,
-        isDense: true,
-        itemHeight: null,
-        alignment: Alignment.centerLeft,
-        dropdownColor: colors.surface,
-        borderRadius: BorderRadius.circular(12),
-        icon: Icon(Icons.expand_more, color: colors.onSurfaceVariant),
-        underline: const SizedBox.shrink(),
-        value: selected,
-        items: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: SegmentedButton<DailyChallengeLanguage>(
+        expandedInsets: EdgeInsets.zero,
+        showSelectedIcon: false,
+        selected: {selected},
+        segments: [
           for (final language in DailyChallengeLanguage.values)
-            DropdownMenuItem(
-              value: language,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: label(language),
-              ),
-            ),
+            ButtonSegment(value: language, label: Text(language.label)),
         ],
-        selectedItemBuilder: (_) => [
-          for (final language in DailyChallengeLanguage.values)
-            Align(alignment: Alignment.centerLeft, child: label(language)),
-        ],
-        onChanged: (language) {
-          if (language != null) onSelected(language);
-        },
+        onSelectionChanged: (languages) => onSelected(languages.single),
       ),
     );
   }

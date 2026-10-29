@@ -9,6 +9,101 @@ import 'package:freecodecamp/learn/ui/widgets/celebration_confetti.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:html/parser.dart' show parseFragment;
+
+class DailyInstructionCard extends StatelessWidget {
+  const DailyInstructionCard({
+    super.key,
+    required this.challenge,
+    required this.maxHeight,
+  });
+
+  final Challenge challenge;
+  final double maxHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final fragment = parseFragment(challenge.description);
+    final summary = (fragment.querySelector('p')?.text ?? fragment.text ?? '')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              challenge.title,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            if (summary.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(summary, maxLines: 2, overflow: TextOverflow.ellipsis),
+            ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  useSafeArea: true,
+                  showDragHandle: true,
+                  builder: (context) => SizedBox(
+                    height: MediaQuery.sizeOf(context).height * .7,
+                    child: InstructionPanel(challenge: challenge),
+                  ),
+                ),
+                child: const Text(
+                  'Read more',
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DailyChallengeExample extends StatelessWidget {
+  const DailyChallengeExample({super.key, required this.test});
+
+  final ChallengeTest test;
+
+  @override
+  Widget build(BuildContext context) {
+    final fragment = parseFragment(test.text);
+    final paragraph = fragment.children.singleOrNull;
+    final example = paragraph?.localName == 'p'
+        ? paragraph!.innerHtml
+        : test.text;
+    return ParsedHtml(
+      'Example: $example',
+      outlinedInlineCode: true,
+      customStyles: {
+        '*': Style(
+          fontSize: FontSize(13),
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+        'p': Style(margin: Margins.zero),
+        'code': Style(fontFamily: 'JetBrains Mono', fontSize: FontSize(13)),
+      },
+    );
+  }
+}
 
 class InstructionPanel extends StatelessWidget {
   const InstructionPanel({super.key, required this.challenge, this.block});
@@ -41,7 +136,6 @@ class HintPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -50,7 +144,7 @@ class HintPanel extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: dark ? const Color(0xFF29216C) : const Color(0xFFF6F6FE),
+              color: FccDesignColors.of(context).editorHighlight,
               borderRadius: BorderRadius.circular(16),
             ),
             child: ParsedHtml(
@@ -121,7 +215,7 @@ class PassPanel extends ConsumerWidget {
       ...?user?.completedChallenges.map((c) => c.id),
       challenge.id,
     };
-    final tint = dark ? const Color(0xFF003D1B) : const Color(0xFFCCFBD7);
+    final tint = FccDesignColors.of(context).successContainer;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -145,7 +239,9 @@ class PassPanel extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: dark ? success : const Color(0xFFB0EEBF),
+                        color: dark
+                            ? success
+                            : FccDesignColors.of(context).successContainer,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -161,9 +257,9 @@ class PassPanel extends ConsumerWidget {
                   step == null ? 'Challenge complete!' : 'Step $step complete!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     height: 1.15,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
                     color: colors.onSurface,
                   ),
                 ),
@@ -173,7 +269,7 @@ class PassPanel extends ConsumerWidget {
                     '${tests == 1 ? '1 test' : 'All $tests tests'} passed.${next == null ? '' : ' On to step $next.'}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       color: colors.onSurfaceVariant,
                     ),
                   ),
@@ -184,6 +280,15 @@ class PassPanel extends ConsumerWidget {
                 ],
                 if (user == null) ...[
                   const SizedBox(height: 24),
+                  Text(
+                    "You're not signed in, so this progress is only saved on this device.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   FilledButton(
                     onPressed: () => const LoginRoute().push<void>(context),
                     style: FilledButton.styleFrom(
@@ -194,17 +299,14 @@ class PassPanel extends ConsumerWidget {
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                       textStyle: const TextStyle(
                         fontFamily: 'Lato',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     child: const Text(
-                      'Sign in to save your progress',
+                      'Sign in to save progress',
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -244,7 +346,7 @@ class _BlockProgress extends StatelessWidget {
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
     final colors = Theme.of(context).colorScheme;
     final style = TextStyle(
-      fontSize: 12,
+      fontSize: 13,
       fontWeight: FontWeight.w700,
       color: colors.onSurfaceVariant,
     );
