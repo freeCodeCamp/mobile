@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/controllers/profile_controller.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
@@ -49,7 +50,6 @@ class _AccountViewState extends ConsumerState<AccountView> {
     final refresh = ref.watch(profileRefreshProvider);
     final user = auth.value;
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -83,14 +83,9 @@ class _AccountViewState extends ConsumerState<AccountView> {
                     const _GuestAccount(),
                   if (auth.hasError || refresh.hasError) ...[
                     if (user != null) const SizedBox(height: 12),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: ErrorRetry(
-                          message: 'Unable to refresh your account.',
-                          onRetry: () => ref.invalidate(profileRefreshProvider),
-                        ),
-                      ),
+                    ErrorRetry(
+                      message: 'Unable to refresh your account.',
+                      onRetry: () => ref.invalidate(profileRefreshProvider),
                     ),
                   ],
                   const SizedBox(height: 16),
@@ -98,14 +93,7 @@ class _AccountViewState extends ConsumerState<AccountView> {
                   if (user != null) ...[
                     const SizedBox(height: 16),
                     OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: colors.error,
-                        backgroundColor: Colors.transparent,
-                        side: BorderSide(color: colors.outlineVariant),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+                      style: FccTheme.dangerOutlineStyle(context),
                       onPressed: _signingOut ? null : _signOut,
                       child: Text(_signingOut ? 'Logging out…' : 'Log out'),
                     ),
@@ -114,7 +102,7 @@ class _AccountViewState extends ConsumerState<AccountView> {
                   Text(
                     'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) charity.',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall,
+                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
                   ),
                 ],
               ),
@@ -136,15 +124,24 @@ class _AccountHeader extends StatelessWidget {
     final colors = theme.colorScheme;
     final identity = Row(
       children: [
-        CircleAvatar(
-          radius: 28,
-          backgroundColor: colors.surfaceContainer,
-          backgroundImage: user.picture.isEmpty
-              ? null
-              : CachedNetworkImageProvider(user.picture),
-          child: user.picture.isEmpty
-              ? Icon(Icons.person_outline, color: colors.onSurfaceVariant)
-              : null,
+        DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(1),
+            child: CircleAvatar(
+              radius: 31,
+              backgroundColor: colors.surfaceContainer,
+              backgroundImage: user.picture.isEmpty
+                  ? null
+                  : CachedNetworkImageProvider(user.picture),
+              child: user.picture.isEmpty
+                  ? Icon(Icons.person_outline, color: colors.onSurfaceVariant)
+                  : null,
+            ),
+          ),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -153,26 +150,33 @@ class _AccountHeader extends StatelessWidget {
             children: [
               Text(
                 user.name.trim().isEmpty ? user.username : user.name,
-                style: theme.textTheme.titleMedium,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-              Text('@${user.username}', style: theme.textTheme.bodySmall),
+              Text(
+                '@${user.username}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontFamily: 'JetBrains Mono',
+                  fontSize: 13,
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),
       ],
     );
     final viewProfile = OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        side: BorderSide(color: colors.outlineVariant),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
+      style: FccTheme.compactOutlineStyle(context),
       onPressed: () => const ProfileRoute().push<void>(context),
       child: const Text('View profile'),
     );
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final stacked =
@@ -209,6 +213,7 @@ class _GuestAccount extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -232,7 +237,7 @@ class _GuestAccount extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "You're learning as a guest",
+                        "You're learning as a guest.",
                         style: theme.textTheme.titleLarge,
                       ),
                       const SizedBox(height: 4),
@@ -250,8 +255,10 @@ class _GuestAccount extends StatelessWidget {
             const SizedBox(height: 16),
             FilledButton(
               style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                textStyle: const TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               onPressed: () => const LoginRoute().push<void>(context),
@@ -269,6 +276,7 @@ class _AccountLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     clipBehavior: Clip.antiAlias,
     child: Column(
       children: [
