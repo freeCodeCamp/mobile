@@ -358,19 +358,9 @@ class _AddEntry extends StatelessWidget {
   final VoidCallback? onPressed;
 
   @override
-  Widget build(BuildContext context) => ProfileDashedBorder(
-    color: onPressed == null
-        ? Theme.of(context).colorScheme.outlineVariant
-        : Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
-    child: OutlinedButton.icon(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: FccDesignColors.of(context).accentText,
-        backgroundColor: Colors.transparent,
-        side: BorderSide.none,
-      ),
-      onPressed: onPressed,
-      icon: const Icon(Icons.add, size: 20),
-      label: Text(label),
-    ),
+  Widget build(BuildContext context) => OutlinedButton.icon(
+    onPressed: onPressed,
+    icon: const Icon(Icons.add, size: 20),
+    label: Text(label),
   );
 }

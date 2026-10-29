@@ -30,7 +30,6 @@ class TagButton extends StatelessWidget {
           style: TextButton.styleFrom(
             minimumSize: const Size(44, 44),
             padding: EdgeInsets.zero,
-            foregroundColor: FccDesignColors.of(context).accentText,
             textStyle: TextStyle(
               fontFamily: listEyebrow ? 'JetBrains Mono' : 'Lato',
               fontSize: listEyebrow
@@ -42,7 +41,7 @@ class TagButton extends StatelessWidget {
               letterSpacing: 0,
               decoration: link ? TextDecoration.underline : TextDecoration.none,
             ),
-          ),
+          ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
           onPressed: () =>
               NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context),
           child: Text(

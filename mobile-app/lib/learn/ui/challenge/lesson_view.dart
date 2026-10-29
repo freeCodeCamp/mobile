@@ -315,12 +315,12 @@ class _LessonViewState extends ConsumerState<LessonView> {
                   final lesson = ChallengeButton(
                     label: 'Lesson',
                     leadingIcon: CupertinoIcons.book,
-                    style: _buttonStyle(context).copyWith(
-                      backgroundColor: WidgetStatePropertyAll(
-                        colors.primaryContainer,
-                      ),
-                      foregroundColor: WidgetStatePropertyAll(
-                        FccDesignColors.of(context).accentText,
+                    style: _buttonStyle(context, secondary: true).merge(
+                      FccTheme.surfaceButtonStyle(
+                        context,
+                        fill: colors.primaryContainer,
+                        pressed: colors.surfaceContainer,
+                        foreground: FccDesignColors.of(context).accentText,
                       ),
                     ),
                     onPressed: () => _show(null),
@@ -389,13 +389,13 @@ class _LessonViewState extends ConsumerState<LessonView> {
           final previous = ChallengeButton(
             label: 'Previous',
             secondary: true,
-            style: _buttonStyle(context),
+            style: _buttonStyle(context, secondary: true),
             onPressed: current == 0 ? null : () => _show(current - 1),
           );
           final next = ChallengeButton(
             label: 'Next question',
             secondary: true,
-            style: _buttonStyle(context),
+            style: _buttonStyle(context, secondary: true),
             trailingIcon: Icons.arrow_forward,
             onPressed: current == _questions.length - 1
                 ? null
@@ -419,14 +419,14 @@ class _LessonViewState extends ConsumerState<LessonView> {
         },
       );
 
-  ButtonStyle _buttonStyle(BuildContext context) => FilledButton.styleFrom(
-    minimumSize: const Size(double.infinity, 50),
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-    textStyle: const TextStyle(
-      fontFamily: 'Lato',
-      fontSize: 16,
-      fontWeight: FontWeight.w800,
-    ),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-  );
+  ButtonStyle _buttonStyle(BuildContext context, {bool secondary = false}) =>
+      FilledButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        textStyle: TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 17,
+          fontWeight: secondary ? FontWeight.w700 : FontWeight.w900,
+        ),
+      );
 }

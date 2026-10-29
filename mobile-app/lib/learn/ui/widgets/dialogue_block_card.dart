@@ -291,20 +291,18 @@ class _DialogueCardState extends State<_DialogueCard> {
                 ),
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: FccDesignColors.of(context).accentText,
                     minimumSize: const Size.fromHeight(44),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 12,
                     ),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    shape: const RoundedRectangleBorder(),
                     textStyle: const TextStyle(
                       fontFamily: 'Lato',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
-                  ),
+                  ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
                   onPressed: () => setState(() {
                     _showAll = !_showAll;
                     _saveState();

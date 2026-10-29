@@ -53,16 +53,10 @@ class _BackToTopButtonState extends State<BackToTopButton> {
       curve: Curves.easeOut,
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: FloatingActionButton(
+        child: IconButton(
           onPressed: _goToTop,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Theme.of(context).colorScheme.outline),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          foregroundColor: Theme.of(context).colorScheme.primary,
           tooltip: 'Back to top',
-          child: const Icon(Icons.keyboard_arrow_up, size: 32),
+          icon: const Icon(Icons.keyboard_arrow_up, size: 32),
         ),
       ),
     );
