@@ -346,8 +346,9 @@ class _CodeRadioPlayPauseButtonState
               fixedSize: const Size.square(76),
             ).copyWith(
               backgroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.disabled))
+                if (states.contains(WidgetState.disabled)) {
                   return colors.surfaceContainer;
+                }
                 if (states.contains(WidgetState.pressed)) {
                   return FccDesignColors.of(context).primaryPressed;
                 }

@@ -138,8 +138,9 @@ class EpisodePlayButton extends ConsumerWidget {
             fixedSize: Size.square(prominent ? 80 : 48),
           ).copyWith(
             backgroundColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.disabled))
+              if (states.contains(WidgetState.disabled)) {
                 return colors.surfaceContainer;
+              }
               if (states.contains(WidgetState.pressed)) {
                 return prominent
                     ? FccDesignColors.of(context).primaryPressed
