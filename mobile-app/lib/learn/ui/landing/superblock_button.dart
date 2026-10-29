@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 
 class SuperBlockButton extends StatelessWidget {
   const SuperBlockButton({
@@ -7,50 +7,39 @@ class SuperBlockButton extends StatelessWidget {
     required this.title,
     required this.onPressed,
     this.icon,
-    this.svgAsset,
     this.isEnabled = true,
     this.isExternal = false,
     this.subtitle,
-    this.color,
   });
   final String title;
   final VoidCallback onPressed;
   final IconData? icon;
-  final String? svgAsset;
   final bool isEnabled;
   final bool isExternal;
   final String? subtitle;
-  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final accent = color ?? colors.primary;
     return InkWell(
       onTap: onPressed,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         child: Row(
           children: [
             Container(
-              width: 38,
-              height: 38,
+              width: 44,
+              height: 44,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: accent.withValues(alpha: .12),
+                color: colors.surfaceContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: svgAsset != null
-                  ? SvgPicture.asset(
-                      svgAsset!,
-                      fit: BoxFit.contain,
-                      colorFilter: ColorFilter.mode(accent, BlendMode.srcIn),
-                    )
-                  : Icon(
-                      icon ?? Icons.school_outlined,
-                      color: accent,
-                      size: 22,
-                    ),
+              child: Icon(
+                icon ?? Icons.desktop_windows_outlined,
+                color: colors.onSurface,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -61,6 +50,7 @@ class SuperBlockButton extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontSize: 16,
+                      height: 1.25,
                       fontWeight: FontWeight.w700,
                       color: colors.onSurface,
                     ),
@@ -71,7 +61,11 @@ class SuperBlockButton extends StatelessWidget {
                       subtitle ?? 'Not available in the app',
                       style: TextStyle(
                         fontSize: 13,
-                        color: colors.onSurfaceVariant,
+                        color:
+                            subtitle == 'Start here' ||
+                                subtitle == 'In progress'
+                            ? FccDesignColors.of(context).accentText
+                            : colors.onSurfaceVariant,
                       ),
                     ),
                   ],
