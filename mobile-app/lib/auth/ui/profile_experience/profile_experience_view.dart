@@ -63,9 +63,15 @@ class _ProfileExperienceViewState extends ConsumerState<ProfileExperienceView> {
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
+          FilledButton(
+            style: FccTheme.dangerStyle(context).copyWith(
+              textStyle: const WidgetStatePropertyAll(
+                TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ),
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Delete experience'),

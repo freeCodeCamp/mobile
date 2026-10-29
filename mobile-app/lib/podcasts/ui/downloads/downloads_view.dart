@@ -282,7 +282,7 @@ class _DownloadRow extends StatelessWidget {
                   Text(
                     podcast.title,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: colors.onSurfaceVariant,
                     ),
@@ -301,7 +301,7 @@ class _DownloadRow extends StatelessWidget {
                     Text(
                       podcastDuration(episode.duration),
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         color: colors.onSurfaceVariant,
                       ),
                     ),

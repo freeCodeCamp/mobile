@@ -198,17 +198,10 @@ class _PreviewBanner extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           FilledButton(
-            style:
-                FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  minimumSize: const Size(48, 44),
-                ).copyWith(
-                  shape: FccTheme.focusShape(
-                    context,
-                    radius: 10,
-                    color: colors.onSecondary,
-                  ),
-                ),
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              minimumSize: const Size(48, 44),
+            ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
             onPressed: onDone,
             child: const Text('Done'),
           ),
@@ -264,6 +257,7 @@ class _PrivacyBanner extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         alignment: Alignment.centerLeft,
                         textStyle: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w700,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -279,7 +273,7 @@ class _PrivacyBanner extends StatelessWidget {
           const SizedBox(height: 12),
           OutlinedButton.icon(
             style: const ButtonStyle().copyWith(
-              shape: FccTheme.focusShape(context, radius: 10, color: accent),
+              shape: FccTheme.focusShape(context),
             ),
             onPressed: onPreview,
             icon: const Icon(Icons.visibility_outlined, size: 20),
@@ -626,11 +620,7 @@ class _Header extends StatelessWidget {
                       padding: const WidgetStatePropertyAll(
                         EdgeInsets.symmetric(horizontal: 12),
                       ),
-                      shape: FccTheme.focusShape(
-                        context,
-                        radius: 999,
-                        color: FccDesignColors.of(context).accentText,
-                      ),
+                      shape: FccTheme.focusShape(context, radius: 999),
                       textStyle: const WidgetStatePropertyAll(
                         TextStyle(
                           fontFamily: 'Lato',

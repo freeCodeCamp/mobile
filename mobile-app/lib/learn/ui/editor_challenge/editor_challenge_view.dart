@@ -331,62 +331,87 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
           padding: EdgeInsets.only(bottom: keyboard),
           child: SafeArea(
             top: false,
-            child: Column(
-              children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => Column(
-                      children: [
-                        _instructions(
-                          math.min(
-                            keyboard > 0 ? 140 : 220,
-                            constraints.maxHeight * .32,
-                          ),
-                          _instructionHeightLimit(constraints.maxHeight),
-                        ),
-                        _fileSelector(state),
-                        Expanded(
-                          child: Container(
-                            margin: _daily ? const EdgeInsets.all(12) : null,
-                            decoration: _daily
-                                ? BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(8),
-                                  )
-                                : null,
-                            clipBehavior: _daily ? Clip.antiAlias : Clip.none,
-                            child: LayoutBuilder(
-                              builder: (context, editorSpace) => Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  _editor ??
-                                      const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  if (_sheet != null && keyboard == 0)
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: _panel(
-                                        state,
-                                        editorSpace.maxHeight,
-                                      ),
-                                    ),
-                                ],
+            child: _daily
+                ? _dailyBody(state, keyboard > 0)
+                : Column(
+                    children: [
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) => Column(
+                            children: [
+                              _instructions(
+                                math.min(
+                                  keyboard > 0 ? 140 : 220,
+                                  constraints.maxHeight * .32,
+                                ),
+                                _instructionHeightLimit(constraints.maxHeight),
                               ),
-                            ),
+                              _fileSelector(state),
+                              Expanded(child: _editorArea(state, keyboard > 0)),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      _bottomBar(state, keyboard > 0),
+                    ],
                   ),
-                ),
-                _bottomBar(state, keyboard > 0),
-              ],
-            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _dailyBody(EditorChallengeState state, bool keyboard) {
+    return CustomScrollView(
+      key: const ValueKey('daily-challenge-scroll'),
+      slivers: [
+        SliverToBoxAdapter(
+          child: DailyInstructionCard(
+            challenge: widget.challenge,
+            maxHeight: double.infinity,
+          ),
+        ),
+        SliverToBoxAdapter(child: _fileSelector(state)),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Column(
+            children: [
+              Expanded(
+                // The editor keeps usable space when a long example or the
+                // keyboard makes the whole screen need to scroll.
+                child: SizedBox(
+                  height: 184,
+                  child: Container(
+                    margin: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: _editorArea(state, keyboard),
+                  ),
+                ),
+              ),
+              _bottomBar(state, keyboard),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _editorArea(EditorChallengeState state, bool keyboard) {
+    return LayoutBuilder(
+      builder: (context, editorSpace) => Stack(
+        fit: StackFit.expand,
+        children: [
+          _editor ?? const Center(child: CircularProgressIndicator()),
+          if (_sheet != null && !keyboard)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _panel(state, editorSpace.maxHeight),
+            ),
+        ],
       ),
     );
   }
@@ -973,12 +998,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (example != null) ...[
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 80),
-                child: SingleChildScrollView(
-                  child: DailyChallengeExample(test: example),
-                ),
-              ),
+              DailyChallengeExample(test: example),
               const SizedBox(height: 8),
             ],
             if (state.passed)
@@ -1177,18 +1197,15 @@ class _ToolButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style:
-          TextButton.styleFrom(
-            foregroundColor: active
-                ? colors.onSurface
-                : colors.onSurfaceVariant,
-            backgroundColor: Colors.transparent,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            minimumSize: const Size(60, 64),
+          FccTheme.surfaceButtonStyle(
+            context,
+            fill: Colors.transparent,
+            foreground: active ? colors.onSurface : colors.onSurfaceVariant,
           ).copyWith(
-            shape: FccTheme.focusShape(
-              context,
-              color: active ? colors.onSurface : colors.onSurfaceVariant,
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             ),
+            minimumSize: const WidgetStatePropertyAll(Size(60, 64)),
           ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

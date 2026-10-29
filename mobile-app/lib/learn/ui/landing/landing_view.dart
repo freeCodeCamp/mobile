@@ -283,7 +283,10 @@ IconData _courseIcon(String name) {
   if (name.contains('back-end')) return Icons.dns_outlined;
   if (name.contains('python')) return Icons.terminal;
   if (name.contains('javascript')) return Icons.data_object;
-  if (name.contains('visualization')) return Icons.visibility_outlined;
+  if (name.contains('visualization') ||
+      name.contains('front-end-development-libraries')) {
+    return Icons.visibility_outlined;
+  }
   return Icons.desktop_windows_outlined;
 }
 

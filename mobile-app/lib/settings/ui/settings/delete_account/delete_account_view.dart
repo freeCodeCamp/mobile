@@ -205,11 +205,13 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                         onPressed: _certain && !isDeleting && auth.isLoggedIn
                             ? _delete
                             : null,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: colors.error,
-                          foregroundColor: colors.onError,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        style: FccTheme.dangerStyle(context).copyWith(
+                          textStyle: const WidgetStatePropertyAll(
+                            TextStyle(
+                              fontFamily: 'Lato',
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ),
                         child: const Text(
@@ -225,11 +227,6 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                     child: SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
                         onPressed: isDeleting ? null : _keepAccount,
                         child: const Text(
                           'Keep my account',

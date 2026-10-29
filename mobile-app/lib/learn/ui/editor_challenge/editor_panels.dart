@@ -161,12 +161,13 @@ class HintPanel extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: OutlinedButton(
               onPressed: null,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(0, 44),
-                textStyle: const TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+              style: FccTheme.compactOutlineStyle(context).copyWith(
+                textStyle: const WidgetStatePropertyAll(
+                  TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               child: const Text(
@@ -292,8 +293,6 @@ class PassPanel extends ConsumerWidget {
                   FilledButton(
                     onPressed: () => const LoginRoute().push<void>(context),
                     style: FilledButton.styleFrom(
-                      backgroundColor: colors.secondary,
-                      foregroundColor: colors.onSecondary,
                       minimumSize: const Size.fromHeight(52),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -315,7 +314,6 @@ class PassPanel extends ConsumerWidget {
                 TextButton(
                   onPressed: onReviewCode,
                   style: TextButton.styleFrom(
-                    foregroundColor: FccDesignColors.of(context).accentText,
                     textStyle: const TextStyle(
                       fontFamily: 'Lato',
                       fontSize: 16,

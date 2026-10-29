@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/code_radio.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/services/audio_service.dart';
@@ -104,7 +105,7 @@ class MiniPlayer extends ConsumerWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: colors.onSurfaceVariant,
-                                        fontSize: 12,
+                                        fontSize: 13,
                                       ),
                                     )
                                   else
@@ -126,18 +127,21 @@ class MiniPlayer extends ConsumerWidget {
                                         handler.play();
                                       }
                                     },
-                              style: IconButton.styleFrom(
-                                backgroundColor: colors.secondary,
-                                foregroundColor: colors.onSecondary,
-                                disabledBackgroundColor: colors.secondary,
-                                fixedSize: const Size.square(44),
+                              style: FccTheme.surfaceButtonStyle(
+                                context,
+                                fill: colors.secondary,
+                                foreground: colors.onSurface,
+                                pressed: FccDesignColors.of(
+                                  context,
+                                ).primaryPressed,
+                                compact: true,
                               ),
                               icon: isBusy
                                   ? SizedBox.square(
                                       dimension: 22,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: colors.onSecondary,
+                                        color: colors.outline,
                                       ),
                                     )
                                   : Icon(
@@ -282,7 +286,7 @@ class _PodcastTime extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: 12,
+          fontSize: 13,
         ),
       );
     },

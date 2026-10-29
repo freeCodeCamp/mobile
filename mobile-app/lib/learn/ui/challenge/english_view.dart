@@ -235,10 +235,9 @@ class _EnglishViewState extends State<EnglishView> {
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     textStyle: const TextStyle(
       fontFamily: 'Lato',
-      fontSize: 16,
-      fontWeight: FontWeight.w800,
+      fontSize: 17,
+      fontWeight: FontWeight.w900,
     ),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
   );
 
   // NOTE: A blank can be glued to the words around it ("BLANK," or "(BLANK)"), so each word splits on it.

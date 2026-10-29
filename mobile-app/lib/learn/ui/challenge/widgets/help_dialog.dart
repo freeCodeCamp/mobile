@@ -459,9 +459,7 @@ class _Statement extends StatelessWidget {
                       ? Theme.of(context).colorScheme.primary
                       : Colors.transparent,
                   border: Border.all(
-                    color: value
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(7),

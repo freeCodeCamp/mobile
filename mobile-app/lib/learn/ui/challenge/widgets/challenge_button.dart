@@ -20,14 +20,16 @@ class ChallengeButton extends StatelessWidget {
   final IconData? trailingIcon;
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final defaults = FilledButton.styleFrom(
-      minimumSize: const Size(double.infinity, 48),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      backgroundColor: secondary ? colors.surfaceContainer : colors.secondary,
-      foregroundColor: secondary ? colors.onSurface : colors.onSecondary,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    );
+    final theme = Theme.of(context);
+    final defaults =
+        FilledButton.styleFrom(
+          minimumSize: const Size(double.infinity, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ).merge(
+          secondary
+              ? theme.outlinedButtonTheme.style
+              : theme.filledButtonTheme.style,
+        );
     return FilledButton(
       style: style?.merge(defaults) ?? defaults,
       onPressed: loading ? null : onPressed,

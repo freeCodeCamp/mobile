@@ -425,11 +425,7 @@ class _ThemeChoice extends StatelessWidget {
                     )
                   : BorderSide.none,
             ).copyWith(
-              shape: FccTheme.focusShape(
-                context,
-                radius: 8,
-                color: selected ? colors.onSurface : colors.onSurfaceVariant,
-              ),
+              shape: FccTheme.focusShape(context),
               foregroundColor: WidgetStateProperty.resolveWith(
                 (states) => states.contains(WidgetState.disabled)
                     ? colors.outline

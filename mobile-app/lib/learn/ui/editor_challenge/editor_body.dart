@@ -49,21 +49,32 @@ class TestList extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: FilledButton.icon(
                       onPressed: onHint,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: colors.primaryContainer,
-                        foregroundColor: accent,
-                        minimumSize: const Size(0, 44),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        textStyle: const TextStyle(
-                          fontFamily: 'Lato',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
+                      style:
+                          FccTheme.surfaceButtonStyle(
+                            context,
+                            fill: colors.primaryContainer,
+                            foreground: accent,
+                            pressed: colors.surfaceContainer,
+                            compact: true,
+                          ).copyWith(
+                            padding: const WidgetStatePropertyAll(
+                              EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                            ),
+                            textStyle: const WidgetStatePropertyAll(
+                              TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                      icon: Builder(
+                        builder: (context) =>
+                            SocratesIcon(color: IconTheme.of(context).color!),
                       ),
-                      icon: SocratesIcon(color: accent),
                       label: const Text(
                         'Ask Socrates for a hint',
                         textAlign: TextAlign.center,

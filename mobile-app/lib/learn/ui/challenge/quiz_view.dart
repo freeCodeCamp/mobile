@@ -121,7 +121,6 @@ class _QuizViewState extends State<QuizView> {
   }
 
   Future<void> _jump() async {
-    final colors = Theme.of(context).colorScheme;
     final index = await showModalBottomSheet<int>(
       context: context,
       isScrollControlled: true,
@@ -152,20 +151,24 @@ class _QuizViewState extends State<QuizView> {
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              backgroundColor: _selected[i] != null
-                                  ? colors.primaryContainer
-                                  : colors.surface,
-                              side: BorderSide(
-                                color: i == _current
-                                    ? colors.primary
-                                    : colors.outline,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
                             ),
                             onPressed: () => Navigator.of(context).pop(i),
-                            child: Text('${i + 1}'),
+                            child: Semantics(
+                              selected: i == _current,
+                              label:
+                                  'Question ${i + 1}${_selected[i] != null ? ', answered' : ''}',
+                              excludeSemantics: true,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (_selected[i] != null) ...[
+                                    const Icon(Icons.check, size: 14),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  Text('${i + 1}'),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                     ],
@@ -365,7 +368,7 @@ class _QuizViewState extends State<QuizView> {
                             'Question ${i + 1}',
                             style: TextStyle(
                               fontFamily: 'Lato',
-                              fontSize: 12,
+                              fontSize: 13,
                               color: colors.onSurfaceVariant,
                             ),
                           ),
@@ -402,15 +405,11 @@ class _QuizViewState extends State<QuizView> {
   ButtonStyle _buttonStyle(BuildContext context, {bool secondary = false}) =>
       FilledButton.styleFrom(
         minimumSize: const Size(double.infinity, 50),
-        textStyle: const TextStyle(
+        textStyle: TextStyle(
           fontFamily: 'Lato',
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
+          fontSize: 17,
+          fontWeight: secondary ? FontWeight.w700 : FontWeight.w900,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        side: secondary
-            ? BorderSide(color: Theme.of(context).colorScheme.outline)
-            : BorderSide.none,
       );
 
   Widget _navigation(BuildContext context) => LayoutBuilder(

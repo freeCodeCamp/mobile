@@ -12,7 +12,6 @@ class PodcastsShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final downloaded =
         GoRouterState.of(context).uri.path == podcastDownloadsPath;
     return Scaffold(
@@ -48,15 +47,8 @@ class PodcastsShell extends StatelessWidget {
                         ),
                         ChoiceChip(
                           label: const Text('Downloaded'),
-                          avatar: Icon(
-                            Icons.download_rounded,
-                            size: 18,
-                            color: colors.onSurfaceVariant,
-                          ),
+                          avatar: const Icon(Icons.download_rounded, size: 18),
                           selected: downloaded,
-                          showCheckmark: false,
-                          selectedColor: colors.primary,
-                          labelStyle: TextStyle(color: colors.onSurfaceVariant),
                           onSelected: (_) => context.go(podcastDownloadsPath),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,

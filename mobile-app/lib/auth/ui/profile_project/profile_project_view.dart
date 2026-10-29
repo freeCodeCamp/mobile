@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/profile_project/profile_project_viewmodel.dart';
@@ -55,9 +56,15 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
+          FilledButton(
+            style: FccTheme.dangerStyle(context).copyWith(
+              textStyle: const WidgetStatePropertyAll(
+                TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ),
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Delete project'),
@@ -106,6 +113,22 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
               style: Theme.of(context).textTheme.labelLarge,
             ),
             const SizedBox(height: 8),
+            if (image.isNotEmpty) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.contain,
+                  errorWidget: (_, _, _) => const SizedBox(
+                    height: 180,
+                    child: Center(child: Icon(Icons.broken_image_outlined)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
             ProfileDashedBorder(
               color: colors.outline,
               child: Container(
@@ -121,11 +144,7 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
                   children: [
                     OutlinedButton.icon(
                       style: FccTheme.compactOutlineStyle(context).copyWith(
-                        shape: FccTheme.focusShape(
-                          context,
-                          radius: 999,
-                          color: FccDesignColors.of(context).accentText,
-                        ),
+                        shape: FccTheme.focusShape(context, radius: 999),
                       ),
                       onPressed: null,
                       icon: const Icon(Icons.image_outlined, size: 18),

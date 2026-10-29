@@ -175,6 +175,20 @@ class FccTheme {
     compact: true,
   );
 
+  static ButtonStyle surfaceButtonStyle(
+    BuildContext context, {
+    Color? fill,
+    Color? foreground,
+    Color? pressed,
+    bool compact = false,
+  }) => _buttonStyle(
+    Theme.of(context).colorScheme,
+    foreground: foreground ?? Theme.of(context).colorScheme.onSurface,
+    fill: fill ?? Theme.of(context).colorScheme.surface,
+    pressed: pressed ?? Theme.of(context).colorScheme.primaryContainer,
+    compact: compact,
+  );
+
   static ButtonStyle dangerOutlineStyle(BuildContext context) => _buttonStyle(
     Theme.of(context).colorScheme,
     foreground: Theme.of(context).colorScheme.error,
@@ -200,6 +214,7 @@ class FccTheme {
     bool compact = false,
   }) => ButtonStyle(
     minimumSize: WidgetStatePropertyAll(Size(44, compact ? 44 : 48)),
+    tapTargetSize: compact ? MaterialTapTargetSize.shrinkWrap : null,
     elevation: const WidgetStatePropertyAll(0),
     animationDuration: const Duration(milliseconds: 100),
     splashFactory: NoSplash.splashFactory,
@@ -238,7 +253,7 @@ class FccTheme {
         ring:
             states.contains(WidgetState.focused) &&
                 !states.contains(WidgetState.disabled)
-            ? foreground
+            ? colors.onSurface
             : null,
       ),
     ),
@@ -334,13 +349,15 @@ class FccTheme {
               color: foreground,
             ),
             bodySmall: TextStyle(fontSize: 13, height: 1.4, color: muted),
-            labelSmall: const TextStyle(
+            labelSmall: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
+              color: foreground,
             ),
-            labelLarge: const TextStyle(
+            labelLarge: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
+              color: foreground,
             ),
           )
           .apply(fontFamily: 'Lato'),
@@ -443,18 +460,23 @@ class FccTheme {
         shape: const StadiumBorder(),
         showCheckmark: true,
         checkmarkColor: foreground,
-        labelStyle: WidgetStateTextStyle.resolveWith(
-          (states) => TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 14,
-            fontWeight: states.contains(WidgetState.selected)
-                ? FontWeight.w900
-                : FontWeight.w700,
-            color: states.contains(WidgetState.disabled)
+        labelStyle: TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: WidgetStateColor.resolveWith(
+            (states) =>
+                states.contains(WidgetState.disabled) ? controlEdge : muted,
+          ),
+        ),
+        secondaryLabelStyle: TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 14,
+          fontWeight: FontWeight.w900,
+          color: WidgetStateColor.resolveWith(
+            (states) => states.contains(WidgetState.disabled)
                 ? controlEdge
-                : states.contains(WidgetState.selected)
-                ? foreground
-                : muted,
+                : foreground,
           ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

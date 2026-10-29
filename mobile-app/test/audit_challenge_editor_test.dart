@@ -10,6 +10,7 @@ import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/services/test_runner_service.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge/daily_challenge_view.dart';
+import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_view.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
@@ -37,6 +38,21 @@ const _challenge = Challenge(
       name: 'script',
       contents: 'function double(n) { return n * 2; }',
       fileKey: 'scriptjs',
+    ),
+  ],
+);
+
+const _emailInput =
+    'sort(["jill@mail.com", "john@example.com", "jane@example.com"])';
+const _emailOutput =
+    '["jane@example.com", "john@example.com", "jill@mail.com"]';
+final _longExampleChallenge = _challenge.copyWith(
+  title: 'Email Sorter',
+  tests: [
+    const ChallengeTest(
+      text:
+          '<code>$_emailInput</code> should return <code>$_emailOutput</code>.',
+      testString: '',
     ),
   ],
 );
@@ -168,6 +184,137 @@ void main() {
     );
   }
 
+  for (final keyboard in [false, true]) {
+    testWidgets(
+      'long daily example and editor stay reachable ${keyboard ? 'with keyboard at 360dp' : 'at normal height'}',
+      (tester) async {
+        tester.view.physicalSize = keyboard
+            ? const Size(360, 640)
+            : const Size(488, 1000);
+        tester.view.devicePixelRatio = 1;
+        tester.view.viewInsets = FakeViewPadding(bottom: keyboard ? 280 : 0);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetViewInsets);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authProvider.overrideWith(() => _TestAuth(null)),
+              learnTestRunnerServiceProvider('javascript').overrideWith(
+                (ref) async => LearnTestRunnerService('javascript'),
+              ),
+            ],
+            child: MaterialApp(
+              theme: FccTheme.themeDark,
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(keyboard ? 1.3 : 1)),
+                child: child!,
+              ),
+              home: EditorChallengeView(
+                challenge: _longExampleChallenge,
+                dailyChallengeNumber: 80,
+                selector: DailyChallengeLanguageSelector(
+                  selected: DailyChallengeLanguage.javascript,
+                  onSelected: (_) {},
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        final example = find.byType(DailyChallengeExample);
+        final input = find.text(_emailInput);
+        final output = find.text(_emailOutput);
+        final check = find.widgetWithText(FilledButton, 'Check your code');
+        final editor = find.byType(Editor);
+        expect(tester.getSize(example).height, greaterThan(80));
+        expect(tester.getSize(editor).height, greaterThanOrEqualTo(160));
+        expect(tester.getRect(input).left, greaterThanOrEqualTo(12));
+        expect(
+          tester.getRect(input).right,
+          lessThanOrEqualTo(tester.view.physicalSize.width - 12),
+        );
+        expect(
+          tester.getRect(output).bottom,
+          lessThanOrEqualTo(tester.getRect(example).bottom),
+        );
+        expect(
+          tester.getRect(example).bottom,
+          lessThan(tester.getRect(check).top),
+        );
+
+        if (keyboard) {
+          await tester.ensureVisible(check);
+          await tester.pump();
+        }
+        expect(check.hitTestable(), findsOneWidget);
+        expect(output.hitTestable(), findsOneWidget);
+        expect(tester.widget<FilledButton>(check).onPressed, isNotNull);
+
+        await tester.ensureVisible(editor);
+        await tester.pump();
+        expect(editor.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('hint controls retain shared states and compact shape', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FccTheme.themeDark,
+        home: Scaffold(
+          body: TestList(
+            tests: _challenge.tests,
+            results: null,
+            hint: '<p>Try multiplying.</p>',
+            onHint: () {},
+          ),
+        ),
+      ),
+    );
+    final hint = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, 'Ask Socrates for a hint'),
+    );
+    final style = hint.style!;
+    expect(style.backgroundColor!.resolve({}), const Color(0xff29216c));
+    expect(
+      style.backgroundColor!.resolve({WidgetState.pressed}),
+      const Color(0xff3f3557),
+    );
+    expect(
+      style.backgroundColor!.resolve({WidgetState.disabled}),
+      const Color(0xff3f3557),
+    );
+    expect(
+      style.foregroundColor!.resolve({WidgetState.disabled}),
+      const Color(0xff7d709d),
+    );
+    expect(style.textStyle!.resolve({})!.fontSize, 16);
+    expect(style.textStyle!.resolve({})!.fontWeight, FontWeight.w900);
+    expect(
+      (style.shape!.resolve({})! as RoundedRectangleBorder).borderRadius,
+      BorderRadius.circular(10),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FccTheme.themeDark,
+        home: const Scaffold(body: HintPanel(hint: '<p>Try multiplying.</p>')),
+      ),
+    );
+    final extra = tester.widget<OutlinedButton>(
+      find.widgetWithText(OutlinedButton, 'Ask for another hint'),
+    );
+    expect(extra.onPressed, isNull);
+    expect(extra.style!.side!.resolve({WidgetState.disabled}), BorderSide.none);
+  });
+
   testWidgets('help dialog preserves code attachment and post validation', (
     tester,
   ) async {
@@ -220,6 +367,21 @@ void main() {
             widget.properties.label ==
                 'I have tried the Read-Search-Ask method',
       ),
+    );
+    await tester.pump();
+    final checkedBox = tester.widget<Container>(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.decoration is BoxDecoration &&
+            (widget.decoration! as BoxDecoration).color ==
+                const Color(0xff9ea1fe) &&
+            widget.constraints?.maxWidth == 26,
+      ),
+    );
+    expect(
+      (checkedBox.decoration! as BoxDecoration).border,
+      Border.all(color: const Color(0xffcabeea), width: 2),
     );
     await tester.tap(
       find.byWidgetPredicate(

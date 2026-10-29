@@ -236,7 +236,7 @@ class _PodcastEpisodeListViewState
                                     _oldestFirst
                                         ? 'Oldest first'
                                         : 'Newest first',
-                                    style: const TextStyle(fontSize: 12),
+                                    style: const TextStyle(fontSize: 13),
                                   ),
                                   const SizedBox(width: 4),
                                   const Icon(
@@ -379,10 +379,7 @@ class _Header extends ConsumerWidget {
               Builder(
                 builder: (buttonContext) => IconButton.filled(
                   tooltip: 'Share podcast',
-                  style: IconButton.styleFrom(
-                    backgroundColor: colors.surface,
-                    foregroundColor: colors.onSurface,
-                  ),
+                  style: FccTheme.surfaceButtonStyle(context, compact: true),
                   onPressed: () => sharePodcast(
                     buttonContext,
                     podcast.title,

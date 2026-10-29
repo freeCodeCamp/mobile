@@ -100,28 +100,36 @@ class ChallengeGrid extends StatelessWidget {
                   excludeSemantics: true,
                   onTap: () => onSelected(challenge),
                   child: TextButton(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      backgroundColor: done
-                          ? design.successContainer
-                          : colors.surface,
-                      foregroundColor: done
-                          ? design.onSuccessContainer
-                          : colors.onSurface,
-                      side: done
-                          ? BorderSide(
-                              color: design.onSuccessContainer,
-                              width: colors.brightness == Brightness.dark
-                                  ? 1.5
-                                  : 1,
-                            )
-                          : BorderSide(
-                              color: active
-                                  ? colors.primary
-                                  : colors.outlineVariant,
-                              width: active ? 2 : 1,
-                            ),
-                    ).copyWith(shape: FccTheme.focusShape(context, radius: 8)),
+                    style:
+                        FccTheme.surfaceButtonStyle(
+                          context,
+                          fill: done ? design.successContainer : colors.surface,
+                          foreground: done
+                              ? design.onSuccessContainer
+                              : colors.onSurface,
+                        ).copyWith(
+                          padding: const WidgetStatePropertyAll(
+                            EdgeInsets.zero,
+                          ),
+                          side: WidgetStateProperty.resolveWith(
+                            (states) => states.contains(WidgetState.disabled)
+                                ? BorderSide.none
+                                : done
+                                ? BorderSide(
+                                    color: design.onSuccessContainer,
+                                    width: colors.brightness == Brightness.dark
+                                        ? 1.5
+                                        : 1,
+                                  )
+                                : BorderSide(
+                                    color: active
+                                        ? colors.primary
+                                        : colors.outlineVariant,
+                                    width: active ? 2 : 1,
+                                  ),
+                          ),
+                          shape: FccTheme.focusShape(context, radius: 8),
+                        ),
                     onPressed: () => onSelected(challenge),
                     child: done
                         ? Container(

@@ -134,9 +134,6 @@ class _AuthorDetails extends StatelessWidget {
               icon: const Icon(Icons.open_in_new_rounded, size: 16),
               label: Text(website.host),
               style: OutlinedButton.styleFrom(
-                backgroundColor: colors.surface,
-                foregroundColor: colors.onSurface,
-                side: BorderSide(color: colors.outline),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
                   vertical: 14,

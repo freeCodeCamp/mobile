@@ -22,15 +22,18 @@ class SceneControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).colorScheme;
+    final colors = fullscreen
+        ? FccTheme.themeDark.colorScheme
+        : Theme.of(context).colorScheme;
+    final iconStyle = fullscreen
+        ? FccTheme.themeDark.iconButtonTheme.style
+        : null;
     final handler = ref.watch(audioHandlerProvider);
     final notifier = ref.read(sceneProvider(scene, title).notifier);
     final sceneState = ref.watch(sceneProvider(scene, title));
     final showCaptions = sceneState.showCaptions;
     final active = sceneState.isActive;
-    final foreground = fullscreen
-        ? FccDesignColors.of(context).heroForeground
-        : colors.onSurface;
+    final foreground = colors.onSurface;
 
     return StreamBuilder<PlaybackState>(
       stream: handler.playbackState,
@@ -54,17 +57,13 @@ class SceneControls extends ConsumerWidget {
                     liveRegion: true,
                     child: Text(
                       sceneState.error!,
-                      style: TextStyle(
-                        color: fullscreen
-                            ? FccTheme.themeDark.colorScheme.error
-                            : colors.error,
-                      ),
+                      style: TextStyle(color: colors.error),
                     ),
                   ),
                 ),
               Row(
                 children: [
-                  IconButton.filled(
+                  IconButton(
                     tooltip: sceneState.isLoading
                         ? 'Loading dialogue'
                         : sceneState.error != null
@@ -72,11 +71,7 @@ class SceneControls extends ConsumerWidget {
                         : completed
                         ? 'Replay'
                         : (playing ? 'Pause' : 'Play'),
-                    style: IconButton.styleFrom(
-                      backgroundColor: colors.primary,
-                      foregroundColor: colors.onPrimary,
-                      shape: const CircleBorder(),
-                    ),
+                    style: iconStyle,
                     onPressed: sceneState.isLoading
                         ? null
                         : playing
@@ -88,7 +83,7 @@ class SceneControls extends ConsumerWidget {
                             height: 26,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: colors.onPrimary,
+                              color: colors.outline,
                               semanticsLabel: 'Loading dialogue',
                             ),
                           )
@@ -134,7 +129,7 @@ class SceneControls extends ConsumerWidget {
                               '${current.inMinutes}:${(current.inSeconds % 60).toString().padLeft(2, '0')}',
                               style: TextStyle(
                                 fontFamily: 'monospace',
-                                fontSize: 12,
+                                fontSize: 13,
                                 color: foreground,
                               ),
                             ),
@@ -147,32 +142,15 @@ class SceneControls extends ConsumerWidget {
                   IconButton(
                     tooltip: showCaptions ? 'Hide captions' : 'Show captions',
                     isSelected: showCaptions,
-                    style: IconButton.styleFrom(
-                      backgroundColor: showCaptions
-                          ? colors.primary
-                          : Colors.transparent,
-                      foregroundColor: showCaptions
-                          ? colors.onPrimary
-                          : foreground,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    style: iconStyle,
                     onPressed: notifier.toggleCaptions,
                     icon: const Icon(Icons.closed_caption_outlined),
                     selectedIcon: const Icon(Icons.closed_caption),
                   ),
                   if (!fullscreen) ...[
                     const SizedBox(width: 6),
-                    IconButton.outlined(
+                    IconButton(
                       tooltip: 'Fullscreen',
-                      style: IconButton.styleFrom(
-                        foregroundColor: foreground,
-                        side: BorderSide(color: colors.outline),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                       onPressed: onFullscreen,
                       icon: const Icon(Icons.fullscreen),
                     ),

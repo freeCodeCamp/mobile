@@ -115,11 +115,6 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
                   child: IconButton(
                     tooltip: 'Copy code',
                     onPressed: _copy,
-                    style: IconButton.styleFrom(
-                      foregroundColor: colors.onSurfaceVariant,
-                      minimumSize: const Size(44, 44),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
                     icon: const Icon(Icons.copy_outlined, size: 16),
                   ),
                 ),
@@ -151,24 +146,26 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
                           message: 'Copy code',
                           child: TextButton(
                             onPressed: _copy,
-                            style: TextButton.styleFrom(
-                              minimumSize: const Size(56, 44),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              backgroundColor: colors.surface,
-                              foregroundColor: colors.onSurface,
-                              textStyle: const TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 13,
-                                letterSpacing: 0,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
+                            style:
+                                FccTheme.surfaceButtonStyle(
+                                  context,
+                                  compact: true,
+                                ).copyWith(
+                                  minimumSize: const WidgetStatePropertyAll(
+                                    Size(56, 44),
+                                  ),
+                                  padding: const WidgetStatePropertyAll(
+                                    EdgeInsets.symmetric(horizontal: 12),
+                                  ),
+                                  textStyle: const WidgetStatePropertyAll(
+                                    TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 13,
+                                      letterSpacing: 0,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
                             child: const Text('Copy'),
                           ),
                         ),

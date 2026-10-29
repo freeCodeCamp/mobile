@@ -51,7 +51,7 @@ class ListenTabs extends StatelessWidget {
                             ? colors.surfaceContainerLow
                             : Colors.transparent,
                       ).copyWith(
-                        shape: FccTheme.focusShape(context, radius: 8),
+                        shape: FccTheme.focusShape(context),
                         backgroundColor: WidgetStateProperty.resolveWith(
                           (states) =>
                               isRadio == radio ||

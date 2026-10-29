@@ -162,6 +162,12 @@ class _Chapters extends ConsumerWidget {
           ),
         for (final exam in exams)
           Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
+            ),
             margin: const EdgeInsets.only(top: 8, bottom: 12),
             child: Padding(
               padding: const EdgeInsets.all(18),
@@ -220,9 +226,13 @@ class _Chapters extends ConsumerWidget {
                               chapter: exam.dashedName,
                             ),
                       icon: const Icon(Icons.open_in_new, size: 18),
-                      label: const Text(
+                      label: Text(
                         'Open',
-                        style: TextStyle(decoration: TextDecoration.underline),
+                        style: TextStyle(
+                          decoration: _locked(exam)
+                              ? TextDecoration.none
+                              : TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),

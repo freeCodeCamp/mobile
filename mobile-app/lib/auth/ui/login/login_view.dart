@@ -272,12 +272,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                               width: double.infinity,
                               child: FilledButton(
                                 style: FilledButton.styleFrom(
-                                  disabledBackgroundColor: state.isLoading
-                                      ? colors.secondary
-                                      : null,
-                                  disabledForegroundColor: state.isLoading
-                                      ? colors.onSecondary
-                                      : null,
                                   minimumSize: const Size.fromHeight(52),
                                 ),
                                 onPressed: canSubmit

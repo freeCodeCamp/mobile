@@ -89,7 +89,7 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
                         children: [
                           if (_loading)
                             const SizedBox.square(
-                              dimension: 48,
+                              dimension: 44,
                               child: Padding(
                                 padding: EdgeInsets.all(12),
                                 child: CircularProgressIndicator(
@@ -99,13 +99,8 @@ class _QuizAudioPlayerState extends ConsumerState<QuizAudioPlayer> {
                               ),
                             )
                           else
-                            IconButton.filled(
+                            IconButton(
                               tooltip: playing ? 'Pause audio' : 'Play audio',
-                              style: IconButton.styleFrom(
-                                backgroundColor: colors.primary,
-                                foregroundColor: colors.onPrimary,
-                                shape: const CircleBorder(),
-                              ),
                               icon: Icon(
                                 playing ? Icons.pause : Icons.play_arrow,
                               ),

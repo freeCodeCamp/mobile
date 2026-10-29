@@ -129,7 +129,7 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 minimumSize: const Size(64, 44),
-              ),
+              ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
               onPressed: widget.saving ? null : widget.onSave,
               child: Text(widget.saving ? 'Saving…' : 'Save'),
             ),
@@ -350,7 +350,6 @@ class ProfileFormError extends StatelessWidget {
               IconButton(
                 tooltip: 'Dismiss error',
                 onPressed: onDismiss,
-                visualDensity: VisualDensity.compact,
                 icon: Icon(Icons.close, color: colors.error, size: 20),
               ),
           ],

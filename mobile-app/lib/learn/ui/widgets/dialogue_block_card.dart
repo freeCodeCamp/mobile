@@ -219,7 +219,7 @@ class _DialogueCardState extends State<_DialogueCard> {
                           Text(
                             progress,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               height: 1.2,
                               color: colors.onSurfaceVariant,
                             ),
