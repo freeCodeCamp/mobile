@@ -212,14 +212,19 @@ class _LoginViewState extends ConsumerState<LoginView> {
                             child: Row(
                               children: [
                                 const Expanded(child: Divider()),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                  ),
-                                  child: Text(
-                                    'or use your email',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: colors.onSurfaceVariant,
+                                Flexible(
+                                  flex: 4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    child: Text(
+                                      'or use your email',
+                                      textAlign: TextAlign.center,
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: colors.onSurfaceVariant,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -274,9 +279,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       ? colors.onSecondary
                                       : null,
                                   minimumSize: const Size.fromHeight(52),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
                                 ),
                                 onPressed: canSubmit
                                     ? state.showOtpField
@@ -347,6 +349,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                               ],
                             ),
                             style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: 13,
                               height: 1.6,
                             ),
                           ),
@@ -489,8 +492,12 @@ class _ProviderButton extends StatelessWidget {
     width: double.infinity,
     child: OutlinedButton.icon(
       style: OutlinedButton.styleFrom(
+        textStyle: const TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
         minimumSize: const Size.fromHeight(52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: onPressed,
       icon: Image.asset(
