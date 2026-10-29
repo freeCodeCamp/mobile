@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 
 class SuperBlockButton extends StatelessWidget {
@@ -6,14 +7,14 @@ class SuperBlockButton extends StatelessWidget {
     super.key,
     required this.title,
     required this.onPressed,
-    this.icon,
+    required this.iconAsset,
     this.isEnabled = true,
     this.isExternal = false,
     this.subtitle,
   });
   final String title;
   final VoidCallback onPressed;
-  final IconData? icon;
+  final String iconAsset;
   final bool isEnabled;
   final bool isExternal;
   final String? subtitle;
@@ -35,10 +36,15 @@ class SuperBlockButton extends StatelessWidget {
                 color: colors.surfaceContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon ?? Icons.desktop_windows_outlined,
-                color: colors.onSurface,
-                size: 22,
+              child: SvgPicture.asset(
+                iconAsset,
+                width: 28,
+                height: 28,
+                colorFilter: ColorFilter.mode(
+                  colors.onSurface,
+                  BlendMode.srcIn,
+                ),
+                excludeFromSemantics: true,
               ),
             ),
             const SizedBox(width: 12),

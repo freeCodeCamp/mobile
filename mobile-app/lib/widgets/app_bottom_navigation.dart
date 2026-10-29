@@ -85,18 +85,26 @@ class AppBottomNavigation extends StatelessWidget {
             ),
           ),
           child: NavigationDestination(
-            icon: Transform.translate(
-              offset: const Offset(0, -10),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: FccDesignColors.of(context).donateContainer,
-                ),
-                child: Icon(
-                  Icons.favorite,
-                  color: Theme.of(context).colorScheme.tertiary,
+            icon: SizedBox(
+              width: 24,
+              height: 24,
+              child: OverflowBox(
+                maxWidth: 40,
+                maxHeight: 40,
+                child: Transform.translate(
+                  offset: const Offset(0, -10),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: FccDesignColors.of(context).donateContainer,
+                    ),
+                    child: Icon(
+                      Icons.favorite,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -116,43 +116,47 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           Row(
             children: [
               Container(
+                key: const ValueKey('daily-challenge-calendar'),
                 width: 48,
                 height: 52,
-                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: colors.outline, width: 1.5),
                 ),
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      color: colors.surfaceContainer,
-                      alignment: Alignment.center,
-                      child: Text(
-                        Jiffy.parseFromDateTime(
-                          challenge.date,
-                        ).format(pattern: 'MMM'),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          height: 1.4,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
+                child: ClipRRect(
+                  key: const ValueKey('daily-challenge-calendar-content'),
+                  borderRadius: BorderRadius.circular(10.5),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        color: colors.surfaceContainer,
+                        alignment: Alignment.center,
                         child: Text(
-                          '${challenge.date.day}',
+                          Jiffy.parseFromDateTime(
+                            challenge.date,
+                          ).format(pattern: 'MMM'),
                           style: const TextStyle(
-                            fontSize: 20,
-                            height: 1,
-                            fontWeight: FontWeight.w900,
+                            fontSize: 12,
+                            height: 1.4,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            '${challenge.date.day}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              height: 1,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(width: 12),

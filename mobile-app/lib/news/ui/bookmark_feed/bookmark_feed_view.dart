@@ -30,7 +30,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
           children: [
             if (posts.isEmpty)
               const NewsSavedEmptyState()

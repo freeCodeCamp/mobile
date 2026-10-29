@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
@@ -100,7 +101,9 @@ class LearnLandingView extends ConsumerWidget {
               SuperBlockButton(
                 key: ValueKey(superBlock.dashedName),
                 title: superBlock.title,
-                icon: _courseIcon(superBlock.dashedName),
+                iconAsset:
+                    superBlockIcons[superBlock.dashedName] ??
+                    defaultSuperBlockIcon,
                 isEnabled: superBlock.isPublic,
                 subtitle: superBlock.isDisabledByOverride
                     ? 'Temporarily unavailable'
@@ -275,19 +278,6 @@ class _ResumeCard extends ConsumerWidget {
       ),
     );
   }
-}
-
-IconData _courseIcon(String name) {
-  if (name.contains('english')) return Icons.chat_bubble_outline;
-  if (name.contains('database')) return Icons.storage_outlined;
-  if (name.contains('back-end')) return Icons.dns_outlined;
-  if (name.contains('python')) return Icons.terminal;
-  if (name.contains('javascript')) return Icons.data_object;
-  if (name.contains('visualization') ||
-      name.contains('front-end-development-libraries')) {
-    return Icons.visibility_outlined;
-  }
-  return Icons.desktop_windows_outlined;
 }
 
 class FirstVisitHero extends StatelessWidget {
