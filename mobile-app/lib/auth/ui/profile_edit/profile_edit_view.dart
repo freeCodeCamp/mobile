@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/controllers/profile_editor_controller.dart';
 import 'package:freecodecamp/auth/ui/profile_edit/profile_edit_viewmodel.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
+import 'package:freecodecamp/auth/ui/widgets/profile_photo_options.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
@@ -115,7 +116,7 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
       maxLines: lines,
       keyboardType: keyboard,
       style: key == 'username'
-          ? const TextStyle(fontFamily: 'monospace')
+          ? const TextStyle(fontFamily: 'JetBrains Mono')
           : null,
       onChanged: (value) =>
           ref.read(profileEditorProvider.notifier).updateField(key, value),
@@ -126,7 +127,7 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
       title: 'Edit profile',
       isDirty: editor.isDirty,
       saving: editor.saving,
-      onSave: editor.isDirty || editor.needsRefresh ? _save : null,
+      onSave: _save,
       child: Stack(
         children: [
           ListView(
@@ -149,6 +150,17 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
                       : null,
                 ),
               ),
+              const SizedBox(height: 12),
+              Center(
+                child: OutlinedButton.icon(
+                  style: FccTheme.compactOutlineStyle(context),
+                  onPressed: enabled
+                      ? () => showProfilePhotoOptions(context)
+                      : null,
+                  icon: const Icon(Icons.photo_camera_outlined, size: 18),
+                  label: const Text('Change photo'),
+                ),
+              ),
               const SizedBox(height: 24),
               const ProfileFormSectionTitle('Basic info'),
               field('username', 'Username', helper: presentation.usernameHint),
@@ -164,7 +176,10 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
                 alignment: Alignment.centerRight,
                 child: Text(
                   '${presentation.fields['about']!.length} characters',
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 13,
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -352,7 +367,6 @@ class _AddEntry extends StatelessWidget {
         foregroundColor: FccDesignColors.of(context).accentText,
         backgroundColor: Colors.transparent,
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: onPressed,
       icon: const Icon(Icons.add, size: 20),
