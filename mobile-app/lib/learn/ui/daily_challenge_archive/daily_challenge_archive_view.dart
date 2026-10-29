@@ -71,12 +71,6 @@ class _DailyChallengeArchiveViewState
                   for (final filter in _Filter.values)
                     ChoiceChip(
                       label: Text(filter.label),
-                      showCheckmark: false,
-                      labelStyle: TextStyle(
-                        color: _filter == filter
-                            ? Theme.of(context).colorScheme.onPrimary
-                            : Theme.of(context).colorScheme.onSurface,
-                      ),
                       selected: _filter == filter,
                       onSelected: (_) => setState(() => _filter = filter),
                     ),
@@ -159,8 +153,11 @@ class _MonthCard extends StatelessWidget {
                             Text(
                               Jiffy.parseFromDateTime(
                                 month.month,
-                              ).format(pattern: 'MMMM'),
-                              style: Theme.of(context).textTheme.titleLarge,
+                              ).format(pattern: 'MMMM yyyy'),
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                             Text(
                               allDone
@@ -173,15 +170,19 @@ class _MonthCard extends StatelessWidget {
                                 fontSize: 13,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            LearnProgress(
-                              done: done,
-                              total: month.challenges.length,
-                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        width: 72,
+                        height: 6,
+                        child: LearnProgress(
+                          done: done,
+                          total: month.challenges.length,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
                       Icon(
                         isOpen ? Icons.expand_less : Icons.expand_more,
                         color: colors.onSurfaceVariant,
@@ -244,8 +245,14 @@ class _ChallengeItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LearnEyebrow(
+                    Text(
                       '#${challenge.challengeNumber} · ${Jiffy.parseFromDateTime(challenge.date).format(pattern: 'MMM d')}',
+                      style: TextStyle(
+                        fontFamily: 'JetBrains Mono',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
