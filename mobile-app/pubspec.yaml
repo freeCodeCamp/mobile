@@ -102,9 +102,18 @@ flutter:
     - family: Hack
       fonts:
         - asset: assets/fonts/Hack-Regular.ttf
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono/JetBrainsMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/JetBrainsMono/JetBrainsMono-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/JetBrainsMono/JetBrainsMono-Bold.ttf
+          weight: 700
   uses-material-design: true
   assets:
     - .env
+    - assets/fonts/JetBrainsMono/OFL.txt
     - assets/images/
     - assets/learn/
     - assets/test_runner/dist/

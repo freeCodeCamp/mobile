@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/learn.dart';
@@ -61,25 +62,54 @@ class AppBottomNavigation extends StatelessWidget {
             const AccountRoute().go(context);
         }
       },
-      destinations: const [
-        NavigationDestination(
+      destinations: [
+        const NavigationDestination(
           icon: Icon(Icons.school_outlined),
+          selectedIcon: Icon(Icons.school),
           label: 'Courses',
         ),
-        NavigationDestination(
+        const NavigationDestination(
           icon: Icon(Icons.article_outlined),
+          selectedIcon: Icon(Icons.article),
           label: 'Articles',
         ),
-        NavigationDestination(
-          icon: Icon(Icons.favorite_border),
-          label: 'Donate',
-          tooltip: 'Donate on freecodecamp.org',
+        NavigationBarTheme(
+          data: NavigationBarTheme.of(context).copyWith(
+            labelTextStyle: WidgetStatePropertyAll(
+              TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+            ),
+          ),
+          child: NavigationDestination(
+            icon: Transform.translate(
+              offset: const Offset(0, -10),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: FccDesignColors.of(context).donateContainer,
+                ),
+                child: Icon(
+                  Icons.favorite,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+              ),
+            ),
+            label: 'Donate',
+            tooltip: 'Donate on freecodecamp.org',
+          ),
         ),
-        NavigationDestination(
+        const NavigationDestination(
           icon: Icon(Icons.headphones_outlined),
+          selectedIcon: Icon(Icons.headphones),
           label: 'Listen',
         ),
-        NavigationDestination(
+        const NavigationDestination(
           icon: Icon(Icons.person_outline),
           selectedIcon: Icon(Icons.person),
           label: 'Account',

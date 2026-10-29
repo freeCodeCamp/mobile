@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Colors from the Sunny Day / Starry Night design palette.
 @immutable
 class FccDesignColors extends ThemeExtension<FccDesignColors> {
   const FccDesignColors({
@@ -9,6 +8,22 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
     required this.onSuccessContainer,
     required this.accentText,
     required this.hero,
+    required this.codeSurface,
+    required this.dangerFill,
+    required this.dangerPressed,
+    required this.dangerOutlinePressed,
+    required this.donateContainer,
+    required this.heatmapLow,
+    required this.heatmapMid,
+    required this.heatmapHigh,
+    required this.successBorder,
+    required this.heroForeground,
+    required this.primaryPressed,
+    required this.editorHighlight,
+    required this.workshop,
+    required this.lab,
+    required this.lecture,
+    required this.quiz,
   });
 
   final Color success;
@@ -16,6 +31,22 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
   final Color onSuccessContainer;
   final Color accentText;
   final Color hero;
+  final Color codeSurface;
+  final Color dangerFill;
+  final Color dangerPressed;
+  final Color dangerOutlinePressed;
+  final Color donateContainer;
+  final Color heatmapLow;
+  final Color heatmapMid;
+  final Color heatmapHigh;
+  final Color successBorder;
+  final Color heroForeground;
+  final Color primaryPressed;
+  final Color editorHighlight;
+  final Color workshop;
+  final Color lab;
+  final Color lecture;
+  final Color quiz;
 
   static FccDesignColors of(BuildContext context) =>
       Theme.of(context).extension<FccDesignColors>()!;
@@ -27,12 +58,44 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
     Color? onSuccessContainer,
     Color? accentText,
     Color? hero,
+    Color? codeSurface,
+    Color? dangerFill,
+    Color? dangerPressed,
+    Color? dangerOutlinePressed,
+    Color? donateContainer,
+    Color? heatmapLow,
+    Color? heatmapMid,
+    Color? heatmapHigh,
+    Color? successBorder,
+    Color? heroForeground,
+    Color? primaryPressed,
+    Color? editorHighlight,
+    Color? workshop,
+    Color? lab,
+    Color? lecture,
+    Color? quiz,
   }) => FccDesignColors(
     success: success ?? this.success,
     successContainer: successContainer ?? this.successContainer,
     onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
     accentText: accentText ?? this.accentText,
     hero: hero ?? this.hero,
+    codeSurface: codeSurface ?? this.codeSurface,
+    dangerFill: dangerFill ?? this.dangerFill,
+    dangerPressed: dangerPressed ?? this.dangerPressed,
+    dangerOutlinePressed: dangerOutlinePressed ?? this.dangerOutlinePressed,
+    donateContainer: donateContainer ?? this.donateContainer,
+    heatmapLow: heatmapLow ?? this.heatmapLow,
+    heatmapMid: heatmapMid ?? this.heatmapMid,
+    heatmapHigh: heatmapHigh ?? this.heatmapHigh,
+    successBorder: successBorder ?? this.successBorder,
+    heroForeground: heroForeground ?? this.heroForeground,
+    primaryPressed: primaryPressed ?? this.primaryPressed,
+    editorHighlight: editorHighlight ?? this.editorHighlight,
+    workshop: workshop ?? this.workshop,
+    lab: lab ?? this.lab,
+    lecture: lecture ?? this.lecture,
+    quiz: quiz ?? this.quiz,
   );
 
   @override
@@ -52,6 +115,26 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
       )!,
       accentText: Color.lerp(accentText, other.accentText, t)!,
       hero: Color.lerp(hero, other.hero, t)!,
+      codeSurface: Color.lerp(codeSurface, other.codeSurface, t)!,
+      dangerFill: Color.lerp(dangerFill, other.dangerFill, t)!,
+      dangerPressed: Color.lerp(dangerPressed, other.dangerPressed, t)!,
+      dangerOutlinePressed: Color.lerp(
+        dangerOutlinePressed,
+        other.dangerOutlinePressed,
+        t,
+      )!,
+      donateContainer: Color.lerp(donateContainer, other.donateContainer, t)!,
+      heatmapLow: Color.lerp(heatmapLow, other.heatmapLow, t)!,
+      heatmapMid: Color.lerp(heatmapMid, other.heatmapMid, t)!,
+      heatmapHigh: Color.lerp(heatmapHigh, other.heatmapHigh, t)!,
+      successBorder: Color.lerp(successBorder, other.successBorder, t)!,
+      heroForeground: Color.lerp(heroForeground, other.heroForeground, t)!,
+      primaryPressed: Color.lerp(primaryPressed, other.primaryPressed, t)!,
+      editorHighlight: Color.lerp(editorHighlight, other.editorHighlight, t)!,
+      workshop: Color.lerp(workshop, other.workshop, t)!,
+      lab: Color.lerp(lab, other.lab, t)!,
+      lecture: Color.lerp(lecture, other.lecture, t)!,
+      quiz: Color.lerp(quiz, other.quiz, t)!,
     );
   }
 }
@@ -59,6 +142,96 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
 class FccTheme {
   static final ThemeData themeLight = _build(Brightness.light);
   static final ThemeData themeDark = _build(Brightness.dark);
+
+  static WidgetStateProperty<OutlinedBorder?> focusShape(
+    BuildContext context, {
+    double radius = 12,
+    Color? color,
+  }) => WidgetStateProperty.resolveWith(
+    (states) => _FocusRingBorder(
+      borderRadius: BorderRadius.circular(radius),
+      ring:
+          states.contains(WidgetState.focused) &&
+              !states.contains(WidgetState.disabled)
+          ? color ?? Theme.of(context).colorScheme.onSurface
+          : null,
+    ),
+  );
+
+  static ButtonStyle compactOutlineStyle(BuildContext context) => _buttonStyle(
+    Theme.of(context).colorScheme,
+    foreground: FccDesignColors.of(context).accentText,
+    pressed: Theme.of(context).colorScheme.primaryContainer,
+    outlined: true,
+    compact: true,
+  );
+
+  static ButtonStyle dangerOutlineStyle(BuildContext context) => _buttonStyle(
+    Theme.of(context).colorScheme,
+    foreground: Theme.of(context).colorScheme.error,
+    pressed: FccDesignColors.of(context).dangerOutlinePressed,
+    outlined: true,
+  );
+
+  static ButtonStyle dangerStyle(BuildContext context) => _buttonStyle(
+    Theme.of(context).colorScheme,
+    foreground: Colors.white,
+    fill: FccDesignColors.of(context).dangerFill,
+    pressed: FccDesignColors.of(context).dangerPressed,
+    filled: true,
+  );
+
+  static ButtonStyle _buttonStyle(
+    ColorScheme colors, {
+    required Color foreground,
+    required Color pressed,
+    Color fill = Colors.transparent,
+    bool filled = false,
+    bool outlined = false,
+    bool compact = false,
+  }) => ButtonStyle(
+    minimumSize: WidgetStatePropertyAll(Size(44, compact ? 44 : 48)),
+    elevation: const WidgetStatePropertyAll(0),
+    animationDuration: const Duration(milliseconds: 100),
+    splashFactory: NoSplash.splashFactory,
+    overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+    foregroundColor: WidgetStateProperty.resolveWith(
+      (states) =>
+          states.contains(WidgetState.disabled) ? colors.outline : foreground,
+    ),
+    backgroundColor: WidgetStateProperty.resolveWith(
+      (states) => states.contains(WidgetState.disabled)
+          ? colors.surfaceContainer
+          : states.contains(WidgetState.pressed)
+          ? pressed
+          : fill,
+    ),
+    textStyle: WidgetStateProperty.resolveWith(
+      (states) => TextStyle(
+        fontFamily: 'Lato',
+        fontSize: compact ? 14 : 16,
+        fontWeight: filled ? FontWeight.w900 : FontWeight.w700,
+        decoration: states.contains(WidgetState.disabled)
+            ? TextDecoration.none
+            : null,
+      ),
+    ),
+    side: WidgetStateProperty.resolveWith(
+      (states) => !outlined || states.contains(WidgetState.disabled)
+          ? BorderSide.none
+          : BorderSide(color: foreground, width: 1.5),
+    ),
+    shape: WidgetStateProperty.resolveWith(
+      (states) => _FocusRingBorder(
+        borderRadius: BorderRadius.circular(compact ? 10 : 12),
+        ring:
+            states.contains(WidgetState.focused) &&
+                !states.contains(WidgetState.disabled)
+            ? foreground
+            : null,
+      ),
+    ),
+  );
 
   static ThemeData _build(Brightness brightness) {
     final dark = brightness == Brightness.dark;
@@ -81,7 +254,7 @@ class FccTheme {
       primaryContainer: tint,
       onPrimaryContainer: foreground,
       secondary: yellow,
-      onSecondary: const Color(0xFF2B2140),
+      onSecondary: Color(dark ? 0xFF1A1530 : 0xFF2B2140),
       secondaryContainer: raised,
       onSecondaryContainer: foreground,
       tertiary: Color(dark ? 0xFFFFAABC : 0xFFC2185B),
@@ -114,9 +287,9 @@ class FccTheme {
       textTheme: base.textTheme
           .copyWith(
             headlineLarge: TextStyle(
-              fontSize: 32,
-              height: 1.15,
-              fontWeight: FontWeight.w800,
+              fontSize: 30,
+              height: 1.2,
+              fontWeight: FontWeight.w900,
               color: foreground,
             ),
             headlineMedium: TextStyle(
@@ -149,7 +322,11 @@ class FccTheme {
               height: 1.45,
               color: foreground,
             ),
-            bodySmall: TextStyle(fontSize: 12, height: 1.4, color: muted),
+            bodySmall: TextStyle(fontSize: 13, height: 1.4, color: muted),
+            labelSmall: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
             labelLarge: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -181,68 +358,132 @@ class FccTheme {
       dividerTheme: DividerThemeData(color: line, thickness: 1, space: 1),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
-        indicatorColor: tint,
+        indicatorColor: Colors.transparent,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
             fontFamily: 'Lato',
             fontSize: 12,
-            color: states.contains(WidgetState.selected) ? accentText : muted,
+            fontWeight: FontWeight.w700,
+            color: states.contains(WidgetState.selected) ? foreground : muted,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
-            color: states.contains(WidgetState.selected) ? accent : muted,
+            color: states.contains(WidgetState.selected) ? foreground : muted,
           ),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: yellow,
-          foregroundColor: colors.onSecondary,
-          minimumSize: const Size(48, 48),
-          textStyle: const TextStyle(
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w700,
-            fontSize: 14,
-          ),
+        style: _buttonStyle(
+          colors,
+          foreground: colors.onSecondary,
+          fill: yellow,
+          pressed: Color(dark ? 0xFFD7A401 : 0xFFD7A401),
+          filled: true,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: yellow,
-          foregroundColor: colors.onSecondary,
-          elevation: 0,
-          minimumSize: const Size(48, 48),
+        style: _buttonStyle(
+          colors,
+          foreground: colors.onSecondary,
+          fill: yellow,
+          pressed: const Color(0xFFD7A401),
+          filled: true,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: foreground,
-          backgroundColor: surface,
-          side: BorderSide(color: controlEdge),
-          minimumSize: const Size(48, 48),
+        style: _buttonStyle(
+          colors,
+          foreground: accentText,
+          pressed: tint,
+          outlined: true,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: accentText,
-          minimumSize: const Size(48, 48),
-        ),
+        style: _buttonStyle(colors, foreground: accentText, pressed: tint),
       ),
       iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(
-          foregroundColor: muted,
-          minimumSize: const Size(48, 48),
+        style: _buttonStyle(
+          colors,
+          foreground: foreground,
+          pressed: raised,
+          compact: true,
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: surface,
-        selectedColor: accent,
-        side: BorderSide(color: controlEdge),
+        color: WidgetStateColor.resolveWith(
+          (states) => states.contains(WidgetState.disabled)
+              ? raised
+              : states.contains(WidgetState.selected)
+              ? tint
+              : Colors.transparent,
+        ),
+        side: WidgetStateBorderSide.resolveWith(
+          (states) => states.contains(WidgetState.disabled)
+              ? BorderSide.none
+              : BorderSide(
+                  color: states.contains(WidgetState.selected)
+                      ? accentText
+                      : controlEdge,
+                  width: states.contains(WidgetState.selected) ? 1.5 : 1,
+                ),
+        ),
         shape: const StadiumBorder(),
-        labelStyle: TextStyle(fontFamily: 'Lato', color: foreground),
+        showCheckmark: true,
+        checkmarkColor: foreground,
+        labelStyle: WidgetStateTextStyle.resolveWith(
+          (states) => TextStyle(
+            fontFamily: 'Lato',
+            fontSize: 14,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w900
+                : FontWeight.w700,
+            color: states.contains(WidgetState.disabled)
+                ? controlEdge
+                : states.contains(WidgetState.selected)
+                ? foreground
+                : muted,
+          ),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: _buttonStyle(colors, foreground: muted, pressed: tint).copyWith(
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.disabled)
+                ? controlEdge
+                : states.contains(WidgetState.selected)
+                ? foreground
+                : muted,
+          ),
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.disabled)
+                ? raised
+                : states.contains(WidgetState.selected)
+                ? tint
+                : Colors.transparent,
+          ),
+          textStyle: WidgetStateProperty.resolveWith(
+            (states) => TextStyle(
+              fontFamily: 'Lato',
+              fontSize: 15,
+              fontWeight: states.contains(WidgetState.selected)
+                  ? FontWeight.w900
+                  : FontWeight.w700,
+            ),
+          ),
+          side: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.disabled)
+                ? BorderSide.none
+                : BorderSide(
+                    color: states.contains(WidgetState.selected)
+                        ? accentText
+                        : line,
+                    width: states.contains(WidgetState.selected) ? 1.5 : 1,
+                  ),
+          ),
+        ),
       ),
       inputDecorationTheme: InputDecorationThemeData(
         filled: true,
@@ -262,7 +503,7 @@ class FccTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: accent, width: 1.5),
+          borderSide: BorderSide(color: accent, width: 2),
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
@@ -282,6 +523,7 @@ class FccTheme {
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: accent,
         linearTrackColor: line,
+        linearMinHeight: 6,
       ),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: accent,
@@ -295,8 +537,53 @@ class FccTheme {
           onSuccessContainer: Color(dark ? 0xFF8DDBA3 : 0xFF02743B),
           accentText: accentText,
           hero: Color(dark ? 0xFF3E329C : 0xFF5B4BDB),
+          codeSurface: Color(dark ? 0xFF0F0B1F : 0xFFFFFFFF),
+          dangerFill: Color(dark ? 0xFFB02019 : 0xFFD6245A),
+          dangerPressed: Color(dark ? 0xFF880B09 : 0xFFC2185B),
+          dangerOutlinePressed: Color(dark ? 0xFF5F0705 : 0xFFFFE8F0),
+          donateContainer: Color(dark ? 0xFF5B0928 : 0xFFFFE8F0),
+          heatmapLow: Color(dark ? 0xFF3E329C : 0xFFB8ADF1),
+          heatmapMid: Color(dark ? 0xFF8381FF : 0xFF8978E5),
+          heatmapHigh: Color(dark ? 0xFFBBBFFF : 0xFF5B4BDB),
+          successBorder: Color(dark ? 0xFF03572B : 0xFF02743B),
+          heroForeground: const Color(0xFFFFF8EC),
+          primaryPressed: const Color(0xFFD7A401),
+          editorHighlight: Color(dark ? 0xFF29216C : 0xFFF6F6FE),
+          workshop: Color(dark ? 0xFFC8B0FF : 0xFF8B3FD9),
+          lab: Color(dark ? 0xFF5FD3D6 : 0xFF1E7F46),
+          lecture: Color(dark ? 0xFF8EC5FF : 0xFF1F6FD1),
+          quiz: Color(dark ? 0xFFFFAF85 : 0xFFB93D0A),
         ),
       ],
     );
+  }
+}
+
+class _FocusRingBorder extends RoundedRectangleBorder {
+  const _FocusRingBorder({required super.borderRadius, super.side, this.ring});
+  final Color? ring;
+
+  @override
+  _FocusRingBorder copyWith({
+    BorderSide? side,
+    BorderRadiusGeometry? borderRadius,
+  }) => _FocusRingBorder(
+    side: side ?? this.side,
+    borderRadius: borderRadius ?? this.borderRadius,
+    ring: ring,
+  );
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    super.paint(canvas, rect, textDirection: textDirection);
+    if (ring != null) {
+      canvas.drawRRect(
+        borderRadius.resolve(textDirection).toRRect(rect).inflate(3),
+        Paint()
+          ..color = ring!
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
+    }
   }
 }
