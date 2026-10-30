@@ -281,7 +281,7 @@ class _AccountLinks extends StatelessWidget {
     child: Column(
       children: [
         ListTile(
-          leading: const Icon(Icons.settings_outlined, size: 20),
+          leading: const Icon(Icons.settings, size: 20),
           title: const Text('Settings'),
           trailing: const Icon(Icons.chevron_right, size: 20),
           onTap: () => const SettingsRoute().push<void>(context),
