@@ -280,6 +280,7 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                         'Before you post, please confirm:',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: colors.onSurfaceVariant,
+                          fontSize: 15,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -342,7 +343,7 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       const SizedBox(height: 16),
                       Card(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           side: BorderSide(color: colors.outlineVariant),
                         ),
                         child: Padding(
@@ -382,6 +383,7 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colors.onSurfaceVariant,
+                        fontSize: 13,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -447,7 +449,7 @@ class _Statement extends StatelessWidget {
         checked: value,
         child: InkWell(
           onTap: () => onChanged(!value),
-          borderRadius: BorderRadius.circular(7),
+          borderRadius: BorderRadius.circular(8),
           child: SizedBox.square(
             dimension: 44,
             child: Center(
@@ -462,7 +464,7 @@ class _Statement extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(7),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: value
                     ? Icon(
@@ -492,7 +494,7 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FilledButton(
     style: FilledButton.styleFrom(
-      minimumSize: const Size(double.infinity, 48),
+      minimumSize: const Size(double.infinity, 50),
       textStyle: const TextStyle(
         fontFamily: 'Lato',
         fontSize: 17,

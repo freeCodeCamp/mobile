@@ -203,28 +203,48 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
-              final button = OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(48, 44),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  textStyle: const TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    height: 1.25,
-                  ),
-                ),
-                onPressed: () => LearnDailyChallengeRoute(
-                  day: challenge.monthDay,
-                ).push<void>(context),
-                child: Text(
-                  isCompleted ? 'Review challenge' : 'Start challenge',
-                  textAlign: TextAlign.center,
-                ),
+              final label = Text(
+                isCompleted ? 'Review challenge' : 'Start challenge',
+                textAlign: TextAlign.center,
               );
+              void start() => LearnDailyChallengeRoute(
+                day: challenge.monthDay,
+              ).push<void>(context);
+              final button = showArchiveLink
+                  ? OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(48, 48),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        textStyle: const TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          height: 1.25,
+                        ),
+                      ),
+                      onPressed: start,
+                      child: label,
+                    )
+                  : FilledButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(48, 48),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        textStyle: const TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          height: 1.25,
+                        ),
+                      ),
+                      onPressed: start,
+                      child: label,
+                    );
               if (!showArchiveLink ||
                   constraints.maxWidth < 300 ||
                   MediaQuery.textScalerOf(context).scale(16) > 20) {

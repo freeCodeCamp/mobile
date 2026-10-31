@@ -83,6 +83,13 @@ Future<bool> showQuizLeaveDialog(
                         Size(double.infinity, 50),
                       ),
                       padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
+                      textStyle: const WidgetStatePropertyAll(
+                        TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                     onPressed: () => Navigator.pop(context, true),
                     child: const Text(

@@ -228,6 +228,14 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                       width: double.infinity,
                       child: OutlinedButton(
                         onPressed: isDeleting ? null : _keepAccount,
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                         child: const Text(
                           'Keep my account',
                           textAlign: TextAlign.center,

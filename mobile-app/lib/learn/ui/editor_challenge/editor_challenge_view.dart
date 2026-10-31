@@ -1110,24 +1110,33 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
               maxWidth: MediaQuery.sizeOf(context).width * .5,
             ),
             child: state.passed
-                ? SizedBox(
-                    width: 128,
+                ? IntrinsicWidth(
                     child: CompleteButton(
                       challenge: widget.challenge,
                       block: block,
                       label: nextLabel,
                       trailingIcon: Icons.arrow_forward_rounded,
-                      buttonStyle: signedIn
-                          ? actionStyle
-                          : theme.outlinedButtonTheme.style!.copyWith(
-                              textStyle: const WidgetStatePropertyAll(
-                                TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
+                      buttonStyle:
+                          (signedIn
+                                  ? actionStyle
+                                  : theme.outlinedButtonTheme.style!)
+                              .copyWith(
+                                minimumSize: const WidgetStatePropertyAll(
+                                  Size(48, 48),
+                                ),
+                                padding: const WidgetStatePropertyAll(
+                                  EdgeInsetsDirectional.fromSTEB(18, 0, 14, 0),
+                                ),
+                                textStyle: WidgetStatePropertyAll(
+                                  TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 16,
+                                    fontWeight: signedIn
+                                        ? FontWeight.w900
+                                        : FontWeight.w700,
+                                  ),
                                 ),
                               ),
-                            ),
                     ),
                   )
                 : FilledButton(

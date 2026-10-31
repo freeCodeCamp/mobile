@@ -160,7 +160,7 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
                                   textStyle: const WidgetStatePropertyAll(
                                     TextStyle(
                                       fontFamily: 'Lato',
-                                      fontSize: 13,
+                                      fontSize: 14,
                                       letterSpacing: 0,
                                       fontWeight: FontWeight.w700,
                                     ),

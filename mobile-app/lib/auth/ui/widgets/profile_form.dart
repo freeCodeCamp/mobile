@@ -36,7 +36,18 @@ Future<bool> confirmProfileDiscard(BuildContext context) async =>
               ),
               const SizedBox(height: 10),
               OutlinedButton(
-                style: FccTheme.dangerOutlineStyle(context),
+                style: FccTheme.dangerOutlineStyle(context).copyWith(
+                  minimumSize: const WidgetStatePropertyAll(
+                    Size.fromHeight(50),
+                  ),
+                  textStyle: const WidgetStatePropertyAll(
+                    TextStyle(
+                      fontFamily: 'Lato',
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
                 onPressed: () => Navigator.pop(context, true),
                 child: const Text('Discard'),
               ),

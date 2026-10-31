@@ -55,10 +55,7 @@ final Map<String, Style> defaultStyles = {
   'th strong': Style(fontSize: FontSize.medium),
   'figure': Style(margin: Margins.zero, textAlign: TextAlign.center),
   'figcaption': Style(fontSize: FontSize.medium),
-  'code': Style(
-    fontFamily: 'monospace',
-    fontSize: FontSize.xLarge,
-  ),
+  'code': Style(fontFamily: 'monospace', fontSize: FontSize.xLarge),
   'pre': Style(fontFamily: 'monospace'),
 };
 

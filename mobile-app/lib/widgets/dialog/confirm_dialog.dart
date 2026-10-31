@@ -24,26 +24,43 @@ Future<bool> showConfirmDialog(
         title: Text(title),
         content: Text(description),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style:
-                (destructive
-                        ? FccTheme.dangerStyle(context)
-                        : const ButtonStyle())
-                    .copyWith(
-                      textStyle: const WidgetStatePropertyAll(
-                        TextStyle(
-                          fontFamily: 'Lato',
-                          fontSize: 17,
-                          fontWeight: FontWeight.w900,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FilledButton(
+                style:
+                    (destructive
+                            ? FccTheme.dangerStyle(context)
+                            : const ButtonStyle())
+                        .copyWith(
+                          minimumSize: const WidgetStatePropertyAll(
+                            Size.fromHeight(50),
+                          ),
+                          textStyle: const WidgetStatePropertyAll(
+                            TextStyle(
+                              fontFamily: 'Lato',
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(confirmLabel),
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(confirmLabel),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  textStyle: const TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
         ],
       );
