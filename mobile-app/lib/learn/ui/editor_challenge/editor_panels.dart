@@ -9,6 +9,7 @@ import 'package:freecodecamp/learn/ui/widgets/celebration_confetti.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parseFragment;
 
 class DailyInstructionCard extends StatelessWidget {
@@ -37,7 +38,7 @@ class DailyInstructionCard extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -50,11 +51,22 @@ class DailyInstructionCard extends StatelessWidget {
             ),
             if (summary.isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text(summary, maxLines: 2, overflow: TextOverflow.ellipsis),
+              Text(
+                summary,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 15,
+                  height: 1.5,
+                ),
+              ),
             ],
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 40),
+                  alignment: AlignmentDirectional.centerStart,
+                ),
                 onPressed: () => showModalBottomSheet<void>(
                   context: context,
                   isScrollControlled: true,
@@ -85,22 +97,49 @@ class DailyChallengeExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final fragment = parseFragment(test.text);
     final paragraph = fragment.children.singleOrNull;
-    final example = paragraph?.localName == 'p'
-        ? paragraph!.innerHtml
-        : test.text;
-    return ParsedHtml(
-      'Example: $example',
-      outlinedInlineCode: true,
-      customStyles: {
-        '*': Style(
-          fontSize: FontSize(13),
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+    final nodes = paragraph?.localName == 'p'
+        ? paragraph!.nodes
+        : fragment.nodes;
+    final style = TextStyle(
+      fontSize: 13,
+      height: 1.5,
+      letterSpacing: 0,
+      color: colors.onSurfaceVariant,
+    );
+    return SelectionArea(
+      child: Text.rich(
+        TextSpan(
+          style: style,
+          children: [
+            const TextSpan(text: 'Example: '),
+            for (final node in nodes)
+              if (node is dom.Element && node.localName == 'code')
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceContainer,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      node.text,
+                      style: style.copyWith(
+                        fontFamily: 'JetBrains Mono',
+                        color: colors.onSurface,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                TextSpan(text: node.text),
+          ],
         ),
-        'p': Style(margin: Margins.zero),
-        'code': Style(fontFamily: 'JetBrains Mono', fontSize: FontSize(13)),
-      },
+      ),
     );
   }
 }

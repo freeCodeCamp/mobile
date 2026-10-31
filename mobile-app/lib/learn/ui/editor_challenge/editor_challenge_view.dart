@@ -430,7 +430,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       leading: IconButton(
         tooltip: 'Back',
         onPressed: () => Navigator.of(context).maybePop(),
-        icon: const Icon(Icons.chevron_left_rounded),
+        icon: const Icon(Icons.arrow_back),
       ),
       leadingWidth: 44,
       titleSpacing: 8,
@@ -442,7 +442,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+            style: _daily
+                ? const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)
+                : const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
           ),
           if (block != null || _daily)
             Text(
@@ -1051,8 +1053,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       children: [
                         _ToolButton(
                           label: 'Tests',
-                          icon: Icons.fact_check_outlined,
-                          selectedIcon: Icons.fact_check_rounded,
+                          icon: Icons.checklist,
+                          selectedIcon: Icons.checklist,
                           active:
                               _sheet == _EditorSheet.tests ||
                               _sheet == _EditorSheet.pass,
