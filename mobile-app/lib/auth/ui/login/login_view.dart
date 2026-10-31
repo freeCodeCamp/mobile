@@ -284,7 +284,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                         dimension: 22,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          color: colors.onSecondary,
+                                          color: colors.primary,
                                           semanticsLabel: 'Please wait',
                                         ),
                                       )
