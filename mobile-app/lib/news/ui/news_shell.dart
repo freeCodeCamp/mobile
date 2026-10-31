@@ -63,7 +63,7 @@ class NewsShell extends StatelessWidget {
       ),
     );
 
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: isSearch
           ? null
           : AppBar(
@@ -100,6 +100,17 @@ class NewsShell extends StatelessWidget {
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.tutorials,
       ),
+    );
+
+    // Saved and Search are reached with context.go, so system back has nothing to pop.
+    return PopScope(
+      canPop: !isSaved && !isSearch,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          context.go(newsFeedPath);
+        }
+      },
+      child: scaffold,
     );
   }
 }
