@@ -5,7 +5,9 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
 import 'package:freecodecamp/learn/ui/widgets/dialogue_block_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/exam_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
@@ -57,6 +59,7 @@ class _BlockListState extends ConsumerState<BlockList> {
     final active = widget.blocks.indexWhere(
       (b) =>
           !b.isDisabledByOverride &&
+          b.label != BlockLabel.exam &&
           b.challenges.any((c) => !completed.contains(c.id)),
     );
     final headerCount = widget.header == null ? 0 : 1;
@@ -97,6 +100,21 @@ class BlockCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (block.label == BlockLabel.exam) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: ExamCard(
+          eyebrow: 'Exam',
+          title: block.name,
+          locked: block.isDisabledByOverride,
+          onOpen: () => openLearningWebsite(
+            context,
+            block.superBlock,
+            chapter: block.dashedName,
+          ),
+        ),
+      );
+    }
     if (block.layout == BlockLayout.challengeDialogue) {
       return DialogueBlockCard(block: block, showAction: showAction);
     }

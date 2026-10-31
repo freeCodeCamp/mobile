@@ -9,6 +9,7 @@ import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/exam_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
 import 'package:freecodecamp/routing/learn.dart';
@@ -86,7 +87,13 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
             BlockSuperBlock(:final blocks) => BlockList(
               blocks: blocks,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-              header: _CourseHero(title: title ?? 'Course', blocks: blocks),
+              header: _CourseHero(
+                title: title ?? 'Course',
+                blocks: [
+                  for (final b in blocks)
+                    if (b.label != BlockLabel.exam) b,
+                ],
+              ),
             ),
             ChapterSuperBlock(:final chapters) => _Chapters(
               title: title ?? 'Course',
@@ -161,104 +168,16 @@ class _Chapters extends ConsumerWidget {
             isLocked: _locked(chapter),
           ),
         for (final exam in exams)
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
-              ),
-            ),
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          Icons.emoji_events_outlined,
-                          color: FccDesignColors.of(context).accentText,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            LearnEyebrow(
-                              'Chapter ${this.chapters.indexOf(exam) + 1}',
-                            ),
-                            const Text(
-                              'Certification Exam',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _locked(exam)
-                              ? 'This exam is coming soon.'
-                              : "Take it on the website when you're ready.",
-                          style: TextStyle(
-                            fontSize: 14,
-                            height: 1.4,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 44),
-                        ),
-                        onPressed: _locked(exam)
-                            ? null
-                            : () => openLearningWebsite(
-                                context,
-                                superBlock,
-                                chapter: exam.dashedName,
-                              ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Open',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                decoration: _locked(exam)
-                                    ? TextDecoration.none
-                                    : TextDecoration.underline,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            const Icon(Icons.open_in_new, size: 14),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: ExamCard(
+              eyebrow: 'Chapter ${this.chapters.indexOf(exam) + 1}',
+              title: 'Certification Exam',
+              locked: _locked(exam),
+              onOpen: () => openLearningWebsite(
+                context,
+                superBlock,
+                chapter: exam.dashedName,
               ),
             ),
           ),

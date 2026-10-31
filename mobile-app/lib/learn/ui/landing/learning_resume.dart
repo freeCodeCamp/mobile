@@ -26,7 +26,7 @@ class LearningResume {
 Iterable<Block> availableLearningBlocks(SuperBlock curriculum) =>
     switch (curriculum) {
       BlockSuperBlock(:final blocks) => blocks.where(
-        (b) => !b.isDisabledByOverride,
+        (b) => !b.isDisabledByOverride && b.label != BlockLabel.exam,
       ),
       ChapterSuperBlock(:final chapters) =>
         chapters
