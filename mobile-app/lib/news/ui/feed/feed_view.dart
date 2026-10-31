@@ -94,11 +94,17 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
     final selected = _selectedTag?.slug == tag?.slug;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: selected,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
-        onSelected: (_) => setState(() => _selectedTag = tag),
+      child: Theme(
+        data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+        child: ChoiceChip(
+          label: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 22),
+            child: Center(widthFactor: 1, child: Text(label)),
+          ),
+          selected: selected,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
+          onSelected: (_) => setState(() => _selectedTag = tag),
+        ),
       ),
     );
   }
