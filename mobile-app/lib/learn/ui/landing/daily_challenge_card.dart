@@ -53,7 +53,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
     final challenge = today.value;
     if (challenge == null) {
       return Container(
-        margin: const EdgeInsets.only(top: 12),
+        margin: const EdgeInsets.only(top: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colors.surface,
@@ -103,7 +103,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
       ),
     );
     return Container(
-      margin: const EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colors.surface,
@@ -172,7 +172,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
                         color: colors.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       isCompleted
                           ? "Today's challenge completed!"
@@ -200,7 +200,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
               ),
             ),
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           LayoutBuilder(
             builder: (context, constraints) {
               final label = Text(
@@ -287,7 +287,7 @@ class _ArchiveLink extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       textStyle: const TextStyle(
         fontFamily: 'Lato',
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: FontWeight.w700,
         decoration: TextDecoration.underline,
       ),

@@ -211,7 +211,7 @@ class _ResumeCard extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 6,
+                      height: 8,
                       child: LearnProgress(
                         done: next.completed,
                         total: next.block.challenges.length,
@@ -320,10 +320,14 @@ class FirstVisitHero extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('New here? Start here'),
+                  const Text(
+                    'New here? Start here',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                  ),
                   const SizedBox(height: 8),
                   const Text(
                     'Learn to code for free, one short hands-on step at a time.',
+                    style: TextStyle(fontSize: 15, height: 1.45),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -353,43 +357,56 @@ class FirstVisitHero extends StatelessWidget {
                     ),
                     iconAlignment: IconAlignment.end,
                     icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Start learning'),
+                    label: const Text('Start step 1'),
                   ),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: design.heroForeground.withValues(alpha: .3),
-                  ),
-                ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Already learning? Sign in to pick up where you left off.',
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton(
-                    onPressed: onSignIn,
-                    style:
-                        OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(
-                            color: Colors.white,
-                            width: 1.5,
-                          ),
-                        ).copyWith(
-                          shape: FccTheme.focusShape(
-                            context,
-                            color: Colors.white,
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: design.heroForeground.withValues(alpha: .3),
+                        ),
+                      ),
+                    ),
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Already learning? Sign in to pick up where you left off.',
+                            style: TextStyle(fontSize: 14, height: 1.4),
                           ),
                         ),
-                    child: const Text('Sign in'),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          onPressed: onSignIn,
+                          style:
+                              OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(0, 44),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                side: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1.5,
+                                ),
+                                textStyle: const TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ).copyWith(
+                                shape: FccTheme.focusShape(
+                                  context,
+                                  radius: 10,
+                                  color: Colors.white,
+                                ),
+                              ),
+                          child: const Text('Sign in'),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
