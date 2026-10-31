@@ -114,7 +114,11 @@ class EpisodePlayButton extends ConsumerWidget {
             tapTargetSize: MaterialTapTargetSize.padded,
             shape: FccTheme.focusShape(context, radius: 999),
             textStyle: const WidgetStatePropertyAll(
-              TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           onPressed: action,

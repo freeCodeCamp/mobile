@@ -36,6 +36,7 @@ class ListenTabs extends StatelessWidget {
                             ? colors.onSurface
                             : colors.onSurfaceVariant,
                         textStyle: TextStyle(
+                          fontFamily: 'Lato',
                           fontSize: 15,
                           fontWeight: isRadio == radio
                               ? FontWeight.w900

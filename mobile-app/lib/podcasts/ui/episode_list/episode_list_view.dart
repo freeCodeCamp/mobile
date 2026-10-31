@@ -360,6 +360,7 @@ class _Header extends ConsumerWidget {
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(48, 48),
                   textStyle: const TextStyle(
+                    fontFamily: 'Lato',
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                   ),
