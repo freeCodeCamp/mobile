@@ -160,7 +160,7 @@ class _PrivateProfile extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'This camper has chosen to keep their profile private.',
+          'This learner has chosen to keep their profile private.',
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colors.onSurfaceVariant,
@@ -488,7 +488,10 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radius),
+      side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+    ),
     clipBehavior: Clip.antiAlias,
     child: Padding(padding: padding, child: child),
   );

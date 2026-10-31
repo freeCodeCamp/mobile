@@ -174,7 +174,6 @@ class _AccountHeader extends StatelessWidget {
       child: const Text('View profile'),
     );
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
         child: LayoutBuilder(
@@ -213,18 +212,22 @@ class _GuestAccount extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: colors.surfaceContainer,
+                Container(
+                  width: 56,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.surfaceContainer,
+                    border: Border.all(color: colors.outlineVariant),
+                  ),
                   child: Icon(
                     Icons.person_outline,
                     color: colors.onSurfaceVariant,
@@ -276,7 +279,6 @@ class _AccountLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     clipBehavior: Clip.antiAlias,
     child: Column(
       children: [
