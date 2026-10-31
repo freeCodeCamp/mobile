@@ -168,7 +168,7 @@ class _Chapters extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.outlineVariant,
               ),
             ),
-            margin: const EdgeInsets.only(top: 8, bottom: 12),
+            margin: const EdgeInsets.only(bottom: 16),
             child: Padding(
               padding: const EdgeInsets.all(18),
               child: Column(
@@ -181,7 +181,7 @@ class _Chapters extends ConsumerWidget {
                         height: 48,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
                           Icons.emoji_events_outlined,
@@ -208,33 +208,55 @@ class _Chapters extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _locked(exam)
-                        ? 'This exam is coming soon.'
-                        : "Take it on the website when you're ready.",
-                  ),
                   const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: _locked(exam)
-                          ? null
-                          : () => openLearningWebsite(
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _locked(exam)
+                              ? 'This exam is coming soon.'
+                              : "Take it on the website when you're ready.",
+                          style: TextStyle(
+                            fontSize: 14,
+                            height: 1.4,
+                            color: Theme.of(
                               context,
-                              superBlock,
-                              chapter: exam.dashedName,
-                            ),
-                      icon: const Icon(Icons.open_in_new, size: 18),
-                      label: Text(
-                        'Open',
-                        style: TextStyle(
-                          decoration: _locked(exam)
-                              ? TextDecoration.none
-                              : TextDecoration.underline,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 44),
+                        ),
+                        onPressed: _locked(exam)
+                            ? null
+                            : () => openLearningWebsite(
+                                context,
+                                superBlock,
+                                chapter: exam.dashedName,
+                              ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Open',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                decoration: _locked(exam)
+                                    ? TextDecoration.none
+                                    : TextDecoration.underline,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(Icons.open_in_new, size: 14),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -264,6 +286,9 @@ class _CourseHero extends ConsumerWidget {
     final nextBlock = available.firstWhereOrNull(
       (b) => b.challenges.any((c) => !completed.contains(c.id)),
     );
+    final nextBlockDone =
+        nextBlock?.challenges.where((c) => completed.contains(c.id)).length ??
+        0;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -288,18 +313,26 @@ class _CourseHero extends ConsumerWidget {
           ),
           const SizedBox(height: 14),
           if (chapters != null && chapters!.isNotEmpty)
-            Row(
-              children: [
-                for (final (index, chapter) in chapters!.indexed) ...[
-                  if (index > 0) const SizedBox(width: 3),
-                  Expanded(
-                    child: _ChapterProgress(
-                      chapter: chapter,
-                      completed: completed,
-                    ),
-                  ),
-                ],
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final widths = _segmentWidths([
+                  for (final chapter in chapters!) _chapterWeight(chapter),
+                ], constraints.maxWidth);
+                return Row(
+                  children: [
+                    for (final (index, chapter) in chapters!.indexed) ...[
+                      if (index > 0) const SizedBox(width: _segmentGap),
+                      SizedBox(
+                        width: widths[index],
+                        child: _ChapterProgress(
+                          chapter: chapter,
+                          completed: completed,
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
             )
           else
             LearnProgress(
@@ -327,7 +360,7 @@ class _CourseHero extends ConsumerWidget {
               ).push<void>(context),
               icon: const Icon(Icons.arrow_forward, size: 18),
               iconAlignment: IconAlignment.end,
-              label: Text(done > 0 ? 'Continue' : 'Start learning'),
+              label: Text(nextBlockDone > 0 ? 'Continue' : 'Start'),
             ),
           ],
         ],
@@ -392,7 +425,7 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
         .any((c) => completed.contains(c.id));
     final design = FccDesignColors.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
@@ -408,19 +441,24 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
           childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
           shape: const Border(),
           collapsedShape: const Border(),
+          iconColor: design.accentText,
+          collapsedIconColor: design.accentText,
           leading: Container(
             width: 48,
             height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: colors.primaryContainer,
+              color: complete ? design.success : colors.primaryContainer,
               borderRadius: BorderRadius.circular(14),
               border: expanded
                   ? Border.all(color: design.accentText, width: 1.5)
                   : null,
             ),
             child: complete
-                ? Icon(Icons.check, color: design.success)
+                ? Icon(
+                    Icons.check,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  )
                 : Text(
                     '$number',
                     style: TextStyle(
@@ -447,7 +485,24 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 8),
+                    if (hasProgress) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        complete
+                            ? 'Done'
+                            : '$doneModules of ${modules.length} modules',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: complete
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                          color: complete
+                              ? design.success
+                              : colors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 6),
                     Wrap(
                       spacing: 4,
                       runSpacing: 4,
@@ -465,23 +520,6 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
                           ),
                       ],
                     ),
-                    if (hasProgress) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        complete
-                            ? 'Done'
-                            : '$doneModules of ${modules.length} modules',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: complete
-                              ? FontWeight.w700
-                              : FontWeight.w400,
-                          color: complete
-                              ? design.success
-                              : colors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
           children: [
@@ -549,7 +587,7 @@ class _ModuleButton extends ConsumerWidget {
         ? '$completedBlocks of ${blocks.length} blocks'
         : null;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.only(bottom: 2),
       child: Material(
         color: active ? colors.primaryContainer : Colors.transparent,
         shape: RoundedRectangleBorder(
@@ -582,8 +620,9 @@ class _ModuleButton extends ConsumerWidget {
                     ).push<void>(context);
                   }
                 },
-          child: Padding(
-            padding: const EdgeInsets.all(12),
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 60),
+            padding: const EdgeInsets.all(10),
             child: Row(
               children: [
                 LearnStatus(
@@ -644,6 +683,46 @@ class _ModuleButton extends ConsumerWidget {
       ),
     );
   }
+}
+
+const _segmentGap = 3.0;
+const _segmentMinWidth = 14.0;
+
+int _chapterWeight(Chapter chapter) {
+  final modules = chapter.modules.where((m) => !m.comingSoon).length;
+  return modules < 1 ? 1 : modules;
+}
+
+List<double> _segmentWidths(List<int> weights, double maxWidth) {
+  final available = maxWidth - _segmentGap * (weights.length - 1);
+  final pinned = <int>{};
+  var changed = true;
+  while (changed) {
+    changed = false;
+    final free = [
+      for (var i = 0; i < weights.length; i++)
+        if (!pinned.contains(i)) i,
+    ];
+    final totalWeight = free.fold<int>(0, (sum, i) => sum + weights[i]);
+    final remaining = available - _segmentMinWidth * pinned.length;
+    for (final i in free) {
+      if (remaining * weights[i] / totalWeight < _segmentMinWidth) {
+        pinned.add(i);
+        changed = true;
+      }
+    }
+  }
+  final freeWeight = [
+    for (var i = 0; i < weights.length; i++)
+      if (!pinned.contains(i)) weights[i],
+  ].fold<int>(0, (sum, w) => sum + w);
+  final remaining = available - _segmentMinWidth * pinned.length;
+  return [
+    for (var i = 0; i < weights.length; i++)
+      pinned.contains(i)
+          ? _segmentMinWidth
+          : remaining * weights[i] / freeWeight,
+  ];
 }
 
 class _ChapterProgress extends StatelessWidget {

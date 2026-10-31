@@ -267,7 +267,7 @@ class _ResumeCard extends ConsumerWidget {
               icon: const Icon(Icons.arrow_forward, size: 18),
               label: Text(
                 next != null
-                    ? '${returning ? 'Continue' : 'Start'} ${blockUnit(next.block)} ${next.step}'
+                    ? '${next.completed > 0 ? 'Continue' : 'Start'} ${blockUnit(next.block)} ${next.step}'
                     : resume.hasError
                     ? 'Try again'
                     : 'Explore course',
