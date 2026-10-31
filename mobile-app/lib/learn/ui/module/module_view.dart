@@ -142,13 +142,14 @@ class ModuleActionBar extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(top: BorderSide(color: colors.outlineVariant)),
       ),
       child: BlockActionButton(
         block: current,
         completed: completed,
         height: 52,
+        showArrow: true,
       ),
     );
   }

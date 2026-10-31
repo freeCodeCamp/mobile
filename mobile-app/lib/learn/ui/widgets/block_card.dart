@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
@@ -166,6 +167,7 @@ class BlockCard extends ConsumerWidget {
                         LearnStatus(
                           complete: complete,
                           active: done > 0 && !complete,
+                          large: true,
                         ),
                         const SizedBox(width: 12),
                       ],
@@ -173,7 +175,7 @@ class BlockCard extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (expanded && done > 0)
+                            if (expanded)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -381,10 +383,12 @@ class BlockActionButton extends StatelessWidget {
     required this.block,
     required this.completed,
     this.height = 48,
+    this.showArrow = false,
   });
   final Block block;
   final Set<String> completed;
   final double height;
+  final bool showArrow;
 
   @override
   Widget build(BuildContext context) {
@@ -393,6 +397,15 @@ class BlockActionButton extends StatelessWidget {
         .firstOrNull;
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
     final unit = blockUnit(block);
+    final label = Text(
+      next == null
+          ? 'Review ${unit == 'step' ? 'steps' : block.label.value}'
+          : done > 0 && unit == 'step'
+          ? 'Continue step ${block.challenges.indexOf(next) + 1}'
+          : done > 0
+          ? 'Continue ${block.label.value}'
+          : 'Start ${block.label == BlockLabel.legacy ? 'learning' : block.label.value}',
+    );
     return FilledButton(
       style: FilledButton.styleFrom(
         minimumSize: Size(double.infinity, height),
@@ -409,15 +422,24 @@ class BlockActionButton extends StatelessWidget {
               block,
               (next ?? block.challenges.first).id,
             ),
-      child: Text(
-        next == null
-            ? 'Review ${unit == 'step' ? 'steps' : block.label.value}'
-            : done > 0 && unit == 'step'
-            ? 'Continue step ${block.challenges.indexOf(next) + 1}'
-            : done > 0
-            ? 'Continue ${block.label.value}'
-            : 'Start ${block.label == BlockLabel.legacy ? 'learning' : block.label.value}',
-      ),
+      child: showArrow
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                label,
+                const SizedBox(width: 8),
+                SvgPicture.asset(
+                  'assets/icons/arrow-right.svg',
+                  width: 18,
+                  height: 18,
+                  theme: SvgTheme(
+                    currentColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  excludeFromSemantics: true,
+                ),
+              ],
+            )
+          : label,
     );
   }
 }

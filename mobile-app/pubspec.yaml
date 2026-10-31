@@ -114,6 +114,7 @@ flutter:
   assets:
     - .env
     - assets/fonts/JetBrainsMono/OFL.txt
+    - assets/icons/
     - assets/images/
     - assets/learn/
     - assets/test_runner/dist/

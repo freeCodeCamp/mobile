@@ -77,20 +77,23 @@ class LearnStatus extends StatelessWidget {
     required this.complete,
     this.active = false,
     this.module = false,
+    this.large = false,
     this.icon,
   });
   final bool complete;
   final bool active;
   final bool module;
+  final bool large;
   final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final success = FccDesignColors.of(context).success;
+    final size = large ? 28.0 : 26.0;
     return Container(
-      width: 26,
-      height: 26,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: complete ? success : colors.surface,
@@ -100,13 +103,17 @@ class LearnStatus extends StatelessWidget {
               : active
               ? colors.primary
               : colors.outline,
-          width: module ? 3 : 2,
+          width: module ? 3 : large ? 2.5 : 2,
         ),
       ),
       child: complete
-          ? Icon(Icons.check, size: 18, color: colors.surface)
+          ? Icon(
+              Icons.check,
+              size: large ? 16 : 18,
+              color: Theme.of(context).scaffoldBackgroundColor,
+            )
           : active
-          ? Icon(Icons.circle, size: 8, color: colors.primary)
+          ? Icon(Icons.circle, size: large ? 10 : 8, color: colors.primary)
           : icon == null
           ? null
           : Icon(icon, size: 16, color: colors.onSurfaceVariant),
