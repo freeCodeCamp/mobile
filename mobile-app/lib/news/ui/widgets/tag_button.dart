@@ -37,7 +37,7 @@ class TagButton extends StatelessWidget {
                   : link
                   ? 15
                   : 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: listEyebrow ? FontWeight.w400 : FontWeight.w700,
               letterSpacing: 0,
               decoration: link ? TextDecoration.underline : TextDecoration.none,
             ),

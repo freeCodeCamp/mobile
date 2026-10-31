@@ -69,7 +69,7 @@ class ModuleView extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: FccDesignColors.of(context).accentText,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
         ),

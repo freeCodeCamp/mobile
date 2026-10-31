@@ -222,8 +222,8 @@ class _PodcastEpisodeListViewState
                                     ? 'Downloaded episodes'
                                     : 'Episodes',
                                 style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900,
                                 ),
                               ),
                             ),
@@ -236,7 +236,10 @@ class _PodcastEpisodeListViewState
                                     _oldestFirst
                                         ? 'Oldest first'
                                         : 'Newest first',
-                                    style: const TextStyle(fontSize: 13),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                   const SizedBox(width: 4),
                                   const Icon(

@@ -617,8 +617,10 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       _instructionsExpanded ? 'Hide' : 'Show',
                       style: TextStyle(
                         color: FccDesignColors.of(context).accentText,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                        fontSize: _instructionsExpanded ? 14 : 13,
+                        fontWeight: _instructionsExpanded
+                            ? FontWeight.w700
+                            : FontWeight.w900,
                       ),
                     ),
                     const SizedBox(width: 8),

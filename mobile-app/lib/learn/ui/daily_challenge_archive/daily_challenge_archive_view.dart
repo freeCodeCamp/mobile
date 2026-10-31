@@ -250,14 +250,17 @@ class _ChallengeItem extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'JetBrains Mono',
                         fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w400,
                         color: colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       challenge.title,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),

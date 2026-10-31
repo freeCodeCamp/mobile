@@ -202,7 +202,7 @@ class CodeRadioProgressBar extends ConsumerWidget {
                 style: TextStyle(
                   fontFamily: 'JetBrains Mono',
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w400,
                   color: colors.onSurfaceVariant,
                 ),
               ),
@@ -211,7 +211,7 @@ class CodeRadioProgressBar extends ConsumerWidget {
                 style: TextStyle(
                   fontFamily: 'JetBrains Mono',
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w400,
                   color: colors.onSurfaceVariant,
                 ),
               ),
