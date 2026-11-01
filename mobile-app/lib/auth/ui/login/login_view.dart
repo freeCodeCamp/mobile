@@ -29,9 +29,28 @@ class _LoginViewState extends ConsumerState<LoginView> {
     ..onTap = () =>
         openInCustomTab('https://www.freecodecamp.org/news/privacy-policy');
 
+  String _lastOtp = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _otpController.addListener(_onOtpChanged);
+  }
+
+  // Listens to the controller because the Paste button sets its text without firing onChanged.
+  void _onOtpChanged() {
+    final otp = _otpController.text;
+    if (otp == _lastOtp) {
+      return;
+    }
+    _lastOtp = otp;
+    ref.read(loginProvider.notifier).clearIncorrectOtp();
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
+    _otpController.removeListener(_onOtpChanged);
     _otpController.dispose();
     _termsRecognizer.dispose();
     _privacyRecognizer.dispose();

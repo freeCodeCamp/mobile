@@ -25,6 +25,12 @@ class LoginNotifier extends _$LoginNotifier {
     if (!state.isLoading) state = const LoginState();
   }
 
+  void clearIncorrectOtp() {
+    if (state.incorrectOtp) {
+      state = state.copyWith(incorrectOtp: false);
+    }
+  }
+
   Future<String?> loginWithProvider(String connection) async {
     try {
       await _login(
