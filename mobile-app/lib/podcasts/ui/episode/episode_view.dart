@@ -426,12 +426,21 @@ class _Controls extends ConsumerWidget {
                         children: [
                           ChoiceChip(
                             selected: speed == option,
+                            showCheckmark: false,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
+                              horizontal: 12,
                               vertical: 14,
                             ),
-                            label: Text(
-                              '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
+                            labelPadding: EdgeInsets.zero,
+                            label: ConstrainedBox(
+                              constraints: const BoxConstraints(minWidth: 52),
+                              child: Center(
+                                widthFactor: 1,
+                                child: Text(
+                                  '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
                             ),
                             onSelected: (_) =>
                                 Navigator.of(context).pop(option),
