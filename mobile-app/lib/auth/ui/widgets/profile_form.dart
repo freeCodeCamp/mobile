@@ -10,8 +10,11 @@ Future<bool> confirmProfileDiscard(BuildContext context) async =>
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        titleTextStyle: Theme.of(context).textTheme.titleLarge,
+        titleTextStyle: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
         contentTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          fontSize: 15,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         title: const Text('Discard changes?'),
@@ -139,8 +142,13 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
             child: FilledButton(
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                minimumSize: const Size(64, 44),
-              ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
+                minimumSize: const Size(72, 44),
+                textStyle: const TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                ),
+              ).copyWith(shape: FccTheme.focusShape(context, radius: 999)),
               onPressed: widget.saving ? null : widget.onSave,
               child: Text(widget.saving ? 'Saving…' : 'Save'),
             ),
@@ -247,8 +255,6 @@ class ProfileFormField extends StatelessWidget {
               error: errorText == null
                   ? null
                   : ProfileFieldError(message: errorText!),
-              helperText: helperText,
-              helperMaxLines: 3,
               filled: true,
               fillColor: colors.surface,
               isDense: true,
@@ -269,6 +275,16 @@ class ProfileFormField extends StatelessWidget {
               ),
             ),
           ),
+          if (helperText != null && errorText == null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                helperText!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ),
         ],
       ),
     );

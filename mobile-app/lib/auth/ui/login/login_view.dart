@@ -224,26 +224,23 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                   ? null
                                   : () => _loginWithProvider(provider.$2),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
                           ],
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Row(
                               children: [
                                 const Expanded(child: Divider()),
-                                Flexible(
-                                  flex: 4,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    child: Text(
-                                      'or use your email',
-                                      textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: colors.onSurfaceVariant,
-                                          ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  child: Text(
+                                    'or use your email',
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontSize: 13,
+                                      color: colors.onSurfaceVariant,
                                     ),
                                   ),
                                 ),
@@ -252,7 +249,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text('Email', style: theme.textTheme.titleMedium),
+                          Text('Email', style: theme.textTheme.labelLarge),
                           const SizedBox(height: 8),
                           TextField(
                             enabled: !state.isLoading,

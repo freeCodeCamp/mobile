@@ -153,7 +153,9 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
               const SizedBox(height: 12),
               Center(
                 child: OutlinedButton.icon(
-                  style: FccTheme.compactOutlineStyle(context),
+                  style: FccTheme.compactOutlineStyle(
+                    context,
+                  ).copyWith(shape: FccTheme.focusShape(context, radius: 999)),
                   onPressed: enabled
                       ? () => showProfilePhotoOptions(context)
                       : null,
