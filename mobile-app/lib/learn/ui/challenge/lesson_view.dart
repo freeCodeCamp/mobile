@@ -55,6 +55,17 @@ class _LessonViewState extends ConsumerState<LessonView> {
     super.dispose();
   }
 
+  double get _readProgress {
+    if (!_scroll.hasClients || !_scroll.position.hasContentDimensions) {
+      return 0;
+    }
+    final max = _scroll.position.maxScrollExtent;
+    if (max <= 0) {
+      return 1;
+    }
+    return (_scroll.position.pixels / max).clamp(0.0, 1.0);
+  }
+
   void _show(int? index) {
     setState(() => _current = index);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -214,12 +225,13 @@ class _LessonViewState extends ConsumerState<LessonView> {
                 ),
               )
             else if (!englishTask)
-              LinearProgressIndicator(
-                value: widget.block.challenges.isEmpty
-                    ? 0
-                    : (index + 1) / widget.block.challenges.length,
-                color: lectureColor,
-                minHeight: 3,
+              ListenableBuilder(
+                listenable: _scroll,
+                builder: (context, _) => LinearProgressIndicator(
+                  value: _readProgress,
+                  color: lectureColor,
+                  minHeight: 3,
+                ),
               ),
             if (current == null && review && _review.topicCount > 0)
               ReviewTopics(controller: _review),
