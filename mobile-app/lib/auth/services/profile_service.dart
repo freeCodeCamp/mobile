@@ -159,8 +159,8 @@ class ProfileService {
       final old = original?.portfolio.firstWhereOrNull((p) => p.id == item.id);
       if (old == item) continue;
       add('$prefix.title', _requiredText(item.title ?? '', 'Title'));
-      if ((item.description ?? '').length > 288) {
-        add('$prefix.description', 'Use 288 characters or fewer.');
+      if ((item.description ?? '').length > 500) {
+        add('$prefix.description', 'Use 500 characters or fewer.');
       }
       add('$prefix.url', _urlError(item.url ?? ''));
     }

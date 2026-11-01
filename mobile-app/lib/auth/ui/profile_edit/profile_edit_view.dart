@@ -105,6 +105,7 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
       String? hint,
       String? helper,
       int lines = 1,
+      int? maxLength,
       TextInputType? keyboard,
     }) => ProfileFormField(
       label: label,
@@ -113,6 +114,7 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
       errorText: editor.errors[key],
       helperText: helper,
       hintText: hint,
+      maxLength: maxLength,
       maxLines: lines,
       keyboardType: keyboard,
       style: key == 'username'
@@ -171,18 +173,10 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
               field(
                 'about',
                 'About',
+                hint: 'A sentence or two about you and what you\'re learning',
                 lines: 5,
+                maxLength: 500,
                 keyboard: TextInputType.multiline,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  '${presentation.fields['about']!.length} characters',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontSize: 13,
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
               ),
               const SizedBox(height: 14),
               const ProfileFormSectionTitle('Internet presence'),

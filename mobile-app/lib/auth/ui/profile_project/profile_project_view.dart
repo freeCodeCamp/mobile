@@ -190,7 +190,7 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
               label: 'Description',
               hintText: 'What it does and what you used to build it',
               controller: _description,
-              maxLength: 288,
+              maxLength: 500,
               maxLines: 4,
               errorText: form.errors['description'],
               enabled: !form.saving,
