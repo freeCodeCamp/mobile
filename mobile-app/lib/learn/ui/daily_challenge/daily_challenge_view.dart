@@ -5,6 +5,7 @@ import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge/daily_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_view.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:freecodecamp/widgets/segmented_tabs.dart';
 
 class DailyChallengeView extends ConsumerWidget {
   const DailyChallengeView({super.key, required this.day});
@@ -63,15 +64,17 @@ class DailyChallengeLanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: SegmentedButton<DailyChallengeLanguage>(
-        expandedInsets: EdgeInsets.zero,
-        showSelectedIcon: false,
-        selected: {selected},
-        segments: [
+      child: SegmentedTabs<DailyChallengeLanguage>(
+        fontFamily: 'JetBrains Mono',
+        fontSize: 14,
+        selectedWeight: FontWeight.w700,
+        unselectedWeight: FontWeight.w600,
+        selected: selected,
+        tabs: [
           for (final language in DailyChallengeLanguage.values)
-            ButtonSegment(value: language, label: Text(language.label)),
+            (value: language, label: language.label, icon: null),
         ],
-        onSelectionChanged: (languages) => onSelected(languages.single),
+        onSelected: onSelected,
       ),
     );
   }

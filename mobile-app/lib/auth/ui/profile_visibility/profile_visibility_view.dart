@@ -6,6 +6,7 @@ import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileVisibilityView extends ConsumerStatefulWidget {
@@ -33,6 +34,11 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
     final state = ref.watch(profileVisibilityProvider);
     final notifier = ref.read(profileVisibilityProvider.notifier);
     final theme = Theme.of(context);
+    final sectionTitle = theme.textTheme.titleMedium?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      color: theme.colorScheme.onSurfaceVariant,
+    );
     final enabled = state != null && !state.saving && !state.needsRefresh;
     return PopScope(
       canPop: !(state?.saving ?? false),
@@ -90,47 +96,57 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        Text(
-                          'Who can see your profile',
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 12),
-                        SegmentedButton<bool>(
-                          segments: const [
-                            ButtonSegment(
-                              value: false,
-                              icon: Icon(Icons.public),
-                              label: Text('Public'),
-                            ),
-                            ButtonSegment(
-                              value: true,
-                              icon: Icon(Icons.lock_outline),
-                              label: Text('Private'),
-                            ),
-                          ],
-                          selected: {state.draft.isLocked},
-                          showSelectedIcon: false,
-                          onSelectionChanged: enabled
-                              ? (selection) => _save(
-                                  state.draft.copyWith(
-                                    isLocked: selection.single,
+                        Card(
+                          margin: EdgeInsets.zero,
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Who can see your profile',
+                                  style: sectionTitle,
+                                ),
+                                const SizedBox(height: 12),
+                                SegmentedTabs<bool>(
+                                  tabs: const [
+                                    (
+                                      value: false,
+                                      label: 'Public',
+                                      icon: Icons.public,
+                                    ),
+                                    (
+                                      value: true,
+                                      label: 'Private',
+                                      icon: Icons.lock_outline,
+                                    ),
+                                  ],
+                                  selected: state.draft.isLocked,
+                                  onSelected: enabled
+                                      ? (isLocked) => _save(
+                                          state.draft.copyWith(
+                                            isLocked: isLocked,
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  state.draft.isLocked
+                                      ? 'Only you can see your profile.'
+                                      : 'Anyone can see your profile at\u00A0freecodecamp.org/${state.original.username}.',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
                                   ),
-                                )
-                              : null,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          state.draft.isLocked
-                              ? 'Only you can see your profile.'
-                              : 'Anyone can see your profile at freecodecamp.org/${state.original.username}.',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
                           'Show on your public profile',
-                          style: theme.textTheme.titleMedium,
+                          style: sectionTitle,
                         ),
                         if (state.draft.isLocked) ...[
                           const SizedBox(height: 8),

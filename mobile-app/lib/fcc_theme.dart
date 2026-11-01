@@ -561,44 +561,6 @@ class FccTheme {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       ),
-      segmentedButtonTheme: SegmentedButtonThemeData(
-        style: _buttonStyle(colors, foreground: muted, pressed: tint).copyWith(
-          foregroundColor: WidgetStateProperty.resolveWith(
-            (states) => states.contains(WidgetState.disabled)
-                ? controlEdge
-                : states.contains(WidgetState.selected)
-                ? foreground
-                : muted,
-          ),
-          backgroundColor: WidgetStateProperty.resolveWith(
-            (states) => states.contains(WidgetState.disabled)
-                ? raised
-                : states.contains(WidgetState.selected)
-                ? tint
-                : Colors.transparent,
-          ),
-          textStyle: WidgetStateProperty.resolveWith(
-            (states) => TextStyle(
-              letterSpacing: 0,
-              fontFamily: 'Lato',
-              fontSize: 15,
-              fontWeight: states.contains(WidgetState.selected)
-                  ? FontWeight.w900
-                  : FontWeight.w700,
-            ),
-          ),
-          side: WidgetStateProperty.resolveWith(
-            (states) => states.contains(WidgetState.disabled)
-                ? BorderSide.none
-                : BorderSide(
-                    color: states.contains(WidgetState.selected)
-                        ? accentText
-                        : line,
-                    width: states.contains(WidgetState.selected) ? 1.5 : 1,
-                  ),
-          ),
-        ),
-      ),
       switchTheme: SwitchThemeData(
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.disabled)
