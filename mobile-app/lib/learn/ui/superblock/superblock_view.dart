@@ -168,19 +168,20 @@ class _Chapters extends ConsumerWidget {
             isLocked: _locked(chapter),
           ),
         for (final exam in exams)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: ExamCard(
-              eyebrow: 'Chapter ${this.chapters.indexOf(exam) + 1}',
-              title: 'Certification Exam',
-              locked: _locked(exam),
-              onOpen: () => openLearningWebsite(
-                context,
-                superBlock,
-                chapter: exam.dashedName,
+          if (exam.examBlock case final examBlock?)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: ExamCard(
+                eyebrow: 'Chapter ${this.chapters.indexOf(exam) + 1}',
+                title: 'Certification Exam',
+                locked: _locked(exam),
+                onOpen: () => openLearningWebsite(
+                  context,
+                  superBlock,
+                  block: examBlock.dashedName,
+                ),
               ),
             ),
-          ),
       ],
     );
   }

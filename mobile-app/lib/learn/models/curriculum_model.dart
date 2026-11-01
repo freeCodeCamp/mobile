@@ -114,6 +114,12 @@ abstract class Chapter with _$Chapter {
   }) = _Chapter;
 }
 
+extension ChapterExam on Chapter {
+  Block? get examBlock => modules
+      .expand((m) => m.blocks)
+      .firstWhereOrNull((b) => b.label == BlockLabel.exam);
+}
+
 @freezed
 sealed class SuperBlock with _$SuperBlock {
   const factory SuperBlock.blocks(List<Block> blocks) = BlockSuperBlock;

@@ -111,7 +111,7 @@ class BlockCard extends ConsumerWidget {
           onOpen: () => openLearningWebsite(
             context,
             block.superBlock,
-            chapter: block.dashedName,
+            block: block.dashedName,
           ),
         ),
       );

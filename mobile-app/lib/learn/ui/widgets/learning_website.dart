@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 
+Uri learningWebsiteUri(String superBlock, {String? block}) {
+  final path = block == null
+      ? '/learn/$superBlock/'
+      : '/learn/$superBlock/$block/$block';
+  return Uri.https('www.freecodecamp.org', path);
+}
+
 Future<void> openLearningWebsite(
   BuildContext context,
-  String course, {
-  String? chapter,
+  String superBlock, {
+  String? block,
 }) async {
-  final url = Uri.https(
-    'www.freecodecamp.org',
-    '/learn/$course/',
-  ).replace(fragment: chapter).toString();
+  final url = learningWebsiteUri(superBlock, block: block).toString();
   try {
     await openInCustomTab(url);
   } catch (_) {
