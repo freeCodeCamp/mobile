@@ -172,7 +172,6 @@ class _Chapters extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: ExamCard(
-                eyebrow: 'Chapter ${this.chapters.indexOf(exam) + 1}',
                 title: 'Certification Exam',
                 locked: _locked(exam),
                 onOpen: () => openLearningWebsite(

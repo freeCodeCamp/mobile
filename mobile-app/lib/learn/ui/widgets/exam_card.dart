@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
-import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 
 class ExamCard extends StatelessWidget {
   const ExamCard({
     super.key,
-    required this.eyebrow,
     required this.title,
     required this.locked,
     required this.onOpen,
   });
 
-  final String eyebrow;
   final String title;
   final bool locked;
   final VoidCallback onOpen;
@@ -46,18 +43,12 @@ class ExamCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LearnEyebrow(eyebrow),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
               ],

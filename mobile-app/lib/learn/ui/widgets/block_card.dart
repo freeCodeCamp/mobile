@@ -105,7 +105,6 @@ class BlockCard extends ConsumerWidget {
       return Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: ExamCard(
-          eyebrow: 'Exam',
           title: block.name,
           locked: block.isDisabledByOverride,
           onOpen: () => openLearningWebsite(
