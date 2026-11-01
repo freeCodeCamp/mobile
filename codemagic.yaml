@@ -41,7 +41,7 @@ workflows:
         script: dart pub global activate flutterfire_cli
 
       - name: Install dependencies
-        script: flutter pub get
+        script: flutter pub get --enforce-lockfile
 
       - name: Analyze code
         script: |
@@ -49,14 +49,7 @@ workflows:
           flutter analyze --no-fatal-warnings
 
       - name: Check generated files are up to date
-        script: |
-          dart run build_runner build
-          if [ -n "$(git status --porcelain -- .)" ]; then
-            git status --porcelain -- .
-            git diff -- .
-            echo "Generated files are out of date. Run 'dart run build_runner build' and commit the result."
-            exit 1
-          fi
+        script: dart run build_runner build --only-check
 
       - name: Install applesimutils
         script: |
@@ -132,7 +125,7 @@ workflows:
         script: dart pub global activate flutterfire_cli
 
       - name: Install dependencies
-        script: flutter pub get
+        script: flutter pub get --enforce-lockfile
 
       - name: Analyze code
         script: |
@@ -140,14 +133,7 @@ workflows:
           flutter analyze --no-fatal-warnings
 
       - name: Check generated files are up to date
-        script: |
-          dart run build_runner build
-          if [ -n "$(git status --porcelain -- .)" ]; then
-            git status --porcelain -- .
-            git diff -- .
-            echo "Generated files are out of date. Run 'dart run build_runner build' and commit the result."
-            exit 1
-          fi
+        script: dart run build_runner build --only-check
 
       - name: Install applesimutils
         script: |

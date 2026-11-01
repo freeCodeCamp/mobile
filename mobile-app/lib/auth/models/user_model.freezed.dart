@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'user_model.dart';
@@ -9,6 +9,7 @@ part of 'user_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $PortfolioCopyWith<Portfolio> get copyWith => _$PortfolioCopyWithImpl<Portfolio>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Portfolio&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.image, image) || other.image == image)&&(identical(other.description, description) || other.description == description));
+  final _this = this as Portfolio;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Portfolio&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.image, _this.image) || other.image == _this.image)&&(identical(other.description, _this.description) || other.description == _this.description));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,url,image,description);
+int get hashCode {
+  final _this = this as Portfolio;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.url,_this.image,_this.description);
+}
 
 @override
 String toString() {
-  return 'Portfolio(id: $id, title: $title, url: $url, image: $image, description: $description)';
+  final _this = this as Portfolio;
+  return 'Portfolio(id: ${_this.id}, title: ${_this.title}, url: ${_this.url}, image: ${_this.image}, description: ${_this.description})';
 }
 
 
@@ -66,7 +72,7 @@ class _$PortfolioCopyWithImpl<$Res>
 /// Create a copy of Portfolio
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = freezed,Object? url = freezed,Object? image = freezed,Object? description = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Portfolio(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Portfolio&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.image, image) || other.image == image)&&(identical(other.description, description) || other.description == description));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Portfolio&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.image, image) || other.image == image)&&(identical(other.description, description) || other.description == description));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,url,image,description);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,url,image,description);
+}
 
 @override
 String toString() {
-  return 'Portfolio(id: $id, title: $title, url: $url, image: $image, description: $description)';
+    return 'Portfolio(id: $id, title: $title, url: $url, image: $image, description: $description)';
 }
 
 
@@ -303,16 +311,21 @@ $CompletedChallengeCopyWith<CompletedChallenge> get copyWith => _$CompletedChall
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CompletedChallenge&&(identical(other.id, id) || other.id == id)&&(identical(other.solution, solution) || other.solution == solution)&&(identical(other.githubLink, githubLink) || other.githubLink == githubLink)&&(identical(other.challengeType, challengeType) || other.challengeType == challengeType)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate)&&const DeepCollectionEquality().equals(other.files, files));
+  final _this = this as CompletedChallenge;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CompletedChallenge&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.solution, _this.solution) || other.solution == _this.solution)&&(identical(other.githubLink, _this.githubLink) || other.githubLink == _this.githubLink)&&(identical(other.challengeType, _this.challengeType) || other.challengeType == _this.challengeType)&&(identical(other.completedDate, _this.completedDate) || other.completedDate == _this.completedDate)&&const DeepCollectionEquality().equals(other.files, _this.files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,solution,githubLink,challengeType,completedDate,const DeepCollectionEquality().hash(files));
+int get hashCode {
+  final _this = this as CompletedChallenge;
+  return Object.hash(runtimeType,_this.id,_this.solution,_this.githubLink,_this.challengeType,_this.completedDate,const DeepCollectionEquality().hash(_this.files));
+}
 
 @override
 String toString() {
-  return 'CompletedChallenge(id: $id, solution: $solution, githubLink: $githubLink, challengeType: $challengeType, completedDate: $completedDate, files: $files)';
+  final _this = this as CompletedChallenge;
+  return 'CompletedChallenge(id: ${_this.id}, solution: ${_this.solution}, githubLink: ${_this.githubLink}, challengeType: ${_this.challengeType}, completedDate: ${_this.completedDate}, files: ${_this.files})';
 }
 
 
@@ -341,7 +354,7 @@ class _$CompletedChallengeCopyWithImpl<$Res>
 /// Create a copy of CompletedChallenge
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? solution = freezed,Object? githubLink = freezed,Object? challengeType = freezed,Object? completedDate = null,Object? files = null,}) {
-  return _then(_self.copyWith(
+  return _then(CompletedChallenge(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,solution: freezed == solution ? _self.solution : solution // ignore: cast_nullable_to_non_nullable
 as String?,githubLink: freezed == githubLink ? _self.githubLink : githubLink // ignore: cast_nullable_to_non_nullable
@@ -489,7 +502,7 @@ return $default(_that.id,_that.solution,_that.githubLink,_that.challengeType,_th
 @JsonSerializable()
 
 class _CompletedChallenge implements CompletedChallenge {
-  const _CompletedChallenge({required this.id, this.solution, this.githubLink, this.challengeType, @JsonKey(fromJson: _fromEpochMs, toJson: _toEpochMs) required this.completedDate, final  List<ChallengeFile> files = const []}): _files = files;
+  const _CompletedChallenge({required this.id, this.solution, this.githubLink, this.challengeType, @JsonKey(fromJson: _fromEpochMs, toJson: _toEpochMs) required this.completedDate,  List<ChallengeFile> files = const []}): _files = files;
   factory _CompletedChallenge.fromJson(Map<String, dynamic> json) => _$CompletedChallengeFromJson(json);
 
 @override final  String id;
@@ -518,16 +531,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CompletedChallenge&&(identical(other.id, id) || other.id == id)&&(identical(other.solution, solution) || other.solution == solution)&&(identical(other.githubLink, githubLink) || other.githubLink == githubLink)&&(identical(other.challengeType, challengeType) || other.challengeType == challengeType)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate)&&const DeepCollectionEquality().equals(other._files, _files));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CompletedChallenge&&(identical(other.id, id) || other.id == id)&&(identical(other.solution, solution) || other.solution == solution)&&(identical(other.githubLink, githubLink) || other.githubLink == githubLink)&&(identical(other.challengeType, challengeType) || other.challengeType == challengeType)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate)&&const DeepCollectionEquality().equals(other.files, _files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,solution,githubLink,challengeType,completedDate,const DeepCollectionEquality().hash(_files));
+int get hashCode {
+    return Object.hash(runtimeType,id,solution,githubLink,challengeType,completedDate,const DeepCollectionEquality().hash(_files));
+}
 
 @override
 String toString() {
-  return 'CompletedChallenge(id: $id, solution: $solution, githubLink: $githubLink, challengeType: $challengeType, completedDate: $completedDate, files: $files)';
+    return 'CompletedChallenge(id: $id, solution: $solution, githubLink: $githubLink, challengeType: $challengeType, completedDate: $completedDate, files: $files)';
 }
 
 
@@ -587,16 +602,21 @@ $CompletedDailyChallengeCopyWith<CompletedDailyChallenge> get copyWith => _$Comp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CompletedDailyChallenge&&(identical(other.id, id) || other.id == id)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate)&&const DeepCollectionEquality().equals(other.languages, languages));
+  final _this = this as CompletedDailyChallenge;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CompletedDailyChallenge&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.completedDate, _this.completedDate) || other.completedDate == _this.completedDate)&&const DeepCollectionEquality().equals(other.languages, _this.languages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,completedDate,const DeepCollectionEquality().hash(languages));
+int get hashCode {
+  final _this = this as CompletedDailyChallenge;
+  return Object.hash(runtimeType,_this.id,_this.completedDate,const DeepCollectionEquality().hash(_this.languages));
+}
 
 @override
 String toString() {
-  return 'CompletedDailyChallenge(id: $id, completedDate: $completedDate, languages: $languages)';
+  final _this = this as CompletedDailyChallenge;
+  return 'CompletedDailyChallenge(id: ${_this.id}, completedDate: ${_this.completedDate}, languages: ${_this.languages})';
 }
 
 
@@ -625,7 +645,7 @@ class _$CompletedDailyChallengeCopyWithImpl<$Res>
 /// Create a copy of CompletedDailyChallenge
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? completedDate = null,Object? languages = null,}) {
-  return _then(_self.copyWith(
+  return _then(CompletedDailyChallenge(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,completedDate: null == completedDate ? _self.completedDate : completedDate // ignore: cast_nullable_to_non_nullable
 as DateTime,languages: null == languages ? _self.languages : languages // ignore: cast_nullable_to_non_nullable
@@ -770,7 +790,7 @@ return $default(_that.id,_that.completedDate,_that.languages);case _:
 @JsonSerializable()
 
 class _CompletedDailyChallenge implements CompletedDailyChallenge {
-  const _CompletedDailyChallenge({required this.id, @JsonKey(fromJson: _fromEpochMs, toJson: _toEpochMs) required this.completedDate, final  List<String> languages = const []}): _languages = languages;
+  const _CompletedDailyChallenge({required this.id, @JsonKey(fromJson: _fromEpochMs, toJson: _toEpochMs) required this.completedDate,  List<String> languages = const []}): _languages = languages;
   factory _CompletedDailyChallenge.fromJson(Map<String, dynamic> json) => _$CompletedDailyChallengeFromJson(json);
 
 @override final  String id;
@@ -796,16 +816,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CompletedDailyChallenge&&(identical(other.id, id) || other.id == id)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate)&&const DeepCollectionEquality().equals(other._languages, _languages));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CompletedDailyChallenge&&(identical(other.id, id) || other.id == id)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate)&&const DeepCollectionEquality().equals(other.languages, _languages));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,completedDate,const DeepCollectionEquality().hash(_languages));
+int get hashCode {
+    return Object.hash(runtimeType,id,completedDate,const DeepCollectionEquality().hash(_languages));
+}
 
 @override
 String toString() {
-  return 'CompletedDailyChallenge(id: $id, completedDate: $completedDate, languages: $languages)';
+    return 'CompletedDailyChallenge(id: $id, completedDate: $completedDate, languages: $languages)';
 }
 
 
@@ -862,16 +884,21 @@ $SavedChallengeCopyWith<SavedChallenge> get copyWith => _$SavedChallengeCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavedChallenge&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.files, files));
+  final _this = this as SavedChallenge;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavedChallenge&&(identical(other.id, _this.id) || other.id == _this.id)&&const DeepCollectionEquality().equals(other.files, _this.files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(files));
+int get hashCode {
+  final _this = this as SavedChallenge;
+  return Object.hash(runtimeType,_this.id,const DeepCollectionEquality().hash(_this.files));
+}
 
 @override
 String toString() {
-  return 'SavedChallenge(id: $id, files: $files)';
+  final _this = this as SavedChallenge;
+  return 'SavedChallenge(id: ${_this.id}, files: ${_this.files})';
 }
 
 
@@ -900,7 +927,7 @@ class _$SavedChallengeCopyWithImpl<$Res>
 /// Create a copy of SavedChallenge
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? files = null,}) {
-  return _then(_self.copyWith(
+  return _then(SavedChallenge(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,files: null == files ? _self.files : files // ignore: cast_nullable_to_non_nullable
 as List<ChallengeFile>,
@@ -1044,7 +1071,7 @@ return $default(_that.id,_that.files);case _:
 @JsonSerializable()
 
 class _SavedChallenge implements SavedChallenge {
-  const _SavedChallenge({required this.id, final  List<ChallengeFile> files = const []}): _files = files;
+  const _SavedChallenge({required this.id,  List<ChallengeFile> files = const []}): _files = files;
   factory _SavedChallenge.fromJson(Map<String, dynamic> json) => _$SavedChallengeFromJson(json);
 
 @override final  String id;
@@ -1069,16 +1096,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavedChallenge&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other._files, _files));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavedChallenge&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.files, _files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_files));
+int get hashCode {
+    return Object.hash(runtimeType,id,const DeepCollectionEquality().hash(_files));
+}
 
 @override
 String toString() {
-  return 'SavedChallenge(id: $id, files: $files)';
+    return 'SavedChallenge(id: $id, files: $files)';
 }
 
 
@@ -1134,16 +1163,21 @@ $FccUserModelCopyWith<FccUserModel> get copyWith => _$FccUserModelCopyWithImpl<F
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FccUserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.name, name) || other.name == name)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.currentChallengeId, currentChallengeId) || other.currentChallengeId == currentChallengeId)&&(identical(other.githubProfile, githubProfile) || other.githubProfile == githubProfile)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.twitter, twitter) || other.twitter == twitter)&&(identical(other.website, website) || other.website == website)&&(identical(other.location, location) || other.location == location)&&(identical(other.about, about) || other.about == about)&&(identical(other.emailVerified, emailVerified) || other.emailVerified == emailVerified)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.isCheater, isCheater) || other.isCheater == isCheater)&&(identical(other.isDonating, isDonating) || other.isDonating == isDonating)&&(identical(other.isHonest, isHonest) || other.isHonest == isHonest)&&(identical(other.isBanned, isBanned) || other.isBanned == isBanned)&&(identical(other.isFrontEndCert, isFrontEndCert) || other.isFrontEndCert == isFrontEndCert)&&(identical(other.isDataVisCert, isDataVisCert) || other.isDataVisCert == isDataVisCert)&&(identical(other.isBackEndCert, isBackEndCert) || other.isBackEndCert == isBackEndCert)&&(identical(other.isFullStackCert, isFullStackCert) || other.isFullStackCert == isFullStackCert)&&(identical(other.isRespWebDesignCert, isRespWebDesignCert) || other.isRespWebDesignCert == isRespWebDesignCert)&&(identical(other.is2018DataVisCert, is2018DataVisCert) || other.is2018DataVisCert == is2018DataVisCert)&&(identical(other.isFrontEndLibsCert, isFrontEndLibsCert) || other.isFrontEndLibsCert == isFrontEndLibsCert)&&(identical(other.isJsAlgoDataStructCert, isJsAlgoDataStructCert) || other.isJsAlgoDataStructCert == isJsAlgoDataStructCert)&&(identical(other.isApisMicroservicesCert, isApisMicroservicesCert) || other.isApisMicroservicesCert == isApisMicroservicesCert)&&(identical(other.isInfosecQaCert, isInfosecQaCert) || other.isInfosecQaCert == isInfosecQaCert)&&(identical(other.isQaCertV7, isQaCertV7) || other.isQaCertV7 == isQaCertV7)&&(identical(other.isInfosecCertV7, isInfosecCertV7) || other.isInfosecCertV7 == isInfosecCertV7)&&(identical(other.is2018FullStackCert, is2018FullStackCert) || other.is2018FullStackCert == is2018FullStackCert)&&(identical(other.isSciCompPyCertV7, isSciCompPyCertV7) || other.isSciCompPyCertV7 == isSciCompPyCertV7)&&(identical(other.isDataAnalysisPyCertV7, isDataAnalysisPyCertV7) || other.isDataAnalysisPyCertV7 == isDataAnalysisPyCertV7)&&(identical(other.isMachineLearningPyCertV7, isMachineLearningPyCertV7) || other.isMachineLearningPyCertV7 == isMachineLearningPyCertV7)&&(identical(other.isRelationalDatabaseCertV8, isRelationalDatabaseCertV8) || other.isRelationalDatabaseCertV8 == isRelationalDatabaseCertV8)&&(identical(other.isCollegeAlgebraPyCertV8, isCollegeAlgebraPyCertV8) || other.isCollegeAlgebraPyCertV8 == isCollegeAlgebraPyCertV8)&&(identical(other.isFoundationalCSharpCertV8, isFoundationalCSharpCertV8) || other.isFoundationalCSharpCertV8 == isFoundationalCSharpCertV8)&&(identical(other.joinDate, joinDate) || other.joinDate == joinDate)&&(identical(other.points, points) || other.points == points)&&const DeepCollectionEquality().equals(other.calendar, calendar)&&const DeepCollectionEquality().equals(other.completedChallenges, completedChallenges)&&const DeepCollectionEquality().equals(other.completedDailyCodingChallenges, completedDailyCodingChallenges)&&const DeepCollectionEquality().equals(other.savedChallenges, savedChallenges)&&const DeepCollectionEquality().equals(other.portfolio, portfolio)&&const DeepCollectionEquality().equals(other.yearsTopContributor, yearsTopContributor));
+  final _this = this as FccUserModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FccUserModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.username, _this.username) || other.username == _this.username)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.picture, _this.picture) || other.picture == _this.picture)&&(identical(other.currentChallengeId, _this.currentChallengeId) || other.currentChallengeId == _this.currentChallengeId)&&(identical(other.githubProfile, _this.githubProfile) || other.githubProfile == _this.githubProfile)&&(identical(other.linkedin, _this.linkedin) || other.linkedin == _this.linkedin)&&(identical(other.twitter, _this.twitter) || other.twitter == _this.twitter)&&(identical(other.website, _this.website) || other.website == _this.website)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.about, _this.about) || other.about == _this.about)&&(identical(other.emailVerified, _this.emailVerified) || other.emailVerified == _this.emailVerified)&&(identical(other.isEmailVerified, _this.isEmailVerified) || other.isEmailVerified == _this.isEmailVerified)&&(identical(other.isCheater, _this.isCheater) || other.isCheater == _this.isCheater)&&(identical(other.isDonating, _this.isDonating) || other.isDonating == _this.isDonating)&&(identical(other.isHonest, _this.isHonest) || other.isHonest == _this.isHonest)&&(identical(other.isBanned, _this.isBanned) || other.isBanned == _this.isBanned)&&(identical(other.isFrontEndCert, _this.isFrontEndCert) || other.isFrontEndCert == _this.isFrontEndCert)&&(identical(other.isDataVisCert, _this.isDataVisCert) || other.isDataVisCert == _this.isDataVisCert)&&(identical(other.isBackEndCert, _this.isBackEndCert) || other.isBackEndCert == _this.isBackEndCert)&&(identical(other.isFullStackCert, _this.isFullStackCert) || other.isFullStackCert == _this.isFullStackCert)&&(identical(other.isRespWebDesignCert, _this.isRespWebDesignCert) || other.isRespWebDesignCert == _this.isRespWebDesignCert)&&(identical(other.is2018DataVisCert, _this.is2018DataVisCert) || other.is2018DataVisCert == _this.is2018DataVisCert)&&(identical(other.isFrontEndLibsCert, _this.isFrontEndLibsCert) || other.isFrontEndLibsCert == _this.isFrontEndLibsCert)&&(identical(other.isJsAlgoDataStructCert, _this.isJsAlgoDataStructCert) || other.isJsAlgoDataStructCert == _this.isJsAlgoDataStructCert)&&(identical(other.isApisMicroservicesCert, _this.isApisMicroservicesCert) || other.isApisMicroservicesCert == _this.isApisMicroservicesCert)&&(identical(other.isInfosecQaCert, _this.isInfosecQaCert) || other.isInfosecQaCert == _this.isInfosecQaCert)&&(identical(other.isQaCertV7, _this.isQaCertV7) || other.isQaCertV7 == _this.isQaCertV7)&&(identical(other.isInfosecCertV7, _this.isInfosecCertV7) || other.isInfosecCertV7 == _this.isInfosecCertV7)&&(identical(other.is2018FullStackCert, _this.is2018FullStackCert) || other.is2018FullStackCert == _this.is2018FullStackCert)&&(identical(other.isSciCompPyCertV7, _this.isSciCompPyCertV7) || other.isSciCompPyCertV7 == _this.isSciCompPyCertV7)&&(identical(other.isDataAnalysisPyCertV7, _this.isDataAnalysisPyCertV7) || other.isDataAnalysisPyCertV7 == _this.isDataAnalysisPyCertV7)&&(identical(other.isMachineLearningPyCertV7, _this.isMachineLearningPyCertV7) || other.isMachineLearningPyCertV7 == _this.isMachineLearningPyCertV7)&&(identical(other.isRelationalDatabaseCertV8, _this.isRelationalDatabaseCertV8) || other.isRelationalDatabaseCertV8 == _this.isRelationalDatabaseCertV8)&&(identical(other.isCollegeAlgebraPyCertV8, _this.isCollegeAlgebraPyCertV8) || other.isCollegeAlgebraPyCertV8 == _this.isCollegeAlgebraPyCertV8)&&(identical(other.isFoundationalCSharpCertV8, _this.isFoundationalCSharpCertV8) || other.isFoundationalCSharpCertV8 == _this.isFoundationalCSharpCertV8)&&(identical(other.joinDate, _this.joinDate) || other.joinDate == _this.joinDate)&&(identical(other.points, _this.points) || other.points == _this.points)&&const DeepCollectionEquality().equals(other.calendar, _this.calendar)&&const DeepCollectionEquality().equals(other.completedChallenges, _this.completedChallenges)&&const DeepCollectionEquality().equals(other.completedDailyCodingChallenges, _this.completedDailyCodingChallenges)&&const DeepCollectionEquality().equals(other.savedChallenges, _this.savedChallenges)&&const DeepCollectionEquality().equals(other.portfolio, _this.portfolio)&&const DeepCollectionEquality().equals(other.yearsTopContributor, _this.yearsTopContributor));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,email,username,name,picture,currentChallengeId,githubProfile,linkedin,twitter,website,location,about,emailVerified,isEmailVerified,isCheater,isDonating,isHonest,isBanned,isFrontEndCert,isDataVisCert,isBackEndCert,isFullStackCert,isRespWebDesignCert,is2018DataVisCert,isFrontEndLibsCert,isJsAlgoDataStructCert,isApisMicroservicesCert,isInfosecQaCert,isQaCertV7,isInfosecCertV7,is2018FullStackCert,isSciCompPyCertV7,isDataAnalysisPyCertV7,isMachineLearningPyCertV7,isRelationalDatabaseCertV8,isCollegeAlgebraPyCertV8,isFoundationalCSharpCertV8,joinDate,points,const DeepCollectionEquality().hash(calendar),const DeepCollectionEquality().hash(completedChallenges),const DeepCollectionEquality().hash(completedDailyCodingChallenges),const DeepCollectionEquality().hash(savedChallenges),const DeepCollectionEquality().hash(portfolio),const DeepCollectionEquality().hash(yearsTopContributor)]);
+int get hashCode {
+  final _this = this as FccUserModel;
+  return Object.hashAll([runtimeType,_this.id,_this.email,_this.username,_this.name,_this.picture,_this.currentChallengeId,_this.githubProfile,_this.linkedin,_this.twitter,_this.website,_this.location,_this.about,_this.emailVerified,_this.isEmailVerified,_this.isCheater,_this.isDonating,_this.isHonest,_this.isBanned,_this.isFrontEndCert,_this.isDataVisCert,_this.isBackEndCert,_this.isFullStackCert,_this.isRespWebDesignCert,_this.is2018DataVisCert,_this.isFrontEndLibsCert,_this.isJsAlgoDataStructCert,_this.isApisMicroservicesCert,_this.isInfosecQaCert,_this.isQaCertV7,_this.isInfosecCertV7,_this.is2018FullStackCert,_this.isSciCompPyCertV7,_this.isDataAnalysisPyCertV7,_this.isMachineLearningPyCertV7,_this.isRelationalDatabaseCertV8,_this.isCollegeAlgebraPyCertV8,_this.isFoundationalCSharpCertV8,_this.joinDate,_this.points,const DeepCollectionEquality().hash(_this.calendar),const DeepCollectionEquality().hash(_this.completedChallenges),const DeepCollectionEquality().hash(_this.completedDailyCodingChallenges),const DeepCollectionEquality().hash(_this.savedChallenges),const DeepCollectionEquality().hash(_this.portfolio),const DeepCollectionEquality().hash(_this.yearsTopContributor)]);
+}
 
 @override
 String toString() {
-  return 'FccUserModel(id: $id, email: $email, username: $username, name: $name, picture: $picture, currentChallengeId: $currentChallengeId, githubProfile: $githubProfile, linkedin: $linkedin, twitter: $twitter, website: $website, location: $location, about: $about, emailVerified: $emailVerified, isEmailVerified: $isEmailVerified, isCheater: $isCheater, isDonating: $isDonating, isHonest: $isHonest, isBanned: $isBanned, isFrontEndCert: $isFrontEndCert, isDataVisCert: $isDataVisCert, isBackEndCert: $isBackEndCert, isFullStackCert: $isFullStackCert, isRespWebDesignCert: $isRespWebDesignCert, is2018DataVisCert: $is2018DataVisCert, isFrontEndLibsCert: $isFrontEndLibsCert, isJsAlgoDataStructCert: $isJsAlgoDataStructCert, isApisMicroservicesCert: $isApisMicroservicesCert, isInfosecQaCert: $isInfosecQaCert, isQaCertV7: $isQaCertV7, isInfosecCertV7: $isInfosecCertV7, is2018FullStackCert: $is2018FullStackCert, isSciCompPyCertV7: $isSciCompPyCertV7, isDataAnalysisPyCertV7: $isDataAnalysisPyCertV7, isMachineLearningPyCertV7: $isMachineLearningPyCertV7, isRelationalDatabaseCertV8: $isRelationalDatabaseCertV8, isCollegeAlgebraPyCertV8: $isCollegeAlgebraPyCertV8, isFoundationalCSharpCertV8: $isFoundationalCSharpCertV8, joinDate: $joinDate, points: $points, calendar: $calendar, completedChallenges: $completedChallenges, completedDailyCodingChallenges: $completedDailyCodingChallenges, savedChallenges: $savedChallenges, portfolio: $portfolio, yearsTopContributor: $yearsTopContributor)';
+  final _this = this as FccUserModel;
+  return 'FccUserModel(id: ${_this.id}, email: ${_this.email}, username: ${_this.username}, name: ${_this.name}, picture: ${_this.picture}, currentChallengeId: ${_this.currentChallengeId}, githubProfile: ${_this.githubProfile}, linkedin: ${_this.linkedin}, twitter: ${_this.twitter}, website: ${_this.website}, location: ${_this.location}, about: ${_this.about}, emailVerified: ${_this.emailVerified}, isEmailVerified: ${_this.isEmailVerified}, isCheater: ${_this.isCheater}, isDonating: ${_this.isDonating}, isHonest: ${_this.isHonest}, isBanned: ${_this.isBanned}, isFrontEndCert: ${_this.isFrontEndCert}, isDataVisCert: ${_this.isDataVisCert}, isBackEndCert: ${_this.isBackEndCert}, isFullStackCert: ${_this.isFullStackCert}, isRespWebDesignCert: ${_this.isRespWebDesignCert}, is2018DataVisCert: ${_this.is2018DataVisCert}, isFrontEndLibsCert: ${_this.isFrontEndLibsCert}, isJsAlgoDataStructCert: ${_this.isJsAlgoDataStructCert}, isApisMicroservicesCert: ${_this.isApisMicroservicesCert}, isInfosecQaCert: ${_this.isInfosecQaCert}, isQaCertV7: ${_this.isQaCertV7}, isInfosecCertV7: ${_this.isInfosecCertV7}, is2018FullStackCert: ${_this.is2018FullStackCert}, isSciCompPyCertV7: ${_this.isSciCompPyCertV7}, isDataAnalysisPyCertV7: ${_this.isDataAnalysisPyCertV7}, isMachineLearningPyCertV7: ${_this.isMachineLearningPyCertV7}, isRelationalDatabaseCertV8: ${_this.isRelationalDatabaseCertV8}, isCollegeAlgebraPyCertV8: ${_this.isCollegeAlgebraPyCertV8}, isFoundationalCSharpCertV8: ${_this.isFoundationalCSharpCertV8}, joinDate: ${_this.joinDate}, points: ${_this.points}, calendar: ${_this.calendar}, completedChallenges: ${_this.completedChallenges}, completedDailyCodingChallenges: ${_this.completedDailyCodingChallenges}, savedChallenges: ${_this.savedChallenges}, portfolio: ${_this.portfolio}, yearsTopContributor: ${_this.yearsTopContributor})';
 }
 
 
@@ -1172,7 +1206,7 @@ class _$FccUserModelCopyWithImpl<$Res>
 /// Create a copy of FccUserModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? username = null,Object? name = null,Object? picture = null,Object? currentChallengeId = freezed,Object? githubProfile = freezed,Object? linkedin = freezed,Object? twitter = freezed,Object? website = freezed,Object? location = freezed,Object? about = freezed,Object? emailVerified = null,Object? isEmailVerified = null,Object? isCheater = null,Object? isDonating = null,Object? isHonest = null,Object? isBanned = null,Object? isFrontEndCert = null,Object? isDataVisCert = null,Object? isBackEndCert = null,Object? isFullStackCert = null,Object? isRespWebDesignCert = null,Object? is2018DataVisCert = null,Object? isFrontEndLibsCert = null,Object? isJsAlgoDataStructCert = null,Object? isApisMicroservicesCert = null,Object? isInfosecQaCert = null,Object? isQaCertV7 = null,Object? isInfosecCertV7 = null,Object? is2018FullStackCert = null,Object? isSciCompPyCertV7 = null,Object? isDataAnalysisPyCertV7 = null,Object? isMachineLearningPyCertV7 = null,Object? isRelationalDatabaseCertV8 = null,Object? isCollegeAlgebraPyCertV8 = null,Object? isFoundationalCSharpCertV8 = null,Object? joinDate = null,Object? points = null,Object? calendar = null,Object? completedChallenges = null,Object? completedDailyCodingChallenges = null,Object? savedChallenges = null,Object? portfolio = null,Object? yearsTopContributor = null,}) {
-  return _then(_self.copyWith(
+  return _then(FccUserModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
@@ -1359,7 +1393,7 @@ return $default(_that.id,_that.email,_that.username,_that.name,_that.picture,_th
 @JsonSerializable()
 
 class _FccUserModel extends FccUserModel {
-  const _FccUserModel({required this.id, required this.email, required this.username, this.name = '', this.picture = '', this.currentChallengeId, this.githubProfile, this.linkedin, this.twitter, this.website, this.location, this.about, this.emailVerified = false, this.isEmailVerified = false, this.isCheater = false, this.isDonating = false, this.isHonest = false, this.isBanned = false, this.isFrontEndCert = false, this.isDataVisCert = false, this.isBackEndCert = false, this.isFullStackCert = false, this.isRespWebDesignCert = false, this.is2018DataVisCert = false, this.isFrontEndLibsCert = false, this.isJsAlgoDataStructCert = false, this.isApisMicroservicesCert = false, this.isInfosecQaCert = false, this.isQaCertV7 = false, this.isInfosecCertV7 = false, this.is2018FullStackCert = false, this.isSciCompPyCertV7 = false, this.isDataAnalysisPyCertV7 = false, this.isMachineLearningPyCertV7 = false, this.isRelationalDatabaseCertV8 = false, this.isCollegeAlgebraPyCertV8 = false, this.isFoundationalCSharpCertV8 = false, required this.joinDate, this.points = 0, final  Map<String, int> calendar = const {}, final  List<CompletedChallenge> completedChallenges = const [], final  List<CompletedDailyChallenge> completedDailyCodingChallenges = const [], final  List<SavedChallenge> savedChallenges = const [], final  List<Portfolio> portfolio = const [], @JsonKey(fromJson: _yearsToStrings) final  List<String> yearsTopContributor = const []}): _calendar = calendar,_completedChallenges = completedChallenges,_completedDailyCodingChallenges = completedDailyCodingChallenges,_savedChallenges = savedChallenges,_portfolio = portfolio,_yearsTopContributor = yearsTopContributor,super._();
+  const _FccUserModel({required this.id, required this.email, required this.username, this.name = '', this.picture = '', this.currentChallengeId, this.githubProfile, this.linkedin, this.twitter, this.website, this.location, this.about, this.emailVerified = false, this.isEmailVerified = false, this.isCheater = false, this.isDonating = false, this.isHonest = false, this.isBanned = false, this.isFrontEndCert = false, this.isDataVisCert = false, this.isBackEndCert = false, this.isFullStackCert = false, this.isRespWebDesignCert = false, this.is2018DataVisCert = false, this.isFrontEndLibsCert = false, this.isJsAlgoDataStructCert = false, this.isApisMicroservicesCert = false, this.isInfosecQaCert = false, this.isQaCertV7 = false, this.isInfosecCertV7 = false, this.is2018FullStackCert = false, this.isSciCompPyCertV7 = false, this.isDataAnalysisPyCertV7 = false, this.isMachineLearningPyCertV7 = false, this.isRelationalDatabaseCertV8 = false, this.isCollegeAlgebraPyCertV8 = false, this.isFoundationalCSharpCertV8 = false, required this.joinDate, this.points = 0,  Map<String, int> calendar = const {},  List<CompletedChallenge> completedChallenges = const [],  List<CompletedDailyChallenge> completedDailyCodingChallenges = const [],  List<SavedChallenge> savedChallenges = const [],  List<Portfolio> portfolio = const [], @JsonKey(fromJson: _yearsToStrings)  List<String> yearsTopContributor = const []}): _calendar = calendar,_completedChallenges = completedChallenges,_completedDailyCodingChallenges = completedDailyCodingChallenges,_savedChallenges = savedChallenges,_portfolio = portfolio,_yearsTopContributor = yearsTopContributor,super._();
   factory _FccUserModel.fromJson(Map<String, dynamic> json) => _$FccUserModelFromJson(json);
 
 @override final  String id;
@@ -1457,16 +1491,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FccUserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.name, name) || other.name == name)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.currentChallengeId, currentChallengeId) || other.currentChallengeId == currentChallengeId)&&(identical(other.githubProfile, githubProfile) || other.githubProfile == githubProfile)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.twitter, twitter) || other.twitter == twitter)&&(identical(other.website, website) || other.website == website)&&(identical(other.location, location) || other.location == location)&&(identical(other.about, about) || other.about == about)&&(identical(other.emailVerified, emailVerified) || other.emailVerified == emailVerified)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.isCheater, isCheater) || other.isCheater == isCheater)&&(identical(other.isDonating, isDonating) || other.isDonating == isDonating)&&(identical(other.isHonest, isHonest) || other.isHonest == isHonest)&&(identical(other.isBanned, isBanned) || other.isBanned == isBanned)&&(identical(other.isFrontEndCert, isFrontEndCert) || other.isFrontEndCert == isFrontEndCert)&&(identical(other.isDataVisCert, isDataVisCert) || other.isDataVisCert == isDataVisCert)&&(identical(other.isBackEndCert, isBackEndCert) || other.isBackEndCert == isBackEndCert)&&(identical(other.isFullStackCert, isFullStackCert) || other.isFullStackCert == isFullStackCert)&&(identical(other.isRespWebDesignCert, isRespWebDesignCert) || other.isRespWebDesignCert == isRespWebDesignCert)&&(identical(other.is2018DataVisCert, is2018DataVisCert) || other.is2018DataVisCert == is2018DataVisCert)&&(identical(other.isFrontEndLibsCert, isFrontEndLibsCert) || other.isFrontEndLibsCert == isFrontEndLibsCert)&&(identical(other.isJsAlgoDataStructCert, isJsAlgoDataStructCert) || other.isJsAlgoDataStructCert == isJsAlgoDataStructCert)&&(identical(other.isApisMicroservicesCert, isApisMicroservicesCert) || other.isApisMicroservicesCert == isApisMicroservicesCert)&&(identical(other.isInfosecQaCert, isInfosecQaCert) || other.isInfosecQaCert == isInfosecQaCert)&&(identical(other.isQaCertV7, isQaCertV7) || other.isQaCertV7 == isQaCertV7)&&(identical(other.isInfosecCertV7, isInfosecCertV7) || other.isInfosecCertV7 == isInfosecCertV7)&&(identical(other.is2018FullStackCert, is2018FullStackCert) || other.is2018FullStackCert == is2018FullStackCert)&&(identical(other.isSciCompPyCertV7, isSciCompPyCertV7) || other.isSciCompPyCertV7 == isSciCompPyCertV7)&&(identical(other.isDataAnalysisPyCertV7, isDataAnalysisPyCertV7) || other.isDataAnalysisPyCertV7 == isDataAnalysisPyCertV7)&&(identical(other.isMachineLearningPyCertV7, isMachineLearningPyCertV7) || other.isMachineLearningPyCertV7 == isMachineLearningPyCertV7)&&(identical(other.isRelationalDatabaseCertV8, isRelationalDatabaseCertV8) || other.isRelationalDatabaseCertV8 == isRelationalDatabaseCertV8)&&(identical(other.isCollegeAlgebraPyCertV8, isCollegeAlgebraPyCertV8) || other.isCollegeAlgebraPyCertV8 == isCollegeAlgebraPyCertV8)&&(identical(other.isFoundationalCSharpCertV8, isFoundationalCSharpCertV8) || other.isFoundationalCSharpCertV8 == isFoundationalCSharpCertV8)&&(identical(other.joinDate, joinDate) || other.joinDate == joinDate)&&(identical(other.points, points) || other.points == points)&&const DeepCollectionEquality().equals(other._calendar, _calendar)&&const DeepCollectionEquality().equals(other._completedChallenges, _completedChallenges)&&const DeepCollectionEquality().equals(other._completedDailyCodingChallenges, _completedDailyCodingChallenges)&&const DeepCollectionEquality().equals(other._savedChallenges, _savedChallenges)&&const DeepCollectionEquality().equals(other._portfolio, _portfolio)&&const DeepCollectionEquality().equals(other._yearsTopContributor, _yearsTopContributor));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FccUserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.name, name) || other.name == name)&&(identical(other.picture, picture) || other.picture == picture)&&(identical(other.currentChallengeId, currentChallengeId) || other.currentChallengeId == currentChallengeId)&&(identical(other.githubProfile, githubProfile) || other.githubProfile == githubProfile)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.twitter, twitter) || other.twitter == twitter)&&(identical(other.website, website) || other.website == website)&&(identical(other.location, location) || other.location == location)&&(identical(other.about, about) || other.about == about)&&(identical(other.emailVerified, emailVerified) || other.emailVerified == emailVerified)&&(identical(other.isEmailVerified, isEmailVerified) || other.isEmailVerified == isEmailVerified)&&(identical(other.isCheater, isCheater) || other.isCheater == isCheater)&&(identical(other.isDonating, isDonating) || other.isDonating == isDonating)&&(identical(other.isHonest, isHonest) || other.isHonest == isHonest)&&(identical(other.isBanned, isBanned) || other.isBanned == isBanned)&&(identical(other.isFrontEndCert, isFrontEndCert) || other.isFrontEndCert == isFrontEndCert)&&(identical(other.isDataVisCert, isDataVisCert) || other.isDataVisCert == isDataVisCert)&&(identical(other.isBackEndCert, isBackEndCert) || other.isBackEndCert == isBackEndCert)&&(identical(other.isFullStackCert, isFullStackCert) || other.isFullStackCert == isFullStackCert)&&(identical(other.isRespWebDesignCert, isRespWebDesignCert) || other.isRespWebDesignCert == isRespWebDesignCert)&&(identical(other.is2018DataVisCert, is2018DataVisCert) || other.is2018DataVisCert == is2018DataVisCert)&&(identical(other.isFrontEndLibsCert, isFrontEndLibsCert) || other.isFrontEndLibsCert == isFrontEndLibsCert)&&(identical(other.isJsAlgoDataStructCert, isJsAlgoDataStructCert) || other.isJsAlgoDataStructCert == isJsAlgoDataStructCert)&&(identical(other.isApisMicroservicesCert, isApisMicroservicesCert) || other.isApisMicroservicesCert == isApisMicroservicesCert)&&(identical(other.isInfosecQaCert, isInfosecQaCert) || other.isInfosecQaCert == isInfosecQaCert)&&(identical(other.isQaCertV7, isQaCertV7) || other.isQaCertV7 == isQaCertV7)&&(identical(other.isInfosecCertV7, isInfosecCertV7) || other.isInfosecCertV7 == isInfosecCertV7)&&(identical(other.is2018FullStackCert, is2018FullStackCert) || other.is2018FullStackCert == is2018FullStackCert)&&(identical(other.isSciCompPyCertV7, isSciCompPyCertV7) || other.isSciCompPyCertV7 == isSciCompPyCertV7)&&(identical(other.isDataAnalysisPyCertV7, isDataAnalysisPyCertV7) || other.isDataAnalysisPyCertV7 == isDataAnalysisPyCertV7)&&(identical(other.isMachineLearningPyCertV7, isMachineLearningPyCertV7) || other.isMachineLearningPyCertV7 == isMachineLearningPyCertV7)&&(identical(other.isRelationalDatabaseCertV8, isRelationalDatabaseCertV8) || other.isRelationalDatabaseCertV8 == isRelationalDatabaseCertV8)&&(identical(other.isCollegeAlgebraPyCertV8, isCollegeAlgebraPyCertV8) || other.isCollegeAlgebraPyCertV8 == isCollegeAlgebraPyCertV8)&&(identical(other.isFoundationalCSharpCertV8, isFoundationalCSharpCertV8) || other.isFoundationalCSharpCertV8 == isFoundationalCSharpCertV8)&&(identical(other.joinDate, joinDate) || other.joinDate == joinDate)&&(identical(other.points, points) || other.points == points)&&const DeepCollectionEquality().equals(other.calendar, _calendar)&&const DeepCollectionEquality().equals(other.completedChallenges, _completedChallenges)&&const DeepCollectionEquality().equals(other.completedDailyCodingChallenges, _completedDailyCodingChallenges)&&const DeepCollectionEquality().equals(other.savedChallenges, _savedChallenges)&&const DeepCollectionEquality().equals(other.portfolio, _portfolio)&&const DeepCollectionEquality().equals(other.yearsTopContributor, _yearsTopContributor));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,email,username,name,picture,currentChallengeId,githubProfile,linkedin,twitter,website,location,about,emailVerified,isEmailVerified,isCheater,isDonating,isHonest,isBanned,isFrontEndCert,isDataVisCert,isBackEndCert,isFullStackCert,isRespWebDesignCert,is2018DataVisCert,isFrontEndLibsCert,isJsAlgoDataStructCert,isApisMicroservicesCert,isInfosecQaCert,isQaCertV7,isInfosecCertV7,is2018FullStackCert,isSciCompPyCertV7,isDataAnalysisPyCertV7,isMachineLearningPyCertV7,isRelationalDatabaseCertV8,isCollegeAlgebraPyCertV8,isFoundationalCSharpCertV8,joinDate,points,const DeepCollectionEquality().hash(_calendar),const DeepCollectionEquality().hash(_completedChallenges),const DeepCollectionEquality().hash(_completedDailyCodingChallenges),const DeepCollectionEquality().hash(_savedChallenges),const DeepCollectionEquality().hash(_portfolio),const DeepCollectionEquality().hash(_yearsTopContributor)]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,email,username,name,picture,currentChallengeId,githubProfile,linkedin,twitter,website,location,about,emailVerified,isEmailVerified,isCheater,isDonating,isHonest,isBanned,isFrontEndCert,isDataVisCert,isBackEndCert,isFullStackCert,isRespWebDesignCert,is2018DataVisCert,isFrontEndLibsCert,isJsAlgoDataStructCert,isApisMicroservicesCert,isInfosecQaCert,isQaCertV7,isInfosecCertV7,is2018FullStackCert,isSciCompPyCertV7,isDataAnalysisPyCertV7,isMachineLearningPyCertV7,isRelationalDatabaseCertV8,isCollegeAlgebraPyCertV8,isFoundationalCSharpCertV8,joinDate,points,const DeepCollectionEquality().hash(_calendar),const DeepCollectionEquality().hash(_completedChallenges),const DeepCollectionEquality().hash(_completedDailyCodingChallenges),const DeepCollectionEquality().hash(_savedChallenges),const DeepCollectionEquality().hash(_portfolio),const DeepCollectionEquality().hash(_yearsTopContributor)]);
+}
 
 @override
 String toString() {
-  return 'FccUserModel(id: $id, email: $email, username: $username, name: $name, picture: $picture, currentChallengeId: $currentChallengeId, githubProfile: $githubProfile, linkedin: $linkedin, twitter: $twitter, website: $website, location: $location, about: $about, emailVerified: $emailVerified, isEmailVerified: $isEmailVerified, isCheater: $isCheater, isDonating: $isDonating, isHonest: $isHonest, isBanned: $isBanned, isFrontEndCert: $isFrontEndCert, isDataVisCert: $isDataVisCert, isBackEndCert: $isBackEndCert, isFullStackCert: $isFullStackCert, isRespWebDesignCert: $isRespWebDesignCert, is2018DataVisCert: $is2018DataVisCert, isFrontEndLibsCert: $isFrontEndLibsCert, isJsAlgoDataStructCert: $isJsAlgoDataStructCert, isApisMicroservicesCert: $isApisMicroservicesCert, isInfosecQaCert: $isInfosecQaCert, isQaCertV7: $isQaCertV7, isInfosecCertV7: $isInfosecCertV7, is2018FullStackCert: $is2018FullStackCert, isSciCompPyCertV7: $isSciCompPyCertV7, isDataAnalysisPyCertV7: $isDataAnalysisPyCertV7, isMachineLearningPyCertV7: $isMachineLearningPyCertV7, isRelationalDatabaseCertV8: $isRelationalDatabaseCertV8, isCollegeAlgebraPyCertV8: $isCollegeAlgebraPyCertV8, isFoundationalCSharpCertV8: $isFoundationalCSharpCertV8, joinDate: $joinDate, points: $points, calendar: $calendar, completedChallenges: $completedChallenges, completedDailyCodingChallenges: $completedDailyCodingChallenges, savedChallenges: $savedChallenges, portfolio: $portfolio, yearsTopContributor: $yearsTopContributor)';
+    return 'FccUserModel(id: $id, email: $email, username: $username, name: $name, picture: $picture, currentChallengeId: $currentChallengeId, githubProfile: $githubProfile, linkedin: $linkedin, twitter: $twitter, website: $website, location: $location, about: $about, emailVerified: $emailVerified, isEmailVerified: $isEmailVerified, isCheater: $isCheater, isDonating: $isDonating, isHonest: $isHonest, isBanned: $isBanned, isFrontEndCert: $isFrontEndCert, isDataVisCert: $isDataVisCert, isBackEndCert: $isBackEndCert, isFullStackCert: $isFullStackCert, isRespWebDesignCert: $isRespWebDesignCert, is2018DataVisCert: $is2018DataVisCert, isFrontEndLibsCert: $isFrontEndLibsCert, isJsAlgoDataStructCert: $isJsAlgoDataStructCert, isApisMicroservicesCert: $isApisMicroservicesCert, isInfosecQaCert: $isInfosecQaCert, isQaCertV7: $isQaCertV7, isInfosecCertV7: $isInfosecCertV7, is2018FullStackCert: $is2018FullStackCert, isSciCompPyCertV7: $isSciCompPyCertV7, isDataAnalysisPyCertV7: $isDataAnalysisPyCertV7, isMachineLearningPyCertV7: $isMachineLearningPyCertV7, isRelationalDatabaseCertV8: $isRelationalDatabaseCertV8, isCollegeAlgebraPyCertV8: $isCollegeAlgebraPyCertV8, isFoundationalCSharpCertV8: $isFoundationalCSharpCertV8, joinDate: $joinDate, points: $points, calendar: $calendar, completedChallenges: $completedChallenges, completedDailyCodingChallenges: $completedDailyCodingChallenges, savedChallenges: $savedChallenges, portfolio: $portfolio, yearsTopContributor: $yearsTopContributor)';
 }
 
 

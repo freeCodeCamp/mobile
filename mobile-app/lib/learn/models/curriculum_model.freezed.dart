@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'curriculum_model.dart';
@@ -9,6 +9,7 @@ part of 'curriculum_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SuperBlockSummaryCopyWith<SuperBlockSummary> get copyWith => _$SuperBlockSummar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SuperBlockSummary&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.title, title) || other.title == title)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.isDisabledByOverride, isDisabledByOverride) || other.isDisabledByOverride == isDisabledByOverride));
+  final _this = this as SuperBlockSummary;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SuperBlockSummary&&(identical(other.dashedName, _this.dashedName) || other.dashedName == _this.dashedName)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.isPublic, _this.isPublic) || other.isPublic == _this.isPublic)&&(identical(other.isDisabledByOverride, _this.isDisabledByOverride) || other.isDisabledByOverride == _this.isDisabledByOverride));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dashedName,title,isPublic,isDisabledByOverride);
+int get hashCode {
+  final _this = this as SuperBlockSummary;
+  return Object.hash(runtimeType,_this.dashedName,_this.title,_this.isPublic,_this.isDisabledByOverride);
+}
 
 @override
 String toString() {
-  return 'SuperBlockSummary(dashedName: $dashedName, title: $title, isPublic: $isPublic, isDisabledByOverride: $isDisabledByOverride)';
+  final _this = this as SuperBlockSummary;
+  return 'SuperBlockSummary(dashedName: ${_this.dashedName}, title: ${_this.title}, isPublic: ${_this.isPublic}, isDisabledByOverride: ${_this.isDisabledByOverride})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SuperBlockSummaryCopyWithImpl<$Res>
 /// Create a copy of SuperBlockSummary
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? dashedName = null,Object? title = null,Object? isPublic = null,Object? isDisabledByOverride = null,}) {
-  return _then(_self.copyWith(
+  return _then(SuperBlockSummary(
 dashedName: null == dashedName ? _self.dashedName : dashedName // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,isPublic: null == isPublic ? _self.isPublic : isPublic // ignore: cast_nullable_to_non_nullable
@@ -227,16 +233,18 @@ _$SuperBlockSummaryCopyWith<_SuperBlockSummary> get copyWith => __$SuperBlockSum
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SuperBlockSummary&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.title, title) || other.title == title)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.isDisabledByOverride, isDisabledByOverride) || other.isDisabledByOverride == isDisabledByOverride));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SuperBlockSummary&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.title, title) || other.title == title)&&(identical(other.isPublic, isPublic) || other.isPublic == isPublic)&&(identical(other.isDisabledByOverride, isDisabledByOverride) || other.isDisabledByOverride == isDisabledByOverride));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dashedName,title,isPublic,isDisabledByOverride);
+int get hashCode {
+    return Object.hash(runtimeType,dashedName,title,isPublic,isDisabledByOverride);
+}
 
 @override
 String toString() {
-  return 'SuperBlockSummary(dashedName: $dashedName, title: $title, isPublic: $isPublic, isDisabledByOverride: $isDisabledByOverride)';
+    return 'SuperBlockSummary(dashedName: $dashedName, title: $title, isPublic: $isPublic, isDisabledByOverride: $isDisabledByOverride)';
 }
 
 
@@ -294,16 +302,21 @@ $ChallengeOrderCopyWith<ChallengeOrder> get copyWith => _$ChallengeOrderCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChallengeOrder&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title));
+  final _this = this as ChallengeOrder;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChallengeOrder&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title);
+int get hashCode {
+  final _this = this as ChallengeOrder;
+  return Object.hash(runtimeType,_this.id,_this.title);
+}
 
 @override
 String toString() {
-  return 'ChallengeOrder(id: $id, title: $title)';
+  final _this = this as ChallengeOrder;
+  return 'ChallengeOrder(id: ${_this.id}, title: ${_this.title})';
 }
 
 
@@ -332,7 +345,7 @@ class _$ChallengeOrderCopyWithImpl<$Res>
 /// Create a copy of ChallengeOrder
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChallengeOrder(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,
@@ -495,16 +508,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChallengeOrder&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChallengeOrder&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title);
+int get hashCode {
+    return Object.hash(runtimeType,id,title);
+}
 
 @override
 String toString() {
-  return 'ChallengeOrder(id: $id, title: $title)';
+    return 'ChallengeOrder(id: $id, title: $title)';
 }
 
 
@@ -557,16 +572,21 @@ $BlockCopyWith<Block> get copyWith => _$BlockCopyWithImpl<Block>(this as Block, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Block&&(identical(other.superBlock, superBlock) || other.superBlock == superBlock)&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.layout, layout) || other.layout == layout)&&(identical(other.label, label) || other.label == label)&&const DeepCollectionEquality().equals(other.description, description)&&const DeepCollectionEquality().equals(other.challenges, challenges)&&(identical(other.isDisabledByOverride, isDisabledByOverride) || other.isDisabledByOverride == isDisabledByOverride));
+  final _this = this as Block;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Block&&(identical(other.superBlock, _this.superBlock) || other.superBlock == _this.superBlock)&&(identical(other.dashedName, _this.dashedName) || other.dashedName == _this.dashedName)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.layout, _this.layout) || other.layout == _this.layout)&&(identical(other.label, _this.label) || other.label == _this.label)&&const DeepCollectionEquality().equals(other.description, _this.description)&&const DeepCollectionEquality().equals(other.challenges, _this.challenges)&&(identical(other.isDisabledByOverride, _this.isDisabledByOverride) || other.isDisabledByOverride == _this.isDisabledByOverride));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,superBlock,dashedName,name,layout,label,const DeepCollectionEquality().hash(description),const DeepCollectionEquality().hash(challenges),isDisabledByOverride);
+int get hashCode {
+  final _this = this as Block;
+  return Object.hash(runtimeType,_this.superBlock,_this.dashedName,_this.name,_this.layout,_this.label,const DeepCollectionEquality().hash(_this.description),const DeepCollectionEquality().hash(_this.challenges),_this.isDisabledByOverride);
+}
 
 @override
 String toString() {
-  return 'Block(superBlock: $superBlock, dashedName: $dashedName, name: $name, layout: $layout, label: $label, description: $description, challenges: $challenges, isDisabledByOverride: $isDisabledByOverride)';
+  final _this = this as Block;
+  return 'Block(superBlock: ${_this.superBlock}, dashedName: ${_this.dashedName}, name: ${_this.name}, layout: ${_this.layout}, label: ${_this.label}, description: ${_this.description}, challenges: ${_this.challenges}, isDisabledByOverride: ${_this.isDisabledByOverride})';
 }
 
 
@@ -595,7 +615,7 @@ class _$BlockCopyWithImpl<$Res>
 /// Create a copy of Block
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? superBlock = null,Object? dashedName = null,Object? name = null,Object? layout = null,Object? label = null,Object? description = null,Object? challenges = null,Object? isDisabledByOverride = null,}) {
-  return _then(_self.copyWith(
+  return _then(Block(
 superBlock: null == superBlock ? _self.superBlock : superBlock // ignore: cast_nullable_to_non_nullable
 as String,dashedName: null == dashedName ? _self.dashedName : dashedName // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -745,7 +765,7 @@ return $default(_that.superBlock,_that.dashedName,_that.name,_that.layout,_that.
 
 
 class _Block implements Block {
-  const _Block({required this.superBlock, required this.dashedName, required this.name, required this.layout, required this.label, required final  List<String> description, required final  List<ChallengeOrder> challenges, this.isDisabledByOverride = false}): _description = description,_challenges = challenges;
+  const _Block({required this.superBlock, required this.dashedName, required this.name, required this.layout, required this.label, required  List<String> description, required  List<ChallengeOrder> challenges, this.isDisabledByOverride = false}): _description = description,_challenges = challenges;
   
 
 @override final  String superBlock;
@@ -779,16 +799,18 @@ _$BlockCopyWith<_Block> get copyWith => __$BlockCopyWithImpl<_Block>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Block&&(identical(other.superBlock, superBlock) || other.superBlock == superBlock)&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.layout, layout) || other.layout == layout)&&(identical(other.label, label) || other.label == label)&&const DeepCollectionEquality().equals(other._description, _description)&&const DeepCollectionEquality().equals(other._challenges, _challenges)&&(identical(other.isDisabledByOverride, isDisabledByOverride) || other.isDisabledByOverride == isDisabledByOverride));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Block&&(identical(other.superBlock, superBlock) || other.superBlock == superBlock)&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.layout, layout) || other.layout == layout)&&(identical(other.label, label) || other.label == label)&&const DeepCollectionEquality().equals(other.description, _description)&&const DeepCollectionEquality().equals(other.challenges, _challenges)&&(identical(other.isDisabledByOverride, isDisabledByOverride) || other.isDisabledByOverride == isDisabledByOverride));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,superBlock,dashedName,name,layout,label,const DeepCollectionEquality().hash(_description),const DeepCollectionEquality().hash(_challenges),isDisabledByOverride);
+int get hashCode {
+    return Object.hash(runtimeType,superBlock,dashedName,name,layout,label,const DeepCollectionEquality().hash(_description),const DeepCollectionEquality().hash(_challenges),isDisabledByOverride);
+}
 
 @override
 String toString() {
-  return 'Block(superBlock: $superBlock, dashedName: $dashedName, name: $name, layout: $layout, label: $label, description: $description, challenges: $challenges, isDisabledByOverride: $isDisabledByOverride)';
+    return 'Block(superBlock: $superBlock, dashedName: $dashedName, name: $name, layout: $layout, label: $label, description: $description, challenges: $challenges, isDisabledByOverride: $isDisabledByOverride)';
 }
 
 
@@ -847,16 +869,21 @@ $ModuleCopyWith<Module> get copyWith => _$ModuleCopyWithImpl<Module>(this as Mod
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Module&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.comingSoon, comingSoon) || other.comingSoon == comingSoon)&&(identical(other.moduleType, moduleType) || other.moduleType == moduleType)&&const DeepCollectionEquality().equals(other.blocks, blocks));
+  final _this = this as Module;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Module&&(identical(other.dashedName, _this.dashedName) || other.dashedName == _this.dashedName)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.comingSoon, _this.comingSoon) || other.comingSoon == _this.comingSoon)&&(identical(other.moduleType, _this.moduleType) || other.moduleType == _this.moduleType)&&const DeepCollectionEquality().equals(other.blocks, _this.blocks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dashedName,name,comingSoon,moduleType,const DeepCollectionEquality().hash(blocks));
+int get hashCode {
+  final _this = this as Module;
+  return Object.hash(runtimeType,_this.dashedName,_this.name,_this.comingSoon,_this.moduleType,const DeepCollectionEquality().hash(_this.blocks));
+}
 
 @override
 String toString() {
-  return 'Module(dashedName: $dashedName, name: $name, comingSoon: $comingSoon, moduleType: $moduleType, blocks: $blocks)';
+  final _this = this as Module;
+  return 'Module(dashedName: ${_this.dashedName}, name: ${_this.name}, comingSoon: ${_this.comingSoon}, moduleType: ${_this.moduleType}, blocks: ${_this.blocks})';
 }
 
 
@@ -885,7 +912,7 @@ class _$ModuleCopyWithImpl<$Res>
 /// Create a copy of Module
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? dashedName = null,Object? name = null,Object? comingSoon = null,Object? moduleType = freezed,Object? blocks = null,}) {
-  return _then(_self.copyWith(
+  return _then(Module(
 dashedName: null == dashedName ? _self.dashedName : dashedName // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,comingSoon: null == comingSoon ? _self.comingSoon : comingSoon // ignore: cast_nullable_to_non_nullable
@@ -1032,7 +1059,7 @@ return $default(_that.dashedName,_that.name,_that.comingSoon,_that.moduleType,_t
 
 
 class _Module implements Module {
-  const _Module({required this.dashedName, required this.name, this.comingSoon = false, this.moduleType, required final  List<Block> blocks}): _blocks = blocks;
+  const _Module({required this.dashedName, required this.name, this.comingSoon = false, this.moduleType, required  List<Block> blocks}): _blocks = blocks;
   
 
 @override final  String dashedName;
@@ -1057,16 +1084,18 @@ _$ModuleCopyWith<_Module> get copyWith => __$ModuleCopyWithImpl<_Module>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Module&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.comingSoon, comingSoon) || other.comingSoon == comingSoon)&&(identical(other.moduleType, moduleType) || other.moduleType == moduleType)&&const DeepCollectionEquality().equals(other._blocks, _blocks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Module&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.comingSoon, comingSoon) || other.comingSoon == comingSoon)&&(identical(other.moduleType, moduleType) || other.moduleType == moduleType)&&const DeepCollectionEquality().equals(other.blocks, _blocks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dashedName,name,comingSoon,moduleType,const DeepCollectionEquality().hash(_blocks));
+int get hashCode {
+    return Object.hash(runtimeType,dashedName,name,comingSoon,moduleType,const DeepCollectionEquality().hash(_blocks));
+}
 
 @override
 String toString() {
-  return 'Module(dashedName: $dashedName, name: $name, comingSoon: $comingSoon, moduleType: $moduleType, blocks: $blocks)';
+    return 'Module(dashedName: $dashedName, name: $name, comingSoon: $comingSoon, moduleType: $moduleType, blocks: $blocks)';
 }
 
 
@@ -1122,16 +1151,21 @@ $ChapterCopyWith<Chapter> get copyWith => _$ChapterCopyWithImpl<Chapter>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Chapter&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.comingSoon, comingSoon) || other.comingSoon == comingSoon)&&const DeepCollectionEquality().equals(other.modules, modules));
+  final _this = this as Chapter;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Chapter&&(identical(other.dashedName, _this.dashedName) || other.dashedName == _this.dashedName)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.comingSoon, _this.comingSoon) || other.comingSoon == _this.comingSoon)&&const DeepCollectionEquality().equals(other.modules, _this.modules));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dashedName,name,comingSoon,const DeepCollectionEquality().hash(modules));
+int get hashCode {
+  final _this = this as Chapter;
+  return Object.hash(runtimeType,_this.dashedName,_this.name,_this.comingSoon,const DeepCollectionEquality().hash(_this.modules));
+}
 
 @override
 String toString() {
-  return 'Chapter(dashedName: $dashedName, name: $name, comingSoon: $comingSoon, modules: $modules)';
+  final _this = this as Chapter;
+  return 'Chapter(dashedName: ${_this.dashedName}, name: ${_this.name}, comingSoon: ${_this.comingSoon}, modules: ${_this.modules})';
 }
 
 
@@ -1160,7 +1194,7 @@ class _$ChapterCopyWithImpl<$Res>
 /// Create a copy of Chapter
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? dashedName = null,Object? name = null,Object? comingSoon = null,Object? modules = null,}) {
-  return _then(_self.copyWith(
+  return _then(Chapter(
 dashedName: null == dashedName ? _self.dashedName : dashedName // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,comingSoon: null == comingSoon ? _self.comingSoon : comingSoon // ignore: cast_nullable_to_non_nullable
@@ -1306,7 +1340,7 @@ return $default(_that.dashedName,_that.name,_that.comingSoon,_that.modules);case
 
 
 class _Chapter implements Chapter {
-  const _Chapter({required this.dashedName, required this.name, this.comingSoon = false, required final  List<Module> modules}): _modules = modules;
+  const _Chapter({required this.dashedName, required this.name, this.comingSoon = false, required  List<Module> modules}): _modules = modules;
   
 
 @override final  String dashedName;
@@ -1330,16 +1364,18 @@ _$ChapterCopyWith<_Chapter> get copyWith => __$ChapterCopyWithImpl<_Chapter>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Chapter&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.comingSoon, comingSoon) || other.comingSoon == comingSoon)&&const DeepCollectionEquality().equals(other._modules, _modules));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Chapter&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.name, name) || other.name == name)&&(identical(other.comingSoon, comingSoon) || other.comingSoon == comingSoon)&&const DeepCollectionEquality().equals(other.modules, _modules));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dashedName,name,comingSoon,const DeepCollectionEquality().hash(_modules));
+int get hashCode {
+    return Object.hash(runtimeType,dashedName,name,comingSoon,const DeepCollectionEquality().hash(_modules));
+}
 
 @override
 String toString() {
-  return 'Chapter(dashedName: $dashedName, name: $name, comingSoon: $comingSoon, modules: $modules)';
+    return 'Chapter(dashedName: $dashedName, name: $name, comingSoon: $comingSoon, modules: $modules)';
 }
 
 
@@ -1389,7 +1425,7 @@ mixin _$SuperBlock {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SuperBlock);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SuperBlock);
 }
 
 
@@ -1398,7 +1434,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'SuperBlock()';
+    return 'SuperBlock()';
 }
 
 
@@ -1544,7 +1580,7 @@ return chapters(_that.chapters);case _:
 
 
 class BlockSuperBlock implements SuperBlock {
-  const BlockSuperBlock(final  List<Block> blocks): _blocks = blocks;
+  const BlockSuperBlock( List<Block> blocks): _blocks = blocks;
   
 
  final  List<Block> _blocks;
@@ -1565,16 +1601,18 @@ $BlockSuperBlockCopyWith<BlockSuperBlock> get copyWith => _$BlockSuperBlockCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BlockSuperBlock&&const DeepCollectionEquality().equals(other._blocks, _blocks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is BlockSuperBlock&&const DeepCollectionEquality().equals(other.blocks, _blocks));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_blocks));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_blocks));
+}
 
 @override
 String toString() {
-  return 'SuperBlock.blocks(blocks: $blocks)';
+    return 'SuperBlock.blocks(blocks: $blocks)';
 }
 
 
@@ -1616,7 +1654,7 @@ as List<Block>,
 
 
 class ChapterSuperBlock implements SuperBlock {
-  const ChapterSuperBlock(final  List<Chapter> chapters): _chapters = chapters;
+  const ChapterSuperBlock( List<Chapter> chapters): _chapters = chapters;
   
 
  final  List<Chapter> _chapters;
@@ -1637,16 +1675,18 @@ $ChapterSuperBlockCopyWith<ChapterSuperBlock> get copyWith => _$ChapterSuperBloc
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterSuperBlock&&const DeepCollectionEquality().equals(other._chapters, _chapters));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterSuperBlock&&const DeepCollectionEquality().equals(other.chapters, _chapters));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_chapters));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_chapters));
+}
 
 @override
 String toString() {
-  return 'SuperBlock.chapters(chapters: $chapters)';
+    return 'SuperBlock.chapters(chapters: $chapters)';
 }
 
 

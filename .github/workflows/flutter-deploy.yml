@@ -90,7 +90,7 @@ jobs:
           AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
 
       - name: Install packages
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
       - name: Analyze
         run: |
@@ -98,14 +98,7 @@ jobs:
           flutter analyze --no-fatal-warnings
 
       - name: Check generated files are up to date
-        run: |
-          dart run build_runner build
-          if [ -n "$(git status --porcelain -- .)" ]; then
-            git status --porcelain -- .
-            git diff -- .
-            echo "::error::Generated files are out of date. Run 'dart run build_runner build' and commit the result."
-            exit 1
-          fi
+        run: dart run build_runner build --only-check
 
       - name: Run tests in emulator
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2
