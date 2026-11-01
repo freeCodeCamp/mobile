@@ -15,7 +15,6 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/questions.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/review_content.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/task_explanation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/services/auth_service.dart';
@@ -152,9 +151,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
             ],
           ),
         ),
-      if (englishTask && taskExplanation.isNotEmpty)
-        TaskExplanation(html: taskExplanation)
-      else if (!englishTask && challenge.explanation.isNotEmpty)
+      if (!englishTask && challenge.explanation.isNotEmpty)
         HtmlCard(
           title: 'Explanation',
           html: challenge.explanation,
@@ -258,6 +255,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                       currentIndex: current,
                       validated: _checked[current],
                       outlinedFeedbackCode: englishTask,
+                      explanation: englishTask ? taskExplanation : '',
                       onChanged: (question, answer) => setState(() {
                         _selected[question] = answer;
                         _checked[question] = false;
@@ -329,7 +327,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                       ? CompleteButton(
                           challenge: challenge,
                           block: widget.block,
-                          label: 'Continue',
+                          label: englishTask ? 'Next lesson' : 'Continue',
                           buttonStyle: _buttonStyle(context),
                           enabled: _assignmentsDone,
                         )

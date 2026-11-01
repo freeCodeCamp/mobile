@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/answer_feedback.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_audio_player.dart';
 
@@ -29,6 +30,7 @@ class Questions extends StatelessWidget {
     this.enabled = true,
     this.plainCodeBlocks = false,
     this.outlinedFeedbackCode = false,
+    this.explanation = '',
   });
   final List<QuestionItem> questions;
   final List<int?> selected;
@@ -38,6 +40,7 @@ class Questions extends StatelessWidget {
   final bool enabled;
   final bool plainCodeBlocks;
   final bool outlinedFeedbackCode;
+  final String explanation;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -168,40 +171,15 @@ class Questions extends StatelessWidget {
   Widget _feedback(BuildContext context, int question) {
     final index = selected[question]!;
     final correct = questions[question].solution == index;
-    final color = correct
-        ? FccDesignColors.of(context).success
-        : Theme.of(context).colorScheme.error;
-    final feedback = questions[question].answers[index].feedback;
-    return Container(
+    final feedback = questions[question].answers[index].feedback ?? '';
+    return AnswerFeedback(
+      correct: correct,
+      html: [if (correct && explanation.isNotEmpty) explanation else feedback],
+      fallback: correct
+          ? null
+          : 'Try another answer. You can revisit the lesson for a hint.',
+      outlinedInlineCode: outlinedFeedbackCode,
       margin: const EdgeInsets.only(top: 4, bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .1),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: .3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            correct ? 'Correct!' : 'Not quite',
-            style: TextStyle(
-              color: color,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          if (feedback != null && feedback.isNotEmpty)
-            ParsedHtml(feedback, outlinedInlineCode: outlinedFeedbackCode)
-          else if (!correct)
-            const Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: Text(
-                'Try another answer. You can revisit the lesson for a hint.',
-              ),
-            ),
-        ],
-      ),
     );
   }
 }
