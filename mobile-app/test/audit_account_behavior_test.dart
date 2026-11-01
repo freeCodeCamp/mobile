@@ -23,6 +23,7 @@ import 'package:freecodecamp/settings/services/app_preferences.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_view.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -146,37 +147,14 @@ Finder _switch(String label) =>
     find.ancestor(of: find.text(label), matching: find.byType(SwitchListTile));
 
 void main() {
-  testWidgets(
-    'EF1 change photo opens the options sheet without account writes',
-    (tester) async {
-      final auth = _MemoryAuth();
-      await _pumpScreen(tester, const ProfileEditView(), auth);
-      final save = tester.widget<FilledButton>(
-        find.widgetWithText(FilledButton, 'Save'),
-      );
-      expect(save.onPressed, isNotNull);
-      await tester.tap(find.widgetWithText(OutlinedButton, 'Change photo'));
-      await tester.pumpAndSettle();
-      for (final label in [
-        'Take photo',
-        'Choose from library',
-        'Remove photo',
-      ]) {
-        final tile = tester.widget<ListTile>(
-          find.widgetWithText(ListTile, label),
-        );
-        expect(tile.enabled, isFalse);
-        expect(tile.onTap, isNull);
-      }
-      expect(
-        find.text('Photo changes are not available in the app yet.'),
-        findsOneWidget,
-      );
-      expect(auth._saves, 0);
-    },
-  );
+  testWidgets('should not show a Change photo button on Edit profile', (
+    tester,
+  ) async {
+    await _pumpScreen(tester, const ProfileEditView(), _MemoryAuth());
+    expect(find.text('Change photo'), findsNothing);
+  });
 
-  testWidgets('PV1 and PV2 save visibility immediately and announce Saved', (
+  testWidgets('should save visibility immediately and announce Saved', (
     tester,
   ) async {
     final auth = _MemoryAuth();
@@ -187,9 +165,9 @@ void main() {
     expect(find.text('Only you can see your profile.'), findsOneWidget);
     expect(
       tester
-          .widget<SegmentedButton<bool>>(find.byType(SegmentedButton<bool>))
+          .widget<SegmentedTabs<bool>>(find.byType(SegmentedTabs<bool>))
           .selected,
-      {true},
+      isTrue,
     );
     await tester.tap(find.text('Public'));
     await tester.pumpAndSettle();
@@ -197,15 +175,15 @@ void main() {
     expect(find.text('Saved'), findsOneWidget);
     expect(
       find.text(
-        'Anyone can see your profile at freecodecamp.org/audit-learner.',
+        'Anyone can see your profile at freecodecamp.org/audit-learner.',
       ),
       findsOneWidget,
     );
     expect(
       tester
-          .widget<SegmentedButton<bool>>(find.byType(SegmentedButton<bool>))
+          .widget<SegmentedTabs<bool>>(find.byType(SegmentedTabs<bool>))
           .selected,
-      {false},
+      isFalse,
     );
     await tester.tap(_switch('Name'));
     await tester.pumpAndSettle();
@@ -213,33 +191,34 @@ void main() {
     expect(tester.widget<SwitchListTile>(_switch('Name')).value, isTrue);
   });
 
-  testWidgets(
-    'PV1 failed immediate save is retryable and never announces success',
-    (tester) async {
-      final auth = _MemoryAuth().._failSave = true;
-      await _pumpScreen(tester, const ProfileVisibilityView(), auth);
-      await tester.tap(find.text('Public'));
-      await tester.pumpAndSettle();
-      expect(auth._saves, 1);
-      expect(find.text('Saved'), findsNothing);
-      expect(
-        find.text('Could not save your visibility settings. Please try again.'),
-        findsOneWidget,
-      );
-      auth._failSave = false;
-      await tester.tap(find.text('Try again'));
-      await tester.pumpAndSettle();
-      expect(auth._saves, 2);
-      expect(find.text('Saved'), findsOneWidget);
-    },
-  );
+  testWidgets('should retry a failed immediate save and not announce success', (
+    tester,
+  ) async {
+    final auth = _MemoryAuth().._failSave = true;
+    await _pumpScreen(tester, const ProfileVisibilityView(), auth);
+    await tester.tap(find.text('Public'));
+    await tester.pumpAndSettle();
+    expect(auth._saves, 1);
+    expect(find.text('Saved'), findsNothing);
+    expect(
+      find.text('Could not save your visibility settings. Please try again.'),
+      findsOneWidget,
+    );
+    auth._failSave = false;
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+    expect(auth._saves, 2);
+    expect(find.text('Saved'), findsOneWidget);
+  });
 
-  testWidgets('PRIV-N1 should not show the bottom tab bar', (tester) async {
+  testWidgets('should not show the bottom tab bar on Profile visibility', (
+    tester,
+  ) async {
     await _pumpScreen(tester, const ProfileVisibilityView(), _MemoryAuth());
     expect(find.byType(AppNavigationFooter), findsNothing);
   });
 
-  testWidgets('PV1 disables repeated changes while saving', (tester) async {
+  testWidgets('should disable repeated changes while saving', (tester) async {
     final auth = _MemoryAuth().._saveGate = Completer<void>();
     await _pumpScreen(tester, const ProfileVisibilityView(), auth);
     await tester.tap(find.text('Public'));
@@ -247,8 +226,8 @@ void main() {
     expect(auth._saves, 1);
     expect(
       tester
-          .widget<SegmentedButton<bool>>(find.byType(SegmentedButton<bool>))
-          .onSelectionChanged,
+          .widget<SegmentedTabs<bool>>(find.byType(SegmentedTabs<bool>))
+          .onSelected,
       isNull,
     );
     auth._saveGate!.complete();
@@ -256,26 +235,19 @@ void main() {
     expect(find.text('Saved'), findsOneWidget);
   });
 
-  testWidgets('ST3 exposes unavailable modes and opens profile visibility', (
+  testWidgets('should omit unavailable modes and open Profile visibility', (
     tester,
   ) async {
     final auth = _MemoryAuth();
     await _pumpScreen(tester, const SettingsView(), auth);
-    for (final label in ['Socrates mode', 'Campfire mode']) {
-      await tester.scrollUntilVisible(
-        find.text(label),
-        180,
-        scrollable: find.byType(Scrollable).first,
-      );
-      final tile = tester.widget<SwitchListTile>(_switch(label));
-      expect(tile.onChanged, isNull);
-      expect(tile.value, isFalse);
-    }
+    expect(find.text('Socrates mode'), findsNothing);
+    expect(find.text('Campfire mode'), findsNothing);
     await tester.scrollUntilVisible(
       find.text('Profile visibility'),
       180,
       scrollable: find.byType(Scrollable).first,
     );
+    expect(find.text('Private'), findsOneWidget);
     await tester.ensureVisible(find.text('Profile visibility'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Profile visibility'));
@@ -286,7 +258,7 @@ void main() {
 
   for (final brightness in Brightness.values) {
     testWidgets(
-      'Account forms and settings fit 360dp at 1.3 scale in ${brightness.name}',
+      'should fit account forms and settings in 360dp at 1.3 scale in ${brightness.name}',
       (tester) async {
         tester.view.physicalSize = const Size(360, 800);
         tester.view.devicePixelRatio = 1;
@@ -369,34 +341,37 @@ void main() {
     );
   }
 
-  testWidgets('PP2 PP3 PP4 fields use the control edge and readable counters', (
-    tester,
-  ) async {
-    final controller = TextEditingController(text: 'Hello');
-    addTearDown(controller.dispose);
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FccTheme.themeDark,
-        home: Scaffold(
-          body: ProfileFormField(
-            label: 'Description',
-            controller: controller,
-            maxLength: 288,
-            maxLines: 4,
+  testWidgets(
+    'should use the control edge and readable counters on profile fields',
+    (tester) async {
+      final controller = TextEditingController(text: 'Hello');
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: FccTheme.themeDark,
+          home: Scaffold(
+            body: ProfileFormField(
+              label: 'Description',
+              controller: controller,
+              maxLength: 288,
+              maxLines: 4,
+            ),
           ),
         ),
-      ),
-    );
-    expect(find.text('5 / 288 characters'), findsOneWidget);
-    final field = tester.widget<TextField>(find.byType(TextField));
-    expect(field.style?.letterSpacing, 0);
-    expect(
-      (field.decoration!.enabledBorder! as OutlineInputBorder).borderSide.color,
-      FccTheme.themeDark.colorScheme.outline,
-    );
-    expect(
-      tester.widget<Text>(find.text('5 / 288 characters')).style?.fontSize,
-      13,
-    );
-  });
+      );
+      expect(find.text('5 / 288 characters'), findsOneWidget);
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.style?.letterSpacing, 0);
+      expect(
+        (field.decoration!.enabledBorder! as OutlineInputBorder)
+            .borderSide
+            .color,
+        FccTheme.themeDark.colorScheme.outline,
+      );
+      expect(
+        tester.widget<Text>(find.text('5 / 288 characters')).style?.fontSize,
+        13,
+      );
+    },
+  );
 }
