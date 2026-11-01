@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/controllers/profile_editor_controller.dart';
 import 'package:freecodecamp/auth/ui/profile_edit/profile_edit_viewmodel.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
-import 'package:freecodecamp/auth/ui/widgets/profile_photo_options.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
@@ -150,19 +148,6 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
                           color: colors.onSurfaceVariant,
                         )
                       : null,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Center(
-                child: OutlinedButton.icon(
-                  style: FccTheme.compactOutlineStyle(
-                    context,
-                  ).copyWith(shape: FccTheme.focusShape(context, radius: 999)),
-                  onPressed: enabled
-                      ? () => showProfilePhotoOptions(context)
-                      : null,
-                  icon: const Icon(Icons.photo_camera_outlined, size: 18),
-                  label: const Text('Change photo'),
                 ),
               ),
               const SizedBox(height: 24),
