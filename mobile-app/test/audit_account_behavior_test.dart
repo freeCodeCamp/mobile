@@ -22,6 +22,7 @@ import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/services/app_preferences.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_view.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -232,6 +233,11 @@ void main() {
       expect(find.text('Saved'), findsOneWidget);
     },
   );
+
+  testWidgets('PRIV-N1 should not show the bottom tab bar', (tester) async {
+    await _pumpScreen(tester, const ProfileVisibilityView(), _MemoryAuth());
+    expect(find.byType(AppNavigationFooter), findsNothing);
+  });
 
   testWidgets('PV1 disables repeated changes while saving', (tester) async {
     final auth = _MemoryAuth().._saveGate = Completer<void>();

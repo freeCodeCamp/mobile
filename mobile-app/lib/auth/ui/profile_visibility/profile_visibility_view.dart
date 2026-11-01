@@ -4,7 +4,6 @@ import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/profile_visibility/profile_visibility_viewmodel.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
@@ -52,11 +51,6 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                       ? context.pop()
                       : const ProfileRoute().go(context),
           ),
-        ),
-        bottomNavigationBar: AppNavigationFooter(
-          selected: AppDestination.account,
-          beforeNavigate: () async =>
-              !(ref.read(profileVisibilityProvider)?.saving ?? false),
         ),
         body: SafeArea(
           top: false,
