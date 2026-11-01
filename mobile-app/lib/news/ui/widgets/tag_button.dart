@@ -2,61 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/news.dart';
 
+enum TagButtonVariant { listEyebrow, articleEyebrow, link }
+
 class TagButton extends StatelessWidget {
   const TagButton({
     super.key,
     required this.tagName,
     required this.tagSlug,
-    this.compact = false,
+    this.variant = TagButtonVariant.link,
   });
 
   final String tagName;
   final String tagSlug;
-  final bool compact;
-
-  static const _colors = [
-    FccColors.purple10,
-    FccColors.yellow50,
-    FccColors.blue30,
-    FccColors.green40,
-  ];
-
-  Color get _tagColor => _colors[tagSlug.hashCode.abs() % _colors.length];
+  final TagButtonVariant variant;
 
   @override
   Widget build(BuildContext context) {
+    final link = variant == TagButtonVariant.link;
+    final listEyebrow = variant == TagButtonVariant.listEyebrow;
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, compact ? 0 : 8, compact ? 6 : 8, 0),
-      child: InkWell(
-        onTap: () {
-          NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context);
-        },
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth:
-                MediaQuery.of(context).size.width * (compact ? 0.35 : 0.45),
-          ),
-          decoration: ShapeDecoration(
-            color: _tagColor,
-            shape: const StadiumBorder(),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: compact ? 2 : 4,
-              horizontal: compact ? 6 : 8,
+      padding: EdgeInsets.only(right: 6, bottom: link ? 8 : 0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * (link ? .7 : .5),
+        ),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            minimumSize: listEyebrow ? const Size(44, 0) : const Size(44, 44),
+            tapTargetSize: listEyebrow
+                ? MaterialTapTargetSize.shrinkWrap
+                : MaterialTapTargetSize.padded,
+            padding: EdgeInsets.zero,
+            textStyle: TextStyle(
+              fontFamily: listEyebrow ? 'JetBrains Mono' : 'Lato',
+              fontSize: listEyebrow
+                  ? 12
+                  : link
+                  ? 15
+                  : 14,
+              fontWeight: listEyebrow ? FontWeight.w400 : FontWeight.w700,
+              letterSpacing: 0,
+              decoration: link ? TextDecoration.underline : TextDecoration.none,
             ),
-            child: Tooltip(
-              message: '#$tagName',
-              child: Text(
-                '#$tagName',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: compact ? 11 : 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
+          ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
+          onPressed: () =>
+              NewsTagFeedRoute(tagSlug: tagSlug, $extra: tagName).push(context),
+          child: Text(
+            '#$tagName',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),

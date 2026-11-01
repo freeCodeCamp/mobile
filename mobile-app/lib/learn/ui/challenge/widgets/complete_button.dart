@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/challenge_viewmodel.dart';
@@ -15,6 +14,8 @@ class CompleteButton extends ConsumerWidget {
     required this.label,
     this.solution,
     this.enabled = true,
+    this.buttonStyle,
+    this.trailingIcon,
   });
 
   final Challenge challenge;
@@ -22,6 +23,8 @@ class CompleteButton extends ConsumerWidget {
   final String label;
   final String? solution;
   final bool enabled;
+  final ButtonStyle? buttonStyle;
+  final IconData? trailingIcon;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,17 +32,24 @@ class CompleteButton extends ConsumerWidget {
     final submit = ref.watch(provider);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (submit.hasError)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               'Your progress could not be saved. Check your connection and try again.',
-              style: TextStyle(fontSize: 16, color: FccColors.red15),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
           ),
         ChallengeButton(
           label: label,
+          style: buttonStyle,
+          trailingIcon: trailingIcon,
           loading: submit.isLoading,
           onPressed: !enabled
               ? null
@@ -59,7 +69,6 @@ class CompleteButton extends ConsumerWidget {
     final index =
         block?.challenges.indexWhere((c) => c.id == challenge.id) ?? -1;
     if (block == null || index == -1 || index == block.challenges.length - 1) {
-      // NOTE: Inside an open drawer a plain pop only closes the drawer.
       final route = ModalRoute.of(context);
       Navigator.of(context).popUntil((r) => r != route);
       return;

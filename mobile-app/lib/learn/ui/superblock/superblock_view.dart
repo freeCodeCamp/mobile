@@ -9,13 +9,16 @@ import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/exam_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 
 class SuperBlockView extends ConsumerStatefulWidget {
   const SuperBlockView({super.key, required this.dashedName});
-
   final String dashedName;
 
   @override
@@ -41,10 +44,36 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
             ?.title,
       ),
     );
-
     return Scaffold(
-      backgroundColor: FccColors.gray90,
-      appBar: AppBar(title: Text(title ?? '')),
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.learn,
+      ),
+      appBar: AppBar(
+        leadingWidth: 44,
+        titleSpacing: 0,
+        leading: IconButton(
+          tooltip: 'Back to Courses',
+          icon: Icon(
+            Icons.chevron_left,
+            color: FccDesignColors.of(context).accentText,
+          ),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              const LearnLandingRoute().go(context);
+            }
+          },
+        ),
+        title: Text(
+          'Courses',
+          style: TextStyle(
+            color: FccDesignColors.of(context).accentText,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
       body: superBlock.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => ErrorRetry(
@@ -54,15 +83,22 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
         data: (superBlock) => RefreshIndicator(
           onRefresh: () =>
               ref.refresh(provider.future).then((_) {}, onError: (_) {}),
-          backgroundColor: FccColors.gray90,
-          color: Colors.white,
           child: switch (superBlock) {
-            BlockSuperBlock(:final blocks) => _Blocks(blocks: blocks),
+            BlockSuperBlock(:final blocks) => BlockList(
+              blocks: blocks,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              header: _CourseHero(
+                title: title ?? 'Course',
+                blocks: [
+                  for (final b in blocks)
+                    if (b.label != BlockLabel.exam) b,
+                ],
+              ),
+            ),
             ChapterSuperBlock(:final chapters) => _Chapters(
+              title: title ?? 'Course',
               superBlock: widget.dashedName,
-              chapters: chapters
-                  .where((c) => !hiddenExamChapters.contains(c.dashedName))
-                  .toList(),
+              chapters: chapters,
             ),
           },
         ),
@@ -71,233 +107,561 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
   }
 }
 
-class _Empty extends StatelessWidget {
-  const _Empty();
+bool _locked(Chapter chapter) =>
+    chapter.comingSoon ||
+    (devOnlyChapters.contains(chapter.dashedName) &&
+        !(dotenv.isInitialized &&
+            dotenv.getBool('DEVELOPMENT_MODE', fallback: false)));
 
-  @override
-  Widget build(BuildContext context) {
-    // NOTE: A ListView so pull-to-refresh still works.
-    return ListView(
-      children: const [
-        Padding(
-          padding: EdgeInsets.all(64),
-          child: Center(child: Text('No blocks available right now.')),
-        ),
-      ],
-    );
-  }
-}
-
-class _Blocks extends StatelessWidget {
-  const _Blocks({required this.blocks});
-
-  final List<Block> blocks;
-
-  @override
-  Widget build(BuildContext context) {
-    if (blocks.isEmpty) return const _Empty();
-
-    return BlockList(
-      blocks: blocks,
-      padding: const EdgeInsets.fromLTRB(8, 16, 8, 32),
-    );
-  }
-}
-
-class _Chapters extends StatelessWidget {
-  const _Chapters({required this.superBlock, required this.chapters});
-
+class _Chapters extends ConsumerWidget {
+  const _Chapters({
+    required this.title,
+    required this.superBlock,
+    required this.chapters,
+  });
+  final String title;
   final String superBlock;
   final List<Chapter> chapters;
 
   @override
-  Widget build(BuildContext context) {
-    if (chapters.isEmpty) return const _Empty();
-
-    final isDev = dotenv.getBool('DEVELOPMENT_MODE', fallback: false);
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final exams = this.chapters
+        .where((c) => hiddenExamChapters.contains(c.dashedName))
+        .toList();
+    final chapters = this.chapters
+        .where((c) => !hiddenExamChapters.contains(c.dashedName))
+        .toList();
+    final completed = ref.watch(
+      authProvider.select(
+        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
+      ),
+    );
+    final available = chapters.where((c) => !_locked(c));
+    final blocks = available
+        .expand((c) => c.modules.where((m) => !m.comingSoon))
+        .expand((m) => m.blocks)
+        .toList();
+    final active = available.firstWhereOrNull(
+      (c) => c.modules
+          .where((m) => !m.comingSoon)
+          .expand((m) => m.blocks)
+          .expand((b) => b.challenges)
+          .any((ch) => !completed.contains(ch.id)),
+    );
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       children: [
-        for (final chapter in chapters)
+        _CourseHero(title: title, blocks: blocks, chapters: this.chapters),
+        if (chapters.isEmpty)
+          const Padding(
+            padding: EdgeInsets.all(24),
+            child: Text('No chapters available right now.'),
+          ),
+        for (final (index, chapter) in chapters.indexed)
           _ChapterCard(
+            key: ValueKey(chapter.dashedName),
             superBlock: superBlock,
             chapter: chapter,
-            isLocked: devOnlyChapters.contains(chapter.dashedName) && !isDev,
+            number: index + 1,
+            active: chapter == active,
+            isLocked: _locked(chapter),
           ),
+        for (final exam in exams)
+          if (exam.examBlock case final examBlock?)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: ExamCard(
+                title: 'Certification Exam',
+                locked: _locked(exam),
+                onOpen: () => openLearningWebsite(
+                  context,
+                  superBlock,
+                  block: examBlock.dashedName,
+                ),
+              ),
+            ),
       ],
     );
   }
 }
 
-class _ChapterCard extends StatelessWidget {
-  const _ChapterCard({
-    required this.superBlock,
-    required this.chapter,
-    required this.isLocked,
-  });
-
-  final String superBlock;
-  final Chapter chapter;
-  final bool isLocked;
+class _CourseHero extends ConsumerWidget {
+  const _CourseHero({required this.title, required this.blocks, this.chapters});
+  final String title;
+  final List<Block> blocks;
+  final List<Chapter>? chapters;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final completed = ref.watch(
+      authProvider.select(
+        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
+      ),
+    );
+    final available = blocks.where((b) => !b.isDisabledByOverride);
+    final challenges = available.expand((b) => b.challenges).toList();
+    final done = challenges.where((c) => completed.contains(c.id)).length;
+    final nextBlock = available.firstWhereOrNull(
+      (b) => b.challenges.any((c) => !completed.contains(c.id)),
+    );
+    final nextBlockDone =
+        nextBlock?.challenges.where((c) => completed.contains(c.id)).length ??
+        0;
     return Container(
-      padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      decoration: const BoxDecoration(
-        color: FccColors.gray85,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: FccDesignColors.of(context).hero,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              chapter.name,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          Text(
+            title.replaceFirst(
+              RegExp(r'\s+Certification$', caseSensitive: false),
+              '',
+            ),
+            style: TextStyle(
+              color: FccDesignColors.of(context).heroForeground,
+              fontSize: 26,
+              height: 1.2,
+              fontWeight: FontWeight.w900,
             ),
           ),
-          if (chapter.comingSoon || isLocked)
-            Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: const Text('Coming Soon'),
+          const SizedBox(height: 14),
+          if (chapters != null && chapters!.isNotEmpty)
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final widths = _segmentWidths([
+                  for (final chapter in chapters!) _chapterWeight(chapter),
+                ], constraints.maxWidth);
+                return Row(
+                  children: [
+                    for (final (index, chapter) in chapters!.indexed) ...[
+                      if (index > 0) const SizedBox(width: _segmentGap),
+                      SizedBox(
+                        width: widths[index],
+                        child: _ChapterProgress(
+                          chapter: chapter,
+                          completed: completed,
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            )
+          else
+            LearnProgress(
+              done: done,
+              total: challenges.length,
+              color: Colors.white,
+              backgroundColor: Colors.white.withValues(alpha: .22),
             ),
-          if (!isLocked)
-            for (final module in chapter.modules)
-              if (!module.comingSoon)
-                _ModuleButton(superBlock: superBlock, module: module),
+          if (nextBlock != null) ...[
+            const SizedBox(height: 14),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                textStyle: const TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              onPressed: () => LearnChallengeRoute(
+                superBlock: nextBlock.superBlock,
+                block: nextBlock.dashedName,
+                challengeId: nextBlock.challenges
+                    .firstWhere((c) => !completed.contains(c.id))
+                    .id,
+              ).push<void>(context),
+              icon: const Icon(Icons.arrow_forward, size: 18),
+              iconAlignment: IconAlignment.end,
+              label: Text(nextBlockDone > 0 ? 'Continue' : 'Start'),
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-class _ModuleButton extends ConsumerWidget {
-  const _ModuleButton({required this.superBlock, required this.module});
-
+class _ChapterCard extends ConsumerStatefulWidget {
+  const _ChapterCard({
+    super.key,
+    required this.superBlock,
+    required this.chapter,
+    required this.number,
+    required this.active,
+    required this.isLocked,
+  });
   final String superBlock;
-  final Module module;
+  final Chapter chapter;
+  final int number;
+  final bool active;
+  final bool isLocked;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final challenges = [for (final block in module.blocks) ...block.challenges];
-    final isSingleStep = challenges.length == 1;
-    final isReview = module.blocks.first.label == BlockLabel.review;
-    final isCertProject = module.moduleType == ModuleType.certProject;
-    final color = isReview
-        ? FccColors.orange30
-        : isCertProject
-        ? FccColors.green40
-        : FccColors.blue30;
-    final textColor = isSingleStep ? color : Colors.white;
+  ConsumerState<_ChapterCard> createState() => _ChapterCardState();
+}
 
-    final completedCount = ref.watch(
-      authProvider.select((s) {
-        final completed = {...?s.value?.completedChallenges.map((c) => c.id)};
-        return challenges.where((c) => completed.contains(c.id)).length;
-      }),
-    );
+class _ChapterCardState extends ConsumerState<_ChapterCard> {
+  bool? _expanded;
+  @override
+  Widget build(BuildContext context) {
+    final chapter = widget.chapter;
+    final active = widget.active;
+    final isLocked = widget.isLocked;
+    final number = widget.number;
+    final superBlock = widget.superBlock;
+    final expanded = _expanded ?? (active && !isLocked);
 
-    final subtitle = isCertProject
-        ? 'Certification Project'
-        : isReview
-        ? 'Review'
-        : null;
-
-    return Container(
-      margin: const EdgeInsets.all(5),
-      constraints: const BoxConstraints(minHeight: 100),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: isSingleStep ? 0.3 : 0.1),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: color.withValues(alpha: isSingleStep ? 0.5 : 0.4),
-          width: 2,
-        ),
+    final colors = Theme.of(context).colorScheme;
+    final completed = ref.watch(
+      authProvider.select(
+        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
       ),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.all(12),
-          alignment: Alignment.centerLeft,
-          minimumSize: const Size.fromHeight(100),
-          backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          overlayColor: Colors.white,
+    );
+    final modules = chapter.modules.where((m) => !m.comingSoon).toList();
+    final current = modules.firstWhereOrNull(
+      (m) => m.blocks
+          .expand((b) => b.challenges)
+          .any((c) => !completed.contains(c.id)),
+    );
+    bool moduleComplete(Module module) {
+      final challenges = module.blocks.expand((b) => b.challenges).toList();
+      return challenges.isNotEmpty &&
+          challenges.every((c) => completed.contains(c.id));
+    }
+
+    final doneModules = modules.where(moduleComplete).length;
+    final complete = modules.isNotEmpty && doneModules == modules.length;
+    final hasProgress = modules
+        .expand((m) => m.blocks)
+        .expand((b) => b.challenges)
+        .any((c) => completed.contains(c.id));
+    final design = FccDesignColors.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: colors.outlineVariant),
         ),
-        onPressed: () {
-          final block = module.blocks.first;
-          if (isSingleStep && block.challenges.isNotEmpty) {
-            LearnChallengeRoute(
-              superBlock: superBlock,
-              block: block.dashedName,
-              challengeId: block.challenges.first.id,
-            ).push<void>(context);
-          } else {
-            LearnModuleRoute(
-              superBlock: superBlock,
-              module: module.dashedName,
-            ).push<void>(context);
-          }
-        },
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    module.name,
+        child: ExpansionTile(
+          onExpansionChanged: (value) => setState(() => _expanded = value),
+          key: PageStorageKey(chapter.dashedName),
+          initiallyExpanded: active && !isLocked,
+          enabled: !isLocked,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+          shape: const Border(),
+          collapsedShape: const Border(),
+          iconColor: design.accentText,
+          collapsedIconColor: design.accentText,
+          leading: Container(
+            width: 48,
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: complete ? design.success : colors.primaryContainer,
+              borderRadius: BorderRadius.circular(14),
+              border: expanded
+                  ? Border.all(color: design.accentText, width: 1.5)
+                  : null,
+            ),
+            child: complete
+                ? Icon(
+                    Icons.check,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  )
+                : Text(
+                    '$number',
                     style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: design.accentText,
                     ),
                   ),
-                  if (subtitle != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        subtitle,
+          ),
+          title: Text(
+            chapter.name,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+          ),
+          subtitle: isLocked
+              ? Text(
+                  'Coming soon',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colors.onSurfaceVariant,
+                  ),
+                )
+              : expanded
+              ? null
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (hasProgress) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        complete
+                            ? 'Done'
+                            : '$doneModules of ${modules.length} modules',
                         style: TextStyle(
-                          color: color.withValues(alpha: 0.8),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                          fontWeight: complete
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                          color: complete
+                              ? design.success
+                              : colors.onSurfaceVariant,
                         ),
                       ),
+                    ],
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final module in modules)
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: moduleComplete(module)
+                                  ? design.success
+                                  : design.hero,
+                            ),
+                          ),
+                      ],
                     ),
-                  if (!isSingleStep && !isReview)
-                    Text(
-                      '$completedCount/${challenges.length} Steps Complete',
-                      style: const TextStyle(
-                        color: FccColors.gray15,
-                        fontSize: 18,
+                  ],
+                ),
+          children: [
+            Stack(
+              children: [
+                if (modules.length > 1)
+                  Positioned(
+                    left: 25,
+                    top: 28,
+                    bottom: 28,
+                    child: Container(width: 3, color: design.hero),
+                  ),
+                Column(
+                  children: [
+                    for (final module in modules)
+                      _ModuleButton(
+                        superBlock: superBlock,
+                        module: module,
+                        active: module == current,
                       ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              isSingleStep
-                  ? Icons.play_arrow_rounded
-                  : Icons.arrow_forward_ios_outlined,
-              size: 25,
-              color: textColor,
+                  ],
+                ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ModuleButton extends ConsumerWidget {
+  const _ModuleButton({
+    required this.superBlock,
+    required this.module,
+    required this.active,
+  });
+  final String superBlock;
+  final Module module;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).colorScheme;
+    final blocks = module.blocks;
+    final challenges = blocks.expand((b) => b.challenges).toList();
+    final completed = ref.watch(
+      authProvider.select(
+        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
+      ),
+    );
+    final done = challenges.where((c) => completed.contains(c.id)).length;
+    final complete = challenges.isNotEmpty && done == challenges.length;
+    final isReview = blocks.firstOrNull?.label == BlockLabel.review;
+    final completedBlocks = blocks
+        .where(
+          (b) =>
+              b.challenges.isNotEmpty &&
+              b.challenges.every((c) => completed.contains(c.id)),
+        )
+        .length;
+    final subtitle = module.moduleType == ModuleType.certProject
+        ? 'Certification project'
+        : active
+        ? '$completedBlocks of ${blocks.length} blocks'
+        : null;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Material(
+        color: active ? colors.primaryContainer : Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: active
+                ? FccDesignColors.of(context).accentText
+                : Colors.transparent,
+            width: active ? 1.5 : 1,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: challenges.isEmpty
+              ? null
+              : () {
+                  if (challenges.length == 1) {
+                    final block = blocks.firstWhere(
+                      (b) => b.challenges.isNotEmpty,
+                    );
+                    LearnChallengeRoute(
+                      superBlock: superBlock,
+                      block: block.dashedName,
+                      challengeId: challenges.first.id,
+                    ).push<void>(context);
+                  } else {
+                    LearnModuleRoute(
+                      superBlock: superBlock,
+                      module: module.dashedName,
+                    ).push<void>(context);
+                  }
+                },
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 60),
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                LearnStatus(
+                  complete: complete,
+                  active: active,
+                  module: true,
+                  icon: module.moduleType == ModuleType.certProject
+                      ? Icons.flag_outlined
+                      : isReview || module.moduleType == ModuleType.review
+                      ? Icons.loop
+                      : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        module.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: active
+                                ? FccDesignColors.of(context).accentText
+                                : colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                      if (active) ...[
+                        const SizedBox(height: 6),
+                        LearnProgress(
+                          done: done,
+                          total: challenges.length,
+                          backgroundColor: colors.primaryContainer,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: colors.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+const _segmentGap = 3.0;
+const _segmentMinWidth = 14.0;
+
+int _chapterWeight(Chapter chapter) {
+  final modules = chapter.modules.where((m) => !m.comingSoon).length;
+  return modules < 1 ? 1 : modules;
+}
+
+List<double> _segmentWidths(List<int> weights, double maxWidth) {
+  final available = maxWidth - _segmentGap * (weights.length - 1);
+  final pinned = <int>{};
+  var changed = true;
+  while (changed) {
+    changed = false;
+    final free = [
+      for (var i = 0; i < weights.length; i++)
+        if (!pinned.contains(i)) i,
+    ];
+    final totalWeight = free.fold<int>(0, (sum, i) => sum + weights[i]);
+    final remaining = available - _segmentMinWidth * pinned.length;
+    for (final i in free) {
+      if (remaining * weights[i] / totalWeight < _segmentMinWidth) {
+        pinned.add(i);
+        changed = true;
+      }
+    }
+  }
+  final freeWeight = [
+    for (var i = 0; i < weights.length; i++)
+      if (!pinned.contains(i)) weights[i],
+  ].fold<int>(0, (sum, w) => sum + w);
+  final remaining = available - _segmentMinWidth * pinned.length;
+  return [
+    for (var i = 0; i < weights.length; i++)
+      pinned.contains(i)
+          ? _segmentMinWidth
+          : remaining * weights[i] / freeWeight,
+  ];
+}
+
+class _ChapterProgress extends StatelessWidget {
+  const _ChapterProgress({required this.chapter, required this.completed});
+  final Chapter chapter;
+  final Set<String> completed;
+  @override
+  Widget build(BuildContext context) {
+    final challenges = chapter.modules
+        .expand((m) => m.blocks)
+        .expand((b) => b.challenges)
+        .toList();
+    final done = challenges.where((c) => completed.contains(c.id)).length;
+    return LinearProgressIndicator(
+      value: challenges.isEmpty ? 0 : done / challenges.length,
+      minHeight: 10,
+      borderRadius: BorderRadius.circular(5),
+      color: Colors.white,
+      backgroundColor: Colors.white.withValues(alpha: .22),
+      semanticsLabel: '${chapter.name}: $done of ${challenges.length} complete',
     );
   }
 }

@@ -59,13 +59,13 @@ class _SceneFullscreenViewState extends State<SceneFullscreenView> {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
                 tooltip: 'Exit fullscreen',
-                icon: const Icon(
+                icon: Icon(
                   Icons.fullscreen_exit,
-                  color: FccColors.gray00,
+                  color: FccDesignColors.of(context).heroForeground,
                   size: 32,
                 ),
                 onPressed: () => context.pop(),

@@ -1,73 +1,567 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
+import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/routing/auth.dart';
+import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/settings/services/app_preferences.dart';
+import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
+import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
-import 'package:freecodecamp/widgets/drawer/drawer.dart';
-import 'package:freecodecamp/widgets/section_divider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
 
-class SettingsView extends ConsumerWidget {
+class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
 
-  Future<void> _confirmResetCache(BuildContext context) async {
-    final confirmed = await showConfirmDialog(
-      context,
-      title: 'Reset Cache',
-      description: 'Clears all local data and progress',
-      confirmLabel: 'Clear',
-    );
+  @override
+  ConsumerState<SettingsView> createState() => _SettingsViewState();
+}
 
-    if (!confirmed) return;
+class _SettingsViewState extends ConsumerState<SettingsView> {
+  bool _busy = false;
+  bool _savingReminder = false;
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+  void _message(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Cache cleared')));
+  Future<void> _change(
+    Future<void> Function() action, {
+    bool isReminder = false,
+  }) async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _savingReminder = isReminder;
+    });
+    try {
+      await action();
+    } on ReminderPermissionDenied {
+      _message(
+        'Allow notifications in your device settings to enable reminders.',
+      );
+    } catch (_) {
+      _message('Could not save this change. Please try again.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _savingReminder = false;
+        });
+      }
     }
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
+  Future<void> _confirmReset() async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Reset app data?',
+      description:
+          'Remove downloaded episodes, saved articles, listening history, settings and reminders from this device, and sign out. Your freeCodeCamp account and online learning progress will be kept.',
+      confirmLabel: 'Reset app data',
+      destructive: true,
+    );
+    if (!confirmed || !mounted || _busy) return;
+    setState(() => _busy = true);
+    try {
+      await ref.read(localDataResetServiceProvider).reset();
+      _message('Local app data cleared. Your online progress is safe.');
+    } on DownloadsInProgress {
+      _message('Finish or cancel your episode downloads before resetting.');
+    } catch (_) {
+      _message('Some local data could not be cleared. Please try again.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('SETTINGS')),
-      drawer: const DrawerWidget(),
-      body: Column(
+  Future<void> _confirmLogOut() async {
+    if (_busy) return;
+    final confirmed = await showLogOutDialog(context);
+    if (!confirmed || !mounted || _busy) return;
+    await _change(() => ref.read(authProvider.notifier).signOut());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = ref.watch(authProvider);
+    final preferences = ref.watch(appPreferencesProvider);
+    final storage = ref.watch(downloadedStorageBytesProvider);
+    final version = ref.watch(appVersionProvider);
+    final colors = Theme.of(context).colorScheme;
+    final current = preferences.value;
+    return PopScope(
+      canPop: !_busy,
+      child: Stack(
         children: [
-          if (isLoggedIn) ...[
-            ListTile(
-              leading: const Icon(Icons.delete_forever),
-              title: const Text('Delete Account'),
-              subtitle: const Text('Delete your freeCodeCamp account'),
-              onTap: () =>
-                  const SettingsDeleteAccountRoute().push<void>(context),
+          Scaffold(
+            appBar: AppBar(
+              title: const Text('Settings'),
+              leading: BackButton(
+                onPressed: _busy
+                    ? null
+                    : () => context.canPop()
+                          ? context.pop()
+                          : const AccountRoute().go(context),
+              ),
             ),
-            sectionDivider,
+            body: SafeArea(
+              top: false,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 640),
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                    children: [
+                      _Group(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  'Theme',
+                                  style: Theme.of(context).textTheme.bodyLarge
+                                      ?.copyWith(fontWeight: FontWeight.w700),
+                                ),
+                                const SizedBox(height: 8),
+                                if (preferences.isLoading)
+                                  const LinearProgressIndicator()
+                                else if (preferences.hasError)
+                                  TextButton.icon(
+                                    onPressed: () => ref.invalidate(
+                                      settingsPreferencesStoreProvider,
+                                    ),
+                                    icon: const Icon(Icons.refresh),
+                                    label: const Text(
+                                      'Could not load settings. Retry',
+                                    ),
+                                  )
+                                else
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: colors.surface,
+                                      border: Border.all(
+                                        color: colors.outlineVariant,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        final largeText =
+                                            MediaQuery.textScalerOf(
+                                              context,
+                                            ).scale(14) >
+                                            20;
+                                        final buttons = [
+                                          for (final mode in ThemeMode.values)
+                                            _ThemeChoice(
+                                              mode: mode,
+                                              selected:
+                                                  current!.themeMode == mode,
+                                              onPressed: () => _change(
+                                                () => ref
+                                                    .read(
+                                                      appPreferencesProvider
+                                                          .notifier,
+                                                    )
+                                                    .setTheme(mode),
+                                              ),
+                                            ),
+                                        ];
+                                        return largeText &&
+                                                constraints.maxWidth < 400
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  for (final (index, button)
+                                                      in buttons.indexed) ...[
+                                                    if (index > 0)
+                                                      const SizedBox(height: 4),
+                                                    button,
+                                                  ],
+                                                ],
+                                              )
+                                            : Row(
+                                                children: [
+                                                  for (final (index, button)
+                                                      in buttons.indexed) ...[
+                                                    if (index > 0)
+                                                      const SizedBox(width: 4),
+                                                    Expanded(child: button),
+                                                  ],
+                                                ],
+                                              );
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      _Group(
+                        title: 'Learning',
+                        children: [
+                          SwitchListTile.adaptive(
+                            minTileHeight: 76,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                            title: Text(
+                              'Daily challenge reminder',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    height: 1.35,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                            subtitle: Text(
+                              'A nudge when a new challenge is out',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            value: current?.dailyReminder ?? false,
+                            onChanged:
+                                current == null || (_busy && !_savingReminder)
+                                ? null
+                                : (enabled) => _change(
+                                    () => ref
+                                        .read(appPreferencesProvider.notifier)
+                                        .setDailyReminder(enabled),
+                                    isReminder: true,
+                                  ),
+                          ),
+                          const _SettingsTile(
+                            title: 'Language',
+                            trailingLabel: 'English',
+                          ),
+                        ],
+                      ),
+                      _Group(
+                        title: 'Privacy',
+                        children: [
+                          _SettingsTile(
+                            title: 'Profile visibility',
+                            subtitle: auth.isLoggedIn
+                                ? 'Choose who sees your profile and what it shows'
+                                : 'Sign in to manage profile visibility',
+                            trailingLabel: auth.value == null
+                                ? null
+                                : auth.value!.profileUI.isLocked
+                                ? 'Private'
+                                : 'Public',
+                            onTap: () => auth.isLoggedIn
+                                ? const ProfileVisibilityRoute().push<void>(
+                                    context,
+                                  )
+                                : const LoginRoute().push<void>(context),
+                          ),
+                        ],
+                      ),
+                      _Group(
+                        title: 'Storage',
+                        children: [
+                          _SettingsTile(
+                            title: 'Downloaded episodes',
+                            subtitle: storage.when(
+                              data: (bytes) =>
+                                  '${formatStorageBytes(bytes)} on this device',
+                              loading: () => 'Calculating storage…',
+                              error: (_, _) => 'Manage episodes on this device',
+                            ),
+                            onTap: () async {
+                              await const PodcastDownloadsRoute().push<void>(
+                                context,
+                              );
+                              if (mounted) {
+                                ref.invalidate(downloadedStorageBytesProvider);
+                              }
+                            },
+                          ),
+                          _SettingsTile(
+                            title: 'Reset app data',
+                            subtitle: 'Clears all local data and progress',
+                            destructive: true,
+                            onTap: _confirmReset,
+                          ),
+                        ],
+                      ),
+                      _Group(
+                        title: 'About',
+                        children: [
+                          _SettingsTile(
+                            title: 'Privacy Policy',
+                            external: true,
+                            onTap: () => openInCustomTab(
+                              'https://www.freecodecamp.org/news/privacy-policy/',
+                            ),
+                          ),
+                          _SettingsTile(
+                            title: 'Terms of Service',
+                            external: true,
+                            onTap: () => openInCustomTab(
+                              'https://www.freecodecamp.org/news/terms-of-service/',
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (!auth.isLoading && !auth.hasError)
+                        _Group(
+                          title: 'Account',
+                          children: auth.isLoggedIn
+                              ? [
+                                  _SettingsTile(
+                                    title: 'Log out',
+                                    onTap: _confirmLogOut,
+                                  ),
+                                  _SettingsTile(
+                                    title: 'Delete account',
+                                    destructive: true,
+                                    onTap: () =>
+                                        const SettingsDeleteAccountRoute()
+                                            .push<void>(context),
+                                  ),
+                                ]
+                              : [
+                                  _SettingsTile(
+                                    title: 'Sign in',
+                                    onTap: () =>
+                                        const LoginRoute().push<void>(context),
+                                  ),
+                                ],
+                        ),
+                      version.when(
+                        data: (info) => Text(
+                          'Version ${info.version}${info.buildNumber.isEmpty ? '' : ' (${info.buildNumber})'}',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colors.onSurfaceVariant),
+                        ),
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, _) => TextButton(
+                          onPressed: () => ref.invalidate(appVersionProvider),
+                          child: const Text('Retry version information'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (_busy) ...[
+            ModalBarrier(
+              dismissible: false,
+              color: _savingReminder ? Colors.transparent : Colors.black26,
+            ),
+            if (_savingReminder)
+              Semantics(
+                liveRegion: true,
+                label: 'Saving reminder',
+                child: const SizedBox.shrink(),
+              )
+            else
+              const Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: 'Updating settings',
+                ),
+              ),
           ],
-          ListTile(
-            leading: const Icon(Icons.dataset_linked),
-            title: const Text('Reset Cache'),
-            subtitle: const Text('Clears all local data and progress'),
-            onTap: () => _confirmResetCache(context),
-          ),
-          sectionDivider,
-          ListTile(
-            leading: const Icon(Icons.privacy_tip),
-            title: const Text('Privacy Policy'),
-            subtitle: const Text('Read our privacy policy'),
-            onTap: () => openInCustomTab(
-              'https://www.freecodecamp.org/news/privacy-policy/',
-            ),
-          ),
-          sectionDivider,
         ],
       ),
     );
   }
+}
+
+String formatStorageBytes(int bytes) {
+  if (bytes < 1024) return '$bytes B';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  if (bytes < 1024 * 1024 * 1024) {
+    return '${(bytes / 1024 / 1024).toStringAsFixed(1)} MB';
+  }
+  return '${(bytes / 1024 / 1024 / 1024).toStringAsFixed(1)} GB';
+}
+
+class _ThemeChoice extends StatelessWidget {
+  const _ThemeChoice({
+    required this.mode,
+    required this.selected,
+    required this.onPressed,
+  });
+  final ThemeMode mode;
+  final bool selected;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Semantics(
+      selected: selected,
+      child: OutlinedButton(
+        style:
+            OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+              backgroundColor: selected
+                  ? colors.primaryContainer
+                  : Colors.transparent,
+              foregroundColor: selected
+                  ? colors.onSurface
+                  : colors.onSurfaceVariant,
+              textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: 15,
+                fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+              ),
+              side: selected
+                  ? BorderSide(
+                      color: FccDesignColors.of(context).accentText,
+                      width: 1.5,
+                    )
+                  : BorderSide.none,
+            ).copyWith(
+              shape: FccTheme.focusShape(context),
+              foregroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? colors.outline
+                    : selected
+                    ? colors.onSurface
+                    : colors.onSurfaceVariant,
+              ),
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? colors.surfaceContainer
+                    : selected || states.contains(WidgetState.pressed)
+                    ? colors.primaryContainer
+                    : Colors.transparent,
+              ),
+              side: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.disabled)
+                    ? BorderSide.none
+                    : selected
+                    ? BorderSide(
+                        color: FccDesignColors.of(context).accentText,
+                        width: 1.5,
+                      )
+                    : BorderSide.none,
+              ),
+            ),
+        onPressed: onPressed,
+        child: Text(switch (mode) {
+          ThemeMode.system => 'System',
+          ThemeMode.light => 'Light',
+          ThemeMode.dark => 'Dark',
+        }),
+      ),
+    );
+  }
+}
+
+class _Group extends StatelessWidget {
+  const _Group({this.title, required this.children});
+  final String? title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 22),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title case final title?) ...[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        Card(
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              for (final (i, child) in children.indexed) ...[
+                if (i > 0) const Divider(),
+                child,
+              ],
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _SettingsTile extends StatelessWidget {
+  const _SettingsTile({
+    required this.title,
+    this.onTap,
+    this.subtitle,
+    this.trailingLabel,
+    this.destructive = false,
+    this.external = false,
+  });
+  final String title;
+  final String? subtitle;
+  final String? trailingLabel;
+  final VoidCallback? onTap;
+  final bool destructive;
+  final bool external;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    minTileHeight: 76,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+    title: Text(
+      title,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        height: 1.35,
+        fontWeight: FontWeight.w700,
+        color: destructive ? Theme.of(context).colorScheme.error : null,
+      ),
+    ),
+    subtitle: subtitle == null
+        ? null
+        : Text(
+            subtitle!,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontSize: 13),
+          ),
+    trailing: trailingLabel == null && onTap == null
+        ? null
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (trailingLabel != null)
+                Text(
+                  trailingLabel!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              if (onTap != null) ...[
+                if (trailingLabel != null) const SizedBox(width: 4),
+                Icon(
+                  external ? Icons.open_in_new : Icons.chevron_right,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ],
+          ),
+    onTap: onTap,
+  );
 }

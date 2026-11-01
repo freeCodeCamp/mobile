@@ -17,6 +17,7 @@ import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/services/notification_service.dart';
 import 'package:freecodecamp/services/remote_config_service.dart';
+import 'package:freecodecamp/settings/services/app_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:upgrader/upgrader.dart';
 
@@ -120,7 +121,14 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp.router(
       routerConfig: router,
       title: 'freeCodeCamp',
-      theme: FccTheme.themeDark,
+      debugShowCheckedModeBanner: false,
+      theme: FccTheme.themeLight,
+      darkTheme: FccTheme.themeDark,
+      themeMode: ref.watch(
+        appPreferencesProvider.select(
+          (preferences) => preferences.value?.themeMode ?? ThemeMode.system,
+        ),
+      ),
       builder: (context, child) => UpgradeAlert(
         navigatorKey: router.routerDelegate.navigatorKey,
         dialogStyle: Platform.isIOS

@@ -1,0 +1,171 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/auth/ui/profile_project/profile_project_viewmodel.dart';
+import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
+import 'package:freecodecamp/fcc_theme.dart';
+
+class ProfileProjectView extends ConsumerStatefulWidget {
+  const ProfileProjectView({super.key, this.projectId});
+
+  final String? projectId;
+
+  @override
+  ConsumerState<ProfileProjectView> createState() => _ProfileProjectViewState();
+}
+
+class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
+  final _formKey = GlobalKey<ProfileFormScaffoldState>();
+  late final TextEditingController _title;
+  late final TextEditingController _url;
+  late final TextEditingController _description;
+
+  @override
+  void initState() {
+    super.initState();
+    final project = ref.read(profileProjectProvider(widget.projectId))?.draft;
+    _title = TextEditingController(text: project?.title ?? '');
+    _url = TextEditingController(text: project?.url ?? '');
+    _description = TextEditingController(text: project?.description ?? '');
+  }
+
+  @override
+  void dispose() {
+    _title.dispose();
+    _url.dispose();
+    _description.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (ref.read(profileProjectProvider(widget.projectId).notifier).save()) {
+      await _formKey.currentState?.close();
+    }
+  }
+
+  Future<void> _delete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete project?'),
+        content: const Text(
+          'This project will be removed when you save your profile.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FccTheme.dangerStyle(context).copyWith(
+              textStyle: const WidgetStatePropertyAll(
+                TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete project'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || confirmed != true) return;
+    if (ref.read(profileProjectProvider(widget.projectId).notifier).delete()) {
+      await _formKey.currentState?.close();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final form = ref.watch(profileProjectProvider(widget.projectId));
+    final notifier = ref.read(
+      profileProjectProvider(widget.projectId).notifier,
+    );
+    final available = form != null && form.available;
+    final image = form?.draft.image?.trim() ?? '';
+    return ProfileFormScaffold(
+      key: _formKey,
+      title: widget.projectId == null ? 'Add project' : 'Edit project',
+      isDirty: form?.isDirty ?? false,
+      navigationDirty: form?.navigationDirty ?? false,
+      saving: form?.saving ?? false,
+      onSave: available ? _save : null,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (!available)
+            const ProfileFormError(
+              message:
+                  'This project is unavailable. Return to Edit profile to try again.',
+            )
+          else ...[
+            if (form.errors['form'] case final message?)
+              ProfileFormError(
+                message: message,
+                onDismiss: notifier.dismissError,
+              ),
+            if (image.isNotEmpty) ...[
+              Text(
+                'Project image',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.contain,
+                  errorWidget: (_, _, _) => const SizedBox(
+                    height: 180,
+                    child: Center(child: Icon(Icons.broken_image_outlined)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+            ],
+            ProfileFormField(
+              label: 'Project title',
+              hintText: 'e.g. Weather dashboard',
+              controller: _title,
+              errorText: form.errors['title'],
+              enabled: !form.saving,
+              onChanged: (value) => notifier.update(title: value),
+            ),
+            ProfileFormField(
+              label: 'Link',
+              hintText: 'https://example.com',
+              controller: _url,
+              keyboardType: TextInputType.url,
+              errorText: form.errors['url'],
+              enabled: !form.saving,
+              onChanged: (value) => notifier.update(url: value),
+            ),
+            ProfileFormField(
+              label: 'Description',
+              hintText: 'What it does and what you used to build it',
+              controller: _description,
+              maxLength: 500,
+              maxLines: 4,
+              errorText: form.errors['description'],
+              enabled: !form.saving,
+              onChanged: (value) => notifier.update(description: value),
+            ),
+            if (widget.projectId != null) ...[
+              OutlinedButton.icon(
+                onPressed: form.saving ? null : _delete,
+                style: FccTheme.dangerOutlineStyle(context),
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Delete project'),
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+}

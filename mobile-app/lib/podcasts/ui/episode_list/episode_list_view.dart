@@ -1,18 +1,21 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
-import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
+import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 import 'package:freecodecamp/podcasts/ui/episode_list/episode_list_viewmodel.dart';
+import 'package:freecodecamp/podcasts/ui/widgets/episode_play_button.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/episode_tile.dart';
+import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
+import 'package:freecodecamp/podcasts/ui/widgets/podcast_format.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:freecodecamp/widgets/mini_player.dart';
 
 class PodcastEpisodeListView extends ConsumerStatefulWidget {
   const PodcastEpisodeListView({super.key, required this.source});
-
   final PodcastEpisodeSource source;
 
   @override
@@ -23,7 +26,9 @@ class PodcastEpisodeListView extends ConsumerStatefulWidget {
 class _PodcastEpisodeListViewState
     extends ConsumerState<PodcastEpisodeListView> {
   final _scrollController = ScrollController();
-  bool _showFullDescription = false;
+  bool _oldestFirst = false;
+  bool _loadingOlder = false;
+  int _sortGeneration = 0;
 
   PodcastEpisodesNotifierProvider get _provider =>
       podcastEpisodesProvider(widget.source);
@@ -36,225 +41,408 @@ class _PodcastEpisodeListViewState
 
   @override
   void dispose() {
+    _sortGeneration++;
     _scrollController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 1000) {
+    if (!_oldestFirst && _scrollController.position.extentAfter < 1000) {
       ref.read(_provider.notifier).fetchNextPage();
     }
   }
 
+  // The feed endpoint returns newest-first pages. Wait for the complete list
+  // before displaying oldest-first, rather than incorrectly reversing page one.
+  Future<void> _loadOlder({bool retry = false}) async {
+    if (_loadingOlder || !_oldestFirst) return;
+    final initial = ref.read(_provider).value;
+    if (initial == null || initial.isLoadingMore || !initial.hasNextPage) {
+      return;
+    }
+    if (initial.loadMoreError != null && !retry) return;
+    _loadingOlder = true;
+    final generation = _sortGeneration;
+    try {
+      while (mounted && _oldestFirst && generation == _sortGeneration) {
+        final current = ref.read(_provider).value;
+        if (current == null || !current.hasNextPage || current.isLoadingMore) {
+          break;
+        }
+        if (current.loadMoreError != null && !retry) break;
+        await ref.read(_provider.notifier).fetchNextPage(isRetry: retry);
+        retry = false;
+      }
+    } finally {
+      _loadingOlder = false;
+      if (mounted && _oldestFirst && generation != _sortGeneration) {
+        unawaited(_loadOlder());
+      }
+    }
+  }
+
+  Future<void> _sort() async {
+    final oldest = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: false,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final colors = Theme.of(context).colorScheme;
+        final accentText = FccDesignColors.of(context).accentText;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.outlineVariant,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Sort episodes',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 16),
+                for (final value in [false, true]) ...[
+                  Material(
+                    color: _oldestFirst == value
+                        ? colors.primaryContainer
+                        : Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: _oldestFirst == value
+                            ? accentText
+                            : colors.outline,
+                        width: _oldestFirst == value ? 1.5 : 1,
+                      ),
+                    ),
+                    child: InkWell(
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      onTap: () => Navigator.of(context).pop(value),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 56),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  value ? 'Oldest first' : 'Newest first',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: _oldestFirst == value
+                                        ? FontWeight.w900
+                                        : FontWeight.w700,
+                                    color: colors.onSurface,
+                                  ),
+                                ),
+                              ),
+                              if (_oldestFirst == value)
+                                Icon(
+                                  Icons.check_rounded,
+                                  size: 20,
+                                  color: accentText,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (!value) const SizedBox(height: 12),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (oldest == null || !mounted || oldest == _oldestFirst) return;
+    setState(() {
+      _oldestFirst = oldest;
+      _sortGeneration++;
+    });
+    if (_scrollController.hasClients) _scrollController.jumpTo(0);
+    if (oldest) unawaited(_loadOlder());
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final episodes = ref.watch(_provider);
+    ref.listen(_provider, (_, next) {
+      final state = next.value;
+      if (_oldestFirst &&
+          state != null &&
+          !state.isLoadingMore &&
+          state.loadMoreError == null &&
+          state.hasNextPage) {
+        unawaited(_loadOlder());
+      }
+    });
 
     return Scaffold(
-      backgroundColor: FccColors.gray90,
-      appBar: AppBar(title: Text(episodes.value?.podcast.title ?? '')),
+      appBar: AppBar(
+        title: const Text('Podcast'),
+        backgroundColor: colors.surfaceContainerLow,
+      ),
+      bottomNavigationBar: const Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          MiniPlayer(),
+          AppBottomNavigation(selected: AppDestination.listen),
+        ],
+      ),
       body: episodes.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => ErrorRetry(
           message: 'Unable to load episodes.',
           onRetry: () => ref.invalidate(_provider),
         ),
-        data: (state) => RefreshIndicator(
-          onRefresh: () =>
-              ref.refresh(_provider.future).then((_) {}, onError: (_) {}),
-          backgroundColor: FccColors.gray90,
-          color: Colors.white,
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    _Header(podcast: state.podcast, source: widget.source),
-                    _Description(
-                      description: state.podcast.description,
-                      isExpanded: _showFullDescription,
-                      onToggle: () => setState(
-                        () => _showFullDescription = !_showFullDescription,
+        data: (state) {
+          final ordered = [...state.episodes]
+            ..sort((a, b) {
+              final comparison = (a.publicationDate ?? DateTime(0)).compareTo(
+                b.publicationDate ?? DateTime(0),
+              );
+              return _oldestFirst ? comparison : -comparison;
+            });
+          final newest = [...state.episodes]
+            ..sort(
+              (a, b) => (b.publicationDate ?? DateTime(0)).compareTo(
+                a.publicationDate ?? DateTime(0),
+              ),
+            );
+          final waitingForOldest = _oldestFirst && state.hasNextPage;
+          return RefreshIndicator(
+            onRefresh: () async {
+              _sortGeneration++;
+              await ref
+                  .refresh(_provider.future)
+                  .then<void>((_) {}, onError: (_) {});
+              if (mounted && _oldestFirst) unawaited(_loadOlder());
+            },
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: _Header(
+                    podcast: state.podcast,
+                    latest: newest.firstOrNull,
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.source is DownloadedEpisodes
+                                    ? 'Downloaded episodes'
+                                    : 'Episodes',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: _sort,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _oldestFirst
+                                        ? 'Oldest first'
+                                        : 'Newest first',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(
+                                    Icons.expand_more_rounded,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(height: 1, color: colors.outlineVariant),
+                      ],
+                    ),
+                  ),
+                ),
+                if (waitingForOldest)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: state.loadMoreError != null
+                          ? ErrorRetry(
+                              margin: EdgeInsets.zero,
+                              message: 'Unable to load older episodes.',
+                              onRetry: () => _loadOlder(retry: true),
+                            )
+                          : Column(
+                              children: [
+                                const CircularProgressIndicator(),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Loading older episodes…',
+                                  style: TextStyle(
+                                    color: colors.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  )
+                else if (ordered.isEmpty)
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(child: Text('No episodes available.')),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverList.separated(
+                      itemCount: ordered.length,
+                      separatorBuilder: (_, _) =>
+                          Divider(height: 1, color: colors.outlineVariant),
+                      itemBuilder: (context, index) => PodcastEpisodeTile(
+                        key: ValueKey(ordered[index].id),
+                        podcast: state.podcast,
+                        episode: ordered[index],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              if (state.episodes.isEmpty)
-                const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(child: Text('No episodes')),
-                )
-              else
-                _buildList(state),
-            ],
-          ),
-        ),
+                  ),
+                if (!waitingForOldest && state.loadMoreError != null)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: ErrorRetry(
+                        message: 'Unable to load more episodes.',
+                        onRetry: () => ref
+                            .read(_provider.notifier)
+                            .fetchNextPage(isRetry: true),
+                      ),
+                    ),
+                  ),
+                if (!waitingForOldest && state.isLoadingMore)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ),
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              ],
+            ),
+          );
+        },
       ),
     );
-  }
-
-  Widget _buildList(PodcastEpisodesState state) {
-    final footer = _buildFooter(state);
-
-    return SliverList.separated(
-      itemCount: state.episodes.length + (footer == null ? 0 : 1),
-      separatorBuilder: (_, _) =>
-          const Divider(color: FccColors.gray80, thickness: 1, height: 1),
-      itemBuilder: (context, index) => index == state.episodes.length
-          ? footer
-          : PodcastEpisodeTile(
-              key: ValueKey(state.episodes[index].id),
-              podcast: state.podcast,
-              episode: state.episodes[index],
-            ),
-    );
-  }
-
-  Widget? _buildFooter(PodcastEpisodesState state) {
-    if (state.loadMoreError != null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: ErrorRetry(
-          message: 'Unable to load more episodes.',
-          onRetry: () =>
-              ref.read(_provider.notifier).fetchNextPage(isRetry: true),
-        ),
-      );
-    }
-
-    if (state.isLoadingMore) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    return null;
   }
 }
 
 class _Header extends ConsumerWidget {
-  const _Header({required this.podcast, required this.source});
-
+  const _Header({required this.podcast, required this.latest});
   final Podcast podcast;
-  final PodcastEpisodeSource source;
+  final Episode? latest;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Stack(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: AspectRatio(aspectRatio: 1, child: _artwork(ref)),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.75),
-                  spreadRadius: 1.5,
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: Text(
-              podcast.title,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 24,
-                height: 1.2,
-                overflow: TextOverflow.ellipsis,
-              ),
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(22, 0, 22, 22),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(26)),
+      ),
+      child: Column(
+        children: [
+          PodcastArtwork(podcast: podcast, size: 168, radius: 20),
+          const SizedBox(height: 18),
+          Text(
+            podcast.title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              height: 1.2,
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _artwork(WidgetRef ref) {
-    if (source is DownloadedEpisodes) {
-      final artwork = ref.watch(
-        podcastLibraryProvider.select(
-          (state) => state.value?.artworkByPodcastId[podcast.id],
-        ),
-      );
-
-      if (artwork != null) return Image.file(artwork, fit: BoxFit.cover);
-    }
-
-    if (podcast.imageLink.isEmpty) {
-      return const ColoredBox(color: FccColors.gray80);
-    }
-
-    return CachedNetworkImage(imageUrl: podcast.imageLink, fit: BoxFit.cover);
-  }
-}
-
-class _Description extends StatelessWidget {
-  const _Description({
-    required this.description,
-    required this.isExpanded,
-    required this.onToggle,
-  });
-
-  final String description;
-  final bool isExpanded;
-  final VoidCallback onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    if (description.isEmpty) return const SizedBox.shrink();
-
-    return ColoredBox(
-      color: FccColors.gray90,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Description',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                height: 1.2,
-              ),
-            ),
-            Html(
-              data: description,
-              onLinkTap: (url, _, _) {
-                if (url != null) launchUrl(Uri.parse(url));
-              },
-              style: {
-                '#': Style(
-                  fontSize: FontSize(16),
-                  color: Colors.white.withValues(alpha: 0.87),
-                  margin: Margins.zero,
-                  maxLines: isExpanded ? null : 3,
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                  textStyle: const TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 12,
+                  ),
                 ),
-              },
-            ),
-            TextButton(
-              onPressed: onToggle,
-              style: TextButton.styleFrom(
-                shape: const RoundedRectangleBorder(),
+                onPressed: latest == null
+                    ? null
+                    : () =>
+                          togglePodcastEpisode(context, ref, podcast, latest!),
+                icon: const Icon(Icons.play_arrow_rounded, size: 19),
+                label: const Text('Play latest'),
               ),
-              child: Text(
-                isExpanded ? 'Show less' : 'Show more',
-                style: const TextStyle(fontSize: 16),
+              const SizedBox(width: 8),
+              Builder(
+                builder: (buttonContext) => IconButton.filled(
+                  tooltip: 'Share podcast',
+                  style:
+                      FccTheme.surfaceButtonStyle(
+                        context,
+                        fill: Colors.transparent,
+                        compact: true,
+                      ).copyWith(
+                        minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+                      ),
+                  onPressed: () => sharePodcast(
+                    buttonContext,
+                    podcast.title,
+                    podcast.podcastLink.isEmpty
+                        ? podcast.feedUrl
+                        : podcast.podcastLink,
+                  ),
+                  icon: const Icon(Icons.ios_share_rounded, size: 20),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

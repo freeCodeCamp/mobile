@@ -9,35 +9,49 @@ part of 'profile_viewmodel.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(profileRefresh)
-final profileRefreshProvider = ProfileRefreshProvider._();
+@ProviderFor(profileStreak)
+final profileStreakProvider = ProfileStreakProvider._();
 
-final class ProfileRefreshProvider
-    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
-    with $FutureModifier<void>, $FutureProvider<void> {
-  ProfileRefreshProvider._()
+final class ProfileStreakProvider
+    extends
+        $FunctionalProvider<
+          ({int current, int longest}),
+          ({int current, int longest}),
+          ({int current, int longest})
+        >
+    with $Provider<({int current, int longest})> {
+  ProfileStreakProvider._()
     : super(
         from: null,
         argument: null,
-        retry: noRetry,
-        name: r'profileRefreshProvider',
+        retry: null,
+        name: r'profileStreakProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$profileRefreshHash();
+  String debugGetCreateSourceHash() => _$profileStreakHash();
 
   @$internal
   @override
-  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $ProviderElement<({int current, int longest})> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  FutureOr<void> create(Ref ref) {
-    return profileRefresh(ref);
+  ({int current, int longest}) create(Ref ref) {
+    return profileStreak(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({int current, int longest}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<({int current, int longest})>(value),
+    );
   }
 }
 
-String _$profileRefreshHash() => r'8bd67e16ba253230e44e0de68638fd49409f1e4c';
+String _$profileStreakHash() => r'24ac10a7e8e78c1d4e6fb034773dbd88c01c78f1';

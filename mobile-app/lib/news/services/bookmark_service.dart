@@ -9,6 +9,8 @@ const _idKey = 'articleId';
 const _titleKey = 'articleTitle';
 const _authorKey = 'authorName';
 const _textKey = 'articleText';
+const _coverKey = 'coverImageUrl';
+const _savedAtKey = 'savedAt';
 
 @riverpod
 NewsBookmarkService newsBookmarkService(Ref ref) {
@@ -20,6 +22,7 @@ class NewsBookmarkService {
   final NewsBookmarkRepository _repo;
 
   NewsBookmarkService(this._repo);
+  int get resetGeneration => _repo.resetGeneration;
 
   Future<List<BookmarkedPost>> getBookmarks() async {
     final raw = await _repo.readBookmarks();
@@ -35,7 +38,7 @@ class NewsBookmarkService {
     return _repo.updateBookmarks(
       (current) => List<BookmarkEntry>.from(current)
         ..removeWhere((entry) => entry[_idKey] == post.id)
-        ..add(_toEntry(post)),
+        ..add(_toEntry(post.copyWith(savedAt: post.savedAt ?? DateTime.now()))),
     );
   }
 
@@ -52,6 +55,9 @@ class NewsBookmarkService {
     _titleKey: post.title,
     _authorKey: post.authorName,
     _textKey: post.text,
+    _coverKey: ?post.coverImageUrl,
+    if (post.savedAt case final savedAt?)
+      _savedAtKey: savedAt.toUtc().toIso8601String(),
   };
 
   BookmarkedPost _fromEntry(BookmarkEntry entry) => switch (entry) {
@@ -61,7 +67,14 @@ class NewsBookmarkService {
       _authorKey: final String authorName,
       _textKey: final String text,
     } =>
-      BookmarkedPost(id: id, title: title, authorName: authorName, text: text),
+      BookmarkedPost(
+        id: id,
+        title: title,
+        authorName: authorName,
+        text: text,
+        coverImageUrl: entry[_coverKey],
+        savedAt: DateTime.tryParse(entry[_savedAtKey] ?? ''),
+      ),
     _ => throw FormatException('Malformed bookmark entry: $entry'),
   };
 }

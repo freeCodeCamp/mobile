@@ -53,7 +53,7 @@ final class PodcastEpisodesNotifierProvider
 }
 
 String _$podcastEpisodesNotifierHash() =>
-    r'74e02ef2905e26c0bdcfca2a69a8e2d7fc132f94';
+    r'a999c9ff9cfd9f4f0dd710fd8be658f4bdb1f775';
 
 final class PodcastEpisodesNotifierFamily extends $Family
     with

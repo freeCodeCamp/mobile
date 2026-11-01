@@ -385,6 +385,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: ea36e500cbf0ec18361deabca755434f73e42fe53c5130021c7e2d6b5ebe1702
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -587,14 +595,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  flutter_highlight:
-    dependency: transitive
-    description:
-      name: flutter_highlight
-      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.0"
   flutter_html:
     dependency: "direct main"
     description:
@@ -824,6 +824,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_timezone:
+    dependency: "direct main"
+    description:
+      name: flutter_timezone
+      sha256: "7830bc64bef0b003468fc1f58fc3f3faf54817f8cd6e68fa818b306560410d68"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -955,7 +963,7 @@ packages:
     source: hosted
     version: "2.3.2"
   highlight:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: highlight
       sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
@@ -1362,11 +1370,12 @@ packages:
   phone_ide:
     dependency: "direct main"
     description:
-      name: phone_ide
-      sha256: "6d30607fb42f1df40d95be3fa062715c80ca2731a4254dcf1394c114258690b5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
+      path: "."
+      ref: "279f4d513d43d348a0b5ded39b01f3e181ec0302"
+      resolved-ref: "279f4d513d43d348a0b5ded39b01f3e181ec0302"
+      url: "https://github.com/Sembauke/PhoneIDE.git"
+    source: git
+    version: "3.0.0"
   photo_view:
     dependency: "direct main"
     description:
@@ -1740,6 +1749,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1+2"
+  syntax_highlight:
+    dependency: "direct overridden"
+    description:
+      path: "."
+      ref: "6331de462c1a7314cdf089d140aac71060692d46"
+      resolved-ref: "6331de462c1a7314cdf089d140aac71060692d46"
+      url: "https://github.com/serverpod/syntax_highlight.git"
+    source: git
+    version: "0.4.0"
   term_glyph:
     dependency: transitive
     description:

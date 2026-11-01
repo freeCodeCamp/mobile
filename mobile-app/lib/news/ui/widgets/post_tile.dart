@@ -1,168 +1,126 @@
-import 'dart:developer';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/models/post_summary_model.dart';
+import 'package:freecodecamp/news/ui/widgets/news_image.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/utils/date_utils.dart';
 
 class PostTile extends StatelessWidget {
-  const PostTile({super.key, required this.post});
+  const PostTile({
+    super.key,
+    required this.post,
+    this.featured = false,
+    this.selectedTagSlug,
+  });
 
   final PostSummary post;
+  final bool featured;
+  final String? selectedTagSlug;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final tag = post.tags
+        .where((tag) => tag.slug != selectedTagSlug)
+        .firstOrNull;
+    final title = Text(
+      post.title,
+      maxLines: featured ? 4 : 3,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: featured ? 20 : 15,
+        fontWeight: FontWeight.w700,
+        height: 1.3,
+        color: colors.onSurface,
+      ),
+    );
+
     return InkWell(
-      splashColor: Colors.transparent,
-      onTap: () {
-        NewsPostRoute(slug: post.slug).push(context);
-      },
+      onTap: () => NewsPostRoute(slug: post.slug).push(context),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCoverImage(),
-            const SizedBox(height: 8),
-            if (post.tags.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Wrap(
-                  spacing: 0,
-                  runSpacing: 4,
-                  children: [
-                    for (final tag in post.tags.take(3))
-                      TagButton(
-                        tagName: tag.name,
-                        tagSlug: tag.slug,
-                        compact: true,
-                      ),
-                  ],
-                ),
-              ),
-            Text(
-              post.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                height: 1.25,
-              ),
-            ),
-            const SizedBox(height: 8),
-            _buildAuthorRow(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCoverImage() {
-    final imageUrl = post.coverImage?.url;
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: Container(
-          color: FccColors.gray80,
-          child: imageUrl == null
-              ? Image.asset(
-                  'assets/images/freecodecamp-banner.png',
-                  fit: BoxFit.cover,
-                )
-              : CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      ColoredBox(color: FccColors.gray80),
-                  errorWidget: (context, url, error) {
-                    log('Error loading image: $url - $imageUrl - $error');
-                    return Image.asset(
-                      'assets/images/freecodecamp-banner.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAuthorRow(BuildContext context) {
-    final author = post.author;
-    final profileUrl = author.profilePicture;
-
-    return Row(
-      children: [
-        Flexible(
-          child: GestureDetector(
-            onTap: () {
-              NewsAuthorRoute(
-                username: author.username,
-                $extra: author,
-              ).push(context);
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: profileUrl == null
-                        ? Image.asset(
-                            'assets/images/placeholder-profile-img.png',
-                            fit: BoxFit.cover,
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: profileUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                ColoredBox(color: FccColors.gray80),
-                            errorWidget: (context, url, error) => Image.asset(
-                              'assets/images/placeholder-profile-img.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+        padding: featured
+            ? const EdgeInsets.symmetric(vertical: 8)
+            : const EdgeInsets.only(top: 16, bottom: 14),
+        child: featured
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: NewsImage(url: post.coverImage?.url),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    author.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white.withValues(alpha: 0.8),
+                  const SizedBox(height: 14),
+                  title,
+                  const SizedBox(height: 12),
+                  _author(context, withAvatar: true),
+                  const SizedBox(height: 8),
+                ],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  NewsImage(
+                    url: post.coverImage?.url,
+                    width: 104,
+                    height: 70,
+                    radius: 8,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (tag != null)
+                          TagButton(
+                            tagName: tag.name,
+                            tagSlug: tag.slug,
+                            variant: TagButtonVariant.listEyebrow,
+                          ),
+                        if (tag != null) const SizedBox(height: 4),
+                        title,
+                        const SizedBox(height: 4),
+                        _author(context),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _author(BuildContext context, {bool withAvatar = false}) {
+    final colors = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: () => NewsAuthorRoute(
+        username: post.author.username,
+        $extra: post.author,
+      ).push(context),
+      child: Row(
+        children: [
+          if (withAvatar) ...[
+            NewsImage(
+              url: post.author.profilePicture,
+              isAvatar: true,
+              width: 24,
+              height: 24,
+            ),
+            const SizedBox(width: 8),
+          ],
+          Expanded(
+            child: Text(
+              '${post.author.name} · ${parseDate(post.publishedAt).toLowerCase()}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: withAvatar ? 14 : 13,
+                height: 1.4,
+                color: colors.onSurfaceVariant,
+              ),
             ),
           ),
-        ),
-        Text(
-          '  •  ',
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.white.withValues(alpha: 0.5),
-          ),
-        ),
-        Text(
-          parseDate(post.publishedAt),
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.white.withValues(alpha: 0.5),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

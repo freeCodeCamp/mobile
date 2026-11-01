@@ -1,17 +1,148 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
-import 'package:freecodecamp/learn/services/code_service.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
-import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
+import 'package:freecodecamp/learn/ui/widgets/celebration_confetti.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' show parseFragment;
 
-const _heading = TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
+class DailyInstructionCard extends StatelessWidget {
+  const DailyInstructionCard({
+    super.key,
+    required this.challenge,
+    required this.maxHeight,
+  });
+
+  final Challenge challenge;
+  final double maxHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final fragment = parseFragment(challenge.description);
+    final summary = (fragment.querySelector('p')?.text ?? fragment.text ?? '')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              challenge.title,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            if (summary.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                summary,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 15,
+                  height: 1.5,
+                ),
+              ),
+            ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 40),
+                  alignment: AlignmentDirectional.centerStart,
+                ),
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  useSafeArea: true,
+                  showDragHandle: true,
+                  builder: (context) => SizedBox(
+                    height: MediaQuery.sizeOf(context).height * .7,
+                    child: InstructionPanel(challenge: challenge),
+                  ),
+                ),
+                child: const Text(
+                  'Read more',
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DailyChallengeExample extends StatelessWidget {
+  const DailyChallengeExample({super.key, required this.test});
+
+  final ChallengeTest test;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final fragment = parseFragment(test.text);
+    final paragraph = fragment.children.singleOrNull;
+    final nodes = paragraph?.localName == 'p'
+        ? paragraph!.nodes
+        : fragment.nodes;
+    final style = TextStyle(
+      fontSize: 13,
+      height: 1.5,
+      letterSpacing: 0,
+      color: colors.onSurfaceVariant,
+    );
+    return SelectionArea(
+      child: Text.rich(
+        TextSpan(
+          style: style,
+          children: [
+            const TextSpan(text: 'Example: '),
+            for (final node in nodes)
+              if (node is dom.Element && node.localName == 'code')
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceContainer,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      node.text,
+                      style: style.copyWith(
+                        fontFamily: 'JetBrains Mono',
+                        color: colors.onSurface,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                TextSpan(text: node.text),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class InstructionPanel extends StatelessWidget {
   const InstructionPanel({super.key, required this.challenge, this.block});
@@ -20,173 +151,169 @@ class InstructionPanel extends StatelessWidget {
   final Block? block;
 
   @override
-  Widget build(BuildContext context) {
-    final step = RegExp(r'^Step (\d+)$').firstMatch(challenge.title)?.group(1);
-    final total = block?.challenges.length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) => SingleChildScrollView(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 12, right: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                challenge.title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              if (step != null && total != null)
-                Text(
-                  'Step $step of $total',
-                  style: const TextStyle(fontSize: 14, color: Colors.white70),
-                ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ParsedHtml(challenge.description),
-                ParsedHtml(challenge.instructions),
-              ],
+        for (final html in [challenge.description, challenge.instructions])
+          if (html.trim().isNotEmpty)
+            ParsedHtml(
+              html,
+              outlinedInlineCode: true,
+              customStyles: {'*': Style(lineHeight: const LineHeight(1.45))},
             ),
-          ),
-        ),
       ],
-    );
-  }
+    ),
+  );
 }
 
-class HintPanel extends ConsumerWidget {
-  const HintPanel({
+class PassPanel extends ConsumerWidget {
+  const PassPanel({
     super.key,
     required this.challenge,
-    required this.block,
-    required this.hint,
-    required this.onReset,
+    this.block,
+    required this.onReviewCode,
   });
 
   final Challenge challenge;
   final Block? block;
-  final String hint;
-  final VoidCallback onReset;
+  final VoidCallback onReviewCode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Hint', style: _heading),
-        ),
-        const SizedBox(height: 8),
-        Expanded(child: SingleChildScrollView(child: ParsedHtml(hint))),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.question_mark),
-              padding: const EdgeInsets.all(16),
-              onPressed: () async {
-                final code = await ref
-                    .read(learnCodeServiceProvider)
-                    .filesMarkdown(challenge);
-                if (!context.mounted) return;
-                await showHelpDialog(
-                  context,
-                  challenge,
-                  block?.name ?? 'Daily Coding Challenge',
-                  code: code,
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.restart_alt),
-              padding: const EdgeInsets.all(16),
-              onPressed: onReset,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class PassPanel extends ConsumerWidget {
-  const PassPanel({super.key, required this.challenge, this.block});
-
-  final Challenge challenge;
-  final Block? block;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final quote = ref.watch(passQuoteProvider).value;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final dark = theme.brightness == Brightness.dark;
+    final success = FccDesignColors.of(context).success;
     final user = ref.watch(authProvider).value;
     final block = this.block;
+    final step = RegExp(r'^Step (\d+)$').firstMatch(challenge.title)?.group(1);
+    final index =
+        block?.challenges.indexWhere((c) => c.id == challenge.id) ?? -1;
+    final next =
+        block != null && index >= 0 && index + 1 < block.challenges.length
+        ? RegExp(
+            r'^Step (\d+)$',
+          ).firstMatch(block.challenges[index + 1].title)?.group(1)
+        : null;
+    final tests = challenge.tests.length;
+    final completed = {
+      ...?user?.completedChallenges.map((c) => c.id),
+      challenge.id,
+    };
+    final tint = FccDesignColors.of(context).successContainer;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Passed', style: _heading),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [tint, tint.withValues(alpha: 0)],
         ),
-        Expanded(
-          child: SingleChildScrollView(
+      ),
+      child: Stack(
+        children: [
+          const Positioned.fill(child: CelebrationConfetti()),
+          SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (quote != null)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      '"${quote.quote}"',
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  ),
-                if (user == null)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: FccColors.yellow50,
-                        minimumSize: const Size.fromHeight(50),
-                        shape: const RoundedRectangleBorder(),
+                Center(
+                  child: ExcludeSemantics(
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: dark
+                            ? success
+                            : FccDesignColors.of(context).successContainer,
+                        shape: BoxShape.circle,
                       ),
-                      onPressed: () => const LoginRoute().push<void>(context),
-                      child: const Text(
-                        'Sign in to save your progress',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: dark ? colors.onSecondary : success,
+                        size: 30,
                       ),
                     ),
-                  )
-                else if (block != null)
-                  _BlockProgress(
-                    completed: {
-                      for (final c in user.completedChallenges) c.id,
-                      challenge.id,
-                    },
-                    block: block,
                   ),
-                CompleteButton(
-                  challenge: challenge,
-                  block: block,
-                  label: 'Next',
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  step == null ? 'Challenge complete!' : 'Step $step complete!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 26,
+                    height: 1.15,
+                    fontWeight: FontWeight.w900,
+                    color: colors.onSurface,
+                  ),
+                ),
+                if (tests > 0) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    '${tests == 1 ? '1 test' : 'All $tests tests'} passed.${next == null ? '' : ' On to step $next.'}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                if (block != null && block.challenges.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  _BlockProgress(completed: completed, block: block),
+                ],
+                if (user == null) ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    "You're not signed in, so this progress is only saved on this device.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton(
+                    onPressed: () => const LoginRoute().push<void>(context),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(52),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      textStyle: const TextStyle(
+                        fontFamily: 'Lato',
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    child: const Text(
+                      'Sign in to save progress',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: onReviewCode,
+                  style: TextButton.styleFrom(
+                    textStyle: const TextStyle(
+                      fontFamily: 'Lato',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  child: const Text('Review code'),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -201,21 +328,36 @@ class _BlockProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final total = block.challenges.length;
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          LinearProgressIndicator(
-            value: done / total,
-            minHeight: 7,
-            backgroundColor: FccColors.gray75,
-          ),
-          const SizedBox(height: 16),
-          Text('${(done * 100 / total).round()}% Completed'),
-        ],
-      ),
+    final colors = Theme.of(context).colorScheme;
+    final style = TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: colors.onSurfaceVariant,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 2, child: Text(block.name, style: style)),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                '$done of ${countLabel(total, 'step')}',
+                textAlign: TextAlign.right,
+                style: style,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        LearnProgress(
+          done: done,
+          total: total,
+          backgroundColor: colors.surface,
+        ),
+      ],
     );
   }
 }

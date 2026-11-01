@@ -1,51 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
-import 'package:freecodecamp/widgets/drawer/drawer.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/app_page_title.dart';
+import 'package:freecodecamp/widgets/listen_tabs.dart';
 import 'package:go_router/go_router.dart';
-
-typedef _Tab = ({String title, String path, IconData icon});
 
 class PodcastsShell extends StatelessWidget {
   const PodcastsShell({super.key, required this.child});
 
   final Widget child;
 
-  static const List<_Tab> _tabs = [
-    (title: 'Podcasts', path: podcastListPath, icon: Icons.grid_view_rounded),
-    (
-      title: 'Downloads',
-      path: podcastDownloadsPath,
-      icon: Icons.arrow_circle_down_sharp,
-    ),
-  ];
-
-  static const _listIndex = 0;
-
-  int _currentIndex(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    final index = _tabs.indexWhere((tab) => tab.path == location);
-    return index == -1 ? _listIndex : index;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final index = _currentIndex(context);
-
+    final downloaded =
+        GoRouterState.of(context).uri.path == podcastDownloadsPath;
     return Scaffold(
-      appBar: AppBar(title: Text(_tabs[index].title)),
-      drawer: const DrawerWidget(),
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: index,
-        onTap: (i) => context.go(_tabs[i].path),
-        items: [
-          for (final tab in _tabs)
-            BottomNavigationBarItem(
-              icon: Icon(tab.icon),
-              label: tab.title,
-              tooltip: tab.title,
+      body: SafeArea(
+        bottom: false,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 24, 16, 32),
+                    child: AppPageTitle('Listen'),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ListenTabs(isRadio: false),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                    child: Wrap(
+                      spacing: 10,
+                      children: [
+                        ChoiceChip(
+                          label: const Text('All'),
+                          selected: !downloaded,
+                          onSelected: (_) => context.go(podcastListPath),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 12,
+                          ),
+                        ),
+                        ChoiceChip(
+                          label: const Text('Downloaded'),
+                          avatar: const Icon(Icons.download_rounded, size: 18),
+                          selected: downloaded,
+                          onSelected: (_) => context.go(podcastDownloadsPath),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-        ],
+          ],
+          body: child,
+        ),
+      ),
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.listen,
       ),
     );
   }

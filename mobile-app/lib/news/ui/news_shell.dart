@@ -1,53 +1,116 @@
-import 'package:flutter/material.dart';
-import 'package:freecodecamp/routing/news.dart';
-import 'package:freecodecamp/widgets/drawer/drawer.dart';
-import 'package:go_router/go_router.dart';
+import 'dart:math' as math;
 
-typedef _Tab = ({String title, String path, IconData icon});
+import 'package:flutter/material.dart';
+import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/routing/news.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/app_page_title.dart';
+import 'package:go_router/go_router.dart';
 
 class NewsShell extends StatelessWidget {
   const NewsShell({super.key, required this.child});
 
   final Widget child;
 
-  static const List<_Tab> _tabs = [
-    (
-      title: 'Bookmarks',
-      path: newsBookmarksPath,
-      icon: Icons.bookmark_outline_sharp,
-    ),
-    (title: 'Tutorials', path: newsFeedPath, icon: Icons.article_sharp),
-    (title: 'Search', path: newsSearchPath, icon: Icons.search_sharp),
-  ];
-
-  static const _feedIndex = 1;
-
-  int _currentIndex(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    final index = _tabs.indexWhere((tab) => tab.path == location);
-    return index == -1 ? _feedIndex : index;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final index = _currentIndex(context);
+    final location = GoRouterState.of(context).uri.path;
+    final isSaved = location == newsBookmarksPath;
+    final isSearch = location == newsSearchPath;
+    final scaler = MediaQuery.textScalerOf(context);
+    const bookmarkStyle = TextStyle(
+      fontFamily: 'Lato',
+      fontSize: 14,
+      height: 1.3,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0,
+    );
+    double textWidth(String text, TextStyle style) {
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: scaler,
+      )..layout();
+      final width = painter.width;
+      painter.dispose();
+      return width;
+    }
 
-    return Scaffold(
-      appBar: AppBar(title: Text(_tabs[index].title)),
-      drawer: const DrawerWidget(),
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: index,
-        onTap: (i) => context.go(_tabs[i].path),
-        items: [
-          for (final tab in _tabs)
-            BottomNavigationBarItem(
-              icon: Icon(tab.icon),
-              label: tab.title,
-              tooltip: tab.title,
-            ),
-        ],
+    final bookmarkHeight = math.max(44.0, scaler.scale(14) * 1.3 + 20);
+    final stackBookmarks =
+        textWidth(
+              'Articles',
+              const TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 30,
+                fontWeight: FontWeight.w900,
+              ),
+            ) +
+            textWidth('View bookmarks', bookmarkStyle) +
+            108 >
+        MediaQuery.sizeOf(context).width -
+            MediaQuery.paddingOf(context).horizontal;
+    final viewBookmarks = OutlinedButton.icon(
+      onPressed: () => context.go(newsBookmarksPath),
+      icon: const Icon(Icons.bookmark_border_rounded, size: 20),
+      label: const Text('View bookmarks'),
+      style: FccTheme.compactOutlineStyle(context).copyWith(
+        minimumSize: WidgetStatePropertyAll(Size(44, bookmarkHeight)),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        textStyle: const WidgetStatePropertyAll(bookmarkStyle),
       ),
+    );
+
+    final scaffold = Scaffold(
+      appBar: isSearch
+          ? null
+          : AppBar(
+              automaticallyImplyLeading: false,
+              leading: isSaved
+                  ? BackButton(onPressed: () => context.go(newsFeedPath))
+                  : null,
+              title: isSaved
+                  ? const Text('Saved articles')
+                  : const AppPageTitle('Articles'),
+              toolbarHeight: isSaved ? 64 : AppPageTitle.toolbarHeight(context),
+              bottom: !isSaved && stackBookmarks
+                  ? PreferredSize(
+                      preferredSize: Size.fromHeight(bookmarkHeight + 12),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: viewBookmarks,
+                        ),
+                      ),
+                    )
+                  : null,
+              actions: isSaved || stackBookmarks
+                  ? null
+                  : [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: viewBookmarks,
+                      ),
+                    ],
+            ),
+      body: SafeArea(top: isSearch, bottom: false, child: child),
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.tutorials,
+      ),
+    );
+
+    // Saved and Search are reached with context.go, so system back has nothing to pop.
+    return PopScope(
+      canPop: !isSaved && !isSearch,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          context.go(newsFeedPath);
+        }
+      },
+      child: scaffold,
     );
   }
 }

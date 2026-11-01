@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 
 class BackToTopButton extends StatefulWidget {
   const BackToTopButton({
@@ -53,20 +52,11 @@ class _BackToTopButtonState extends State<BackToTopButton> {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
       child: Padding(
-        // Lifts the button clear of the bottom action buttons.
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 64),
-        child: FloatingActionButton(
+        padding: const EdgeInsets.all(8),
+        child: IconButton(
           onPressed: _goToTop,
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(width: 1, color: Colors.white),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          backgroundColor: FccColors.gray80,
-          child: const Icon(
-            Icons.keyboard_arrow_up,
-            size: 40,
-            color: Colors.white,
-          ),
+          tooltip: 'Back to top',
+          icon: const Icon(Icons.keyboard_arrow_up, size: 32),
         ),
       ),
     );

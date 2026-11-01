@@ -1,602 +1,1237 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/auth/controllers/profile_controller.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/profile/profile_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:freecodecamp/widgets/drawer/drawer.dart';
+import 'package:freecodecamp/utils/custom_tab.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-({int longest, int current}) _calculateStreak(Map<DateTime, int> days) {
-  final sorted = days.keys.toList()..sort();
-  var longest = 0;
-  var current = 0;
-
-  for (final day in sorted) {
-    final previous = DateTime(day.year, day.month, day.day - 1);
-    current = days.containsKey(previous) ? current + 1 : 1;
-    if (current > longest) longest = current;
-  }
-
-  // A streak whose last day is before yesterday has ended.
-  final now = DateTime.now();
-  final yesterday = DateTime(now.year, now.month, now.day - 1);
-  if (sorted.isEmpty || sorted.last.isBefore(yesterday)) current = 0;
-
-  return (longest: longest, current: current);
-}
-
-class ProfileView extends ConsumerWidget {
+class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final refresh = ref.watch(profileRefreshProvider);
-    final user = ref.watch(authProvider.select((s) => s.value));
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
+}
 
-    return Scaffold(
-      backgroundColor: FccSemanticColors.backgroundPrimary,
-      appBar: AppBar(
-        title: const Text('PROFILE'),
-        backgroundColor: FccSemanticColors.backgroundSecondary,
-      ),
-      drawer: const DrawerWidget(),
-      body: switch (refresh) {
-        AsyncData() when user != null => _ProfileBody(user: user),
-        AsyncData() => const Center(
-          child: Text(
-            'No user data found',
-            style: TextStyle(color: FccSemanticColors.foregroundDanger),
+class _ProfileViewState extends ConsumerState<ProfileView> {
+  bool _preview = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = ref.watch(authProvider);
+    final refresh = ref.watch(profileRefreshProvider);
+    final user = auth.value;
+    final preview = _preview && user != null;
+    return PopScope(
+      canPop: !preview,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && preview) setState(() => _preview = false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: BackButton(
+            onPressed: () {
+              if (preview) {
+                setState(() => _preview = false);
+              } else if (context.canPop()) {
+                context.pop();
+              } else {
+                const AccountRoute().go(context);
+              }
+            },
+          ),
+          title: Text(preview ? 'Profile' : 'Public profile'),
+          actions: [
+            if (user != null && !preview)
+              IconButton(
+                tooltip: 'Edit profile',
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => const EditProfileRoute().push<void>(context),
+              ),
+          ],
+        ),
+        bottomNavigationBar: const AppNavigationFooter(
+          selected: AppDestination.account,
+        ),
+        body: SafeArea(
+          top: false,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: auth.isLoading && user == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : auth.hasError || refresh.hasError
+                  ? ErrorRetry(
+                      message: 'Unable to load your profile.',
+                      onRetry: () => ref.invalidate(profileRefreshProvider),
+                    )
+                  : user == null
+                  ? const _GuestProfile()
+                  : Column(
+                      children: [
+                        if (preview)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                            child: _PreviewBanner(
+                              onDone: () => setState(() => _preview = false),
+                            ),
+                          ),
+                        Expanded(
+                          child: preview && user.profileUI.isLocked
+                              ? _PrivateProfile(username: user.username)
+                              : RefreshIndicator(
+                                  onRefresh: () => ref.refresh(
+                                    profileRefreshProvider.future,
+                                  ),
+                                  child: _ProfileBody(
+                                    key: ValueKey(preview),
+                                    user: user,
+                                    preview: preview,
+                                    onPreview: () =>
+                                        setState(() => _preview = true),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
-        AsyncError() => ErrorRetry(
-          message: 'Unable to load your profile.',
-          onRetry: () => ref.invalidate(profileRefreshProvider),
-        ),
-        _ => const Center(
-          child: CircularProgressIndicator(color: FccColors.yellow40),
-        ),
-      },
+      ),
     );
   }
 }
 
-class _ProfileBody extends StatelessWidget {
-  const _ProfileBody({required this.user});
-
-  final FccUserModel user;
+class _PrivateProfile extends StatelessWidget {
+  const _PrivateProfile({required this.username});
+  final String username;
 
   @override
   Widget build(BuildContext context) {
-    final heatMapCal = user.heatMapCal;
-    final streak = _calculateStreak(heatMapCal);
-
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _Header(user: user),
-          if (user.about?.trim().isNotEmpty ?? false)
-            _Section(
-              padding: const EdgeInsets.all(16),
-              child: _About(about: user.about!),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      children: [
+        Center(
+          child: Container(
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colors.surfaceContainer,
+              border: Border.all(color: colors.outlineVariant),
             ),
-          _Section(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            child: _Info(user: user, streak: streak),
+            child: Icon(
+              Icons.person_outline,
+              size: 40,
+              color: colors.onSurfaceVariant,
+            ),
           ),
-          _Section(
-            padding: const EdgeInsets.all(12),
-            child: _Heatmap(days: heatMapCal),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          '@$username',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontFamily: 'JetBrains Mono',
+            fontSize: 15,
+            color: colors.onSurface,
           ),
-          if (user.portfolio.isNotEmpty)
-            _Section(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-              child: Column(
-                children: [
-                  for (final item in user.portfolio)
-                    _PortfolioCard(portfolio: item),
-                ],
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: CircleAvatar(
+            radius: 28,
+            backgroundColor: colors.primaryContainer,
+            child: Icon(
+              Icons.lock_outline,
+              size: 26,
+              color: FccDesignColors.of(context).accentText,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'This profile is private',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 280),
+            child: Text(
+              'This learner has chosen to keep their profile private.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 15,
+                height: 1.5,
+                color: colors.onSurfaceVariant,
               ),
             ),
-          _Section(
-            margin: const EdgeInsets.fromLTRB(8, 6, 8, 56),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            child: _Certifications(user: user),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewBanner extends StatelessWidget {
+  const _PreviewBanner({required this.onDone});
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+      decoration: BoxDecoration(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: FccDesignColors.of(context).heatmapLow),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.visibility_outlined,
+            size: 18,
+            color: FccDesignColors.of(context).accentText,
+          ),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text('Previewing your profile as others see it'),
+          ),
+          const SizedBox(width: 10),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              minimumSize: const Size(48, 44),
+            ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
+            onPressed: onDone,
+            child: const Text('Done'),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PrivacyBanner extends StatelessWidget {
+  const _PrivacyBanner({required this.onPreview});
+  final VoidCallback onPreview;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final accent = FccDesignColors.of(context).accentText;
+    final heatmapLow = FccDesignColors.of(context).heatmapLow;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: heatmapLow),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: heatmapLow,
+                child: Icon(Icons.lock_outline, color: accent, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Your profile is private.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        height: 1.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      'This limits what other people can see.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.centerLeft,
+                        textStyle: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 14,
+                          height: 1.5,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.underline,
+                          decorationColor: accent,
+                        ),
+                      ),
+                      onPressed: () =>
+                          const ProfileVisibilityRoute().push<void>(context),
+                      child: const Text('Change visibility'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            style: FccTheme.compactOutlineStyle(
+              context,
+            ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
+            onPressed: onPreview,
+            icon: const Icon(Icons.visibility_outlined, size: 16),
+            label: const Text('View as others'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GuestProfile extends StatelessWidget {
+  const _GuestProfile();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _Section(
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: colors.surfaceContainer,
+                    child: Icon(
+                      Icons.person_outline,
+                      color: colors.onSurfaceVariant,
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "You're learning as a guest",
+                          style: theme.textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Sign in to save progress across devices and earn certifications.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(),
+                  onPressed: () => const LoginRoute().push<void>(context),
+                  child: const Text('Sign in'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileBody extends ConsumerWidget {
+  const _ProfileBody({
+    super.key,
+    required this.user,
+    required this.preview,
+    required this.onPreview,
+  });
+  final FccUserModel user;
+  final bool preview;
+  final VoidCallback onPreview;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final days = user.heatMapCal;
+    final streak = ref.watch(profileStreakProvider);
+    final visibility = user.profileUI;
+    final showActivity = visibility.showHeatMap;
+    final statistics = [
+      if (visibility.showPoints) (user.points, 'Points'),
+      if (showActivity) ...[
+        (streak.current, 'Current streak'),
+        (streak.longest, 'Longest streak'),
+      ],
+    ];
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        if (!preview && visibility.isLocked) ...[
+          _PrivacyBanner(onPreview: onPreview),
+          const SizedBox(height: 16),
+        ],
+        _Header(user: user),
+        if (statistics.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _Section(
+            radius: 14,
+            padding: EdgeInsets.zero,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final textScale =
+                    MediaQuery.textScalerOf(context).scale(12) / 12;
+                final stacked =
+                    constraints.maxWidth < 80 * statistics.length * textScale;
+                if (stacked) {
+                  return Column(
+                    children: [
+                      for (final (index, stat) in statistics.indexed) ...[
+                        if (index > 0) const Divider(),
+                        _Stat(value: stat.$1, label: stat.$2, horizontal: true),
+                      ],
+                    ],
+                  );
+                }
+                return IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final (index, stat) in statistics.indexed) ...[
+                        if (index > 0) const VerticalDivider(width: 1),
+                        Expanded(
+                          child: _Stat(value: stat.$1, label: stat.$2),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+        if (showActivity) ...[
+          const SizedBox(height: 16),
+          _Section(child: _Heatmap(days: days)),
+        ],
+        if (visibility.showCerts) ...[
+          const SizedBox(height: 16),
+          _Certifications(user: user, preview: preview),
+        ],
+        if (visibility.showPortfolio && user.portfolio.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Portfolio',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _Section(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (final (index, item) in user.portfolio.indexed) ...[
+                  if (index > 0) const Divider(),
+                  _PortfolioRow(portfolio: item),
+                ],
+              ],
+            ),
+          ),
+        ],
+        if (visibility.showExperience && user.experience.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Experience',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _Section(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (final (index, item) in user.experience.indexed) ...[
+                  if (index > 0) const Divider(),
+                  _ExperienceRow(experience: item),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
 
 class _Section extends StatelessWidget {
   const _Section({
-    required this.padding,
     required this.child,
-    this.margin = const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+    this.padding = const EdgeInsets.all(16),
+    this.radius = 16,
   });
-
-  final EdgeInsets padding;
-  final EdgeInsets margin;
   final Widget child;
+  final EdgeInsets padding;
+  final double radius;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: margin,
-      child: Card(
-        color: FccColors.gray85,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(padding: padding, child: child),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Card(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radius),
+      side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Padding(padding: padding, child: child),
+  );
 }
 
 class _Header extends StatelessWidget {
   const _Header({required this.user});
-
   final FccUserModel user;
 
   @override
   Widget build(BuildContext context) {
-    final hasName = user.name.trim().isNotEmpty;
-    final nameColor = user.isDonating ? FccColors.yellow40 : Colors.white;
-
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.fromLTRB(8, 89, 8, 6),
-          child: Card(
-            color: FccColors.gray85,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 92, 16, 24),
-              child: Column(
-                children: [
-                  Text(
-                    hasName ? user.name : '@${user.username}',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: nameColor,
-                    ),
-                  ),
-                  if (hasName) ...[
-                    const SizedBox(height: 4),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final visibility = user.profileUI;
+    final showName = visibility.showName;
+    final showDonation = visibility.showDonation;
+    final showSupporter = user.isDonating && showDonation;
+    final description = [
+      if (visibility.showAbout) ...[
+        if (user.about?.trim().isNotEmpty ?? false) user.about!.trim(),
+      ],
+      if (visibility.showLocation &&
+          (user.location?.trim().isNotEmpty ?? false))
+        user.location!.trim(),
+      if (visibility.showAbout)
+        'Joined ${Jiffy.parseFromDateTime(user.joinDate).yMMMM}',
+    ];
+    final links = [
+      if (user.githubProfile?.trim().isNotEmpty ?? false)
+        ('GitHub', user.githubProfile!),
+      if (user.linkedin?.trim().isNotEmpty ?? false)
+        ('LinkedIn', user.linkedin!),
+      if (user.twitter?.trim().isNotEmpty ?? false) ('X', user.twitter!),
+      if (user.bluesky?.trim().isNotEmpty ?? false) ('Bluesky', user.bluesky!),
+      if (user.website?.trim().isNotEmpty ?? false) ('Website', user.website!),
+    ];
+    return _Section(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 36,
+                backgroundColor: colors.primaryContainer,
+                backgroundImage: user.picture.isEmpty
+                    ? null
+                    : CachedNetworkImageProvider(user.picture),
+                child: user.picture.isEmpty
+                    ? Icon(
+                        Icons.person_outline,
+                        size: 30,
+                        color: colors.onSurfaceVariant,
+                      )
+                    : null,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (showName)
+                      Text(
+                        user.name.trim().isNotEmpty ? user.name : user.username,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     Text(
                       '@${user.username}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: nameColor,
-                        fontWeight: FontWeight.w600,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontFamily: 'JetBrains Mono',
+                        fontSize: 13,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
+                    if (showSupporter ||
+                        user.yearsTopContributor.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: showSupporter
+                              ? FccDesignColors.of(context).donateContainer
+                              : colors.primaryContainer,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          showSupporter ? 'Supporter' : 'Top contributor',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: showSupporter
+                                ? colors.tertiary
+                                : FccDesignColors.of(context).accentText,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              ),
-            ),
-          ),
-        ),
-        Center(
-          child: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: FccColors.blue50, width: 3),
-                ),
-                child: CircleAvatar(
-                  radius: 54,
-                  backgroundColor: FccColors.gray85,
-                  backgroundImage: user.picture.isEmpty
-                      ? const AssetImage(
-                          'assets/images/placeholder-profile-img.png',
-                        )
-                      : CachedNetworkImageProvider(user.picture),
                 ),
               ),
-              if (user.isDonating || user.yearsTopContributor.isNotEmpty)
-                Positioned(
-                  bottom: 4,
-                  right: 4,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: FccColors.yellow45,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      user.isDonating ? Icons.favorite : Icons.emoji_events,
-                      color: FccColors.gray85,
-                      size: 18,
-                    ),
-                  ),
-                ),
             ],
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _About extends StatelessWidget {
-  const _About({required this.about});
-
-  final String about;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Row(
-          children: [
-            Icon(Icons.chat_bubble, color: FccColors.gray00, size: 22),
-            SizedBox(width: 10),
+          if (description.isNotEmpty) ...[
+            const SizedBox(height: 14),
             Text(
-              'About',
-              style: TextStyle(
-                color: FccColors.gray00,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+              description.join(' · '),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 14,
+                height: 1.5,
+                color: colors.onSurfaceVariant,
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          about,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Info extends StatelessWidget {
-  const _Info({required this.user, required this.streak});
-
-  final FccUserModel user;
-  final ({int longest, int current}) streak;
-
-  @override
-  Widget build(BuildContext context) {
-    bool present(String? value) => value != null && value.trim().isNotEmpty;
-
-    final rows = [
-      if (present(user.location))
-        _InfoRow(
-          Icons.location_on,
-          'Location',
-          user.location!,
-          FccColors.blue50,
-        ),
-      if (user.isDonating)
-        const _InfoRow(
-          Icons.favorite,
-          'Supporter',
-          'Supporter',
-          FccColors.yellow45,
-        ),
-      if (present(user.twitter))
-        _InfoRow(Icons.alternate_email, 'X', user.twitter!, FccColors.blue50),
-      if (present(user.githubProfile))
-        _InfoRow(Icons.code, 'GitHub', user.githubProfile!, FccColors.blue50),
-      if (present(user.linkedin))
-        _InfoRow(Icons.business, 'LinkedIn', user.linkedin!, FccColors.blue50),
-      if (present(user.website))
-        _InfoRow(Icons.language, 'Website', user.website!, FccColors.blue50),
-      _InfoRow(
-        Icons.calendar_month,
-        'Joined',
-        Jiffy.parseFromDateTime(user.joinDate).yMMMM,
-        FccColors.gray15,
-      ),
-      _InfoRow(
-        Icons.local_fire_department_sharp,
-        'Points',
-        '${user.points}',
-        FccColors.red30,
-      ),
-      _InfoRow(
-        Icons.emoji_events,
-        'Longest Streak',
-        '${streak.longest}',
-        FccColors.orange30,
-      ),
-      _InfoRow(
-        Icons.bolt,
-        'Current Streak',
-        '${streak.current}',
-        FccColors.orange30,
-      ),
-    ];
-
-    return Column(
-      children: [
-        for (final (i, row) in rows.indexed) ...[
-          if (i > 0)
-            const Divider(color: FccColors.gray75, height: 18, thickness: 1),
-          row,
+          if (links.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final (label, url) in links)
+                  OutlinedButton(
+                    style: FccTheme.compactOutlineStyle(context).copyWith(
+                      padding: const WidgetStatePropertyAll(
+                        EdgeInsets.symmetric(horizontal: 12),
+                      ),
+                      shape: FccTheme.focusShape(context, radius: 999),
+                      textStyle: const WidgetStatePropertyAll(
+                        TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      final uri = Uri.tryParse(url);
+                      if (uri != null &&
+                          (uri.scheme == 'https' || uri.scheme == 'http')) {
+                        launchUrl(uri).ignore();
+                      }
+                    },
+                    child: Text(label),
+                  ),
+              ],
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  const _InfoRow(this.icon, this.label, this.value, this.iconColor);
-
-  final IconData icon;
+class _Stat extends StatelessWidget {
+  const _Stat({
+    required this.value,
+    required this.label,
+    this.horizontal = false,
+  });
+  final int value;
   final String label;
-  final String value;
-  final Color iconColor;
+  final bool horizontal;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(icon, color: iconColor, size: 22),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: FccColors.gray15,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ),
-          Flexible(
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ],
+    final valueText = FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: horizontal ? Alignment.centerRight : Alignment.centerLeft,
+      child: Text(
+        '$value',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
+        ),
       ),
+    );
+    final labelText = Text(
+      label,
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: horizontal
+          ? Row(
+              children: [
+                Expanded(flex: 2, child: labelText),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: valueText,
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [valueText, labelText],
+            ),
     );
   }
 }
 
 class _Heatmap extends StatelessWidget {
   const _Heatmap({required this.days});
-
   final Map<DateTime, int> days;
 
   @override
   Widget build(BuildContext context) {
-    return HeatMap(
-      startDate: Jiffy.now().subtract(months: 3).dateTime,
-      datasets: days,
-      colorsets: const {
-        0: FccColors.gray80,
-        1: FccColors.gray45,
-        4: FccColors.gray15,
-        8: FccColors.gray00,
-      },
-      defaultColor: FccColors.gray80,
-      scrollable: true,
-      colorMode: ColorMode.color,
-      showColorTip: false,
-      onClick: (date) {
-        final points = days[date] ?? 0;
-        final day = Jiffy.parseFromDateTime(date).yMMMd;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: FccColors.gray75,
-            duration: const Duration(seconds: 2),
-            content: Text(
-              '$points ${points == 1 ? 'point' : 'points'} on $day',
-              style: const TextStyle(
-                color: FccSemanticColors.foregroundPrimary,
-              ),
-            ),
-          ),
-        );
-      },
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    // Complete calendar weeks keep weekday rows aligned, including across DST.
+    final weekStart = DateTime(
+      today.year,
+      today.month,
+      today.day - (today.weekday - 1),
     );
-  }
-}
+    final start = DateTime(weekStart.year, weekStart.month, weekStart.day - 77);
+    final design = FccDesignColors.of(context);
+    Color shade(int points) => points == 0
+        ? colors.surfaceContainerHighest
+        : points >= 8
+        ? design.heatmapHigh
+        : points >= 4
+        ? design.heatmapMid
+        : design.heatmapLow;
+    final legendStyle = theme.textTheme.labelSmall?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      color: colors.onSurfaceVariant,
+    );
 
-class _PortfolioCard extends StatelessWidget {
-  const _PortfolioCard({required this.portfolio});
-
-  final Portfolio portfolio;
-
-  @override
-  Widget build(BuildContext context) {
-    final url = portfolio.url?.trim() ?? '';
-    final link = url.isEmpty ? null : Uri.tryParse(url);
-    final image = portfolio.image;
-    final description = portfolio.description;
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      color: FccColors.gray85,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: link == null ? null : () => launchUrl(link).ignore(),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 4,
             children: [
-              if (image != null && image.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, _, _) => const SizedBox.shrink(),
-                  ),
-                ),
-              const SizedBox(height: 12),
               Text(
-                portfolio.title ?? '',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                'Activity',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-              if (description != null && description.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: FccColors.gray15,
-                    ),
-                  ),
+              Text(
+                'Last 12 weeks',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: 13,
+                  color: colors.onSurfaceVariant,
                 ),
-              if (link != null) ...[
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(Icons.link, color: FccColors.blue50, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        url,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: FccColors.blue50,
-                          decoration: TextDecoration.underline,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _Certifications extends StatelessWidget {
-  const _Certifications({required this.user});
-
-  final FccUserModel user;
-
-  @override
-  Widget build(BuildContext context) {
-    final current = [
-      if (user.isRespWebDesignCert) 'Responsive Web Design Certification',
-      if (user.isJsAlgoDataStructCert)
-        'JavaScript Algorithms and Data Structures Certification',
-      if (user.isFrontEndLibsCert)
-        'Front End Development Libraries Certification',
-      if (user.is2018DataVisCert) 'Data Visualization Certification',
-      if (user.isApisMicroservicesCert)
-        'Back End Development and APIs Certification',
-      if (user.isQaCertV7) 'Quality Assurance Certification',
-      if (user.isInfosecCertV7) 'Information Security Certification',
-      if (user.isSciCompPyCertV7)
-        'Scientific Computing with Python Certification',
-      if (user.isDataAnalysisPyCertV7)
-        'Data Analysis with Python Certification',
-      if (user.isMachineLearningPyCertV7)
-        'Machine Learning with Python Certification',
-      if (user.isRelationalDatabaseCertV8) 'Relational Database Certification',
-      if (user.isCollegeAlgebraPyCertV8) 'College Algebra with Python',
-      if (user.isFoundationalCSharpCertV8) 'Foundational C# with Microsoft',
-    ];
-
-    final legacy = [
-      if (user.isFrontEndCert) 'Front End Certification',
-      if (user.isBackEndCert) 'Back End Certification',
-      if (user.isDataVisCert) 'Data Visualization Certification',
-      if (user.isInfosecQaCert)
-        'Information Security and Quality Assurance Certification',
-      if (user.isFullStackCert) 'Full Stack Certification',
-    ];
-
-    final certs = [...current, ...legacy];
-
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            'freeCodeCamp Certifications',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              height: 1.25,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final cell = (constraints.maxWidth - 44) / 12;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var week = 0; week < 12; week++) ...[
+                  if (week > 0) const SizedBox(width: 4),
+                  Column(
+                    children: [
+                      for (var day = 0; day < 7; day++)
+                        Builder(
+                          builder: (context) {
+                            final date = DateTime(
+                              start.year,
+                              start.month,
+                              start.day + week * 7 + day,
+                            );
+                            final points = days[date] ?? 0;
+                            final label =
+                                '$points ${points == 1 ? 'point' : 'points'} on ${Jiffy.parseFromDateTime(date).yMMMd}';
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: date.isAfter(today)
+                                  ? SizedBox(width: cell, height: cell)
+                                  : Semantics(
+                                      label: label,
+                                      child: Tooltip(
+                                        message: label,
+                                        child: Container(
+                                          width: cell,
+                                          height: cell,
+                                          decoration: BoxDecoration(
+                                            color: shade(points),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            );
+          },
         ),
-        if (certs.isEmpty)
-          const Text(
-            'You have not yet earned any certifications.',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-        for (final title in certs) _Trophy(title: title),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text('Less', style: legendStyle),
+            for (final points in [0, 1, 4, 8])
+              Container(
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.only(left: 4),
+                decoration: BoxDecoration(
+                  color: shade(points),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            const SizedBox(width: 4),
+            Text('More', style: legendStyle),
+          ],
+        ),
       ],
     );
   }
 }
 
-class _Trophy extends StatelessWidget {
-  const _Trophy({required this.title});
-
-  final String title;
+class _Certifications extends StatelessWidget {
+  const _Certifications({required this.user, required this.preview});
+  final FccUserModel user;
+  final bool preview;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: FccColors.gray85,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.emoji_events, color: FccColors.yellow40, size: 26),
-          const SizedBox(width: 14),
-          Expanded(
+    final current = [
+      if (user.isRespWebDesignCert)
+        ('Responsive Web Design', 'responsive-web-design'),
+      if (user.isJsAlgoDataStructCert)
+        (
+          'JavaScript Algorithms and Data Structures',
+          'javascript-algorithms-and-data-structures',
+        ),
+      if (user.isFrontEndLibsCert)
+        ('Front End Development Libraries', 'front-end-development-libraries'),
+      if (user.is2018DataVisCert) ('Data Visualization', 'data-visualization'),
+      if (user.isApisMicroservicesCert)
+        ('Back End Development and APIs', 'back-end-development-and-apis'),
+      if (user.isQaCertV7) ('Quality Assurance', 'quality-assurance-v7'),
+      if (user.isInfosecCertV7)
+        ('Information Security', 'information-security-v7'),
+      if (user.isSciCompPyCertV7)
+        (
+          'Scientific Computing with Python',
+          'scientific-computing-with-python-v7',
+        ),
+      if (user.isDataAnalysisPyCertV7)
+        ('Data Analysis with Python', 'data-analysis-with-python-v7'),
+      if (user.isMachineLearningPyCertV7)
+        ('Machine Learning with Python', 'machine-learning-with-python-v7'),
+      if (user.isRelationalDatabaseCertV8)
+        ('Relational Database', 'relational-database-v8'),
+      if (user.isCollegeAlgebraPyCertV8)
+        ('College Algebra with Python', 'college-algebra-with-python-v8'),
+      if (user.isFoundationalCSharpCertV8)
+        (
+          'Foundational C# with Microsoft',
+          'foundational-c-sharp-with-microsoft',
+        ),
+    ];
+    final legacy = [
+      if (user.isFrontEndCert) ('Front End', 'legacy-front-end'),
+      if (user.isBackEndCert) ('Back End', 'legacy-back-end'),
+      if (user.isDataVisCert)
+        ('Data Visualization', 'legacy-data-visualization'),
+      if (user.isInfosecQaCert)
+        (
+          'Information Security and Quality Assurance',
+          'information-security-and-quality-assurance',
+        ),
+      if (user.isFullStackCert) ('Full Stack', 'full-stack'),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Certifications',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (current.isEmpty && legacy.isEmpty)
+          _Section(
             child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
+              preview
+                  ? 'This camper has not yet earned any certifications.'
+                  : 'You have not yet earned any certifications.',
+            ),
+          ),
+        if (current.isNotEmpty)
+          _CertificateList(certificates: current, username: user.username),
+        if (legacy.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Legacy certifications',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          const SizedBox(height: 8),
+          _CertificateList(certificates: legacy, username: user.username),
+        ],
+      ],
+    );
+  }
+}
+
+class _CertificateList extends StatelessWidget {
+  const _CertificateList({required this.certificates, required this.username});
+  final List<(String, String)> certificates;
+  final String username;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final design = FccDesignColors.of(context);
+    return _Section(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (final (index, certificate) in certificates.indexed) ...[
+            if (index > 0) const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final stacked =
+                      constraints.maxWidth < 380 &&
+                      MediaQuery.textScalerOf(context).scale(14) > 20;
+                  final identity = Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: design.successContainer,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          Icons.emoji_events_outlined,
+                          color: design.onSuccessContainer,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          certificate.$1,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                  final viewButton = Semantics(
+                    label: 'View ${certificate.$1} certification',
+                    child: OutlinedButton(
+                      style: FccTheme.compactOutlineStyle(context),
+                      onPressed: () => openInCustomTab(
+                        Uri.https(
+                          'www.freecodecamp.org',
+                          '/certification/$username/${certificate.$2}',
+                        ).toString(),
+                      ),
+                      child: const Text('View'),
+                    ),
+                  );
+                  return stacked
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            identity,
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: viewButton,
+                            ),
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Expanded(child: identity),
+                            const SizedBox(width: 10),
+                            viewButton,
+                          ],
+                        );
+                },
               ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PortfolioRow extends StatelessWidget {
+  const _PortfolioRow({required this.portfolio});
+  final Portfolio portfolio;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final accent = FccDesignColors.of(context).accentText;
+    final url = portfolio.url?.trim() ?? '';
+    final link = Uri.tryParse(url);
+    final canOpen =
+        link != null &&
+        link.host.isNotEmpty &&
+        (link.scheme == 'http' || link.scheme == 'https');
+    final image = portfolio.image?.trim() ?? '';
+    final fallback = ColoredBox(
+      color: colors.surfaceContainer,
+      child: Icon(Icons.code, color: colors.onSurfaceVariant, size: 30),
+    );
+    final thumbnail = ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(
+        width: 96,
+        height: 64,
+        child: image.isEmpty
+            ? fallback
+            : CachedNetworkImage(
+                imageUrl: image,
+                width: 96,
+                height: 64,
+                fit: BoxFit.cover,
+                placeholder: (_, _) => fallback,
+                errorWidget: (_, _, _) => fallback,
+              ),
+      ),
+    );
+    final details = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (portfolio.title?.trim().isNotEmpty ?? false)
+          Text(
+            portfolio.title!,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        if (portfolio.description?.trim().isNotEmpty ?? false) ...[
+          const SizedBox(height: 4),
+          Text(
+            portfolio.description!,
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+          ),
+        ],
+        if (canOpen) ...[
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Flexible(
+                child: Text(
+                  url.replaceFirst(RegExp(r'^https?://'), ''),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontFamily: 'JetBrains Mono',
+                    color: accent,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 5),
+              Icon(Icons.open_in_new, size: 14, color: accent),
+            ],
+          ),
+        ],
+      ],
+    );
+    return InkWell(
+      onTap: canOpen ? () => launchUrl(link).ignore() : null,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: LayoutBuilder(
+          builder: (context, constraints) => constraints.maxWidth < 240
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [thumbnail, const SizedBox(height: 12), details],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    thumbnail,
+                    const SizedBox(width: 12),
+                    Expanded(child: details),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ExperienceRow extends StatelessWidget {
+  const _ExperienceRow({required this.experience});
+  final Experience experience;
+
+  String _monthYear(String value) {
+    final match = RegExp(r'^(\d{2})/(\d{4})$').firstMatch(value);
+    if (match == null) return value;
+    final month = int.parse(match.group(1)!);
+    if (month < 1 || month > 12) return value;
+    return Jiffy.parseFromDateTime(
+      DateTime(int.parse(match.group(2)!), month),
+    ).format(pattern: 'MMM yyyy');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final company = [
+      experience.company.trim(),
+      if (experience.location.trim().isNotEmpty) experience.location.trim(),
+    ].where((part) => part.isNotEmpty).join(' · ');
+    final start = _monthYear(experience.startDate.trim());
+    final end = experience.endDate.trim().isEmpty
+        ? 'Present'
+        : _monthYear(experience.endDate.trim());
+    return Padding(
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colors.primaryContainer,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.work_outline,
+              color: FccDesignColors.of(context).accentText,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  experience.title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (company.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    company,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      color: colors.onSurface,
+                    ),
+                  ),
+                ],
+                if (start.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    '$start – $end',
+                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+                  ),
+                ],
+                if (experience.description.trim().isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    experience.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ],

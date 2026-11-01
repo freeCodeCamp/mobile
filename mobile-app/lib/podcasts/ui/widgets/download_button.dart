@@ -11,15 +11,18 @@ class PodcastDownloadButton extends ConsumerWidget {
     super.key,
     required this.podcast,
     required this.episode,
-    this.size = 33,
+    this.size = 22,
+    this.outlined = false,
   });
 
   final Podcast podcast;
   final Episode episode;
   final double size;
+  final bool outlined;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).colorScheme;
     final downloadState = ref.watch(
       podcastDownloadsProvider.select((state) => state[episode.id]),
     );
@@ -32,73 +35,74 @@ class PodcastDownloadButton extends ConsumerWidget {
             false,
       ),
     );
-
-    final isRunning = downloadState is DownloadRunning;
-
-    return IconButton(
-      onPressed: () => _onPressed(ref, downloadState, isDownloaded),
-      iconSize: size,
-      style: ButtonStyle(
-        shape: WidgetStateProperty.all(const CircleBorder()),
-        side: WidgetStateProperty.all(
-          isRunning
-              ? BorderSide.none
-              : const BorderSide(color: FccColors.gray80, width: 1),
+    final label = switch (downloadState) {
+      DownloadRunning() => 'Cancel download',
+      DownloadFailed() => 'Download failed, tap to retry',
+      null when isDownloaded => 'Remove download',
+      null => 'Download episode',
+    };
+    final Widget icon = switch (downloadState) {
+      DownloadRunning(:final progress) => SizedBox.square(
+        dimension: size,
+        child: CircularProgressIndicator(
+          color: colors.primary,
+          strokeWidth: 2,
+          value: progress,
+          semanticsLabel: 'Downloading episode',
         ),
       ),
-      icon: _icon(downloadState, isDownloaded),
+      DownloadFailed() => Icon(Icons.refresh_rounded, color: colors.error),
+      null when isDownloaded => Icon(
+        Icons.check_circle_rounded,
+        color: FccDesignColors.of(context).success,
+      ),
+      null => Icon(
+        Icons.download_rounded,
+        color: outlined ? null : colors.onSurfaceVariant,
+      ),
+    };
+
+    return IconButton(
+      tooltip: label,
+      iconSize: size,
+      style: outlined
+          ? FccTheme.compactOutlineStyle(context).copyWith(
+              minimumSize: const WidgetStatePropertyAll(Size(52, 44)),
+              fixedSize: const WidgetStatePropertyAll(Size(52, 44)),
+              shape: FccTheme.focusShape(context, radius: 999),
+            )
+          : null,
+      icon: icon,
+      onPressed: () async {
+        try {
+          switch (downloadState) {
+            case DownloadRunning():
+              ref.read(podcastDownloadsProvider.notifier).cancel(episode.id);
+            case DownloadFailed():
+              await ref
+                  .read(podcastDownloadsProvider.notifier)
+                  .start(podcast, episode);
+            case null when isDownloaded:
+              await ref
+                  .read(podcastLibraryProvider.notifier)
+                  .remove(episode.podcastId, episode.id);
+            case null:
+              await ref
+                  .read(podcastDownloadsProvider.notifier)
+                  .start(podcast, episode);
+          }
+        } catch (_) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Unable to update this download. Please try again.',
+                ),
+              ),
+            );
+          }
+        }
+      },
     );
   }
-
-  void _onPressed(
-    WidgetRef ref,
-    DownloadStatus? downloadState,
-    bool isDownloaded,
-  ) => switch (downloadState) {
-    DownloadRunning() =>
-      ref.read(podcastDownloadsProvider.notifier).cancel(episode.id),
-    DownloadFailed() =>
-      ref.read(podcastDownloadsProvider.notifier).start(podcast, episode),
-    null when isDownloaded =>
-      ref
-          .read(podcastLibraryProvider.notifier)
-          .remove(episode.podcastId, episode.id),
-    null => ref.read(podcastDownloadsProvider.notifier).start(podcast, episode),
-  };
-
-  Widget _icon(DownloadStatus? downloadState, bool isDownloaded) =>
-      switch (downloadState) {
-        DownloadRunning(:final progress) => SizedBox.square(
-          dimension: size,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 1,
-                value: progress,
-              ),
-              Text(
-                '${(progress * 100).round()}%',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        DownloadFailed() => Icon(
-          Icons.refresh,
-          color: FccColors.red15,
-          semanticLabel: 'Download failed, tap to retry',
-        ),
-        null when isDownloaded => Icon(
-          Icons.download_done,
-          color: FccColors.gray10,
-          semanticLabel: 'Downloaded, tap to delete',
-        ),
-        null => Icon(
-          Icons.download,
-          color: FccColors.gray10,
-          semanticLabel: 'Download episode',
-        ),
-      };
 }

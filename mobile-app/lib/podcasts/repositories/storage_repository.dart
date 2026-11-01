@@ -63,6 +63,9 @@ class PodcastStorageRepository {
 
   Future<PodcastStoreSnapshot> readPodcasts() => _serialized(_read);
 
+  /// Queue a local reset after any store write already in progress.
+  Future<void> clearForReset() => _serialized(() => _write([]));
+
   Future<PodcastStoreIds> readIds() => _serialized(_readIds);
 
   Future<bool> containsEpisode({

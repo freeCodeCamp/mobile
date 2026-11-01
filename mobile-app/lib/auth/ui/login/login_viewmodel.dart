@@ -21,6 +21,16 @@ class LoginNotifier extends _$LoginNotifier {
   @override
   LoginState build() => const LoginState();
 
+  void changeEmail() {
+    if (!state.isLoading) state = const LoginState();
+  }
+
+  void clearIncorrectOtp() {
+    if (state.incorrectOtp) {
+      state = state.copyWith(incorrectOtp: false);
+    }
+  }
+
   Future<String?> loginWithProvider(String connection) async {
     try {
       await _login(
@@ -35,7 +45,7 @@ class LoginNotifier extends _$LoginNotifier {
   }
 
   Future<String?> sendOtp(String email) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, incorrectOtp: false);
 
     try {
       await ref.read(authSessionServiceProvider).sendEmailOtp(email);
