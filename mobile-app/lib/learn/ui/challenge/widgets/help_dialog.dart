@@ -253,6 +253,14 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
         !tooLong &&
         !_opening;
 
+    final footerHint = !(_triedReadSearchAsk && _searched)
+        ? 'Tick both boxes to post.'
+        : remaining > 0
+        ? 'Add $remaining more ${remaining == 1 ? 'character' : 'characters'} to post.'
+        : tooLong
+        ? 'Shorten your description to post.'
+        : null;
+
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
@@ -378,15 +386,17 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Tick both boxes to post.',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontSize: 13,
+                    if (footerHint != null) ...[
+                      Text(
+                        footerHint,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
+                    ],
                     if (_launchError != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8),
