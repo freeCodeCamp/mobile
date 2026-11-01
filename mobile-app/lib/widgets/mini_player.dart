@@ -37,6 +37,7 @@ class MiniPlayer extends ConsumerWidget {
             }
 
             final colors = Theme.of(context).colorScheme;
+            final accent = FccDesignColors.of(context).accentText;
             final playback = playbackSnapshot.data!;
             final isBusy =
                 playback.processingState == AudioProcessingState.loading ||
@@ -114,7 +115,7 @@ class MiniPlayer extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            IconButton.filled(
+                            IconButton.outlined(
                               tooltip: playback.playing
                                   ? 'Pause audio'
                                   : 'Resume audio',
@@ -127,14 +128,12 @@ class MiniPlayer extends ConsumerWidget {
                                         handler.play();
                                       }
                                     },
-                              style: FccTheme.surfaceButtonStyle(
-                                context,
-                                fill: colors.secondary,
-                                foreground: colors.onSurface,
-                                pressed: FccDesignColors.of(
-                                  context,
-                                ).primaryPressed,
-                                compact: true,
+                              style: IconButton.styleFrom(
+                                foregroundColor: accent,
+                                disabledForegroundColor: colors.outline,
+                                fixedSize: const Size.square(48),
+                                shape: const CircleBorder(),
+                                side: BorderSide(color: accent, width: 1.5),
                               ),
                               icon: isBusy
                                   ? SizedBox.square(
