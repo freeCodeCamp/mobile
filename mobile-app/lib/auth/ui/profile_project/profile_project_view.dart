@@ -85,7 +85,6 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
       profileProjectProvider(widget.projectId).notifier,
     );
     final available = form != null && form.available;
-    final colors = Theme.of(context).colorScheme;
     final image = form?.draft.image?.trim() ?? '';
     return ProfileFormScaffold(
       key: _formKey,
@@ -108,12 +107,12 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
                 message: message,
                 onDismiss: notifier.dismissError,
               ),
-            Text(
-              'Project image',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 8),
             if (image.isNotEmpty) ...[
+              Text(
+                'Project image',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: CachedNetworkImage(
@@ -127,48 +126,8 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 18),
             ],
-            ProfileDashedBorder(
-              color: colors.outline,
-              child: Container(
-                height: 180,
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton.icon(
-                      style: FccTheme.compactOutlineStyle(context).copyWith(
-                        shape: FccTheme.focusShape(context, radius: 999),
-                      ),
-                      onPressed: null,
-                      icon: const Icon(Icons.image_outlined, size: 18),
-                      label: Text(image.isEmpty ? 'Add image' : 'Change image'),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Optional. Landscape images work best.',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 13,
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Project image changes are not available in the app yet.',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 18),
             ProfileFormField(
               label: 'Project title',
               hintText: 'e.g. Weather dashboard',

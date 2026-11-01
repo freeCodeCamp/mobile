@@ -416,51 +416,6 @@ class ProfileFormError extends StatelessWidget {
   }
 }
 
-class ProfileDashedBorder extends StatelessWidget {
-  const ProfileDashedBorder({
-    super.key,
-    required this.child,
-    required this.color,
-  });
-  final Widget child;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) =>
-      CustomPaint(foregroundPainter: _DashedBorderPainter(color), child: child);
-}
-
-class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter(this.color);
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (size.isEmpty) return;
-    final outline = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          (Offset.zero & size).deflate(0.5),
-          const Radius.circular(12),
-        ),
-      );
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    for (final metric in outline.computeMetrics()) {
-      for (var start = 0.0; start < metric.length; start += 5) {
-        final end = start + 3 < metric.length ? start + 3 : metric.length;
-        canvas.drawPath(metric.extractPath(start, end), paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorderPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
 class ProfileFormSectionTitle extends StatelessWidget {
   const ProfileFormSectionTitle(this.title, {super.key});
   final String title;
