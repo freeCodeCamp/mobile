@@ -286,6 +286,9 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
               right: 12,
               child: ProfileFormError(
                 message: presentation.errorMessage!,
+                emphasis: RegExp(
+                  r'^\d+ fields? needs? a fix',
+                ).stringMatch(presentation.errorMessage!),
                 margin: EdgeInsets.zero,
                 floating: true,
                 onDismiss: () =>

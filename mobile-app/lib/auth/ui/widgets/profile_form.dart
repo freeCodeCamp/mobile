@@ -336,27 +336,36 @@ class ProfileFormError extends StatelessWidget {
     this.onDismiss,
     this.margin = const EdgeInsets.only(bottom: 18),
     this.floating = false,
+    this.emphasis,
   });
   final String message;
+  final String? emphasis;
   final VoidCallback? onDismiss;
   final EdgeInsets margin;
   final bool floating;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final lead = emphasis != null && message.startsWith(emphasis!)
+        ? emphasis!
+        : null;
+    final dark = theme.brightness == Brightness.dark;
     return Semantics(
       liveRegion: true,
       child: Container(
         margin: margin,
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
         decoration: BoxDecoration(
-          color: Color.alphaBlend(
-            colors.error.withValues(alpha: 0.1),
-            colors.surface,
-          ),
-          border: Border.all(color: colors.error),
-          borderRadius: BorderRadius.circular(14),
+          color: dark
+              ? const Color(0xFF5A120B)
+              : Color.alphaBlend(
+                  colors.error.withValues(alpha: 0.1),
+                  colors.surface,
+                ),
+          border: Border.all(color: colors.error.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: floating
               ? [
                   BoxShadow(
@@ -368,15 +377,36 @@ class ProfileFormError extends StatelessWidget {
               : null,
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.error_outline, color: colors.error, size: 20),
             const SizedBox(width: 10),
-            Expanded(child: Text(message)),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    if (lead != null)
+                      TextSpan(
+                        text: lead,
+                        style: TextStyle(
+                          color: colors.onSurface,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    TextSpan(
+                      text: lead == null
+                          ? message
+                          : message.substring(lead.length),
+                    ),
+                  ],
+                ),
+                style: TextStyle(color: colors.error),
+              ),
+            ),
             if (onDismiss != null)
               IconButton(
                 tooltip: 'Dismiss error',
                 onPressed: onDismiss,
+                visualDensity: VisualDensity.compact,
                 icon: Icon(Icons.close, color: colors.error, size: 20),
               ),
           ],
