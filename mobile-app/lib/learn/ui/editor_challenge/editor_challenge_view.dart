@@ -15,7 +15,6 @@ import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
-import 'package:freecodecamp/learn/ui/widgets/socrates_icon.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
@@ -41,7 +40,7 @@ class EditorChallengeView extends ConsumerStatefulWidget {
       _EditorChallengeViewState();
 }
 
-enum _EditorSheet { tests, hint, pass, preview, console }
+enum _EditorSheet { tests, pass, preview, console }
 
 class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   final _subscriptions = <StreamSubscription<Object>>[];
@@ -54,7 +53,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   final _instructionBodyKey = GlobalKey();
   double? _instructionHeight;
   double? _instructionDragHeight;
-  bool _hintViewed = false;
   int _editorLoad = 0;
   int _codeEdit = 0;
 
@@ -97,7 +95,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.challenge != widget.challenge) {
       _sheet = null;
-      _hintViewed = false;
       _instructionsExpanded = true;
       _instructionHeight = null;
       _instructionDragHeight = null;
@@ -172,7 +169,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       editor.onTextChange.stream.listen((text) {
         _codeEdit++;
         if (_sheet != null) _showSheet(null, preserveFocus: true);
-        _hintViewed = false;
         ref.read(_provider.notifier).codeChanged(file, text);
         final modified = text != file.contents;
         if (modified != _modifiedFiles.contains(file.fileName)) {
@@ -216,9 +212,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final body = switch (sheet) {
       _EditorSheet.preview => EditorBody.preview,
       _EditorSheet.console => EditorBody.console,
-      _EditorSheet.tests ||
-      _EditorSheet.pass ||
-      _EditorSheet.hint => EditorBody.tests,
+      _EditorSheet.tests || _EditorSheet.pass => EditorBody.tests,
       null => EditorBody.editor,
     };
     if (ref.read(_provider).body != body) {
@@ -227,7 +221,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     setState(() {
       _sheet = sheet;
       if (sheet != null) _instructionsExpanded = false;
-      if (sheet == _EditorSheet.hint) _hintViewed = true;
     });
   }
 
@@ -293,7 +286,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     setState(() {
       _sheet = null;
       _instructionsExpanded = true;
-      _hintViewed = false;
       _modifiedFiles.clear();
     });
   }
@@ -788,13 +780,11 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final desiredHeight = switch (sheet) {
       _EditorSheet.console => 280.0,
       _EditorSheet.preview => 360.0,
-      _EditorSheet.hint => 300.0,
       _EditorSheet.pass => 430.0,
       _EditorSheet.tests => 320.0,
     };
     final title = switch (sheet) {
       _EditorSheet.tests => 'Tests',
-      _EditorSheet.hint => 'Socrates says',
       _EditorSheet.pass => 'Tests',
       _EditorSheet.preview => 'Preview',
       _EditorSheet.console => 'Console',
@@ -845,14 +835,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                   padding: const EdgeInsets.only(left: 16, right: 4),
                   child: Row(
                     children: [
-                      if (sheet == _EditorSheet.hint) ...[
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: colors.primary,
-                          child: SocratesIcon(color: colors.onPrimary),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
                       Expanded(
                         child: Wrap(
                           spacing: 10,
@@ -902,11 +884,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                     _EditorSheet.tests => TestList(
                       tests: widget.challenge.tests,
                       results: results,
-                      hint: state.hint,
-                      hintViewed: _hintViewed,
-                      onHint: () => _showSheet(_EditorSheet.hint),
                     ),
-                    _EditorSheet.hint => HintPanel(hint: state.hint),
                     _EditorSheet.pass => PassPanel(
                       challenge: widget.challenge,
                       block: widget.block,

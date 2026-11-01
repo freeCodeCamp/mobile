@@ -10,7 +10,6 @@ import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/services/test_runner_service.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge/daily_challenge_view.dart';
-import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_view.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
@@ -262,58 +261,6 @@ void main() {
       },
     );
   }
-
-  testWidgets('hint controls retain shared states and compact shape', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FccTheme.themeDark,
-        home: Scaffold(
-          body: TestList(
-            tests: _challenge.tests,
-            results: null,
-            hint: '<p>Try multiplying.</p>',
-            onHint: () {},
-          ),
-        ),
-      ),
-    );
-    final hint = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Ask Socrates for a hint'),
-    );
-    final style = hint.style!;
-    expect(style.backgroundColor!.resolve({}), const Color(0xff29216c));
-    expect(
-      style.backgroundColor!.resolve({WidgetState.pressed}),
-      const Color(0xff3f3557),
-    );
-    expect(
-      style.backgroundColor!.resolve({WidgetState.disabled}),
-      const Color(0xff3f3557),
-    );
-    expect(
-      style.foregroundColor!.resolve({WidgetState.disabled}),
-      const Color(0xff7d709d),
-    );
-    expect(style.textStyle!.resolve({})!.fontSize, 16);
-    expect(style.textStyle!.resolve({})!.fontWeight, FontWeight.w900);
-    expect(
-      (style.shape!.resolve({})! as RoundedRectangleBorder).borderRadius,
-      BorderRadius.circular(10),
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FccTheme.themeDark,
-        home: const Scaffold(body: HintPanel(hint: '<p>Try multiplying.</p>')),
-      ),
-    );
-    final extra = tester.widget<OutlinedButton>(
-      find.widgetWithText(OutlinedButton, 'Ask for another hint'),
-    );
-    expect(extra.onPressed, isNull);
-    expect(extra.style!.side!.resolve({WidgetState.disabled}), BorderSide.none);
-  });
 
   testWidgets('help dialog preserves code attachment and post validation', (
     tester,

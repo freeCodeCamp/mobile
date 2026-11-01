@@ -13,7 +13,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'editor_challenge_viewmodel.freezed.dart';
 part 'editor_challenge_viewmodel.g.dart';
 
-enum EditorPanel { instruction, hint, pass }
+enum EditorPanel { instruction, pass }
 
 enum EditorBody { editor, tests, preview, console }
 
@@ -25,7 +25,6 @@ abstract class EditorChallengeState with _$EditorChallengeState {
     @Default(EditorBody.editor) EditorBody body,
     @Default(false) bool testsRunning,
     @Default(false) bool passed,
-    @Default('') String hint,
     @Default([]) List<String> testConsole,
     @Default([]) List<String> userConsole,
     // NOTE: Null until a run reaches the tests.
@@ -97,7 +96,6 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     state = state.copyWith(
       passed: false,
       testResults: null,
-      hint: '',
       testConsole: [],
       userConsole: [],
     );
@@ -152,8 +150,6 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         if (!isCurrent()) return;
         final hint = syntaxErrorHint(e);
         state = state.copyWith(
-          panel: EditorPanel.hint,
-          hint: '<p>$hint</p>',
           testConsole: [
             ...state.testConsole,
             '<p>$hint</p>',
@@ -198,9 +194,8 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
 
       state = state.copyWith(
         testResults: [for (final result in results) result.pass],
-        panel: failures.isEmpty ? EditorPanel.pass : EditorPanel.hint,
+        panel: failures.isEmpty ? EditorPanel.pass : EditorPanel.instruction,
         passed: failures.isEmpty,
-        hint: failures.firstOrNull ?? state.hint,
         testConsole: [
           ...state.testConsole,
           if (failures.isNotEmpty)

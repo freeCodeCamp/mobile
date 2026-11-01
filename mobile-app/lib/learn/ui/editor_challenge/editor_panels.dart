@@ -168,59 +168,6 @@ class InstructionPanel extends StatelessWidget {
   );
 }
 
-class HintPanel extends StatelessWidget {
-  const HintPanel({super.key, required this.hint});
-
-  final String hint;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: FccDesignColors.of(context).editorHighlight,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: ParsedHtml(
-              hint,
-              outlinedInlineCode: true,
-              customStyles: {
-                '*': Style(lineHeight: const LineHeight(1.45)),
-                'p': Style(margin: Margins.zero),
-              },
-            ),
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: OutlinedButton(
-              onPressed: null,
-              style: FccTheme.compactOutlineStyle(context).copyWith(
-                textStyle: const WidgetStatePropertyAll(
-                  TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              child: const Text(
-                'Ask for another hint',
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class PassPanel extends ConsumerWidget {
   const PassPanel({
     super.key,

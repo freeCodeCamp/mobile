@@ -241,8 +241,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                     isReminder: true,
                                   ),
                           ),
-                          const _UnavailableModeTile(title: 'Socrates mode'),
-                          const _UnavailableModeTile(title: 'Campfire mode'),
                           const _SettingsTile(
                             title: 'Language',
                             trailingLabel: 'English',
@@ -255,8 +253,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           _SettingsTile(
                             title: 'Profile visibility',
                             subtitle: auth.isLoggedIn
-                                ? null
+                                ? 'Choose who sees your profile and what it shows'
                                 : 'Sign in to manage profile visibility',
+                            trailingLabel: auth.value == null
+                                ? null
+                                : auth.value!.profileUI.isLocked
+                                ? 'Private'
+                                : 'Public',
                             onTap: () => auth.isLoggedIn
                                 ? const ProfileVisibilityRoute().push<void>(
                                     context,
@@ -536,44 +539,29 @@ class _SettingsTile extends StatelessWidget {
               context,
             ).textTheme.bodySmall?.copyWith(fontSize: 13),
           ),
-    trailing: trailingLabel != null
-        ? Text(
-            trailingLabel!,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          )
-        : onTap == null
+    trailing: trailingLabel == null && onTap == null
         ? null
-        : Icon(
-            external ? Icons.open_in_new : Icons.chevron_right,
-            size: 20,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (trailingLabel != null)
+                Text(
+                  trailingLabel!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              if (onTap != null) ...[
+                if (trailingLabel != null) const SizedBox(width: 4),
+                Icon(
+                  external ? Icons.open_in_new : Icons.chevron_right,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ],
           ),
     onTap: onTap,
-  );
-}
-
-class _UnavailableModeTile extends StatelessWidget {
-  const _UnavailableModeTile({required this.title});
-  final String title;
-
-  @override
-  Widget build(BuildContext context) => SwitchListTile.adaptive(
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-    minTileHeight: 76,
-    title: Text(
-      title,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
-    ),
-    subtitle: Text(
-      'Not available in the app yet',
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 13),
-    ),
-    value: false,
-    onChanged: null,
   );
 }

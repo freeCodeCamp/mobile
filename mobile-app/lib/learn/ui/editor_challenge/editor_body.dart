@@ -5,29 +5,17 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
-import 'package:freecodecamp/learn/ui/widgets/socrates_icon.dart';
 import 'package:html/parser.dart' as html_parser;
 
 class TestList extends StatelessWidget {
-  const TestList({
-    super.key,
-    required this.tests,
-    required this.results,
-    this.hint = '',
-    this.hintViewed = false,
-    this.onHint,
-  });
+  const TestList({super.key, required this.tests, required this.results});
 
   final List<ChallengeTest> tests;
   final List<bool>? results;
-  final String hint;
-  final bool hintViewed;
-  final VoidCallback? onHint;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final accent = FccDesignColors.of(context).accentText;
     final styles = {
       '*': Style(
         color: colors.onSurface,
@@ -40,48 +28,6 @@ class TestList extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        if (hint.trim().isNotEmpty && onHint != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: hintViewed
-                ? _HintPreview(hint: hint, onPressed: onHint!)
-                : Align(
-                    alignment: Alignment.centerLeft,
-                    child: FilledButton.icon(
-                      onPressed: onHint,
-                      style:
-                          FccTheme.surfaceButtonStyle(
-                            context,
-                            fill: colors.primaryContainer,
-                            foreground: accent,
-                            pressed: colors.surfaceContainer,
-                            compact: true,
-                          ).copyWith(
-                            padding: const WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 10,
-                              ),
-                            ),
-                            textStyle: const WidgetStatePropertyAll(
-                              TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ),
-                      icon: Builder(
-                        builder: (context) =>
-                            SocratesIcon(color: IconTheme.of(context).color!),
-                      ),
-                      label: const Text(
-                        'Ask Socrates for a hint',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-          ),
         for (var i = 0; i < tests.length; i++)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
@@ -129,72 +75,6 @@ class _TestStatus extends StatelessWidget {
         false => 'Failed',
         null => 'Not run',
       },
-    );
-  }
-}
-
-class _HintPreview extends StatelessWidget {
-  const _HintPreview({required this.hint, required this.onPressed});
-  final String hint;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final accent = FccDesignColors.of(context).accentText;
-    return Material(
-      color: colors.primaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colors.primary.withValues(alpha: .25)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              ExcludeSemantics(
-                child: CircleAvatar(
-                  radius: 14,
-                  backgroundColor: colors.primary,
-                  child: SocratesIcon(size: 16, color: colors.onPrimary),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Your hint',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: accent,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      html_parser.parseFragment(hint).text ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.4,
-                        color: colors.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right, size: 20, color: accent),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
