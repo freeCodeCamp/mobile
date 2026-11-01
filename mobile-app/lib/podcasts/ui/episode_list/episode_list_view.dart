@@ -262,6 +262,7 @@ class _PodcastEpisodeListViewState
                       padding: const EdgeInsets.all(32),
                       child: state.loadMoreError != null
                           ? ErrorRetry(
+                              margin: EdgeInsets.zero,
                               message: 'Unable to load older episodes.',
                               onRetry: () => _loadOlder(retry: true),
                             )

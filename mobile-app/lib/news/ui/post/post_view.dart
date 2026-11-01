@@ -19,17 +19,27 @@ class NewsPostHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (post.tags.isNotEmpty) ...[
-            TagButton(
-              tagName: post.tags.first.name,
-              tagSlug: post.tags.first.slug,
-              variant: TagButtonVariant.articleEyebrow,
+            SizedBox(
+              height: 38,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    top: -6,
+                    child: TagButton(
+                      tagName: post.tags.first.name,
+                      tagSlug: post.tags.first.slug,
+                      variant: TagButtonVariant.articleEyebrow,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
           ],
           Text(
             post.title,
@@ -126,7 +136,7 @@ class NewsPostView extends ConsumerWidget {
           footer: post.tags.isEmpty
               ? null
               : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

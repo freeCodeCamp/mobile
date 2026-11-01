@@ -172,7 +172,7 @@ class NewsSavedEmptyState extends StatelessWidget {
     return CustomPaint(
       foregroundPainter: _DashedCardBorder(colors.outlineVariant),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(16),
@@ -189,7 +189,7 @@ class NewsSavedEmptyState extends StatelessWidget {
               child: Icon(
                 Icons.bookmark_border_rounded,
                 color: FccDesignColors.of(context).accentText,
-                size: 40,
+                size: 28,
               ),
             ),
             const SizedBox(height: 16),
@@ -202,7 +202,11 @@ class NewsSavedEmptyState extends StatelessWidget {
             Text(
               'Tap the bookmark on an article to save it.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: colors.onSurfaceVariant, height: 1.5),
+              style: TextStyle(
+                fontSize: 15,
+                color: colors.onSurfaceVariant,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 16),
             FilledButton(

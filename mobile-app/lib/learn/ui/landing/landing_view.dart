@@ -60,6 +60,7 @@ class LearnLandingView extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 32),
                     child: ErrorRetry(
+                      margin: EdgeInsets.zero,
                       message:
                           'Could not load the curriculum. Please try again.',
                       onRetry: () => _refresh(ref),

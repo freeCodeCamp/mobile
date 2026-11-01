@@ -84,6 +84,7 @@ class _AccountViewState extends ConsumerState<AccountView> {
                   if (auth.hasError || refresh.hasError) ...[
                     if (user != null) const SizedBox(height: 12),
                     ErrorRetry(
+                      margin: EdgeInsets.zero,
                       message: 'Unable to refresh your account.',
                       onRetry: () => ref.invalidate(profileRefreshProvider),
                     ),

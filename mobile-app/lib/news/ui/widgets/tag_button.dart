@@ -28,7 +28,10 @@ class TagButton extends StatelessWidget {
         ),
         child: TextButton(
           style: TextButton.styleFrom(
-            minimumSize: const Size(44, 44),
+            minimumSize: listEyebrow ? const Size(44, 0) : const Size(44, 44),
+            tapTargetSize: listEyebrow
+                ? MaterialTapTargetSize.shrinkWrap
+                : MaterialTapTargetSize.padded,
             padding: EdgeInsets.zero,
             textStyle: TextStyle(
               fontFamily: listEyebrow ? 'JetBrains Mono' : 'Lato',

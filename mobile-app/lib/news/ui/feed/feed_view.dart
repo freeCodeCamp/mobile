@@ -39,10 +39,10 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Material(
-              color: colors.surfaceContainer,
+              color: colors.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: colors.outline),
+                side: BorderSide(color: colors.outlineVariant, width: 1.5),
               ),
               clipBehavior: Clip.antiAlias,
               child: InkWell(

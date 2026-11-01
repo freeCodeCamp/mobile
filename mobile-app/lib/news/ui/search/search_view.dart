@@ -91,6 +91,8 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
     loading: () => const Center(child: CircularProgressIndicator()),
     error: (_, _) => ErrorRetry(
       message: 'Unable to search articles.',
+      detail:
+          'Something went wrong on our side or with your connection. Please try again.',
       onRetry: () => _search(_searchBarController.text),
     ),
     data: (posts) => CustomScrollView(

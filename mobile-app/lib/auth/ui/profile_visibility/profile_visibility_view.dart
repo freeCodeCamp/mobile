@@ -83,6 +83,7 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                       children: [
                         if (state.error != null) ...[
                           ErrorRetry(
+                            margin: EdgeInsets.zero,
                             message: state.error!,
                             onRetry: state.saving
                                 ? null
