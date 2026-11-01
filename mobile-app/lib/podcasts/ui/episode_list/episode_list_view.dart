@@ -84,55 +84,93 @@ class _PodcastEpisodeListViewState
   Future<void> _sort() async {
     final oldest = await showModalBottomSheet<bool>(
       context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(22, 0, 22, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Sort episodes',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 18),
-              for (final value in [false, true]) ...[
-                Material(
-                  color: _oldestFirst == value
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.surface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.outline,
+      showDragHandle: false,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final colors = Theme.of(context).colorScheme;
+        final accentText = FccDesignColors.of(context).accentText;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.outlineVariant,
+                      borderRadius: BorderRadius.circular(999),
                     ),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      value ? 'Oldest first' : 'Newest first',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: _oldestFirst == value
-                            ? FccDesignColors.of(context).accentText
-                            : Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    trailing: _oldestFirst == value
-                        ? Icon(
-                            Icons.check_rounded,
-                            color: Theme.of(context).colorScheme.primary,
-                          )
-                        : null,
-                    onTap: () => Navigator.of(context).pop(value),
                   ),
                 ),
-                if (!value) const SizedBox(height: 12),
+                const SizedBox(height: 12),
+                const Text(
+                  'Sort episodes',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 16),
+                for (final value in [false, true]) ...[
+                  Material(
+                    color: _oldestFirst == value
+                        ? colors.primaryContainer
+                        : Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: _oldestFirst == value
+                            ? accentText
+                            : colors.outline,
+                        width: _oldestFirst == value ? 1.5 : 1,
+                      ),
+                    ),
+                    child: InkWell(
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      onTap: () => Navigator.of(context).pop(value),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 56),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  value ? 'Oldest first' : 'Newest first',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: _oldestFirst == value
+                                        ? FontWeight.w900
+                                        : FontWeight.w700,
+                                    color: colors.onSurface,
+                                  ),
+                                ),
+                              ),
+                              if (_oldestFirst == value)
+                                Icon(
+                                  Icons.check_rounded,
+                                  size: 20,
+                                  color: accentText,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (!value) const SizedBox(height: 12),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
     if (oldest == null || !mounted || oldest == _oldestFirst) return;
     setState(() {
@@ -384,13 +422,14 @@ class _Header extends ConsumerWidget {
               Builder(
                 builder: (buttonContext) => IconButton.filled(
                   tooltip: 'Share podcast',
-                  style: FccTheme.surfaceButtonStyle(
-                    context,
-                    fill: Colors.transparent,
-                    compact: true,
-                  ).copyWith(
-                    minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
-                  ),
+                  style:
+                      FccTheme.surfaceButtonStyle(
+                        context,
+                        fill: Colors.transparent,
+                        compact: true,
+                      ).copyWith(
+                        minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+                      ),
                   onPressed: () => sharePodcast(
                     buttonContext,
                     podcast.title,
