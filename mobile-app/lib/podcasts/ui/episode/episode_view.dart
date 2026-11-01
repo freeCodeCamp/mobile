@@ -38,7 +38,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.sizeOf(context);
     final artworkSize = math.min(
-      290.0,
+      250.0,
       math.min(size.width - 96, size.height * .34),
     );
     final description =
@@ -82,7 +82,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
             Center(
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
                       color: colors.primary.withValues(alpha: .13),
@@ -94,7 +94,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                 child: PodcastArtwork(
                   podcast: widget.podcast,
                   size: artworkSize,
-                  radius: 24,
+                  radius: 20,
                 ),
               ),
             ),
@@ -121,10 +121,13 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
             const SizedBox(height: 20),
             if (description.isNotEmpty)
               Container(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: colors.surface,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: colors.outlineVariant),
                 ),
                 child: Column(
@@ -133,8 +136,8 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                     const Text(
                       'Show notes',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -146,7 +149,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                             margin: Margins.zero,
                             padding: HtmlPaddings.zero,
                             color: colors.onSurface,
-                            fontSize: FontSize(16),
+                            fontSize: FontSize(14),
                           ),
                           'a': Style(
                             color: FccDesignColors.of(context).accentText,
@@ -169,7 +172,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                         description,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 16, height: 1.5),
+                        style: const TextStyle(fontSize: 14, height: 1.5),
                       ),
                     const SizedBox(height: 10),
                     TextButton(
@@ -181,7 +184,10 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                           setState(() => _showAllNotes = !_showAllNotes),
                       child: Text(
                         _showAllNotes ? 'Show less' : 'Read all',
-                        style: const TextStyle(
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: FccDesignColors.of(context).accentText,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -278,7 +284,7 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
               style: TextStyle(
                 fontFamily: 'JetBrains Mono',
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w400,
                 color: colors.onSurfaceVariant,
               ),
             ),
@@ -287,7 +293,7 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
               style: TextStyle(
                 fontFamily: 'JetBrains Mono',
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w400,
                 color: colors.onSurfaceVariant,
               ),
             ),
@@ -309,17 +315,18 @@ class _Controls extends ConsumerWidget {
     final canControl =
         player.isCurrent(episode.id) && !player.isBusyWith(episode.id);
     final speed = canControl ? player.speed : 1.0;
-    return Row(
+    final controls = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Flexible(
           child: OutlinedButton(
             style: FccTheme.compactOutlineStyle(context).copyWith(
-              minimumSize: const WidgetStatePropertyAll(Size(52, 48)),
+              minimumSize: const WidgetStatePropertyAll(Size(52, 44)),
               padding: const WidgetStatePropertyAll(
                 EdgeInsets.symmetric(horizontal: 6),
               ),
-              shape: FccTheme.focusShape(context),
+              backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+              shape: FccTheme.focusShape(context, radius: 999),
             ),
             onPressed: canControl
                 ? () => _speedSheet(context, ref, speed)
@@ -364,6 +371,23 @@ class _Controls extends ConsumerWidget {
             podcast: podcast,
             episode: episode,
             outlined: true,
+          ),
+        ),
+      ],
+    );
+    if (player.isCurrent(episode.id)) {
+      return controls;
+    }
+    return Column(
+      children: [
+        controls,
+        const SizedBox(height: 10),
+        Text(
+          'Press play to use speed and skip controls.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -498,6 +522,7 @@ class PodcastSkipButton extends StatelessWidget {
                   ? colors.outline
                   : colors.onSurface,
             ),
+            backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
             minimumSize: const WidgetStatePropertyAll(Size(44, 52)),
             padding: const WidgetStatePropertyAll(EdgeInsets.all(4)),
             shape: FccTheme.focusShape(context, radius: 10),
@@ -508,7 +533,7 @@ class PodcastSkipButton extends StatelessWidget {
               children: [
                 Transform.flip(
                   flipX: forward,
-                  child: const Icon(Icons.replay_rounded, size: 30),
+                  child: const Icon(Icons.replay_rounded, size: 24),
                 ),
                 Text(
                   '$seconds',

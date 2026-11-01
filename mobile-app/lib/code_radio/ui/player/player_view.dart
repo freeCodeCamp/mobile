@@ -95,7 +95,7 @@ class CodeRadioAlbumArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final size = math.min(240.0, MediaQuery.sizeOf(context).width * 0.58);
+    final size = math.min(220.0, MediaQuery.sizeOf(context).width * 0.58);
 
     return Container(
       width: size,
@@ -103,7 +103,7 @@ class CodeRadioAlbumArt extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: colors.surfaceContainer,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: colors.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -134,7 +134,7 @@ class CodeRadioNowPlaying extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(
             context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 6),
         Wrap(
@@ -145,7 +145,7 @@ class CodeRadioNowPlaying extends StatelessWidget {
           children: [
             Text(
               '${radio.nowPlaying.song.artist} ·',
-              style: TextStyle(color: colors.onSurfaceVariant),
+              style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
             ),
             Icon(
               Icons.circle,
@@ -154,7 +154,7 @@ class CodeRadioNowPlaying extends StatelessWidget {
             ),
             Text(
               'Live · ${radio.listeners.total} listening',
-              style: TextStyle(color: colors.onSurfaceVariant),
+              style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant),
             ),
           ],
         ),
@@ -234,10 +234,10 @@ class CodeRadioNextSong extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
@@ -245,9 +245,10 @@ class CodeRadioNextSong extends StatelessWidget {
         children: [
           Text(
             'Up next',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -255,7 +256,7 @@ class CodeRadioNextSong extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: SizedBox.square(
-                  dimension: 48,
+                  dimension: 44,
                   child: ColoredBox(
                     color: colors.surfaceContainer,
                     child: _RadioArtwork(url: song.art),
@@ -343,7 +344,7 @@ class _CodeRadioPlayPauseButtonState
               foregroundColor: colors.onSecondary,
               disabledBackgroundColor: colors.surfaceContainer,
               disabledForegroundColor: colors.outline,
-              fixedSize: const Size.square(76),
+              fixedSize: const Size.square(72),
             ).copyWith(
               backgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.disabled)) {
@@ -358,7 +359,7 @@ class _CodeRadioPlayPauseButtonState
             ),
         icon: Icon(
           isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-          size: 38,
+          size: 30,
         ),
       ),
     );

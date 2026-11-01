@@ -139,7 +139,7 @@ class EpisodePlayButton extends ConsumerWidget {
             foregroundColor: prominent ? colors.onSecondary : colors.onSurface,
             disabledBackgroundColor: colors.surfaceContainer,
             disabledForegroundColor: colors.outline,
-            fixedSize: Size.square(prominent ? 80 : 48),
+            fixedSize: Size.square(prominent ? 72 : 48),
           ).copyWith(
             backgroundColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.disabled)) {

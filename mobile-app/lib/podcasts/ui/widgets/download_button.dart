@@ -67,9 +67,9 @@ class PodcastDownloadButton extends ConsumerWidget {
       iconSize: size,
       style: outlined
           ? FccTheme.compactOutlineStyle(context).copyWith(
-              minimumSize: const WidgetStatePropertyAll(Size(52, 48)),
-              fixedSize: const WidgetStatePropertyAll(Size(52, 48)),
-              shape: FccTheme.focusShape(context),
+              minimumSize: const WidgetStatePropertyAll(Size(52, 44)),
+              fixedSize: const WidgetStatePropertyAll(Size(52, 44)),
+              shape: FccTheme.focusShape(context, radius: 999),
             )
           : null,
       icon: icon,
