@@ -120,50 +120,68 @@ class _PrivateProfile extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 36),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       children: [
         Center(
-          child: CircleAvatar(
-            radius: 42,
-            backgroundColor: colors.surfaceContainer,
+          child: Container(
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colors.surfaceContainer,
+              border: Border.all(color: colors.outlineVariant),
+            ),
             child: Icon(
               Icons.person_outline,
-              size: 42,
+              size: 40,
               color: colors.onSurfaceVariant,
             ),
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
         Text(
           '@$username',
           textAlign: TextAlign.center,
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: theme.textTheme.bodyLarge?.copyWith(
             fontFamily: 'JetBrains Mono',
+            fontSize: 15,
+            color: colors.onSurface,
           ),
         ),
-        const SizedBox(height: 38),
+        const SizedBox(height: 24),
         Center(
           child: CircleAvatar(
-            radius: 26,
+            radius: 28,
             backgroundColor: colors.primaryContainer,
             child: Icon(
               Icons.lock_outline,
+              size: 26,
               color: FccDesignColors.of(context).accentText,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         Text(
           'This profile is private',
           textAlign: TextAlign.center,
-          style: theme.textTheme.titleLarge,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          'This learner has chosen to keep their profile private.',
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: colors.onSurfaceVariant,
+        const SizedBox(height: 12),
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 280),
+            child: Text(
+              'This learner has chosen to keep their profile private.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 15,
+                height: 1.5,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
           ),
         ),
       ],
@@ -220,12 +238,13 @@ class _PrivacyBanner extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final accent = FccDesignColors.of(context).accentText;
+    final heatmapLow = FccDesignColors.of(context).heatmapLow;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: colors.primaryContainer,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: heatmapLow),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -234,9 +253,9 @@ class _PrivacyBanner extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                radius: 20,
-                backgroundColor: colors.primary.withValues(alpha: 0.12),
-                child: Icon(Icons.lock_outline, color: accent, size: 22),
+                radius: 18,
+                backgroundColor: heatmapLow,
+                child: Icon(Icons.lock_outline, color: accent, size: 18),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -245,20 +264,30 @@ class _PrivacyBanner extends StatelessWidget {
                   children: [
                     Text(
                       'Your profile is private.',
-                      style: theme.textTheme.titleMedium,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        height: 1.5,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    const SizedBox(height: 4),
                     Text(
                       'This limits what other people can see.',
-                      style: theme.textTheme.bodySmall,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         alignment: Alignment.centerLeft,
-                        textStyle: theme.textTheme.bodySmall?.copyWith(
+                        textStyle: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 14,
+                          height: 1.5,
                           fontWeight: FontWeight.w700,
                           decoration: TextDecoration.underline,
+                          decorationColor: accent,
                         ),
                       ),
                       onPressed: () =>
@@ -272,11 +301,11 @@ class _PrivacyBanner extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
-            style: const ButtonStyle().copyWith(
-              shape: FccTheme.focusShape(context),
-            ),
+            style: FccTheme.compactOutlineStyle(
+              context,
+            ).copyWith(shape: FccTheme.focusShape(context, radius: 10)),
             onPressed: onPreview,
-            icon: const Icon(Icons.visibility_outlined, size: 20),
+            icon: const Icon(Icons.visibility_outlined, size: 16),
             label: const Text('View as others'),
           ),
         ],

@@ -39,6 +39,7 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
       color: theme.colorScheme.onSurfaceVariant,
     );
     final enabled = state != null && !state.saving && !state.needsRefresh;
+    final locked = state?.draft.isLocked ?? false;
     return PopScope(
       canPop: !(state?.saving ?? false),
       child: Scaffold(
@@ -144,10 +145,14 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                           style: sectionTitle,
                         ),
                         if (state.draft.isLocked) ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Text(
-                            'These choices apply when your profile is public.',
-                            style: theme.textTheme.bodyMedium,
+                            'These choices apply when your profile is public. Switch to Public to change them.',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: 13,
+                              height: 1.4,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ],
                         for (final group in _visibilityGroups) ...[
@@ -164,21 +169,12 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                               for (final (index, field)
                                   in group.fields.indexed) ...[
                                 if (index > 0) const Divider(height: 1),
-                                SwitchListTile.adaptive(
-                                  title: Text(
-                                    field.label,
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  subtitle: field.subtitle == null
-                                      ? null
-                                      : Text(
-                                          field.subtitle!,
-                                          style: theme.textTheme.bodySmall,
-                                        ),
+                                _VisibilitySwitchRow(
+                                  label: field.label,
+                                  subtitle: field.subtitle,
+                                  locked: locked,
                                   value: field.value(state.draft),
-                                  onChanged: enabled
+                                  onChanged: enabled && !locked
                                       ? (value) => _save(
                                           field.update(state.draft, value),
                                         )
@@ -190,6 +186,72 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                         ],
                       ],
                     ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VisibilitySwitchRow extends StatelessWidget {
+  const _VisibilitySwitchRow({
+    required this.label,
+    required this.subtitle,
+    required this.locked,
+    required this.value,
+    required this.onChanged,
+  });
+  final String label;
+  final String? subtitle;
+  final bool locked;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    final onChanged = this.onChanged;
+    return MergeSemantics(
+      child: InkWell(
+        onTap: onChanged == null ? null : () => onChanged(!value),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 56),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(14, 4, 12, 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: locked ? muted : null,
+                        ),
+                      ),
+                      if (subtitle != null)
+                        Text(
+                          subtitle!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: muted,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (locked) ...[
+                  ExcludeSemantics(
+                    child: Icon(Icons.lock_outline, size: 16, color: muted),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Switch.adaptive(value: value, onChanged: onChanged),
+              ],
             ),
           ),
         ),

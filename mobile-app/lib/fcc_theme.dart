@@ -331,6 +331,14 @@ class FccTheme {
     final accentText = Color(dark ? 0xFFBBBFFF : 0xFF5B4BDB);
     final tint = Color(dark ? 0xFF29216C : 0xFFECE8FF);
     const yellow = Color(0xFFFFC83D);
+    final disabledAccent = Color.alphaBlend(
+      accent.withValues(alpha: 0.45),
+      surface,
+    );
+    final disabledThumb = Color.alphaBlend(
+      controlEdge.withValues(alpha: 0.6),
+      surface,
+    );
     final colors = ColorScheme(
       brightness: brightness,
       primary: accent,
@@ -562,28 +570,30 @@ class FccTheme {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       ),
       switchTheme: SwitchThemeData(
-        trackColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.disabled)
-              ? null
-              : states.contains(WidgetState.selected)
-              ? accent
-              : raised,
-        ),
-        trackOutlineColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.disabled)
-              ? null
-              : states.contains(WidgetState.selected)
-              ? accent
-              : controlEdge,
-        ),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          if (states.contains(WidgetState.disabled)) {
+            return selected ? disabledAccent : raised;
+          }
+          return selected ? accent : raised;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          if (states.contains(WidgetState.disabled)) {
+            return selected ? disabledAccent : line;
+          }
+          return selected ? accent : controlEdge;
+        }),
         trackOutlineWidth: const WidgetStatePropertyAll(1),
-        thumbColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.disabled)
-              ? null
-              : states.contains(WidgetState.selected)
-              ? surface
-              : muted,
-        ),
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          if (states.contains(WidgetState.disabled)) {
+            return selected
+                ? (dark ? muted : surface)
+                : (dark ? controlEdge : disabledThumb);
+          }
+          return selected ? surface : muted;
+        }),
       ),
       inputDecorationTheme: InputDecorationThemeData(
         filled: true,
