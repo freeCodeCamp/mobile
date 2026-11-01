@@ -384,7 +384,13 @@ class _Header extends ConsumerWidget {
               Builder(
                 builder: (buttonContext) => IconButton.filled(
                   tooltip: 'Share podcast',
-                  style: FccTheme.surfaceButtonStyle(context, compact: true),
+                  style: FccTheme.surfaceButtonStyle(
+                    context,
+                    fill: Colors.transparent,
+                    compact: true,
+                  ).copyWith(
+                    minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+                  ),
                   onPressed: () => sharePodcast(
                     buttonContext,
                     podcast.title,

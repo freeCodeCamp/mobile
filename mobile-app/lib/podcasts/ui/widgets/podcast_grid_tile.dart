@@ -46,7 +46,7 @@ class PodcastGridTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${podcast.numOfEps} ${podcast.numOfEps == 1 ? 'episode' : 'episodes'}',
+                    '${_formatCount(podcast.numOfEps)} ${podcast.numOfEps == 1 ? 'episode' : 'episodes'}',
                     style: TextStyle(
                       fontSize: 13,
                       color: colors.onSurfaceVariant,
@@ -63,3 +63,8 @@ class PodcastGridTile extends StatelessWidget {
     );
   }
 }
+
+String _formatCount(int value) => value.toString().replaceAllMapped(
+  RegExp(r'\B(?=(\d{3})+(?!\d))'),
+  (match) => ',',
+);

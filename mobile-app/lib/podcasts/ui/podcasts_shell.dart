@@ -24,15 +24,15 @@ class PodcastsShell extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Padding(
-                    padding: EdgeInsets.fromLTRB(18, 24, 18, 18),
+                    padding: EdgeInsets.fromLTRB(16, 24, 16, 32),
                     child: AppPageTitle('Listen'),
                   ),
                   const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: ListenTabs(isRadio: false),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 16, 18, 20),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                     child: Wrap(
                       spacing: 10,
                       children: [
