@@ -234,16 +234,16 @@ final List<_VisibilityGroup> _visibilityGroups = [
         update: (p, v) => p.copyWith(showName: v),
       ),
       (
-        label: 'About',
-        subtitle: null,
-        value: (p) => p.showAbout,
-        update: (p, v) => p.copyWith(showAbout: v),
-      ),
-      (
         label: 'Location',
         subtitle: null,
         value: (p) => p.showLocation,
         update: (p, v) => p.copyWith(showLocation: v),
+      ),
+      (
+        label: 'About',
+        subtitle: null,
+        value: (p) => p.showAbout,
+        update: (p, v) => p.copyWith(showAbout: v),
       ),
     ],
   ),

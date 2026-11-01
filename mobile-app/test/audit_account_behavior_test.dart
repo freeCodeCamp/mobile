@@ -218,6 +218,15 @@ void main() {
     expect(find.byType(AppNavigationFooter), findsNothing);
   });
 
+  testWidgets('should list About you as Name, Location, About', (tester) async {
+    await _pumpScreen(tester, const ProfileVisibilityView(), _MemoryAuth());
+    final top = [
+      for (final label in ['Name', 'Location', 'About'])
+        tester.getTopLeft(_switch(label)).dy,
+    ];
+    expect(top, orderedEquals([...top]..sort()));
+  });
+
   testWidgets('should disable repeated changes while saving', (tester) async {
     final auth = _MemoryAuth().._saveGate = Completer<void>();
     await _pumpScreen(tester, const ProfileVisibilityView(), auth);
