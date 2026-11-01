@@ -322,7 +322,7 @@ class FccTheme {
     final background = Color(dark ? 0xFF1A1530 : 0xFFFFF8EC);
     final surface = Color(dark ? 0xFF2B2140 : 0xFFFFFFFF);
     final raised = Color(dark ? 0xFF3F3557 : 0xFFFFF1D6);
-    final line = Color(dark ? 0xFF4C4066 : 0xFFF1E2C8);
+    final line = Color(dark ? 0xFF4C4066 : 0xFFE5DBCA);
     final controlEdge = Color(dark ? 0xFF7D709D : 0xFF9D9280);
     final foreground = Color(dark ? 0xFFFFF8EC : 0xFF2B2140);
     final muted = Color(dark ? 0xFFCABEEA : 0xFF5E5470);
