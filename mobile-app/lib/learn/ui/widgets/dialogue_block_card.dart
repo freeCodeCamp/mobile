@@ -4,6 +4,7 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 
@@ -52,7 +53,18 @@ class DialogueBlockCard extends ConsumerWidget {
       ),
     );
     final sections = _dialogues(block);
+    final next = resolveLearningAction(
+      [block],
+      completed,
+      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+    )?.next;
     final active =
+        sections
+            .where(
+              (section) =>
+                  section.header == next || section.tasks.contains(next),
+            )
+            .firstOrNull ??
         sections
             .where(
               (section) =>
@@ -64,10 +76,7 @@ class DialogueBlockCard extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: BorderSide(color: colors.outlineVariant),
-        ),
+        shape: FccTheme.cardShape(context),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -77,7 +86,7 @@ class DialogueBlockCard extends ConsumerWidget {
                 block.name,
                 style: const TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   height: 1.15,
                 ),
               ),
@@ -101,6 +110,7 @@ class DialogueBlockCard extends ConsumerWidget {
                     completed: completed,
                     initiallyExpanded: section == active,
                     showAction: showAction,
+                    currentChallengeId: next?.id,
                   ),
                 ],
             ],
@@ -119,6 +129,7 @@ class _DialogueCard extends StatefulWidget {
     required this.completed,
     required this.initiallyExpanded,
     required this.showAction,
+    this.currentChallengeId,
   });
 
   final Block block;
@@ -126,6 +137,7 @@ class _DialogueCard extends StatefulWidget {
   final Set<String> completed;
   final bool initiallyExpanded;
   final bool showAction;
+  final String? currentChallengeId;
 
   @override
   State<_DialogueCard> createState() => _DialogueCardState();
@@ -160,9 +172,14 @@ class _DialogueCardState extends State<_DialogueCard> {
     final done = tasks
         .where((task) => widget.completed.contains(task.id))
         .length;
-    final next = tasks
-        .where((task) => !widget.completed.contains(task.id))
-        .firstOrNull;
+    final remaining = tasks.where(
+      (task) => !widget.completed.contains(task.id),
+    );
+    final next =
+        remaining
+            .where((task) => task.id == widget.currentChallengeId)
+            .firstOrNull ??
+        remaining.firstOrNull;
     final watched = widget.completed.contains(header.id);
     final complete = watched && done == tasks.length;
     final active = watched || done > 0;
@@ -254,6 +271,7 @@ class _DialogueCardState extends State<_DialogueCard> {
                     ChallengeGrid(
                       challenges: tasks,
                       completed: widget.completed,
+                      currentChallengeId: next?.id,
                       onSelected: (task) => _open(context, widget.block, task),
                       maxVisibleItems: _showAll ? null : 12,
                       maxHeight: double.infinity,

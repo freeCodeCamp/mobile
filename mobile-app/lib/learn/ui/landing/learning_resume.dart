@@ -5,6 +5,7 @@ import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 
 class LearningResume {
@@ -19,8 +20,13 @@ class LearningResume {
   final Block block;
   final ChallengeOrder challenge;
   final int completed;
-  int get step => block.challenges.indexOf(challenge) + 1;
   final bool isReturning;
+
+  LearningAction get action => LearningAction(
+    block: block,
+    next: challenge,
+    hasProgress: completed > 0 || isReturning,
+  );
 }
 
 Iterable<Block> availableLearningBlocks(SuperBlock curriculum) =>
@@ -63,18 +69,18 @@ LearningResume? resolveLearningResume(
     String? preferred,
   }) {
     final (course, block) = entry;
-    final remaining = block.challenges.where(
-      (c) => !completed.containsKey(c.id),
+    final action = resolveLearningAction(
+      [block],
+      completed.keys.toSet(),
+      currentChallengeId: preferred,
     );
-    if (remaining.isEmpty) return null;
-    final challenge =
-        remaining.where((c) => c.id == preferred).firstOrNull ??
-        remaining.first;
+    final challenge = action?.next;
+    if (challenge == null) return null;
     return LearningResume(
       course: course,
       block: block,
       challenge: challenge,
-      isReturning: user?.currentChallengeId != null || completed.isNotEmpty,
+      isReturning: completed.isNotEmpty,
       completed: block.challenges
           .where((c) => completed.containsKey(c.id))
           .length,
@@ -82,7 +88,8 @@ LearningResume? resolveLearningResume(
   }
 
   for (final entry in entries) {
-    if (entry.$2.challenges.any((c) => c.id == user?.currentChallengeId)) {
+    if (completed.isNotEmpty &&
+        entry.$2.challenges.any((c) => c.id == user?.currentChallengeId)) {
       final result = candidate(entry, preferred: user?.currentChallengeId);
       if (result != null) return result;
       // A completed block continues into the next available block in its course.
@@ -148,7 +155,7 @@ final learningResumeProvider = FutureProvider.autoDispose<LearningResume?>((
   return resolveLearningResume(loaded, user);
 });
 
-/// Retrying must refresh the source futures as well as the derived selection.
+// Retrying must refresh the source futures as well as the derived selection.
 void retryLearningResume(WidgetRef ref) {
   final stages = ref.read(curriculumStagesProvider).value;
   for (final stage in stages ?? const <CurriculumStage>[]) {

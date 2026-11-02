@@ -34,7 +34,7 @@ class DailyInstructionCard extends StatelessWidget {
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: SingleChildScrollView(
@@ -64,7 +64,7 @@ class DailyInstructionCard extends StatelessWidget {
               child: TextButton(
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
-                  minimumSize: const Size(0, 40),
+                  minimumSize: const Size(48, 48),
                   alignment: AlignmentDirectional.centerStart,
                 ),
                 onPressed: () => showModalBottomSheet<void>(

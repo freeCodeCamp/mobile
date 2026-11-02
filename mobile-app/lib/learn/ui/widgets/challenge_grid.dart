@@ -10,12 +10,14 @@ class ChallengeGrid extends StatelessWidget {
     required this.onSelected,
     required this.challenges,
     required this.completed,
+    this.currentChallengeId,
     this.maxVisibleItems,
     this.maxHeight = 300,
   });
   final ValueChanged<ChallengeOrder> onSelected;
   final List<ChallengeOrder> challenges;
   final Set<String> completed;
+  final String? currentChallengeId;
   final int? maxVisibleItems;
   final double maxHeight;
 
@@ -23,7 +25,10 @@ class ChallengeGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final design = FccDesignColors.of(context);
-    final next = challenges.where((c) => !completed.contains(c.id)).firstOrNull;
+    final remaining = challenges.where((c) => !completed.contains(c.id));
+    final next =
+        remaining.where((c) => c.id == currentChallengeId).firstOrNull ??
+        remaining.firstOrNull;
     final visibleCount = math.min(
       maxVisibleItems ?? challenges.length,
       challenges.length,
@@ -42,7 +47,7 @@ class ChallengeGrid extends StatelessWidget {
             style: const TextStyle(
               fontFamily: 'JetBrains Mono',
               fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
           ),
           textScaler: MediaQuery.textScalerOf(context),
@@ -150,7 +155,7 @@ class ChallengeGrid extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'JetBrains Mono',
                               fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                   ),

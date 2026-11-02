@@ -5,6 +5,7 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
@@ -129,15 +130,12 @@ class ModuleActionBar extends ConsumerWidget {
         (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
       ),
     );
-    final available = blocks.where(
-      (b) => !b.isDisabledByOverride && b.challenges.isNotEmpty,
+    final action = resolveLearningAction(
+      blocks,
+      completed,
+      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
     );
-    final current =
-        available.firstWhereOrNull(
-          (b) => b.challenges.any((c) => !completed.contains(c.id)),
-        ) ??
-        available.firstOrNull;
-    if (current == null) return const SizedBox.shrink();
+    if (action == null) return const SizedBox.shrink();
     final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -146,8 +144,9 @@ class ModuleActionBar extends ConsumerWidget {
         border: Border(top: BorderSide(color: colors.outlineVariant)),
       ),
       child: BlockActionButton(
-        block: current,
+        block: action.block,
         completed: completed,
+        currentChallengeId: action.next?.id,
         height: 52,
         showArrow: true,
       ),

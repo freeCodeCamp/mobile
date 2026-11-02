@@ -611,10 +611,8 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       _instructionsExpanded ? 'Hide' : 'Show',
                       style: TextStyle(
                         color: FccDesignColors.of(context).accentText,
-                        fontSize: _instructionsExpanded ? 14 : 13,
-                        fontWeight: _instructionsExpanded
-                            ? FontWeight.w700
-                            : FontWeight.w900,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -844,7 +842,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                               title,
                               style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w900,
                               ),
                             ),
                             if ((sheet == _EditorSheet.tests ||
@@ -923,7 +921,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             ),
             title: const Text(
               'Preview',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
             ),
           ),
           body: SafeArea(
@@ -1087,7 +1085,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
           const SizedBox(width: 8),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width * .5,
+              maxWidth: math.max(48, MediaQuery.sizeOf(context).width - 96),
             ),
             child: state.passed
                 ? IntrinsicWidth(

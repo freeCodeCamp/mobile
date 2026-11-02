@@ -9,6 +9,7 @@ import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/chip_surface.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -62,17 +63,21 @@ class _DailyChallengeArchiveViewState
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             children: [
-              const DailyChallengeCard(showArchiveLink: false),
+              const DailyChallengeCard(
+                variant: DailyChallengeCardVariant.archive,
+              ),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   for (final filter in _Filter.values)
-                    ChoiceChip(
-                      label: Text(filter.label),
-                      selected: _filter == filter,
-                      onSelected: (_) => setState(() => _filter = filter),
+                    ChipSurface(
+                      child: ChoiceChip(
+                        label: Text(filter.label),
+                        selected: _filter == filter,
+                        onSelected: (_) => setState(() => _filter = filter),
+                      ),
                     ),
                 ],
               ),

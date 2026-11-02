@@ -12,6 +12,7 @@ import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/exam_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
@@ -141,12 +142,15 @@ class _Chapters extends ConsumerWidget {
         .expand((c) => c.modules.where((m) => !m.comingSoon))
         .expand((m) => m.blocks)
         .toList();
+    final action = resolveLearningAction(
+      blocks,
+      completed,
+      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+    );
     final active = available.firstWhereOrNull(
-      (c) => c.modules
-          .where((m) => !m.comingSoon)
-          .expand((m) => m.blocks)
-          .expand((b) => b.challenges)
-          .any((ch) => !completed.contains(ch.id)),
+      (c) =>
+          action?.next != null &&
+          c.modules.expand((m) => m.blocks).contains(action?.block),
     );
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -202,12 +206,11 @@ class _CourseHero extends ConsumerWidget {
     final available = blocks.where((b) => !b.isDisabledByOverride);
     final challenges = available.expand((b) => b.challenges).toList();
     final done = challenges.where((c) => completed.contains(c.id)).length;
-    final nextBlock = available.firstWhereOrNull(
-      (b) => b.challenges.any((c) => !completed.contains(c.id)),
+    final action = resolveLearningAction(
+      available,
+      completed,
+      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
     );
-    final nextBlockDone =
-        nextBlock?.challenges.where((c) => completed.contains(c.id)).length ??
-        0;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -260,26 +263,24 @@ class _CourseHero extends ConsumerWidget {
               color: Colors.white,
               backgroundColor: Colors.white.withValues(alpha: .22),
             ),
-          if (nextBlock != null) ...[
+          if (action != null && action.next != null) ...[
             const SizedBox(height: 14),
             FilledButton.icon(
               style: FilledButton.styleFrom(
                 textStyle: const TextStyle(
                   fontFamily: 'Lato',
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               onPressed: () => LearnChallengeRoute(
-                superBlock: nextBlock.superBlock,
-                block: nextBlock.dashedName,
-                challengeId: nextBlock.challenges
-                    .firstWhere((c) => !completed.contains(c.id))
-                    .id,
+                superBlock: action.block.superBlock,
+                block: action.block.dashedName,
+                challengeId: action.next!.id,
               ).push<void>(context),
               icon: const Icon(Icons.arrow_forward, size: 18),
               iconAlignment: IconAlignment.end,
-              label: Text(nextBlockDone > 0 ? 'Continue' : 'Start'),
+              label: Text(action.label(chapter: true)),
             ),
           ],
         ],
@@ -325,10 +326,13 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
       ),
     );
     final modules = chapter.modules.where((m) => !m.comingSoon).toList();
+    final action = resolveLearningAction(
+      modules.expand((m) => m.blocks),
+      completed,
+      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+    );
     final current = modules.firstWhereOrNull(
-      (m) => m.blocks
-          .expand((b) => b.challenges)
-          .any((c) => !completed.contains(c.id)),
+      (m) => action?.next != null && m.blocks.contains(action?.block),
     );
     bool moduleComplete(Module module) {
       final challenges = module.blocks.expand((b) => b.challenges).toList();
@@ -360,8 +364,8 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
           childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
           shape: const Border(),
           collapsedShape: const Border(),
-          iconColor: design.accentText,
-          collapsedIconColor: design.accentText,
+          iconColor: colors.onSurfaceVariant,
+          collapsedIconColor: colors.onSurfaceVariant,
           leading: Container(
             width: 48,
             height: 48,
@@ -608,7 +612,7 @@ const _segmentGap = 3.0;
 const _segmentMinWidth = 14.0;
 
 int _chapterWeight(Chapter chapter) {
-  final modules = chapter.modules.where((m) => !m.comingSoon).length;
+  final modules = chapter.modules.length;
   return modules < 1 ? 1 : modules;
 }
 

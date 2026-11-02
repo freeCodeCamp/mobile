@@ -157,9 +157,12 @@ class _ResumeCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final resume = ref.watch(learningResumeProvider);
     final next = resume.value;
-    final returning = next?.isReturning ?? false;
-    final guest = !ref.watch(authProvider).isLoggedIn;
-    if (guest && !returning) {
+    final auth = ref.watch(authProvider);
+    final returning =
+        next?.isReturning ??
+        (auth.value?.completedChallenges.isNotEmpty ?? false);
+    final guest = !auth.isLoggedIn;
+    if (!returning) {
       return FirstVisitHero(
         course: course,
         next: next,
@@ -173,7 +176,7 @@ class _ResumeCard extends ConsumerWidget {
                 block: next.block.dashedName,
                 challengeId: next.challenge.id,
               ).push<void>(context),
-        onSignIn: () => const LoginRoute().push<void>(context),
+        onSignIn: guest ? () => const LoginRoute().push<void>(context) : null,
       );
     }
     return Container(
@@ -268,7 +271,7 @@ class _ResumeCard extends ConsumerWidget {
               icon: const Icon(Icons.arrow_forward, size: 18),
               label: Text(
                 next != null
-                    ? '${next.completed > 0 ? 'Continue' : 'Start'} ${blockUnit(next.block)} ${next.step}'
+                    ? next.action.label()
                     : resume.hasError
                     ? 'Try again'
                     : 'Explore course',
@@ -294,7 +297,7 @@ class FirstVisitHero extends StatelessWidget {
   final LearningResume? next;
   final bool loading;
   final VoidCallback onStart;
-  final VoidCallback onSignIn;
+  final VoidCallback? onSignIn;
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +330,7 @@ class FirstVisitHero extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Learn to code for free, one short hands-on step at a time.',
+                    'Choose a certification or start with the essentials.',
                     style: TextStyle(fontSize: 15, height: 1.45),
                   ),
                   const SizedBox(height: 16),
@@ -360,55 +363,57 @@ class FirstVisitHero extends StatelessWidget {
                     icon: const Icon(Icons.arrow_forward),
                     label: const Text('Start step 1'),
                   ),
-                  const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(
-                          color: design.heroForeground.withValues(alpha: .3),
-                        ),
-                      ),
-                    ),
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Already learning? Sign in to pick up where you left off.',
-                            style: TextStyle(fontSize: 14, height: 1.4),
+                  if (onSignIn != null) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: design.heroForeground.withValues(alpha: .3),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        OutlinedButton(
-                          onPressed: onSignIn,
-                          style:
-                              OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(0, 44),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
+                      ),
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Already learning? Sign in to pick up where you left off.',
+                              style: TextStyle(fontSize: 14, height: 1.4),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          OutlinedButton(
+                            onPressed: onSignIn,
+                            style:
+                                OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  minimumSize: const Size(0, 44),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  side: const BorderSide(
+                                    color: Colors.white,
+                                    width: 1.5,
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ).copyWith(
+                                  shape: FccTheme.focusShape(
+                                    context,
+                                    radius: 10,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                                side: const BorderSide(
-                                  color: Colors.white,
-                                  width: 1.5,
-                                ),
-                                textStyle: const TextStyle(
-                                  fontFamily: 'Lato',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ).copyWith(
-                                shape: FccTheme.focusShape(
-                                  context,
-                                  radius: 10,
-                                  color: Colors.white,
-                                ),
-                              ),
-                          child: const Text('Sign in'),
-                        ),
-                      ],
+                            child: const Text('Sign in'),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

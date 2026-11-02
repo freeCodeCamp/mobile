@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/example_editor.dart';
+import 'package:freecodecamp/widgets/chip_surface.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
 
-/// Keeps the persistent topic strip and app bar in sync with the article.
+// Keeps the persistent topic strip and app bar in sync with the article.
 class ReviewController extends ChangeNotifier {
   ReviewController(List<Nodule> nodules) : _sections = _group(nodules);
   final List<_ReviewSection> _sections;
@@ -116,13 +117,15 @@ class _ReviewTopicsState extends State<ReviewTopics> {
               for (final (index, section) in controller._topics.indexed)
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    key: _keys[index],
-                    label: Text(section.title!),
-                    selected: index == controller.selected,
-                    tooltip:
-                        'Jump to topic ${index + 1} of ${controller.topicCount}',
-                    onSelected: (_) => controller.select(index),
+                  child: ChipSurface(
+                    child: ChoiceChip(
+                      key: _keys[index],
+                      label: Text(section.title!),
+                      selected: index == controller.selected,
+                      tooltip:
+                          'Jump to topic ${index + 1} of ${controller.topicCount}',
+                      onSelected: (_) => controller.select(index),
+                    ),
                   ),
                 ),
             ],

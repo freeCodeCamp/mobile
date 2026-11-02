@@ -46,7 +46,7 @@ Future<bool> showQuizLeaveDialog(
                   const Text(
                     'Leave the quiz?',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -61,15 +61,7 @@ Future<bool> showQuizLeaveDialog(
                   const SizedBox(height: 16),
                   FilledButton(
                     autofocus: true,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                      padding: const EdgeInsets.all(12),
-                      textStyle: const TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: 17,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+                    style: FccTheme.dialogActionStyle(context, primary: true),
                     onPressed: () => Navigator.pop(context, false),
                     child: const Text(
                       'Keep going',
@@ -78,18 +70,9 @@ Future<bool> showQuizLeaveDialog(
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
-                    style: FccTheme.dangerOutlineStyle(context).copyWith(
-                      minimumSize: const WidgetStatePropertyAll(
-                        Size(double.infinity, 50),
-                      ),
-                      padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
-                      textStyle: const WidgetStatePropertyAll(
-                        TextStyle(
-                          fontFamily: 'Lato',
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                    style: FccTheme.dialogActionStyle(
+                      context,
+                      destructive: true,
                     ),
                     onPressed: () => Navigator.pop(context, true),
                     child: const Text(

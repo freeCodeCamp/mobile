@@ -103,7 +103,11 @@ class LearnStatus extends StatelessWidget {
               : active
               ? colors.primary
               : colors.outline,
-          width: module ? 3 : large ? 2.5 : 2,
+          width: module
+              ? 3
+              : large
+              ? 2.5
+              : 2,
         ),
       ),
       child: complete

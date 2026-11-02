@@ -9,6 +9,7 @@ import 'package:freecodecamp/learn/ui/widgets/dialogue_block_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/exam_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
@@ -57,11 +58,10 @@ class _BlockListState extends ConsumerState<BlockList> {
         (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
       ),
     );
-    final active = widget.blocks.indexWhere(
-      (b) =>
-          !b.isDisabledByOverride &&
-          b.label != BlockLabel.exam &&
-          b.challenges.any((c) => !completed.contains(c.id)),
+    final action = resolveLearningAction(
+      widget.blocks,
+      completed,
+      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
     );
     final headerCount = widget.header == null ? 0 : 1;
     return ListView.builder(
@@ -72,7 +72,9 @@ class _BlockListState extends ConsumerState<BlockList> {
         if (index < headerCount) return widget.header!;
         final blockIndex = index - headerCount;
         final block = widget.blocks[blockIndex];
-        final isOpen = _open[block.dashedName] ?? blockIndex == active;
+        final isOpen =
+            _open[block.dashedName] ??
+            (action?.next != null && action?.block == block);
         return BlockCard(
           key: ValueKey(block.dashedName),
           block: block,
@@ -130,19 +132,34 @@ class BlockCard extends ConsumerWidget {
     final disabled = block.isDisabledByOverride;
     final expanded = isOpen && !disabled;
     final color = blockLabelColor(context, block.label);
-    final next = block.challenges
-        .where((c) => !completed.contains(c.id))
-        .firstOrNull;
+    final currentChallengeId = ref
+        .watch(authProvider)
+        .value
+        ?.currentChallengeId;
+    final next = resolveLearningAction(
+      [block],
+      completed,
+      currentChallengeId: currentChallengeId,
+    )?.next;
     final unit = blockUnit(block);
     final progress = '$done of ${countLabel(total, unit)}';
-    final toggle = disabled ? () => _showUnavailable(context) : onToggle;
+    final toggle = disabled
+        ? () => _showUnavailable(context)
+        : block.layout == BlockLayout.challengeLink &&
+              block.challenges.isNotEmpty
+        ? () => _openChallenge(
+            context,
+            block,
+            (next ?? block.challenges.first).id,
+          )
+        : onToggle;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: done > 0 && !complete
                 ? colors.primary
@@ -157,7 +174,9 @@ class BlockCard extends ConsumerWidget {
               onTap: toggle,
               child: Semantics(
                 button: true,
-                expanded: expanded,
+                expanded: block.layout == BlockLayout.challengeLink
+                    ? null
+                    : expanded,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
@@ -280,6 +299,7 @@ class BlockCard extends ConsumerWidget {
                               _openChallenge(context, block, challenge.id),
                           challenges: block.challenges,
                           completed: completed,
+                          currentChallengeId: next?.id,
                         ),
                         BlockLayout.challengeDialogue =>
                           const SizedBox.shrink(),
@@ -300,7 +320,11 @@ class BlockCard extends ConsumerWidget {
                       },
                       if (showAction) ...[
                         const SizedBox(height: 12),
-                        BlockActionButton(block: block, completed: completed),
+                        BlockActionButton(
+                          block: block,
+                          completed: completed,
+                          currentChallengeId: currentChallengeId,
+                        ),
                       ],
                     ],
                   ],
@@ -383,28 +407,23 @@ class BlockActionButton extends StatelessWidget {
     required this.completed,
     this.height = 48,
     this.showArrow = false,
+    this.currentChallengeId,
   });
   final Block block;
   final Set<String> completed;
   final double height;
   final bool showArrow;
+  final String? currentChallengeId;
 
   @override
   Widget build(BuildContext context) {
-    final next = block.challenges
-        .where((c) => !completed.contains(c.id))
-        .firstOrNull;
-    final done = block.challenges.where((c) => completed.contains(c.id)).length;
-    final unit = blockUnit(block);
-    final label = Text(
-      next == null
-          ? 'Review ${unit == 'step' ? 'steps' : block.label.value}'
-          : done > 0 && unit == 'step'
-          ? 'Continue step ${block.challenges.indexOf(next) + 1}'
-          : done > 0
-          ? 'Continue ${block.label.value}'
-          : 'Start ${block.label == BlockLabel.legacy ? 'learning' : block.label.value}',
+    final action = resolveLearningAction(
+      [block],
+      completed,
+      currentChallengeId: currentChallengeId,
     );
+    final next = action?.next;
+    final label = Text(action?.label() ?? 'Start step 1');
     return FilledButton(
       style: FilledButton.styleFrom(
         minimumSize: Size(double.infinity, height),
@@ -425,14 +444,14 @@ class BlockActionButton extends StatelessWidget {
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                label,
+                Flexible(child: label),
                 const SizedBox(width: 8),
                 SvgPicture.asset(
                   'assets/icons/arrow-right.svg',
                   width: 18,
                   height: 18,
                   theme: SvgTheme(
-                    currentColor: Theme.of(context).colorScheme.onPrimary,
+                    currentColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                   excludeFromSemantics: true,
                 ),

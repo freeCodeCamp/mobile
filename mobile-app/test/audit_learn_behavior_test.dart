@@ -153,7 +153,7 @@ void main() {
       await _pump(tester, const LearnLandingView());
       expect(find.text('New here? Start here'), findsOneWidget);
       expect(
-        find.text('Learn to code for free, one short hands-on step at a time.'),
+        find.text('Choose a certification or start with the essentials.'),
         findsOneWidget,
       );
       expect(
@@ -190,7 +190,7 @@ void main() {
       await tester.drag(find.byType(ListView).first, const Offset(0, -400));
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(find.byType(ModuleActionBar)), position);
-      await tester.tap(find.text('Start workshop'));
+      await tester.tap(find.text('Start step 1'));
       await tester.pumpAndSettle();
       expect(find.text('Challenge step-0'), findsOneWidget);
     },

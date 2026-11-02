@@ -9,9 +9,14 @@ import 'package:freecodecamp/services/auth_service.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+enum DailyChallengeCardVariant { home, archive }
+
 class DailyChallengeCard extends ConsumerStatefulWidget {
-  const DailyChallengeCard({super.key, this.showArchiveLink = true});
-  final bool showArchiveLink;
+  const DailyChallengeCard({
+    super.key,
+    this.variant = DailyChallengeCardVariant.home,
+  });
+  final DailyChallengeCardVariant variant;
 
   @override
   ConsumerState<DailyChallengeCard> createState() => _DailyChallengeCardState();
@@ -19,7 +24,7 @@ class DailyChallengeCard extends ConsumerStatefulWidget {
 
 class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
   Timer? _refreshTimer;
-  bool get showArchiveLink => widget.showArchiveLink;
+  bool get showArchiveLink => widget.variant == DailyChallengeCardVariant.home;
 
   @override
   void initState() {

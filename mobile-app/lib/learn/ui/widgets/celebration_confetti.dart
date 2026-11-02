@@ -1,10 +1,14 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 
-/// Decorative falling confetti that respects reduced-motion preferences.
+// A short celebration that respects reduced-motion preferences.
 class CelebrationConfetti extends StatefulWidget {
   const CelebrationConfetti({super.key, this.active = true});
+
+  static const duration = Duration(seconds: 3);
 
   final bool active;
 
@@ -15,12 +19,22 @@ class CelebrationConfetti extends StatefulWidget {
 class _CelebrationConfettiState extends State<CelebrationConfetti>
     with SingleTickerProviderStateMixin {
   final _confetti = _ConfettiStream();
-  late final _ticker = createTicker(_confetti.advance);
+  late final Ticker _ticker = createTicker((elapsed) {
+    _confetti.advance(elapsed);
+    if (elapsed >= CelebrationConfetti.duration) _ticker.stop();
+  });
   bool? _reducedMotion;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final colors = Theme.of(context).colorScheme;
+    _confetti.colors = [
+      colors.secondary,
+      colors.primary,
+      FccDesignColors.of(context).lecture,
+      colors.error,
+    ];
     final reducedMotion = MediaQuery.disableAnimationsOf(context);
     if (_reducedMotion != reducedMotion) {
       _reducedMotion = reducedMotion;
@@ -89,9 +103,10 @@ class _ConfettiParticle {
 }
 
 class _ConfettiStream extends ChangeNotifier {
-  static const _emissionInterval = .18;
-  static const _maximumLifetime = 4.4;
+  static const _emissionInterval = .1;
+  static const _emissionDuration = .7;
   final particles = <_ConfettiParticle>[];
+  List<Color> colors = const [];
   double elapsed = 0;
   int _nextParticle = 0;
 
@@ -107,29 +122,23 @@ class _ConfettiStream extends ChangeNotifier {
     particles.removeWhere(
       (particle) => elapsed >= particle.born + particle.duration,
     );
-    // TickerMode can pause painting for a long time. Only create particles that
-    // could still be visible when the result card returns to the foreground.
-    _nextParticle = math.max(
-      _nextParticle,
-      ((elapsed - _maximumLifetime) / _emissionInterval).floor(),
-    );
-    final lastParticle = (elapsed / _emissionInterval).floor();
+    if (elapsed >= CelebrationConfetti.duration.inSeconds) {
+      particles.clear();
+      notifyListeners();
+      return;
+    }
+    final lastParticle =
+        (math.min(elapsed, _emissionDuration) / _emissionInterval).floor();
     while (_nextParticle <= lastParticle) {
       particles.add(_makeParticle(_nextParticle++));
     }
     notifyListeners();
   }
 
-  static _ConfettiParticle _makeParticle(int index) {
+  _ConfettiParticle _makeParticle(int index) {
     // Each emission has a fresh trajectory. There is no shared animation cycle
     // that sends all the pieces back to their starting positions together.
     final random = math.Random(36 + index * 7919);
-    const colors = [
-      Color(0xFFFFC83D),
-      Color(0xFF9EA1FE),
-      Color(0xFF8EC5FF),
-      Color(0xFFD6245A),
-    ];
     // Leave the central text relatively clear, while alternating sides.
     final x = index.isEven
         ? .05 + random.nextDouble() * .25
@@ -137,7 +146,7 @@ class _ConfettiStream extends ChangeNotifier {
     return _ConfettiParticle(
       x: x,
       born: index * _emissionInterval + random.nextDouble() * .12,
-      duration: 2.8 + random.nextDouble() * 1.4,
+      duration: 1.5 + random.nextDouble() * .6,
       side: 4 + random.nextDouble() * 3,
       rotation: random.nextDouble() * math.pi,
       spin: (random.nextDouble() * 2 - 1) * math.pi * 1.5,

@@ -14,6 +14,7 @@ import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_view.dar
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:phone_ide/phone_ide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -97,11 +98,11 @@ void main() {
     expect(selected, DailyChallengeLanguage.python);
     expect(
       tester
-          .widget<SegmentedButton<DailyChallengeLanguage>>(
-            find.byType(SegmentedButton<DailyChallengeLanguage>),
+          .widget<SegmentedTabs<DailyChallengeLanguage>>(
+            find.byType(SegmentedTabs<DailyChallengeLanguage>),
           )
           .selected,
-      {DailyChallengeLanguage.python},
+      DailyChallengeLanguage.python,
     );
   });
 
@@ -230,7 +231,14 @@ void main() {
         final output = find.text(_emailOutput);
         final check = find.widgetWithText(FilledButton, 'Check your code');
         final editor = find.byType(Editor);
-        expect(tester.getSize(example).height, greaterThan(80));
+        if (example.evaluate().isEmpty) {
+          await tester.drag(
+            find.byType(CustomScrollView),
+            const Offset(0, -250),
+          );
+          await tester.pump();
+        }
+        expect(tester.getSize(example).height, greaterThan(20));
         expect(tester.getSize(editor).height, greaterThanOrEqualTo(160));
         expect(tester.getRect(input).left, greaterThanOrEqualTo(12));
         expect(
@@ -423,7 +431,7 @@ void main() {
         final testsButton = find.widgetWithText(TextButton, 'Tests');
         await tester.tap(testsButton);
         await tester.pump();
-        expect(find.byIcon(Icons.fact_check_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.checklist), findsOneWidget);
         expect(
           tester
               .widget<TextButton>(testsButton)

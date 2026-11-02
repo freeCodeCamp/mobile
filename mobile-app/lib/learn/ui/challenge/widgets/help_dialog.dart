@@ -258,7 +258,7 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
         : remaining > 0
         ? 'Add $remaining more ${remaining == 1 ? 'character' : 'characters'} to post.'
         : tooLong
-        ? 'Shorten your description to post.'
+        ? 'Your description is too long. Shorten it to post.'
         : null;
 
     return Dialog.fullscreen(
@@ -461,7 +461,7 @@ class _Statement extends StatelessWidget {
           onTap: () => onChanged(!value),
           borderRadius: BorderRadius.circular(8),
           child: SizedBox.square(
-            dimension: 44,
+            dimension: 48,
             child: Center(
               child: Container(
                 width: 26,
