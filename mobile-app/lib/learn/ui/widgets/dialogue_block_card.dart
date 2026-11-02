@@ -275,6 +275,7 @@ class _DialogueCardState extends State<_DialogueCard> {
                       onSelected: (task) => _open(context, widget.block, task),
                       maxVisibleItems: _showAll ? null : 12,
                       maxHeight: double.infinity,
+                      minColumns: 6,
                     ),
                     if (widget.showAction) ...[
                       const SizedBox(height: 12),

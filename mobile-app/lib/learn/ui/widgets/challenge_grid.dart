@@ -13,6 +13,7 @@ class ChallengeGrid extends StatelessWidget {
     this.currentChallengeId,
     this.maxVisibleItems,
     this.maxHeight = 300,
+    this.minColumns = 1,
   });
   final ValueChanged<ChallengeOrder> onSelected;
   final List<ChallengeOrder> challenges;
@@ -20,6 +21,7 @@ class ChallengeGrid extends StatelessWidget {
   final String? currentChallengeId;
   final int? maxVisibleItems;
   final double maxHeight;
+  final int minColumns;
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +62,18 @@ class ChallengeGrid extends StatelessWidget {
           math.max(numeral.width, numeral.height) + 16,
         );
         numeral.dispose();
-        final columns = math.max(
+        final fitted = math.max(
           1,
           ((constraints.maxWidth + 6) / (minimumSide + 6)).floor(),
         );
-        final side = math.min(minimumSide, constraints.maxWidth);
+        // Shrink tiles to reach minColumns, but never below a 44px target.
+        final shrunkSide =
+            (constraints.maxWidth - (minColumns - 1) * 6) / minColumns;
+        final shrink = fitted < minColumns && shrunkSide >= 44;
+        final columns = shrink ? minColumns : fitted;
+        final side = shrink
+            ? shrunkSide
+            : math.min(minimumSide, constraints.maxWidth);
         return Align(
           alignment: Alignment.centerLeft,
           child: ConstrainedBox(
