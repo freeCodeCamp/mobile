@@ -10,7 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/firebase_options.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dart';
+import 'package:freecodecamp/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/podcasts/services/library_service.dart';
+import 'package:freecodecamp/routing/learn.dart' show learnChallengePath;
 import 'package:freecodecamp/routing/router.dart';
 import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:freecodecamp/services/app_preferences_service.dart';
@@ -61,6 +63,7 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   final _upgrader = Upgrader();
   StreamSubscription<NotificationKind?>? _notificationTaps;
+  ProviderSubscription<AsyncValue<ChallengeScreenData>>? _pendingChallenge;
 
   @override
   void initState() {
@@ -129,13 +132,55 @@ class _MyAppState extends ConsumerState<MyApp> {
     await ref.read(learnDailyChallengeReminderServiceProvider).reschedule(user);
   }
 
-  void _logScreenView() =>
-      unawaited(ref.read(analyticsProvider).screenView(screenViewOf(router)));
+  void _logScreenView() {
+    _pendingChallenge?.close();
+    _pendingChallenge = null;
+
+    final screen = screenViewOf(router);
+    if (screen.route != learnChallengePath) {
+      unawaited(ref.read(analyticsProvider).screenView(screen));
+      return;
+    }
+
+    // NOTE: The challenge's web path needs its slug, which only arrives with the challenge. Listening shares the screen's own fetch, and a new navigation cancels the wait.
+    final params = router.state.pathParameters;
+    var logged = false;
+    _pendingChallenge = ref.listenManual(
+      challengeScreenProvider(
+        params['superBlock']!,
+        params['block']!,
+        params['challengeId']!,
+      ),
+      (_, next) {
+        if (logged || next.isLoading) return;
+        logged = true;
+        final slug = next.value?.challenge.dashedName;
+        unawaited(
+          ref
+              .read(analyticsProvider)
+              .screenView(
+                slug == null
+                    ? screen
+                    : (
+                        path: challengeWebPath(
+                          superBlock: params['superBlock']!,
+                          block: params['block']!,
+                          slug: slug,
+                        ),
+                        route: screen.route,
+                      ),
+              ),
+        );
+      },
+      fireImmediately: true,
+    );
+  }
 
   @override
   void dispose() {
     router.routerDelegate.removeListener(_logScreenView);
     unawaited(_notificationTaps?.cancel());
+    _pendingChallenge?.close();
     super.dispose();
   }
 

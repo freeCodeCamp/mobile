@@ -5,7 +5,8 @@ typedef LoggedEvent = ({String name, Map<String, Object> parameters});
 // NOTE: Records what AnalyticsService would send to Firebase.
 class FakeAnalyticsSink implements AnalyticsSink {
   final events = <LoggedEvent>[];
-  final screens = <ScreenView>[];
+  // NOTE: [screen_name, screen_class, parameters], as sent to Firebase.
+  final screens = <List<Object>>[];
   final userProperties = <String, String>{};
 
   // NOTE: Records compare maps by identity, so tests compare these lists instead.
@@ -18,8 +19,11 @@ class FakeAnalyticsSink implements AnalyticsSink {
       events.add((name: name, parameters: parameters));
 
   @override
-  Future<void> logScreenView(String screenName, String screenClass) async =>
-      screens.add((name: screenName, screenClass: screenClass));
+  Future<void> logScreenView(
+    String screenName,
+    String screenClass,
+    Map<String, Object> parameters,
+  ) async => screens.add([screenName, screenClass, parameters]);
 
   @override
   Future<void> setUserProperty(String name, String value) async =>

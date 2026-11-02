@@ -13,7 +13,11 @@ AnalyticsService analytics(Ref ref) =>
 
 abstract interface class AnalyticsSink {
   Future<void> logEvent(String name, Map<String, Object> parameters);
-  Future<void> logScreenView(String screenName, String screenClass);
+  Future<void> logScreenView(
+    String screenName,
+    String screenClass,
+    Map<String, Object> parameters,
+  );
   Future<void> setUserProperty(String name, String value);
 }
 
@@ -27,8 +31,15 @@ class FirebaseAnalyticsSink implements AnalyticsSink {
       _firebase.logEvent(name: name, parameters: parameters);
 
   @override
-  Future<void> logScreenView(String screenName, String screenClass) =>
-      _firebase.logScreenView(screenName: screenName, screenClass: screenClass);
+  Future<void> logScreenView(
+    String screenName,
+    String screenClass,
+    Map<String, Object> parameters,
+  ) => _firebase.logScreenView(
+    screenName: screenName,
+    screenClass: screenClass,
+    parameters: parameters,
+  );
 
   @override
   Future<void> setUserProperty(String name, String value) =>
@@ -50,20 +61,28 @@ enum LoginMethod {
   };
 }
 
-typedef ScreenView = ({String name, String screenClass});
+// NOTE: path is what GA shows as the page; route is the template, for grouping.
+typedef ScreenView = ({String path, String route});
 
 // NOTE: An unmatched location has no matches, and router.state throws on it.
 ScreenView screenViewOf(GoRouter router) {
   final config = router.routerDelegate.currentConfiguration;
   if (config.matches.isEmpty) {
-    return (name: config.uri.path, screenClass: 'not_found');
+    return (path: config.uri.path, route: 'not_found');
   }
   final state = router.state;
   return (
-    name: state.matchedLocation,
-    screenClass: state.fullPath ?? state.matchedLocation,
+    path: state.matchedLocation,
+    route: state.fullPath ?? state.matchedLocation,
   );
 }
+
+// NOTE: freecodecamp.org's challenge URL, so app and web pages line up in GA. Routes only carry the challenge id, so the slug comes from the loaded challenge.
+String challengeWebPath({
+  required String superBlock,
+  required String block,
+  required String slug,
+}) => '/learn/$superBlock/$block/$slug';
 
 // NOTE: Firebase limits, see docs/ANALYTICS.md.
 const maxNameLength = 40;
@@ -122,8 +141,15 @@ class AnalyticsService {
 
   static const userPropertyNames = {'signed_in', 'notifications_enabled'};
 
-  Future<void> screenView(ScreenView screen) =>
-      _sink.logScreenView(screen.name, screen.screenClass);
+  // NOTE: The path goes in both screen_name and screen_class, because GA's page reports read one or the other. Firebase caps both at 100 characters.
+  Future<void> screenView(ScreenView screen) async {
+    final path = _cut(screen.path);
+    await _sink.logScreenView(path, path, {'route': _cut(screen.route)});
+  }
+
+  String _cut(String value) => value.length > maxParameterValueLength
+      ? value.substring(0, maxParameterValueLength)
+      : value;
 
   Future<void> experimentExposure(
     String eventName, {

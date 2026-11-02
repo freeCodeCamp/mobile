@@ -290,6 +290,50 @@ void main() {
     });
   });
 
+  group('screen views', () {
+    test(
+      'the path goes in screen_name and screen_class, the template in route',
+      () async {
+        await analytics.screenView((
+          path:
+              '/learn/responsive-web-design-v9/workshop-curriculum-outline/step-2',
+          route: '/learn/:superBlock/:block/:challengeId',
+        ));
+        expect(sink.screens, [
+          [
+            '/learn/responsive-web-design-v9/workshop-curriculum-outline/step-2',
+            '/learn/responsive-web-design-v9/workshop-curriculum-outline/step-2',
+            {'route': '/learn/:superBlock/:block/:challengeId'},
+          ],
+        ]);
+      },
+    );
+
+    test('paths are cut to Firebase\'s 100-character limit', () async {
+      final long = '/learn/python-v9/${'a' * 150}';
+      await analytics.screenView((path: long, route: '/learn/:superBlock'));
+      expect(
+        sink.screens.single[0],
+        long.substring(0, maxParameterValueLength),
+      );
+      expect(
+        sink.screens.single[1],
+        long.substring(0, maxParameterValueLength),
+      );
+    });
+
+    test('challenge paths match freecodecamp.org', () {
+      expect(
+        challengeWebPath(
+          superBlock: 'responsive-web-design-v9',
+          block: 'lab-debug-camperbots-profile-page',
+          slug: 'lab-debug-camperbots-profile-page',
+        ),
+        '/learn/responsive-web-design-v9/lab-debug-camperbots-profile-page/lab-debug-camperbots-profile-page',
+      );
+    });
+  });
+
   group('screenViewOf', () {
     GoRouter buildRouter(String initialLocation) => GoRouter(
       initialLocation: initialLocation,
@@ -306,8 +350,8 @@ void main() {
         final router = buildRouter('/news/how-to-learn-react');
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
         expect(screenViewOf(router), (
-          name: '/news/how-to-learn-react',
-          screenClass: '/news/:slug',
+          path: '/news/how-to-learn-react',
+          route: '/news/:slug',
         ));
       },
     );
@@ -318,10 +362,7 @@ void main() {
       final router = buildRouter('/no-such-page');
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       expect(() => router.state, throwsA(anything));
-      expect(screenViewOf(router), (
-        name: '/no-such-page',
-        screenClass: 'not_found',
-      ));
+      expect(screenViewOf(router), (path: '/no-such-page', route: 'not_found'));
     });
   });
 }
