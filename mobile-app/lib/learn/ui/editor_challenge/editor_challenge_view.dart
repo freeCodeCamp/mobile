@@ -412,8 +412,11 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final block = widget.block;
     final index =
         block?.challenges.indexWhere((c) => c.id == widget.challenge.id) ?? -1;
+    final isLab = block?.label == BlockLabel.lab;
     final title = _daily
         ? 'Challenge ${widget.dailyChallengeNumber}'
+        : isLab
+        ? block!.name
         : index >= 0
         ? 'Step ${index + 1} of ${block!.challenges.length}'
         : widget.challenge.title;
@@ -438,7 +441,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                 ? const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)
                 : const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
           ),
-          if (block != null || _daily)
+          if (_daily || (block != null && !isLab))
             Text(
               _daily ? 'Daily coding challenge' : block!.name,
               maxLines: 1,

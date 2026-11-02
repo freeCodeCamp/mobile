@@ -143,6 +143,14 @@ class BlockCard extends ConsumerWidget {
     )?.next;
     final unit = blockUnit(block);
     final progress = '$done of ${countLabel(total, unit)}';
+    final inProgress = done > 0 && !complete && !disabled;
+    final subtitle = disabled
+        ? 'Temporarily unavailable'
+        : block.layout == BlockLayout.challengeLink
+        ? null
+        : done > 0
+        ? progress
+        : countLabel(total, unit);
     final toggle = disabled
         ? () => _showUnavailable(context)
         : block.layout == BlockLayout.challengeLink &&
@@ -199,7 +207,7 @@ class BlockCard extends ConsumerWidget {
                                 children: [
                                   Expanded(
                                     child: LearnEyebrow(
-                                      block.label.value,
+                                      blockLabelText(block.label),
                                       color: color,
                                     ),
                                   ),
@@ -221,7 +229,10 @@ class BlockCard extends ConsumerWidget {
                                 ],
                               )
                             else
-                              LearnEyebrow(block.label.value, color: color),
+                              LearnEyebrow(
+                                blockLabelText(block.label),
+                                color: color,
+                              ),
                             SizedBox(height: expanded ? 12 : 6),
                             Text(
                               block.name,
@@ -230,20 +241,16 @@ class BlockCard extends ConsumerWidget {
                                   : Theme.of(context).textTheme.titleMedium
                                         ?.copyWith(fontSize: 17),
                             ),
-                            if (!expanded) ...[
+                            if (!expanded && subtitle != null) ...[
                               const SizedBox(height: 4),
                               Text(
-                                disabled
-                                    ? 'Temporarily unavailable'
-                                    : done > 0
-                                    ? progress
-                                    : countLabel(total, unit),
+                                subtitle,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  fontWeight: done > 0 && !complete
+                                  fontWeight: inProgress
                                       ? FontWeight.w700
                                       : FontWeight.w400,
-                                  color: done > 0 && !complete
+                                  color: inProgress
                                       ? FccDesignColors.of(context).accentText
                                       : colors.onSurfaceVariant,
                                 ),

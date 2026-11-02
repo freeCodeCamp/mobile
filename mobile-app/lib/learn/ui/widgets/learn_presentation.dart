@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 
 Color blockLabelColor(BuildContext context, BlockLabel label) {
   final design = FccDesignColors.of(context);
@@ -12,8 +13,11 @@ Color blockLabelColor(BuildContext context, BlockLabel label) {
   };
 }
 
+String blockLabelText(BlockLabel label) =>
+    label == BlockLabel.lecture ? 'theory' : label.value;
+
 String blockUnit(Block block) => switch (block.label) {
-  BlockLabel.lecture => 'lecture',
+  BlockLabel.lecture => 'lesson',
   BlockLabel.lab => 'lab',
   BlockLabel.quiz => 'quiz',
   BlockLabel.exam => 'exam',
@@ -21,11 +25,7 @@ String blockUnit(Block block) => switch (block.label) {
 };
 
 String countLabel(int count, String unit) =>
-    '$count ${count == 1
-        ? unit
-        : unit == 'quiz'
-        ? 'quizzes'
-        : '${unit}s'}';
+    '$count ${count == 1 ? unit : pluralUnit(unit)}';
 
 class LearnEyebrow extends StatelessWidget {
   const LearnEyebrow(this.text, {super.key, this.color});

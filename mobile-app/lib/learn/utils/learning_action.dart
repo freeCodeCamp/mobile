@@ -16,7 +16,7 @@ class LearningAction {
     if (next == null) {
       if (chapter || single == 'review') return 'Review';
       return single == null
-          ? 'Review ${_numberedUnit(block)}s'
+          ? 'Review ${pluralUnit(_numberedUnit(block))}'
           : 'Review $single';
     }
     final verb = hasProgress ? 'Continue' : 'Start';
@@ -36,16 +36,28 @@ String? _singleUnit(Block block) => switch (block.label) {
 };
 
 String _numberedUnit(Block block) => switch (block.label) {
-  BlockLabel.lecture => 'lecture',
+  BlockLabel.lecture => 'theory',
   _ => block.layout == BlockLayout.challengeDialogue ? 'task' : 'step',
 };
 
-// '11 steps', '2 lectures'; null for single-unit blocks, which show no count.
+String pluralUnit(String unit) => switch (unit) {
+  'quiz' => 'quizzes',
+  'theory' => 'theories',
+  _ => '${unit}s',
+};
+
+// Progress counts say lessons for lecture blocks; CTA labels keep the theory wording.
+String _countUnit(Block block) => switch (block.label) {
+  BlockLabel.lecture => 'lesson',
+  _ => _numberedUnit(block),
+};
+
+// '11 steps', '2 lessons'; null for single-unit blocks, which show no count.
 String? blockUnitCount(Block block, {int? done}) {
   if (_singleUnit(block) != null) return null;
   final total = block.challenges.length;
-  final unit = _numberedUnit(block);
-  final units = '$total ${total == 1 ? unit : '${unit}s'}';
+  final unit = _countUnit(block);
+  final units = '$total ${total == 1 ? unit : pluralUnit(unit)}';
   return done == null ? units : '$done of $units';
 }
 

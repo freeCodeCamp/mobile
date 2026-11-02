@@ -237,7 +237,13 @@ void main() {
     );
   });
 
-  test('CTA labels number steps and lectures, never single-unit blocks', () {
+  test('block card eyebrow says theory for lecture blocks', () {
+    expect(blockLabelText(BlockLabel.lecture), 'theory');
+    expect(blockLabelText(BlockLabel.lab), 'lab');
+    expect(blockLabelText(BlockLabel.warmup), 'warm-up');
+  });
+
+  test('CTA labels number steps and theories, never single-unit blocks', () {
     Block of(BlockLabel label, {BlockLayout? layout}) => _block.copyWith(
       label: label,
       layout: layout ?? _block.layout,
@@ -250,11 +256,11 @@ void main() {
         resolveLearningAction([block], done)!.label();
 
     final lecture = of(BlockLabel.lecture);
-    expect(label(lecture, {}), 'Start lecture 1');
-    expect(label(lecture, {'BlockLabel.lecture-0'}), 'Continue lecture 2');
+    expect(label(lecture, {}), 'Start theory 1');
+    expect(label(lecture, {'BlockLabel.lecture-0'}), 'Continue theory 2');
     expect(
       label(lecture, lecture.challenges.map((c) => c.id).toSet()),
-      'Review lectures',
+      'Review theories',
     );
 
     for (final (kind, unit) in [
@@ -289,7 +295,15 @@ void main() {
 
     expect(blockUnitCount(_block), '11 steps');
     expect(blockUnitCount(_block, done: 1), '1 of 11 steps');
-    expect(blockUnitCount(lecture, done: 0), '0 of 3 lectures');
+    expect(blockUnitCount(lecture, done: 0), '0 of 3 lessons');
+    expect(
+      blockUnitCount(
+        lecture.copyWith(
+          challenges: [ChallengeOrder(id: 'only', title: 'Item')],
+        ),
+      ),
+      '1 lesson',
+    );
     expect(label(_block, {}), 'Start step 1');
     expect(resolveLearningAction([_block], {})!.label(chapter: true), 'Start');
   });

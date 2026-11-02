@@ -195,7 +195,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
             ? '${review
                   ? 'Review'
                   : widget.block.label == BlockLabel.lecture
-                  ? 'Lecture'
+                  ? 'Theory'
                   : 'Lesson'} ${index + 1} of ${widget.block.challenges.length}'
             : 'Question ${current + 1} of ${_questions.length}',
       ),
