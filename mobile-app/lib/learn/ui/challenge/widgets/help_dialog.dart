@@ -51,6 +51,7 @@ Future<void> showHelpDialog(
     ProviderScope.containerOf(context, listen: false)
         .read(analyticsProvider)
         .helpRequested(
+          challengeId: challenge.id,
           superBlock: challenge.superBlock,
           block: challenge.block,
           challengeType: challenge.challengeType,

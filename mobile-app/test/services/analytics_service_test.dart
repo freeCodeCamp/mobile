@@ -23,11 +23,13 @@ void main() {
   // NOTE: Calls every catalog method once, so the catalog tests below see every event.
   Future<void> logEveryEvent() async {
     const challenge = (
+      challengeId: 'c1',
       superBlock: 'responsive-web-design-v9',
       block: 'basic-html',
       challengeType: 0,
     );
     await analytics.challengeTestsRun(
+      challengeId: 'c1',
       superBlock: challenge.superBlock,
       block: challenge.block,
       challengeType: challenge.challengeType,
@@ -35,17 +37,23 @@ void main() {
       failedTests: 2,
     );
     await analytics.challengeCompleted(
+      challengeId: 'c1',
       superBlock: challenge.superBlock,
       block: challenge.block,
       challengeType: challenge.challengeType,
     );
-    await analytics.dailyChallengeCompleted(language: 'python');
+    await analytics.dailyChallengeCompleted(
+      challengeId: 'd1',
+      language: 'python',
+    );
     await analytics.codeReset(
+      challengeId: 'c1',
       superBlock: challenge.superBlock,
       block: challenge.block,
       challengeType: challenge.challengeType,
     );
     await analytics.helpRequested(
+      challengeId: 'c1',
       superBlock: challenge.superBlock,
       block: challenge.block,
       challengeType: challenge.challengeType,
@@ -127,6 +135,7 @@ void main() {
       'challenge_tests_run carries the challenge context and result',
       () async {
         await analytics.challengeTestsRun(
+          challengeId: 'c1',
           superBlock: 'javascript-v9',
           block: 'lab-palindrome',
           challengeType: 1,
@@ -137,6 +146,7 @@ void main() {
           [
             'challenge_tests_run',
             {
+              'challenge_id': 'c1',
               'superblock': 'javascript-v9',
               'block': 'lab-palindrome',
               'challenge_type': 1,
@@ -298,16 +308,24 @@ void main() {
           path:
               '/learn/responsive-web-design-v9/workshop-curriculum-outline/step-2',
           route: '/learn/:superBlock/:block/:challengeId',
-        ));
+        ), challengeId: '6823ac607bfdbc46331b2559');
         expect(sink.screens, [
           [
             '/learn/responsive-web-design-v9/workshop-curriculum-outline/step-2',
             '/learn/responsive-web-design-v9/workshop-curriculum-outline/step-2',
-            {'route': '/learn/:superBlock/:block/:challengeId'},
+            {
+              'route': '/learn/:superBlock/:block/:challengeId',
+              'challenge_id': '6823ac607bfdbc46331b2559',
+            },
           ],
         ]);
       },
     );
+
+    test('screens other than challenges carry no challenge_id', () async {
+      await analytics.screenView((path: '/settings', route: '/settings'));
+      expect(sink.screens.single[2], {'route': '/settings'});
+    });
 
     test('paths are cut to Firebase\'s 100-character limit', () async {
       final long = '/learn/python-v9/${'a' * 150}';

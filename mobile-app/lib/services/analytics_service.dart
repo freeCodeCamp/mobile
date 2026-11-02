@@ -142,9 +142,16 @@ class AnalyticsService {
   static const userPropertyNames = {'signed_in', 'notifications_enabled'};
 
   // NOTE: The path goes in both screen_name and screen_class, because GA's page reports read one or the other. Firebase caps both at 100 characters.
-  Future<void> screenView(ScreenView screen) async {
+  Future<void> screenView(ScreenView screen, {String? challengeId}) async {
     final path = _cut(screen.path);
-    await _sink.logScreenView(path, path, {'route': _cut(screen.route)});
+    await _sink.logScreenView(
+      path,
+      path,
+      normaliseParameters({
+        'route': _cut(screen.route),
+        'challenge_id': challengeId,
+      }),
+    );
   }
 
   String _cut(String value) => value.length > maxParameterValueLength
@@ -157,12 +164,14 @@ class AnalyticsService {
   }) => _log(eventName, {'variant': variant});
 
   Future<void> challengeTestsRun({
+    required String challengeId,
     required String superBlock,
     required String block,
     required int challengeType,
     required bool passed,
     required int failedTests,
   }) => _log('challenge_tests_run', {
+    'challenge_id': challengeId,
     'superblock': superBlock,
     'block': block,
     'challenge_type': challengeType,
@@ -171,33 +180,44 @@ class AnalyticsService {
   });
 
   Future<void> challengeCompleted({
+    required String challengeId,
     required String superBlock,
     required String block,
     required int challengeType,
   }) => _log('challenge_completed', {
+    'challenge_id': challengeId,
     'superblock': superBlock,
     'block': block,
     'challenge_type': challengeType,
   });
 
-  Future<void> dailyChallengeCompleted({required String language}) =>
-      _log('daily_challenge_completed', {'language': language});
+  Future<void> dailyChallengeCompleted({
+    required String challengeId,
+    required String language,
+  }) => _log('daily_challenge_completed', {
+    'challenge_id': challengeId,
+    'language': language,
+  });
 
   Future<void> codeReset({
+    required String challengeId,
     required String superBlock,
     required String block,
     required int challengeType,
   }) => _log('code_reset', {
+    'challenge_id': challengeId,
     'superblock': superBlock,
     'block': block,
     'challenge_type': challengeType,
   });
 
   Future<void> helpRequested({
+    required String challengeId,
     required String superBlock,
     required String block,
     required int challengeType,
   }) => _log('help_requested', {
+    'challenge_id': challengeId,
     'superblock': superBlock,
     'block': block,
     'challenge_type': challengeType,

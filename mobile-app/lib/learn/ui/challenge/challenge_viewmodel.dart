@@ -100,9 +100,11 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
     unawaited(
       isDaily
           ? analytics.dailyChallengeCompleted(
+              challengeId: challenge.id,
               language: challenge.challengeType == 29 ? 'python' : 'javascript',
             )
           : analytics.challengeCompleted(
+              challengeId: challenge.id,
               superBlock: challenge.superBlock,
               block: challenge.block,
               challengeType: challenge.challengeType,

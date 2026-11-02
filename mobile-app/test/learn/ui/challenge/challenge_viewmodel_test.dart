@@ -50,6 +50,7 @@ void main() {
         [
           'challenge_completed',
           {
+            'challenge_id': 'c1',
             'superblock': 'responsive-web-design-v9',
             'block': 'basic-html',
             'challenge_type': 0,
@@ -67,11 +68,11 @@ void main() {
       expect(sink.logged, [
         [
           'daily_challenge_completed',
-          {'language': 'javascript'},
+          {'challenge_id': 'c1', 'language': 'javascript'},
         ],
         [
           'daily_challenge_completed',
-          {'language': 'python'},
+          {'challenge_id': 'c1', 'language': 'python'},
         ],
       ]);
     },
