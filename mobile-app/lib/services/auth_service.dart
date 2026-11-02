@@ -80,6 +80,31 @@ class AuthNotifier extends _$AuthNotifier {
     return result;
   }
 
+  bool _savingSocrates = false;
+
+  Future<void> setSocrates(bool enabled) async {
+    final before = state.value;
+    if (before == null || _savingSocrates || before.socrates == enabled) return;
+    _savingSocrates = true;
+    final optimistic = before.copyWith(socrates: enabled);
+    state = AsyncData(optimistic);
+    try {
+      await ref
+          .read(profileServiceProvider)
+          .saveSocrates(userId: before.id, enabled: enabled);
+    } catch (_) {
+      if (ref.mounted) {
+        final current = state.value;
+        if (current?.id == before.id && current!.socrates == enabled) {
+          state = AsyncData(current.copyWith(socrates: before.socrates));
+        }
+      }
+      rethrow;
+    } finally {
+      _savingSocrates = false;
+    }
+  }
+
   Future<void> deleteAccount() async {
     await _session.deleteAccount();
     state = const AsyncData(null);

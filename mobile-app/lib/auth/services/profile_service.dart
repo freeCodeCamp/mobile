@@ -45,6 +45,9 @@ class ProfileService {
             ? draft.location
             : canonical.location,
         about: draft.about != original.about ? draft.about : canonical.about,
+        picture: draft.picture != original.picture
+            ? draft.picture
+            : canonical.picture,
       );
     }
     if (!saved.contains(ProfileSection.socials)) {
@@ -74,7 +77,7 @@ class ProfileService {
         canonical.portfolio.map((item) => item.toJson()).toList(),
         original.portfolio.map((item) => item.toJson()).toList(),
         draft.portfolio.map((item) => item.toJson()).toList(),
-        fields: const ['title', 'description', 'url'],
+        fields: const ['title', 'description', 'url', 'image'],
       );
       if (rows != null) {
         rebased = rebased.copyWith(
@@ -139,6 +142,9 @@ class ProfileService {
     if (original == null || user.username != original.username) {
       add('username', usernameError(user.username));
     }
+    if (original == null || user.picture != original.picture) {
+      add('picture', imageUrlError(user.picture, profilePhoto: true));
+    }
     final socials = _socials(user);
     final before = original == null ? null : _socials(original);
     for (final entry in socials.entries) {
@@ -163,6 +169,9 @@ class ProfileService {
         add('$prefix.description', 'Use 500 characters or fewer.');
       }
       add('$prefix.url', _urlError(item.url ?? ''));
+      if (old?.image != item.image) {
+        add('$prefix.image', imageUrlError(item.image ?? ''));
+      }
     }
 
     final experienceIds = <String>{};
@@ -251,6 +260,7 @@ class ProfileService {
       if (draft.name != original.name) 'name': draft.name,
       if (draft.location != original.location) 'location': draft.location ?? '',
       if (draft.about != original.about) 'about': draft.about ?? '',
+      if (draft.picture != original.picture) 'picture': draft.picture.trim(),
     };
     if (about.isNotEmpty) {
       add(ProfileSection.about, '/update-my-about', about);
@@ -264,12 +274,11 @@ class ProfileService {
     }
     final oldPortfolio = original.portfolio.map((p) => p.toJson()).toList();
     final newPortfolio = draft.portfolio.map((p) => p.toJson()).toList();
-    // Images are not editable here. Only text fields can change existing rows.
     final portfolio = _mergeRows(
       _rows(fresh['portfolio']),
       oldPortfolio,
       newPortfolio,
-      fields: const ['title', 'description', 'url'],
+      fields: const ['title', 'description', 'url', 'image'],
     );
     if (portfolio != null) {
       add(ProfileSection.portfolio, '/update-my-portfolio', {
@@ -353,6 +362,48 @@ class ProfileService {
       errorMessage: errorMessage,
       refreshFailed: refreshFailed,
     );
+  }
+
+  Future<void> saveSocrates({
+    required String userId,
+    required bool enabled,
+  }) async {
+    try {
+      final tokens = await _repo.captureSession();
+      final user = await _repo.currentUser(expectedTokens: tokens);
+      if (user?['id'] != userId) throw SessionChangedException();
+      final response = await _repo.update('/update-socrates', {
+        'socrates': enabled,
+      }, expectedTokens: tokens);
+      if (response['type'] != 'success') {
+        throw const ProfileUpdateException(
+          'The server did not confirm this change.',
+        );
+      }
+    } catch (error) {
+      throw ProfileUpdateException(_errorMessage(error));
+    }
+  }
+
+  static String? imageUrlError(String value, {bool profilePhoto = false}) {
+    final error = _urlError(value);
+    if (error != null || value.trim().isEmpty || !profilePhoto) return error;
+    const extensions = [
+      'apng',
+      'avif',
+      'gif',
+      'jpg',
+      'jpeg',
+      'jfif',
+      'pjpeg',
+      'pjp',
+      'png',
+      'svg',
+      'webp',
+    ];
+    return extensions.any((extension) => value.contains('.$extension'))
+        ? null
+        : 'Use an image URL with an extension such as .png or .jpg.';
   }
 
   static String? usernameError(String value) {
@@ -484,11 +535,7 @@ class ProfileService {
           'An item was removed elsewhere. Refresh your profile before saving.',
         );
       }
-      result.add({
-        'id': row['id'],
-        ...updates[row['id']]!,
-        if (fields.contains('url')) 'image': '',
-      });
+      result.add({'id': row['id'], ...updates[row['id']]!});
     }
     return result;
   }

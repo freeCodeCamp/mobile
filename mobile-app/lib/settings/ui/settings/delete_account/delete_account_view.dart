@@ -105,7 +105,7 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                       Text(
                         'Delete your account?',
                         style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -205,14 +205,10 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                         onPressed: _certain && !isDeleting && auth.isLoggedIn
                             ? _delete
                             : null,
-                        style: FccTheme.dangerStyle(context).copyWith(
-                          textStyle: const WidgetStatePropertyAll(
-                            TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 17,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
+                        style: FccTheme.dialogActionStyle(
+                          context,
+                          primary: true,
+                          destructive: true,
                         ),
                         child: const Text(
                           'Delete my account',
@@ -228,14 +224,7 @@ class _DeleteAccountViewState extends ConsumerState<DeleteAccountView> {
                       width: double.infinity,
                       child: OutlinedButton(
                         onPressed: isDeleting ? null : _keepAccount,
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          textStyle: const TextStyle(
-                            fontFamily: 'Lato',
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        style: FccTheme.dialogActionStyle(context),
                         child: const Text(
                           'Keep my account',
                           textAlign: TextAlign.center,

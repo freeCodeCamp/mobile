@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/profile_experience/profile_experience_viewmodel.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
 
 class ProfileExperienceView extends ConsumerStatefulWidget {
   const ProfileExperienceView({super.key, this.experienceId});
@@ -51,33 +52,13 @@ class _ProfileExperienceViewState extends ConsumerState<ProfileExperienceView> {
   }
 
   Future<void> _delete() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete experience?'),
-        content: const Text(
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Delete experience?',
+      description:
           'This experience will be removed when you save your profile.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FccTheme.dangerStyle(context).copyWith(
-              textStyle: const WidgetStatePropertyAll(
-                TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete experience'),
-          ),
-        ],
-      ),
+      confirmLabel: 'Delete experience',
+      destructive: true,
     );
     if (!mounted || confirmed != true) return;
     if (ref

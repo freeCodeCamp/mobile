@@ -61,6 +61,7 @@ class ProfileEditorNotifier extends _$ProfileEditorNotifier {
       'name' => draft.copyWith(name: value),
       'location' => draft.copyWith(location: value),
       'about' => draft.copyWith(about: value),
+      'picture' => draft.copyWith(picture: value),
       'githubProfile' => draft.copyWith(githubProfile: value),
       'linkedin' => draft.copyWith(linkedin: value),
       'twitter' => draft.copyWith(twitter: value),
@@ -70,6 +71,9 @@ class ProfileEditorNotifier extends _$ProfileEditorNotifier {
     };
     updateDraft(updated);
   }
+
+  String? imageError(String value, {bool profilePhoto = false}) =>
+      ProfileService.imageUrlError(value, profilePhoto: profilePhoto);
 
   void updateDraft(FccUserModel draft) {
     final current = state;

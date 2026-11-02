@@ -126,7 +126,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       darkTheme: FccTheme.themeDark,
       themeMode: ref.watch(
         appPreferencesProvider.select(
-          (preferences) => preferences.value?.themeMode ?? ThemeMode.system,
+          (preferences) => preferences.value?.themeMode ?? ThemeMode.dark,
         ),
       ),
       builder: (context, child) => UpgradeAlert(

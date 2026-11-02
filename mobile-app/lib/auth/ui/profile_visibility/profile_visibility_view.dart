@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/profile_visibility/profile_visibility_viewmodel.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
+import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:freecodecamp/widgets/fcc_switch.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
 
@@ -50,7 +53,7 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                 ? null
                 : () => context.canPop()
                       ? context.pop()
-                      : const ProfileRoute().go(context),
+                      : const SettingsRoute().go(context),
           ),
         ),
         body: SafeArea(
@@ -127,14 +130,54 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
                                       : null,
                                 ),
                                 const SizedBox(height: 12),
-                                Text(
-                                  state.draft.isLocked
-                                      ? 'Only you can see your profile.'
-                                      : 'Anyone can see your profile at\u00A0freecodecamp.org/${state.original.username}.',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
+                                if (state.draft.isLocked)
+                                  Text(
+                                    'Only you can see your profile.',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  )
+                                else
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      final style = theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: theme
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          );
+                                      return Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            const TextSpan(
+                                              text:
+                                                  'Anyone can see your profile at ',
+                                            ),
+                                            WidgetSpan(
+                                              alignment:
+                                                  PlaceholderAlignment.baseline,
+                                              baseline: TextBaseline.alphabetic,
+                                              child: ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      constraints.maxWidth,
+                                                ),
+                                                child: FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: Text(
+                                                    'freecodecamp.org/${state.original.username}.',
+                                                    style: style,
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        style: style,
+                                      );
+                                    },
                                   ),
-                                ),
                               ],
                             ),
                           ),
@@ -250,7 +293,11 @@ class _VisibilitySwitchRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                 ],
-                Switch.adaptive(value: value, onChanged: onChanged),
+                FccSwitch(
+                  value: value,
+                  onChanged: onChanged,
+                  semanticLabel: label,
+                ),
               ],
             ),
           ),
@@ -268,10 +315,7 @@ class _VisibilityCard extends StatelessWidget {
   Widget build(BuildContext context) => Material(
     clipBehavior: Clip.antiAlias,
     color: Theme.of(context).colorScheme.surface,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-      side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
-    ),
+    shape: FccTheme.cardShape(context),
     child: Column(children: children),
   );
 }

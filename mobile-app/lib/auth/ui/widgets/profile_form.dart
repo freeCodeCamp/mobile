@@ -26,31 +26,13 @@ Future<bool> confirmProfileDiscard(BuildContext context) async =>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               FilledButton(
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  textStyle: const TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 17,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
+                style: FccTheme.dialogActionStyle(context, primary: true),
                 onPressed: () => Navigator.pop(context, false),
                 child: const Text('Keep editing'),
               ),
               const SizedBox(height: 10),
               OutlinedButton(
-                style: FccTheme.dangerOutlineStyle(context).copyWith(
-                  minimumSize: const WidgetStatePropertyAll(
-                    Size.fromHeight(50),
-                  ),
-                  textStyle: const WidgetStatePropertyAll(
-                    TextStyle(
-                      fontFamily: 'Lato',
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+                style: FccTheme.dialogActionStyle(context, destructive: true),
                 onPressed: () => Navigator.pop(context, true),
                 child: const Text('Discard'),
               ),
@@ -351,20 +333,15 @@ class ProfileFormError extends StatelessWidget {
     final lead = emphasis != null && message.startsWith(emphasis!)
         ? emphasis!
         : null;
-    final dark = theme.brightness == Brightness.dark;
+    final design = FccDesignColors.of(context);
     return Semantics(
       liveRegion: true,
       child: Container(
         margin: margin,
         padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
         decoration: BoxDecoration(
-          color: dark
-              ? const Color(0xFF5A120B)
-              : Color.alphaBlend(
-                  colors.error.withValues(alpha: 0.1),
-                  colors.surface,
-                ),
-          border: Border.all(color: colors.error.withValues(alpha: 0.5)),
+          color: design.dangerContainer,
+          border: Border.all(color: design.dangerBorder),
           borderRadius: BorderRadius.circular(12),
           boxShadow: floating
               ? [
@@ -406,7 +383,10 @@ class ProfileFormError extends StatelessWidget {
               IconButton(
                 tooltip: 'Dismiss error',
                 onPressed: onDismiss,
-                visualDensity: VisualDensity.compact,
+                constraints: const BoxConstraints.tightFor(
+                  width: 48,
+                  height: 48,
+                ),
                 icon: Icon(Icons.close, color: colors.error, size: 20),
               ),
           ],

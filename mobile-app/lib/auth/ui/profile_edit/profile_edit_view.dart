@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/controllers/profile_editor_controller.dart';
 import 'package:freecodecamp/auth/ui/profile_edit/profile_edit_viewmodel.dart';
+import 'package:freecodecamp/auth/ui/widgets/image_url_dialog.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
+import 'package:freecodecamp/auth/ui/widgets/profile_photo_options.dart';
+import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
@@ -58,6 +61,35 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
       );
+    }
+  }
+
+  Future<void> _changePhoto() async {
+    final editor = ref.read(profileEditorProvider);
+    if (editor == null || editor.saving || editor.needsRefresh) return;
+    final action = await showProfilePhotoOptions(
+      context,
+      hasPhoto: editor.draft.picture.isNotEmpty,
+    );
+    if (!mounted ||
+        action == null ||
+        ref.read(profileEditorProvider)?.original.id != editor.original.id) {
+      return;
+    }
+    final notifier = ref.read(profileEditorProvider.notifier);
+    if (action == ProfilePhotoAction.remove) {
+      notifier.updateField('picture', '');
+      return;
+    }
+    final url = await showImageUrlDialog(
+      context,
+      initialUrl: editor.draft.picture,
+      validate: (value) => notifier.imageError(value, profilePhoto: true),
+    );
+    if (mounted &&
+        url != null &&
+        ref.read(profileEditorProvider)?.original.id == editor.original.id) {
+      notifier.updateField('picture', url);
     }
   }
 
@@ -150,6 +182,18 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
                       : null,
                 ),
               ),
+              const SizedBox(height: 12),
+              Center(
+                child: OutlinedButton(
+                  style: FccTheme.compactOutlineStyle(
+                    context,
+                  ).copyWith(shape: FccTheme.focusShape(context, radius: 999)),
+                  onPressed: enabled ? _changePhoto : null,
+                  child: const Text('Change photo'),
+                ),
+              ),
+              if (editor.errors['picture'] case final message?)
+                ProfileFieldError(message: message),
               const SizedBox(height: 24),
               const ProfileFormSectionTitle('Basic info'),
               field('username', 'Username', helper: presentation.usernameHint),

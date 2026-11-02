@@ -111,6 +111,7 @@ abstract class FccUserModel with _$FccUserModel {
     required String username,
     @Default('') String name,
     @Default('') String picture,
+    @Default(true) bool socrates,
     String? currentChallengeId,
     String? githubProfile,
     String? linkedin,

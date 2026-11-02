@@ -70,7 +70,12 @@ class ProfileProjectNotifier extends _$ProfileProjectNotifier {
             (entry) => entry.id == current.original.id,
           ));
 
-  void update({String? title, String? url, String? description}) {
+  void update({
+    String? title,
+    String? url,
+    String? description,
+    String? image,
+  }) {
     final current = state;
     final editor = ref.read(profileEditorProvider);
     if (current == null || !_matches(current, editor) || editor!.saving) return;
@@ -78,15 +83,20 @@ class ProfileProjectNotifier extends _$ProfileProjectNotifier {
     if (title != null) errors.remove('title');
     if (url != null) errors.remove('url');
     if (description != null) errors.remove('description');
+    if (image != null) errors.remove('image');
     state = current.copyWith(
       draft: current.draft.copyWith(
         title: title ?? current.draft.title,
         url: url ?? current.draft.url,
         description: description ?? current.draft.description,
+        image: image ?? current.draft.image,
       ),
       errors: errors,
     );
   }
+
+  String? imageError(String value) =>
+      ref.read(profileEditorProvider.notifier).imageError(value);
 
   void dismissError() {
     final current = state;

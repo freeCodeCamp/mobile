@@ -9,7 +9,7 @@ final settingsPreferencesStoreProvider = FutureProvider<SharedPreferences>(
 
 class AppPreferences {
   const AppPreferences({
-    this.themeMode = ThemeMode.system,
+    this.themeMode = ThemeMode.dark,
     this.dailyReminder = false,
   });
 
@@ -32,7 +32,7 @@ class AppPreferencesNotifier extends AsyncNotifier<AppPreferences> {
     return AppPreferences(
       themeMode: ThemeMode.values.firstWhere(
         (mode) => mode.name == prefs.getString(themeKey),
-        orElse: () => ThemeMode.system,
+        orElse: () => ThemeMode.dark,
       ),
       dailyReminder: prefs.getBool(reminderKey) ?? false,
     );

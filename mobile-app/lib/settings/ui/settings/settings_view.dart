@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
@@ -11,6 +10,8 @@ import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
+import 'package:freecodecamp/widgets/fcc_switch.dart';
+import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
@@ -94,8 +95,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final preferences = ref.watch(appPreferencesProvider);
     final storage = ref.watch(downloadedStorageBytesProvider);
     final version = ref.watch(appVersionProvider);
-    final colors = Theme.of(context).colorScheme;
     final current = preferences.value;
+    final colors = Theme.of(context).colorScheme;
     return PopScope(
       canPop: !_busy,
       child: Stack(
@@ -146,64 +147,35 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                     ),
                                   )
                                 else
-                                  Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: colors.surface,
-                                      border: Border.all(
-                                        color: colors.outlineVariant,
+                                  SegmentedTabs<ThemeMode>(
+                                    tabs: const [
+                                      (
+                                        value: ThemeMode.system,
+                                        label: 'System',
+                                        icon: null,
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: LayoutBuilder(
-                                      builder: (context, constraints) {
-                                        final largeText =
-                                            MediaQuery.textScalerOf(
-                                              context,
-                                            ).scale(14) >
-                                            20;
-                                        final buttons = [
-                                          for (final mode in ThemeMode.values)
-                                            _ThemeChoice(
-                                              mode: mode,
-                                              selected:
-                                                  current!.themeMode == mode,
-                                              onPressed: () => _change(
-                                                () => ref
-                                                    .read(
-                                                      appPreferencesProvider
-                                                          .notifier,
-                                                    )
-                                                    .setTheme(mode),
-                                              ),
-                                            ),
-                                        ];
-                                        return largeText &&
-                                                constraints.maxWidth < 400
-                                            ? Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  for (final (index, button)
-                                                      in buttons.indexed) ...[
-                                                    if (index > 0)
-                                                      const SizedBox(height: 4),
-                                                    button,
-                                                  ],
-                                                ],
-                                              )
-                                            : Row(
-                                                children: [
-                                                  for (final (index, button)
-                                                      in buttons.indexed) ...[
-                                                    if (index > 0)
-                                                      const SizedBox(width: 4),
-                                                    Expanded(child: button),
-                                                  ],
-                                                ],
-                                              );
-                                      },
-                                    ),
+                                      (
+                                        value: ThemeMode.light,
+                                        label: 'Light',
+                                        icon: null,
+                                      ),
+                                      (
+                                        value: ThemeMode.dark,
+                                        label: 'Dark',
+                                        icon: null,
+                                      ),
+                                    ],
+                                    selected: current!.themeMode,
+                                    onSelected: _busy
+                                        ? null
+                                        : (mode) => _change(
+                                            () => ref
+                                                .read(
+                                                  appPreferencesProvider
+                                                      .notifier,
+                                                )
+                                                .setTheme(mode),
+                                          ),
                                   ),
                               ],
                             ),
@@ -213,23 +185,30 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       _Group(
                         title: 'Learning',
                         children: [
-                          SwitchListTile.adaptive(
-                            minTileHeight: 76,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
-                            title: Text(
-                              'Daily challenge reminder',
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    height: 1.35,
-                                    fontWeight: FontWeight.w700,
+                          _SettingsSwitchRow(
+                            title: 'Socrates',
+                            subtitle: auth.isLoggedIn
+                                ? 'Tailored workshop hints on freeCodeCamp.org. In-app hints are not available yet.'
+                                : 'Sign in to change your workshop hint preference.',
+                            value: auth.value?.socrates ?? false,
+                            onChanged: !auth.isLoggedIn || _busy
+                                ? null
+                                : (enabled) => _change(
+                                    () => ref
+                                        .read(authProvider.notifier)
+                                        .setSocrates(enabled),
                                   ),
-                            ),
-                            subtitle: Text(
-                              'A nudge when a new challenge is out',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
+                          ),
+                          const _SettingsSwitchRow(
+                            title: 'Campfire mode',
+                            subtitle:
+                                'Learning sound effects. Not available in the app yet.',
+                            value: false,
+                            onChanged: null,
+                          ),
+                          _SettingsSwitchRow(
+                            title: 'Daily challenge reminder',
+                            subtitle: 'A nudge when a new challenge is out',
                             value: current?.dailyReminder ?? false,
                             onChanged:
                                 current == null || (_busy && !_savingReminder)
@@ -392,74 +371,50 @@ String formatStorageBytes(int bytes) {
   return '${(bytes / 1024 / 1024 / 1024).toStringAsFixed(1)} GB';
 }
 
-class _ThemeChoice extends StatelessWidget {
-  const _ThemeChoice({
-    required this.mode,
-    required this.selected,
-    required this.onPressed,
+class _SettingsSwitchRow extends StatelessWidget {
+  const _SettingsSwitchRow({
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.onChanged,
   });
-  final ThemeMode mode;
-  final bool selected;
-  final VoidCallback onPressed;
+  final String title;
+  final String subtitle;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Semantics(
-      selected: selected,
-      child: OutlinedButton(
-        style:
-            OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-              backgroundColor: selected
-                  ? colors.primaryContainer
-                  : Colors.transparent,
-              foregroundColor: selected
-                  ? colors.onSurface
-                  : colors.onSurfaceVariant,
-              textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontSize: 15,
-                fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
-              ),
-              side: selected
-                  ? BorderSide(
-                      color: FccDesignColors.of(context).accentText,
-                      width: 1.5,
-                    )
-                  : BorderSide.none,
-            ).copyWith(
-              shape: FccTheme.focusShape(context),
-              foregroundColor: WidgetStateProperty.resolveWith(
-                (states) => states.contains(WidgetState.disabled)
-                    ? colors.outline
-                    : selected
-                    ? colors.onSurface
-                    : colors.onSurfaceVariant,
-              ),
-              backgroundColor: WidgetStateProperty.resolveWith(
-                (states) => states.contains(WidgetState.disabled)
-                    ? colors.surfaceContainer
-                    : selected || states.contains(WidgetState.pressed)
-                    ? colors.primaryContainer
-                    : Colors.transparent,
-              ),
-              side: WidgetStateProperty.resolveWith(
-                (states) => states.contains(WidgetState.disabled)
-                    ? BorderSide.none
-                    : selected
-                    ? BorderSide(
-                        color: FccDesignColors.of(context).accentText,
-                        width: 1.5,
-                      )
-                    : BorderSide.none,
-              ),
-            ),
-        onPressed: onPressed,
-        child: Text(switch (mode) {
-          ThemeMode.system => 'System',
-          ThemeMode.light => 'Light',
-          ThemeMode.dark => 'Dark',
-        }),
+    final theme = Theme.of(context);
+    final enabled = onChanged != null;
+    return MergeSemantics(
+      child: ListTile(
+        minTileHeight: 76,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        title: Text(
+          title,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.35,
+            fontWeight: FontWeight.w700,
+            color: enabled
+                ? theme.colorScheme.onSurface
+                : theme.colorScheme.outline,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: enabled
+                ? theme.colorScheme.onSurfaceVariant
+                : theme.colorScheme.outline,
+          ),
+        ),
+        trailing: FccSwitch(
+          value: value,
+          onChanged: onChanged,
+          semanticLabel: title,
+        ),
+        onTap: enabled ? () => onChanged!(!value) : null,
       ),
     );
   }

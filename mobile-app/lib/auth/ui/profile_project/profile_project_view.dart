@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/profile_project/profile_project_viewmodel.dart';
+import 'package:freecodecamp/auth/ui/widgets/image_url_dialog.dart';
 import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
 
 class ProfileProjectView extends ConsumerStatefulWidget {
   const ProfileProjectView({super.key, this.projectId});
@@ -43,34 +45,26 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
     }
   }
 
+  Future<void> _changeImage() async {
+    final notifier = ref.read(
+      profileProjectProvider(widget.projectId).notifier,
+    );
+    final url = await showImageUrlDialog(
+      context,
+      initialUrl:
+          ref.read(profileProjectProvider(widget.projectId))?.draft.image ?? '',
+      validate: notifier.imageError,
+    );
+    if (mounted && url != null) notifier.update(image: url);
+  }
+
   Future<void> _delete() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete project?'),
-        content: const Text(
-          'This project will be removed when you save your profile.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FccTheme.dangerStyle(context).copyWith(
-              textStyle: const WidgetStatePropertyAll(
-                TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete project'),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Delete project?',
+      description: 'This project will be removed when you save your profile.',
+      confirmLabel: 'Delete project',
+      destructive: true,
     );
     if (!mounted || confirmed != true) return;
     if (ref.read(profileProjectProvider(widget.projectId).notifier).delete()) {
@@ -107,27 +101,69 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
                 message: message,
                 onDismiss: notifier.dismissError,
               ),
-            if (image.isNotEmpty) ...[
-              Text(
-                'Project image',
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: image,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.contain,
-                  errorWidget: (_, _, _) => const SizedBox(
-                    height: 180,
-                    child: Center(child: Icon(Icons.broken_image_outlined)),
-                  ),
+            CustomPaint(
+              painter: _ImageBorder(Theme.of(context).colorScheme.outline),
+              child: SizedBox(
+                width: double.infinity,
+                height: 180,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (image.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 56),
+                        child: CachedNetworkImage(
+                          imageUrl: image,
+                          width: double.infinity,
+                          height: 116,
+                          fit: BoxFit.contain,
+                          errorWidget: (_, _, _) => const Center(
+                            child: Icon(Icons.broken_image_outlined),
+                          ),
+                        ),
+                      ),
+                    Align(
+                      alignment: image.isEmpty
+                          ? Alignment.center
+                          : Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: OutlinedButton(
+                          style: FccTheme.compactOutlineStyle(context).copyWith(
+                            shape: FccTheme.focusShape(context, radius: 999),
+                          ),
+                          onPressed: form.saving ? null : _changeImage,
+                          child: Text(
+                            image.isEmpty ? 'Add image' : 'Change image',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 18),
-            ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Use an image URL. Uploading from your device is not available yet.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            if (image.isNotEmpty)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: form.saving
+                      ? null
+                      : () => notifier.update(image: ''),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                  child: const Text('Remove image'),
+                ),
+              ),
+            if (form.errors['image'] case final message?)
+              ProfileFieldError(message: message),
+            const SizedBox(height: 18),
             ProfileFormField(
               label: 'Project title',
               hintText: 'e.g. Weather dashboard',
@@ -168,4 +204,32 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
       ),
     );
   }
+}
+
+class _ImageBorder extends CustomPainter {
+  const _ImageBorder(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          (Offset.zero & size).deflate(.5),
+          const Radius.circular(12),
+        ),
+      );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (final metric in path.computeMetrics()) {
+      for (var offset = 0.0; offset < metric.length; offset += 10) {
+        canvas.drawPath(metric.extractPath(offset, offset + 6), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ImageBorder oldDelegate) => color != oldDelegate.color;
 }

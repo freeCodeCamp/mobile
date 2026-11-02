@@ -60,7 +60,7 @@ final class ProfileProjectNotifierProvider
 }
 
 String _$profileProjectNotifierHash() =>
-    r'70a4704ae5975228c9c65abe222d60dee31569de';
+    r'41d36993c56e805d65e59bacb11781ae5bfb7c00';
 
 final class ProfileProjectNotifierFamily extends $Family
     with
