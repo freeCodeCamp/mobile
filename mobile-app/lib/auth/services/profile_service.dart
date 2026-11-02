@@ -364,27 +364,6 @@ class ProfileService {
     );
   }
 
-  Future<void> saveSocrates({
-    required String userId,
-    required bool enabled,
-  }) async {
-    try {
-      final tokens = await _repo.captureSession();
-      final user = await _repo.currentUser(expectedTokens: tokens);
-      if (user?['id'] != userId) throw SessionChangedException();
-      final response = await _repo.update('/update-socrates', {
-        'socrates': enabled,
-      }, expectedTokens: tokens);
-      if (response['type'] != 'success') {
-        throw const ProfileUpdateException(
-          'The server did not confirm this change.',
-        );
-      }
-    } catch (error) {
-      throw ProfileUpdateException(_errorMessage(error));
-    }
-  }
-
   static String? imageUrlError(String value, {bool profilePhoto = false}) {
     final error = _urlError(value);
     if (error != null || value.trim().isEmpty || !profilePhoto) return error;

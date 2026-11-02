@@ -548,16 +548,12 @@ void main() {
   });
 
   testWidgets(
-    'should identify unavailable sound mode and open Profile visibility',
+    'should omit Socrates and Campfire and open Profile visibility',
     (tester) async {
       final auth = _MemoryAuth();
       await _pumpScreen(tester, const SettingsView(), auth);
-      expect(find.text('Socrates mode'), findsNothing);
-      expect(find.text('Campfire mode'), findsOneWidget);
-      expect(
-        tester.widget<FccSwitch>(_switch('Campfire mode')).onChanged,
-        isNull,
-      );
+      expect(find.text('Socrates'), findsNothing);
+      expect(find.text('Campfire mode'), findsNothing);
       await tester.scrollUntilVisible(
         find.text('Profile visibility'),
         180,

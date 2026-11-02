@@ -186,27 +186,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         title: 'Learning',
                         children: [
                           _SettingsSwitchRow(
-                            title: 'Socrates',
-                            subtitle: auth.isLoggedIn
-                                ? 'Tailored workshop hints on freeCodeCamp.org. In-app hints are not available yet.'
-                                : 'Sign in to change your workshop hint preference.',
-                            value: auth.value?.socrates ?? false,
-                            onChanged: !auth.isLoggedIn || _busy
-                                ? null
-                                : (enabled) => _change(
-                                    () => ref
-                                        .read(authProvider.notifier)
-                                        .setSocrates(enabled),
-                                  ),
-                          ),
-                          const _SettingsSwitchRow(
-                            title: 'Campfire mode',
-                            subtitle:
-                                'Learning sound effects. Not available in the app yet.',
-                            value: false,
-                            onChanged: null,
-                          ),
-                          _SettingsSwitchRow(
                             title: 'Daily challenge reminder',
                             subtitle: 'A nudge when a new challenge is out',
                             value: current?.dailyReminder ?? false,

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/repositories/profile_repository.dart';
 import 'package:freecodecamp/auth/repositories/session_repository.dart';
 import 'package:freecodecamp/auth/services/profile_service.dart';
-import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/services/app_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,24 +51,6 @@ class _ProfileRepository extends Fake implements ProfileRepository {
     writes.add((path: path, body: body));
     current = {...current, ...body};
     return {'type': 'success'};
-  }
-}
-
-class _SocratesService extends ProfileService {
-  _SocratesService() : super(_ProfileRepository(_user));
-  final gate = Completer<void>();
-
-  @override
-  Future<void> saveSocrates({required String userId, required bool enabled}) =>
-      gate.future;
-}
-
-class _Auth extends AuthNotifier {
-  @override
-  Future<FccUserModel?> build() async => _user;
-
-  void receiveUnrelatedUpdate() {
-    state = AsyncData(state.value!.copyWith(name: 'Updated elsewhere'));
   }
 }
 
@@ -181,48 +161,6 @@ void main() {
         ProfileService.imageUrlError('data:image/png;base64,abc'),
         isNotNull,
       );
-    },
-  );
-
-  test(
-    'Socrates writes its supported endpoint for the captured user',
-    () async {
-      final repo = _ProfileRepository(_user);
-      await ProfileService(repo).saveSocrates(userId: _user.id, enabled: true);
-      expect(repo.writes.single.path, '/update-socrates');
-      expect(repo.writes.single.body, {'socrates': true});
-      expect(
-        () => ProfileService(
-          repo,
-        ).saveSocrates(userId: 'other-user', enabled: false),
-        throwsA(isA<ProfileUpdateException>()),
-      );
-    },
-  );
-
-  test(
-    'Socrates updates optimistically, suppresses duplicates and rolls back failure',
-    () async {
-      final service = _SocratesService();
-      final container = ProviderContainer(
-        overrides: [
-          authProvider.overrideWith(_Auth.new),
-          profileServiceProvider.overrideWithValue(service),
-        ],
-      );
-      addTearDown(container.dispose);
-      await container.read(authProvider.future);
-      final notifier = container.read(authProvider.notifier);
-      final saving = notifier.setSocrates(true);
-      expect(container.read(authProvider).value!.socrates, isTrue);
-      await notifier.setSocrates(false);
-      expect(container.read(authProvider).value!.socrates, isTrue);
-      (notifier as _Auth).receiveUnrelatedUpdate();
-      final failure = expectLater(saving, throwsA(isA<StateError>()));
-      service.gate.completeError(StateError('Offline'));
-      await failure;
-      expect(container.read(authProvider).value!.socrates, isFalse);
-      expect(container.read(authProvider).value!.name, 'Updated elsewhere');
     },
   );
 
