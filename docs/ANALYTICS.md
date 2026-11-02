@@ -15,12 +15,16 @@ Firebase Analytics (GA4 property for project `mobile-4ee8a`). Only release build
 
 ## Screen views
 
-Logged by the router listener in `main.dart` on every navigation. Automatic screen reporting is off on both platforms.
+Logged by the router listener in `main.dart` on every navigation. Automatic screen reporting is off on both platforms. Paths follow freecodecamp.org's URLs, so app screens and web pages line up in GA's page reports.
 
 | Field | Value |
 |---|---|
-| `screen_name` | The location, e.g. `/news/how-to-learn-react` |
-| `screen_class` | The route template, e.g. `/news/:slug`; `not_found` for an unmatched location |
+| `screen_name`, `screen_class` | The page path, e.g. `/learn/responsive-web-design-v9`. Both hold the same value because GA's page reports read one or the other. |
+| `route` (parameter) | The route template, e.g. `/learn/:superBlock/:block/:challengeId`, for grouping; `not_found` for an unmatched location |
+
+- **Challenges** use the web path `/learn/<superblock>/<block>/<challenge slug>`. The route only carries the challenge id, so the screen view waits until the challenge has loaded; if it fails to load, the id is used instead of the slug.
+- **Daily challenges** keep the app path (`/learn/daily-challenges/MM-DD`); the route has no year to build the web URL from.
+- Firebase caps `screen_name` and `screen_class` at 100 characters, so longer paths are cut there.
 
 ## Events
 
