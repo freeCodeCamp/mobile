@@ -237,6 +237,87 @@ void main() {
     );
   });
 
+  test('CTA labels number steps and lectures, never single-unit blocks', () {
+    Block of(BlockLabel label, {BlockLayout? layout}) => _block.copyWith(
+      label: label,
+      layout: layout ?? _block.layout,
+      challenges: [
+        for (var i = 0; i < 3; i++)
+          ChallengeOrder(id: '$label-$i', title: 'Item'),
+      ],
+    );
+    String label(Block block, Set<String> done) =>
+        resolveLearningAction([block], done)!.label();
+
+    final lecture = of(BlockLabel.lecture);
+    expect(label(lecture, {}), 'Start lecture 1');
+    expect(label(lecture, {'BlockLabel.lecture-0'}), 'Continue lecture 2');
+    expect(
+      label(lecture, lecture.challenges.map((c) => c.id).toSet()),
+      'Review lectures',
+    );
+
+    for (final (kind, unit) in [
+      (BlockLabel.lab, 'lab'),
+      (BlockLabel.quiz, 'quiz'),
+      (BlockLabel.review, 'review'),
+    ]) {
+      final block = of(kind);
+      expect(label(block, {}), 'Start $unit');
+      expect(label(block, {'$kind-0'}), 'Continue $unit');
+      expect(
+        label(block, block.challenges.map((c) => c.id).toSet()),
+        kind == BlockLabel.review ? 'Review' : 'Review $unit',
+      );
+      expect(blockUnitCount(block), isNull);
+      expect(blockUnitCount(block, done: 1), isNull);
+    }
+    // Exams are left out of resume targets, so build the action directly.
+    final exam = of(BlockLabel.exam);
+    expect(
+      LearningAction(
+        block: exam,
+        next: exam.challenges.first,
+        hasProgress: false,
+      ).label(),
+      'Start exam',
+    );
+
+    final tasks = of(BlockLabel.learn, layout: BlockLayout.challengeDialogue);
+    expect(label(tasks, {'BlockLabel.learn-0'}), 'Continue task 2');
+    expect(blockUnitCount(tasks), '3 tasks');
+
+    expect(blockUnitCount(_block), '11 steps');
+    expect(blockUnitCount(_block, done: 1), '1 of 11 steps');
+    expect(blockUnitCount(lecture, done: 0), '0 of 3 lectures');
+    expect(label(_block, {}), 'Start step 1');
+    expect(resolveLearningAction([_block], {})!.label(chapter: true), 'Start');
+  });
+
+  testWidgets('chapter rail runs through the centre of every module dot', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const SuperBlockView(dashedName: 'responsive-web-design'),
+    );
+    final rail = find.byKey(const ValueKey('chapter-module-rail'));
+    expect(rail, findsOneWidget);
+    final railCentre = tester.getCenter(rail).dx;
+    final dots = find.descendant(
+      of: find.ancestor(of: rail, matching: find.byType(Stack)).first,
+      matching: find.byType(LearnStatus),
+    );
+    expect(dots, findsNWidgets(_chapters.first.modules.length));
+    for (final dot in tester.elementList(dots)) {
+      expect(
+        tester.getCenter(find.byElementPredicate((e) => e == dot)).dx,
+        closeTo(railCentre, .5),
+      );
+    }
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'USER-welcome no-progress member sees essentials rather than resume',
     (tester) async {
@@ -298,9 +379,7 @@ void main() {
       find.text('Already learning? Sign in to pick up where you left off.'),
     );
     expect(tester.getRect(sign).left, greaterThan(sentence.right));
-    final eyebrow = _rendered(tester, 'New here? Start here');
-    expect(eyebrow.fontSize, 13);
-    expect(eyebrow.fontWeight, FontWeight.w700);
+    expect(find.text('New here? Start here'), findsNothing);
     final intro = _rendered(
       tester,
       'Choose a certification or start with the essentials.',

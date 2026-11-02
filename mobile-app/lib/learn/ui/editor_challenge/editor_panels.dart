@@ -7,6 +7,7 @@ import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/widgets/celebration_confetti.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/dom.dart' as dom;
@@ -341,14 +342,12 @@ class _BlockProgress extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(flex: 2, child: Text(block.name, style: style)),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Text(
-                '$done of ${countLabel(total, 'step')}',
-                textAlign: TextAlign.right,
-                style: style,
+            if (blockUnitCount(block, done: done) case final count?) ...[
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(count, textAlign: TextAlign.right, style: style),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 8),

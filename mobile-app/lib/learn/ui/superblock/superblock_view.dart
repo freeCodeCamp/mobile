@@ -450,10 +450,12 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
               children: [
                 if (modules.length > 1)
                   Positioned(
-                    left: 25,
+                    key: const ValueKey('chapter-module-rail'),
+                    left:
+                        _moduleRowPadding + _moduleDotSize / 2 - _railWidth / 2,
                     top: 28,
                     bottom: 28,
-                    child: Container(width: 3, color: design.hero),
+                    child: Container(width: _railWidth, color: design.hero),
                   ),
                 Column(
                   children: [
@@ -473,6 +475,11 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
     );
   }
 }
+
+// The rail runs through the centre of each module's status dot.
+const _moduleRowPadding = 10.0;
+const _moduleDotSize = 26.0;
+const _railWidth = 3.0;
 
 class _ModuleButton extends ConsumerWidget {
   const _ModuleButton({
@@ -545,7 +552,7 @@ class _ModuleButton extends ConsumerWidget {
                 },
           child: Container(
             constraints: const BoxConstraints(minHeight: 60),
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(_moduleRowPadding),
             child: Row(
               children: [
                 LearnStatus(

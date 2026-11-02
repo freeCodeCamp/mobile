@@ -423,7 +423,7 @@ class BlockActionButton extends StatelessWidget {
       currentChallengeId: currentChallengeId,
     );
     final next = action?.next;
-    final label = Text(action?.label() ?? 'Start step 1');
+    final label = Text(action?.label() ?? 'Start');
     return FilledButton(
       style: FilledButton.styleFrom(
         minimumSize: Size(double.infinity, height),

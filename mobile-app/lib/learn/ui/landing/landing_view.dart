@@ -11,6 +11,7 @@ import 'package:freecodecamp/learn/ui/landing/learning_resume.dart';
 import 'package:freecodecamp/learn/ui/landing/superblock_button.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
+import 'package:freecodecamp/learn/utils/learning_action.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
@@ -224,11 +225,11 @@ class _ResumeCard extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${next.completed} of ${next.block.challenges.length} steps',
-                    style: const TextStyle(fontSize: 14),
-                  ),
+                  if (blockUnitCount(next.block, done: next.completed)
+                      case final count?) ...[
+                    const SizedBox(width: 8),
+                    Text(count, style: const TextStyle(fontSize: 14)),
+                  ],
                 ],
               ),
             ] else if (resume.isLoading) ...[
@@ -325,11 +326,6 @@ class FirstVisitHero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    'New here? Start here',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
                     'Choose a certification or start with the essentials.',
                     style: TextStyle(fontSize: 15, height: 1.45),
                   ),
@@ -345,7 +341,10 @@ class FirstVisitHero extends StatelessWidget {
                   const SizedBox(height: 8),
                   if (next != null)
                     Text(
-                      'First up: ${next!.block.name} · ${next!.block.challenges.length} steps',
+                      [
+                        'First up: ${next!.block.name}',
+                        ?blockUnitCount(next!.block),
+                      ].join(' · '),
                     )
                   else if (loading)
                     const Text('Getting your courses ready…'),
@@ -361,7 +360,7 @@ class FirstVisitHero extends StatelessWidget {
                     ),
                     iconAlignment: IconAlignment.end,
                     icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Start step 1'),
+                    label: Text(next?.action.label() ?? 'Start'),
                   ),
                   if (onSignIn != null) ...[
                     const SizedBox(height: 16),

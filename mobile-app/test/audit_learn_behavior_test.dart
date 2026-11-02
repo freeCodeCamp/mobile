@@ -151,7 +151,8 @@ void main() {
     'HN1 guest hero offers first course and sign in without returning progress',
     (tester) async {
       await _pump(tester, const LearnLandingView());
-      expect(find.text('New here? Start here'), findsOneWidget);
+      expect(find.text('New here? Start here'), findsNothing);
+      expect(find.text('Start step 1'), findsOneWidget);
       expect(
         find.text('Choose a certification or start with the essentials.'),
         findsOneWidget,

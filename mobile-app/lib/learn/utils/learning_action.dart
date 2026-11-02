@@ -12,10 +12,41 @@ class LearningAction {
   final bool hasProgress;
 
   String label({bool chapter = false}) {
-    if (next == null) return chapter ? 'Review' : 'Review steps';
+    final single = _singleUnit(block);
+    if (next == null) {
+      if (chapter || single == 'review') return 'Review';
+      return single == null
+          ? 'Review ${_numberedUnit(block)}s'
+          : 'Review $single';
+    }
     final verb = hasProgress ? 'Continue' : 'Start';
-    return chapter ? verb : '$verb step ${block.challenges.indexOf(next!) + 1}';
+    if (chapter) return verb;
+    if (single != null) return '$verb $single';
+    return '$verb ${_numberedUnit(block)} ${block.challenges.indexOf(next!) + 1}';
   }
+}
+
+// Labs, quizzes, reviews and exams are one unit each, so labels never number them.
+String? _singleUnit(Block block) => switch (block.label) {
+  BlockLabel.lab => 'lab',
+  BlockLabel.quiz => 'quiz',
+  BlockLabel.review => 'review',
+  BlockLabel.exam => 'exam',
+  _ => null,
+};
+
+String _numberedUnit(Block block) => switch (block.label) {
+  BlockLabel.lecture => 'lecture',
+  _ => block.layout == BlockLayout.challengeDialogue ? 'task' : 'step',
+};
+
+// '11 steps', '2 lectures'; null for single-unit blocks, which show no count.
+String? blockUnitCount(Block block, {int? done}) {
+  if (_singleUnit(block) != null) return null;
+  final total = block.challenges.length;
+  final unit = _numberedUnit(block);
+  final units = '$total ${total == 1 ? unit : '${unit}s'}';
+  return done == null ? units : '$done of $units';
 }
 
 LearningAction? resolveLearningAction(
