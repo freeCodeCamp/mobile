@@ -68,6 +68,8 @@ class FccDesignColors extends ThemeExtension<FccDesignColors> {
   final Color dangerBorder;
   final Color onDangerContainer;
 
+  Color get artworkBorder => hero;
+
   static FccDesignColors of(BuildContext context) =>
       Theme.of(context).extension<FccDesignColors>()!;
 
@@ -261,6 +263,72 @@ class FccTheme {
     filled: true,
   );
 
+  static RoundedRectangleBorder cardShape(
+    BuildContext context, {
+    double radius = 16,
+  }) => RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(radius),
+    side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+  );
+
+  static ButtonStyle dialogActionStyle(
+    BuildContext context, {
+    bool primary = false,
+    bool destructive = false,
+  }) {
+    final theme = Theme.of(context);
+    final base = destructive
+        ? (primary ? dangerStyle(context) : dangerOutlineStyle(context))
+        : (primary
+              ? theme.filledButtonTheme.style!
+              : theme.outlinedButtonTheme.style!);
+    return base.copyWith(
+      minimumSize: const WidgetStatePropertyAll(Size(48, 50)),
+      textStyle: WidgetStatePropertyAll(
+        theme.textTheme.labelLarge!.copyWith(
+          fontSize: 17,
+          fontWeight: primary ? FontWeight.w900 : FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  static TextTheme _uiTypography(TextTheme theme) {
+    TextStyle style(TextStyle? value) {
+      final weight = value?.fontWeight ?? FontWeight.w400;
+      return (value ?? const TextStyle()).copyWith(
+        fontFamily: 'Lato',
+        letterSpacing: 0,
+        fontWeight: weight.value <= FontWeight.w400.value
+            ? FontWeight.w400
+            : weight.value <= FontWeight.w700.value
+            ? FontWeight.w700
+            : FontWeight.w900,
+      );
+    }
+
+    // Material localizes every slot, including ones not used by our page titles.
+    return TextTheme(
+      displayLarge: style(theme.displayLarge),
+      displayMedium: style(theme.displayMedium),
+      displaySmall: style(theme.displaySmall),
+      headlineLarge: style(theme.headlineLarge),
+      headlineMedium: style(theme.headlineMedium),
+      headlineSmall: style(theme.headlineSmall),
+      titleLarge: style(theme.titleLarge),
+      titleMedium: style(theme.titleMedium),
+      titleSmall: style(theme.titleSmall).copyWith(fontWeight: FontWeight.w700),
+      bodyLarge: style(theme.bodyLarge),
+      bodyMedium: style(theme.bodyMedium),
+      bodySmall: style(theme.bodySmall),
+      labelLarge: style(theme.labelLarge),
+      labelMedium: style(
+        theme.labelMedium,
+      ).copyWith(fontWeight: FontWeight.w700),
+      labelSmall: style(theme.labelSmall),
+    );
+  }
+
   static ButtonStyle _buttonStyle(
     ColorScheme colors, {
     required Color foreground,
@@ -271,7 +339,7 @@ class FccTheme {
     bool compact = false,
   }) => ButtonStyle(
     minimumSize: WidgetStatePropertyAll(Size(44, compact ? 44 : 48)),
-    tapTargetSize: compact ? MaterialTapTargetSize.shrinkWrap : null,
+    tapTargetSize: MaterialTapTargetSize.padded,
     elevation: const WidgetStatePropertyAll(0),
     animationDuration: const Duration(milliseconds: 100),
     splashFactory: NoSplash.splashFactory,
@@ -376,75 +444,78 @@ class FccTheme {
       dividerColor: line,
       hintColor: hint,
       disabledColor: hint,
-      textTheme: base.textTheme
-          .copyWith(
-            headlineLarge: TextStyle(
-              letterSpacing: 0,
-              fontSize: 30,
-              height: 1.2,
-              fontWeight: FontWeight.w900,
-              color: foreground,
-            ),
-            headlineMedium: TextStyle(
-              letterSpacing: 0,
-              fontSize: 26,
-              height: 1.25,
-              fontWeight: FontWeight.w800,
-              color: foreground,
-            ),
-            headlineSmall: TextStyle(
-              letterSpacing: 0,
-              fontSize: 22,
-              height: 1.3,
-              fontWeight: FontWeight.w700,
-              color: foreground,
-            ),
-            titleLarge: TextStyle(
-              letterSpacing: 0,
-              fontSize: 20,
-              height: 1.3,
-              fontWeight: FontWeight.w700,
-              color: foreground,
-            ),
-            titleMedium: TextStyle(
-              letterSpacing: 0,
-              fontSize: 16,
-              height: 1.35,
-              fontWeight: FontWeight.w700,
-              color: foreground,
-            ),
-            bodyLarge: TextStyle(
-              letterSpacing: 0,
-              fontSize: 16,
-              height: 1.6,
-              color: foreground,
-            ),
-            bodyMedium: TextStyle(
-              letterSpacing: 0,
-              fontSize: 14,
-              height: 1.45,
-              color: foreground,
-            ),
-            bodySmall: TextStyle(
-              letterSpacing: 0,
-              fontSize: 13,
-              height: 1.4,
-              color: muted,
-            ),
-            labelSmall: TextStyle(
-              letterSpacing: 0,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: foreground,
-            ),
-            labelLarge: TextStyle(
-              letterSpacing: 0,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: foreground,
-            ),
-          )
-          .apply(fontFamily: 'Lato'),
+      primaryTextTheme: _uiTypography(base.primaryTextTheme),
+      textTheme: _uiTypography(
+        base.textTheme
+            .copyWith(
+              headlineLarge: TextStyle(
+                letterSpacing: 0,
+                fontSize: 30,
+                height: 1.2,
+                fontWeight: FontWeight.w900,
+                color: foreground,
+              ),
+              headlineMedium: TextStyle(
+                letterSpacing: 0,
+                fontSize: 26,
+                height: 1.25,
+                fontWeight: FontWeight.w900,
+                color: foreground,
+              ),
+              headlineSmall: TextStyle(
+                letterSpacing: 0,
+                fontSize: 22,
+                height: 1.3,
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
+              titleLarge: TextStyle(
+                letterSpacing: 0,
+                fontSize: 20,
+                height: 1.3,
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
+              titleMedium: TextStyle(
+                letterSpacing: 0,
+                fontSize: 16,
+                height: 1.35,
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
+              bodyLarge: TextStyle(
+                letterSpacing: 0,
+                fontSize: 16,
+                height: 1.6,
+                color: foreground,
+              ),
+              bodyMedium: TextStyle(
+                letterSpacing: 0,
+                fontSize: 14,
+                height: 1.45,
+                color: foreground,
+              ),
+              bodySmall: TextStyle(
+                letterSpacing: 0,
+                fontSize: 13,
+                height: 1.4,
+                color: muted,
+              ),
+              labelSmall: TextStyle(
+                letterSpacing: 0,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
+              labelLarge: TextStyle(
+                letterSpacing: 0,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
+            )
+            .apply(fontFamily: 'Lato'),
+      ),
       appBarTheme: AppBarThemeData(
         centerTitle: false,
         elevation: 0,
@@ -518,12 +589,21 @@ class FccTheme {
         style: _buttonStyle(colors, foreground: accentText, pressed: tint),
       ),
       iconButtonTheme: IconButtonThemeData(
-        style: _buttonStyle(
-          colors,
-          foreground: foreground,
-          pressed: raised,
-          compact: true,
-        ),
+        style:
+            _buttonStyle(
+              colors,
+              foreground: foreground,
+              pressed: raised,
+              compact: true,
+            ).copyWith(
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (states) =>
+                    !states.contains(WidgetState.disabled) &&
+                        states.contains(WidgetState.pressed)
+                    ? raised
+                    : Colors.transparent,
+              ),
+            ),
       ),
       chipTheme: ChipThemeData(
         color: WidgetStateColor.resolveWith(
@@ -598,7 +678,30 @@ class FccTheme {
       inputDecorationTheme: InputDecorationThemeData(
         filled: true,
         fillColor: raised,
-        hintStyle: TextStyle(letterSpacing: 0, color: hint),
+        hintStyle: TextStyle(fontFamily: 'Lato', letterSpacing: 0, color: hint),
+        labelStyle: const TextStyle(fontFamily: 'Lato', letterSpacing: 0),
+        floatingLabelStyle: const TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+        ),
+        helperStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 13,
+          color: muted,
+        ),
+        counterStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 13,
+          color: muted,
+        ),
+        errorStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 13,
+          color: colors.error,
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
@@ -622,6 +725,61 @@ class FccTheme {
         dragHandleColor: line,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      listTileTheme: ListTileThemeData(
+        titleTextStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 16,
+          color: foreground,
+        ),
+        subtitleTextStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 13,
+          color: muted,
+        ),
+        leadingAndTrailingTextStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 14,
+          color: muted,
+        ),
+      ),
+      tabBarTheme: const TabBarThemeData(
+        labelStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        titleTextStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
+          color: foreground,
+        ),
+        contentTextStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 15,
+          color: foreground,
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        contentTextStyle: TextStyle(
+          fontFamily: 'Lato',
+          letterSpacing: 0,
+          fontSize: 14,
+          color: colors.onInverseSurface,
         ),
       ),
       sliderTheme: SliderThemeData(

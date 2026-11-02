@@ -28,35 +28,17 @@ Future<bool> showConfirmDialog(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               FilledButton(
-                style:
-                    (destructive
-                            ? FccTheme.dangerStyle(context)
-                            : const ButtonStyle())
-                        .copyWith(
-                          minimumSize: const WidgetStatePropertyAll(
-                            Size.fromHeight(50),
-                          ),
-                          textStyle: const WidgetStatePropertyAll(
-                            TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 17,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
+                style: FccTheme.dialogActionStyle(
+                  context,
+                  primary: true,
+                  destructive: destructive,
+                ),
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(confirmLabel),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  textStyle: const TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                style: FccTheme.dialogActionStyle(context),
                 onPressed: () => Navigator.pop(context, false),
                 child: const Text('Cancel'),
               ),

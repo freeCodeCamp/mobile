@@ -28,14 +28,13 @@ class SegmentedTabs<T> extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final design = FccDesignColors.of(context);
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: colors.surface,
         border: Border.all(color: colors.outlineVariant),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        spacing: 4,
         children: [
           for (final tab in tabs)
             Expanded(
@@ -43,7 +42,11 @@ class SegmentedTabs<T> extends StatelessWidget {
                 label: tab.label,
                 icon: tab.icon,
                 isSelected: tab.value == selected,
-                onTap: onSelected == null ? null : () => onSelected!(tab.value),
+                onTap: onSelected == null
+                    ? null
+                    : () {
+                        if (tab.value != selected) onSelected!(tab.value);
+                      },
                 accent: design.accentText,
                 fontFamily: fontFamily,
                 fontSize: fontSize,
@@ -57,7 +60,7 @@ class SegmentedTabs<T> extends StatelessWidget {
   }
 }
 
-class _Segment extends StatelessWidget {
+class _Segment extends StatefulWidget {
   const _Segment({
     required this.label,
     required this.icon,
@@ -81,48 +84,92 @@ class _Segment extends StatelessWidget {
   final FontWeight unselectedWeight;
 
   @override
+  State<_Segment> createState() => _SegmentState();
+}
+
+class _SegmentState extends State<_Segment> {
+  bool _focused = false;
+
+  @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final foreground = isSelected ? colors.onSurface : colors.onSurfaceVariant;
-    final shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      side: isSelected
-          ? BorderSide(color: accent, width: 1.5)
-          : BorderSide.none,
-    );
+    final enabled = widget.onTap != null;
+    final foreground = !enabled
+        ? colors.outline
+        : widget.isSelected
+        ? colors.onSurface
+        : colors.onSurfaceVariant;
+    final shape = FccTheme.focusShape(context, radius: 8)
+        .resolve({
+          if (_focused) WidgetState.focused,
+          if (!enabled) WidgetState.disabled,
+        })!
+        .copyWith(
+          side: enabled && widget.isSelected
+              ? BorderSide(color: widget.accent, width: 1.5)
+              : BorderSide.none,
+        );
     return Semantics(
+      label: widget.label,
       button: true,
-      selected: isSelected,
-      child: Material(
-        color: isSelected ? colors.primaryContainer : Colors.transparent,
-        shape: shape,
-        child: InkWell(
-          customBorder: shape,
-          onTap: isSelected ? null : onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 44),
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 8,
-                children: [
-                  if (icon != null) Icon(icon, size: 18, color: foreground),
-                  Flexible(
-                    child: Text(
-                      label,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        letterSpacing: 0,
-                        fontFamily: fontFamily,
-                        fontSize: fontSize,
-                        fontWeight: isSelected
-                            ? selectedWeight
-                            : unselectedWeight,
-                        color: foreground,
+      selected: widget.isSelected,
+      enabled: enabled,
+      focusable: enabled,
+      focused: enabled ? _focused : null,
+      onTap: widget.onTap,
+      child: ExcludeSemantics(
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            onTap: widget.onTap,
+            onFocusChange: (focused) => setState(() => _focused = focused),
+            focusColor: Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            child: Padding(
+              // Keep the 44px visual pill inside a full-height semantic target.
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+              child: Material(
+                color: !enabled
+                    ? colors.surfaceContainer
+                    : widget.isSelected
+                    ? colors.primaryContainer
+                    : Colors.transparent,
+                shape: shape,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 44),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 4,
+                    ),
+                    child: Center(
+                      heightFactor: 1,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 8,
+                        children: [
+                          if (widget.icon != null)
+                            Icon(widget.icon, size: 18, color: foreground),
+                          Flexible(
+                            child: Text(
+                              widget.label,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                letterSpacing: 0,
+                                fontFamily: widget.fontFamily,
+                                fontSize: widget.fontSize,
+                                fontWeight: widget.isSelected
+                                    ? widget.selectedWeight
+                                    : widget.unselectedWeight,
+                                color: foreground,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),

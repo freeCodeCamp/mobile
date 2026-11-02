@@ -63,11 +63,11 @@ void main() {
         expect(disabledShape.side, BorderSide.none);
         expect(
           tester.getSize(find.widgetWithIcon(IconButton, Icons.add)),
-          const Size(44, 44),
+          const Size(48, 48),
         );
         final dismiss = tester.getSize(find.byTooltip('Dismiss error'));
-        expect(dismiss.width, greaterThanOrEqualTo(44));
-        expect(dismiss.height, greaterThanOrEqualTo(44));
+        expect(dismiss.width, greaterThanOrEqualTo(48));
+        expect(dismiss.height, greaterThanOrEqualTo(48));
         expect(theme.textTheme.labelLarge!.color, theme.colorScheme.onSurface);
         expect(tester.takeException(), isNull);
       },
