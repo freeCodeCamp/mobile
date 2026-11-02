@@ -21,6 +21,7 @@ Logged by the router listener in `main.dart` on every navigation. Automatic scre
 |---|---|
 | `screen_name`, `screen_class` | The page path, e.g. `/learn/responsive-web-design-v9`. Both hold the same value because GA's page reports read one or the other. |
 | `route` (parameter) | The route template, e.g. `/learn/:superBlock/:block/:challengeId`, for grouping; `not_found` for an unmatched location |
+| `challenge_id` (parameter) | Challenge screens only: the challenge's id, which stays the same when its slug changes and tells apart paths cut at 100 characters |
 
 - **Challenges** use the web path `/learn/<superblock>/<block>/<challenge slug>`. The route only carries the challenge id, so the screen view waits until the challenge has loaded; if it fails to load, the id is used instead of the slug.
 - **Daily challenges** keep the app path (`/learn/daily-challenges/MM-DD`); the route has no year to build the web URL from.
@@ -30,11 +31,11 @@ Logged by the router listener in `main.dart` on every navigation. Automatic scre
 
 | Event | When | Parameters | Logged in |
 |---|---|---|---|
-| `challenge_tests_run` | Tests finish running in the editor | `superblock`, `block`, `challenge_type`, `passed`, `failed_tests` | `editor_challenge_viewmodel.dart` |
-| `challenge_completed` | A curriculum challenge is completed (signed in: after it is saved) | `superblock`, `block`, `challenge_type` | `challenge_viewmodel.dart` |
-| `daily_challenge_completed` | A daily coding challenge is completed | `language` (`javascript`, `python`) | `challenge_viewmodel.dart` |
-| `code_reset` | The camper resets their code | `superblock`, `block`, `challenge_type` | `editor_challenge_viewmodel.dart` |
-| `help_requested` | The forum post for "Ask for Help" is opened | `superblock`, `block`, `challenge_type` | `help_dialog.dart` |
+| `challenge_tests_run` | Tests finish running in the editor | `challenge_id`, `superblock`, `block`, `challenge_type`, `passed`, `failed_tests` | `editor_challenge_viewmodel.dart` |
+| `challenge_completed` | A curriculum challenge is completed (signed in: after it is saved) | `challenge_id`, `superblock`, `block`, `challenge_type` | `challenge_viewmodel.dart` |
+| `daily_challenge_completed` | A daily coding challenge is completed | `challenge_id`, `language` (`javascript`, `python`) | `challenge_viewmodel.dart` |
+| `code_reset` | The camper resets their code | `challenge_id`, `superblock`, `block`, `challenge_type` | `editor_challenge_viewmodel.dart` |
+| `help_requested` | The forum post for "Ask for Help" is opened | `challenge_id`, `superblock`, `block`, `challenge_type` | `help_dialog.dart` |
 | `login` | Sign-in succeeds | `method` (`google`, `github`, `apple`, `email`) | `auth_service.dart` |
 | `logout` | The user signs out | – | `auth_service.dart` |
 | `account_deleted` | The account is deleted | – | `auth_service.dart` |

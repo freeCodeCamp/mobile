@@ -169,6 +169,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                         ),
                         route: screen.route,
                       ),
+                challengeId: params['challengeId'],
               ),
         );
       },

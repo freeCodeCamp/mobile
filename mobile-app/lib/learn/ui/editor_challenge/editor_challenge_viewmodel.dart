@@ -84,6 +84,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       await ref.read(learnCodeServiceProvider).reset(challenge);
       unawaited(
         analytics.codeReset(
+          challengeId: challenge.id,
           superBlock: challenge.superBlock,
           block: challenge.block,
           challengeType: challenge.challengeType,
@@ -204,6 +205,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         ref
             .read(analyticsProvider)
             .challengeTestsRun(
+              challengeId: challenge.id,
               superBlock: challenge.superBlock,
               block: challenge.block,
               challengeType: challenge.challengeType,
