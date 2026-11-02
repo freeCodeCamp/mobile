@@ -5,6 +5,7 @@ import 'package:freecodecamp/news/models/post_model.dart';
 import 'package:freecodecamp/news/models/post_summary_model.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_list.dart';
 import 'package:freecodecamp/routing/news.dart';
+import 'package:freecodecamp/widgets/chip_surface.dart';
 import 'package:go_router/go_router.dart';
 
 class NewsFeedView extends ConsumerStatefulWidget {
@@ -46,7 +47,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
               ),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
-                onTap: () => context.go(newsSearchPath),
+                onTap: () => context.push(newsSearchPath),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 48),
                   child: Padding(
@@ -94,8 +95,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
     final selected = _selectedTag?.slug == tag?.slug;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: Theme(
-        data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
+      child: ChipSurface(
         child: ChoiceChip(
           label: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 22),

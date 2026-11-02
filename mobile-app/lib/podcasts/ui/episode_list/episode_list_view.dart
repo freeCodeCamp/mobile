@@ -405,6 +405,7 @@ class _Header extends ConsumerWidget {
                     fontFamily: 'Lato',
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
+                    letterSpacing: 0,
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,

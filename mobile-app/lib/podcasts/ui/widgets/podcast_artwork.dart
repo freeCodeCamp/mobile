@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 
-/// Reuses downloaded artwork so the listening screens also work offline.
+// Reuses downloaded artwork so the listening screens also work offline.
 class PodcastArtwork extends ConsumerWidget {
   const PodcastArtwork({
     super.key,
@@ -14,12 +14,14 @@ class PodcastArtwork extends ConsumerWidget {
     this.size = 64,
     this.radius = 12,
     this.artwork,
+    this.borderColor,
   });
 
   final Podcast podcast;
   final double size;
   final double radius;
   final File? artwork;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +51,7 @@ class PodcastArtwork extends ConsumerWidget {
       decoration: BoxDecoration(
         color: colors.surfaceContainer,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: colors.outlineVariant),
+        border: Border.all(color: borderColor ?? colors.outlineVariant),
       ),
       child: local != null
           ? Image.file(

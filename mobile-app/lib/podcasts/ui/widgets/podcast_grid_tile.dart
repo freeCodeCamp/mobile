@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
+import 'package:intl/intl.dart';
 
 class PodcastGridTile extends StatelessWidget {
   const PodcastGridTile({
@@ -46,7 +47,7 @@ class PodcastGridTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${_formatCount(podcast.numOfEps)} ${podcast.numOfEps == 1 ? 'episode' : 'episodes'}',
+                    '${NumberFormat.decimalPattern(Localizations.localeOf(context).toString()).format(podcast.numOfEps)} ${podcast.numOfEps == 1 ? 'episode' : 'episodes'}',
                     style: TextStyle(
                       fontSize: 13,
                       color: colors.onSurfaceVariant,
@@ -63,8 +64,3 @@ class PodcastGridTile extends StatelessWidget {
     );
   }
 }
-
-String _formatCount(int value) => value.toString().replaceAllMapped(
-  RegExp(r'\B(?=(\d{3})+(?!\d))'),
-  (match) => ',',
-);

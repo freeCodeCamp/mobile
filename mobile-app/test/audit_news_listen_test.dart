@@ -452,6 +452,10 @@ void main() {
             overrides: [
               podcastPlayerProvider.overrideWith(() => player),
               podcastLibraryProvider.overrideWith(() => library),
+              podcastDownloadedSizeProvider(
+                _episode.podcastId,
+                _episode.id,
+              ).overrideWith((ref) async => null),
               podcastDownloadsProvider.overrideWith(_Downloads.new),
               podcastPlaybackPositionProvider.overrideWith(
                 (ref) => Stream.value(Duration.zero),
@@ -482,7 +486,7 @@ void main() {
         final pill = tester.widget<OutlinedButton>(pillFinder);
         expect(pill.style!.fixedSize!.resolve({})!.height, 36);
         expect(tester.getSize(pillFinder).height, greaterThanOrEqualTo(44));
-        expect(_textStyle(tester, '1 hr 19 min').fontSize, 13);
+        expect(_textStyle(tester, '1 hr 19 min').fontSize, 14);
         expect(_textStyle(tester, '#217').fontSize, 14);
         expect(_textStyle(tester, '#217').fontWeight, FontWeight.w900);
         await tester.tap(pillFinder);
@@ -507,6 +511,10 @@ void main() {
           ProviderScope(
             overrides: [
               podcastLibraryProvider.overrideWith(() => library),
+              podcastDownloadedSizeProvider(
+                _episode.podcastId,
+                _episode.id,
+              ).overrideWith((ref) async => null),
               podcastDownloadsProvider.overrideWith(() => downloads),
             ],
             child: Scaffold(
@@ -590,7 +598,7 @@ void main() {
         expect((rewind, forward), (1, 1));
         expect(_textStyle(tester, '0:30').fontFamily, 'JetBrains Mono');
         expect(_textStyle(tester, '0:30').fontSize, 12);
-        expect(_textStyle(tester, '-1:30').fontWeight, FontWeight.w700);
+        expect(_textStyle(tester, '-1:30').fontWeight, FontWeight.w400);
         expect(
           const PodcastSeekThumb().getPreferredSize(true, false),
           const Size(18, 18),

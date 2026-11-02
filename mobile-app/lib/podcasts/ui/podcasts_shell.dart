@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
-import 'package:freecodecamp/widgets/app_page_title.dart';
-import 'package:freecodecamp/widgets/listen_tabs.dart';
+import 'package:freecodecamp/widgets/chip_surface.dart';
+import 'package:freecodecamp/widgets/listen_header.dart';
 import 'package:go_router/go_router.dart';
 
 class PodcastsShell extends StatelessWidget {
@@ -23,36 +23,36 @@ class PodcastsShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 24, 16, 32),
-                    child: AppPageTitle('Listen'),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: ListenTabs(isRadio: false),
-                  ),
+                  const ListenHeader(isRadio: false),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                     child: Wrap(
                       spacing: 10,
                       children: [
-                        ChoiceChip(
-                          label: const Text('All'),
-                          selected: !downloaded,
-                          onSelected: (_) => context.go(podcastListPath),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 12,
+                        ChipSurface(
+                          child: ChoiceChip(
+                            label: const Text('All'),
+                            selected: !downloaded,
+                            onSelected: (_) => context.go(podcastListPath),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 12,
+                            ),
                           ),
                         ),
-                        ChoiceChip(
-                          label: const Text('Downloaded'),
-                          avatar: const Icon(Icons.download_rounded, size: 18),
-                          selected: downloaded,
-                          onSelected: (_) => context.go(podcastDownloadsPath),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 12,
+                        ChipSurface(
+                          child: ChoiceChip(
+                            label: const Text('Downloaded'),
+                            avatar: const Icon(
+                              Icons.download_rounded,
+                              size: 18,
+                            ),
+                            selected: downloaded,
+                            onSelected: (_) => context.go(podcastDownloadsPath),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 12,
+                            ),
                           ),
                         ),
                       ],

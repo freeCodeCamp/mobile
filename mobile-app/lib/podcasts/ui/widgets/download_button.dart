@@ -70,6 +70,7 @@ class PodcastDownloadButton extends ConsumerWidget {
               minimumSize: const WidgetStatePropertyAll(Size(52, 44)),
               fixedSize: const WidgetStatePropertyAll(Size(52, 44)),
               shape: FccTheme.focusShape(context, radius: 999),
+              tapTargetSize: MaterialTapTargetSize.padded,
             )
           : null,
       icon: icon,

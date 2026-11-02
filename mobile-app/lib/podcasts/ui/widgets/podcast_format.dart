@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
 String podcastDuration(Duration? duration) {
@@ -18,6 +19,14 @@ String podcastTimestamp(Duration duration) {
   return hours > 0
       ? '$hours:${two(minutes)}:${two(rest)}'
       : '$minutes:${two(rest)}';
+}
+
+String podcastFileSize(int bytes, String locale) {
+  final megabytes = bytes / 1000000;
+  final format = NumberFormat.decimalPattern(locale)
+    ..minimumFractionDigits = megabytes < 10 ? 1 : 0
+    ..maximumFractionDigits = megabytes < 10 ? 1 : 0;
+  return '${format.format(megabytes)} MB';
 }
 
 String podcastDate(DateTime date) {

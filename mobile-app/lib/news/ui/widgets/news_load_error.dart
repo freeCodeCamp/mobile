@@ -24,7 +24,7 @@ class NewsLoadError extends StatelessWidget {
               const Text(
                 'There was an error loading articles',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 12),
               Text(
@@ -43,7 +43,7 @@ class NewsLoadError extends StatelessWidget {
                 spacing: 12,
                 children: [
                   TextButton(
-                    onPressed: () => context.go(newsBookmarksPath),
+                    onPressed: () => context.push(newsBookmarksPath),
                     child: const Text('Saved articles'),
                   ),
                   TextButton(

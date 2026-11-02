@@ -38,9 +38,7 @@ class PostTile extends StatelessWidget {
     return InkWell(
       onTap: () => NewsPostRoute(slug: post.slug).push(context),
       child: Padding(
-        padding: featured
-            ? const EdgeInsets.symmetric(vertical: 8)
-            : const EdgeInsets.only(top: 16, bottom: 14),
+        padding: featured ? const EdgeInsets.only(top: 8) : EdgeInsets.zero,
         child: featured
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +51,6 @@ class PostTile extends StatelessWidget {
                   title,
                   const SizedBox(height: 12),
                   _author(context, withAvatar: true),
-                  const SizedBox(height: 8),
                 ],
               )
             : Row(
@@ -67,8 +64,7 @@ class PostTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: TagButtonColumn(
                       children: [
                         if (tag != null)
                           TagButton(

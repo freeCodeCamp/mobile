@@ -51,7 +51,7 @@ class NewsShell extends StatelessWidget {
         MediaQuery.sizeOf(context).width -
             MediaQuery.paddingOf(context).horizontal;
     final viewBookmarks = OutlinedButton.icon(
-      onPressed: () => context.go(newsBookmarksPath),
+      onPressed: () => context.push(newsBookmarksPath),
       icon: const Icon(Icons.bookmark_border_rounded, size: 20),
       label: const Text('View bookmarks'),
       style: FccTheme.compactOutlineStyle(context).copyWith(
@@ -69,7 +69,15 @@ class NewsShell extends StatelessWidget {
           : AppBar(
               automaticallyImplyLeading: false,
               leading: isSaved
-                  ? BackButton(onPressed: () => context.go(newsFeedPath))
+                  ? BackButton(
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go(newsFeedPath);
+                        }
+                      },
+                    )
                   : null,
               title: isSaved
                   ? const Text('Saved articles')
@@ -102,9 +110,9 @@ class NewsShell extends StatelessWidget {
       ),
     );
 
-    // Saved and Search are reached with context.go, so system back has nothing to pop.
+    // Deep-linked subpages have no feed underneath them.
     return PopScope(
-      canPop: !isSaved && !isSearch,
+      canPop: (!isSaved && !isSearch) || context.canPop(),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
           context.go(newsFeedPath);

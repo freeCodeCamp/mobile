@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/podcasts/services/library_service.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -26,4 +27,25 @@ class PodcastLibraryNotifier extends _$PodcastLibraryNotifier {
 
     await refresh();
   }
+}
+
+@riverpod
+Future<int?> podcastDownloadedSize(
+  Ref ref,
+  String podcastId,
+  String episodeId,
+) async {
+  final downloaded = ref.watch(
+    podcastLibraryProvider.select(
+      (library) =>
+          library.value?.episodesByPodcastId[podcastId]?.any(
+            (episode) => episode.id == episodeId,
+          ) ??
+          false,
+    ),
+  );
+  if (!downloaded) return null;
+  return ref
+      .watch(podcastLibraryServiceProvider)
+      .downloadedSize(podcastId, episodeId);
 }

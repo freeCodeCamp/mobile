@@ -110,7 +110,7 @@ class EpisodePlayButton extends ConsumerWidget {
             padding: const WidgetStatePropertyAll(
               EdgeInsets.symmetric(horizontal: 10),
             ),
-            visualDensity: const VisualDensity(vertical: -1),
+            visualDensity: VisualDensity.standard,
             tapTargetSize: MaterialTapTargetSize.padded,
             shape: FccTheme.focusShape(context, radius: 999),
             textStyle: const WidgetStatePropertyAll(
@@ -118,6 +118,7 @@ class EpisodePlayButton extends ConsumerWidget {
                 fontFamily: 'Lato',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
+                letterSpacing: 0,
               ),
             ),
           ),

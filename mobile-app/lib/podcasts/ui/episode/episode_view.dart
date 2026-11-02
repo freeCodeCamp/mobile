@@ -13,6 +13,7 @@ import 'package:freecodecamp/podcasts/ui/widgets/download_button.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/episode_play_button.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_format.dart';
+import 'package:freecodecamp/widgets/chip_surface.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,7 +55,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
           widget.podcast.title,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             color: colors.onSurfaceVariant,
           ),
         ),
@@ -95,6 +96,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                   podcast: widget.podcast,
                   size: artworkSize,
                   radius: 20,
+                  borderColor: FccDesignColors.of(context).artworkBorder,
                 ),
               ),
             ),
@@ -150,6 +152,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                             padding: HtmlPaddings.zero,
                             color: colors.onSurface,
                             fontSize: FontSize(14),
+                            lineHeight: const LineHeight(1.5),
                           ),
                           'a': Style(
                             color: FccDesignColors.of(context).accentText,
@@ -327,6 +330,7 @@ class _Controls extends ConsumerWidget {
               ),
               backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
               shape: FccTheme.focusShape(context, radius: 999),
+              tapTargetSize: MaterialTapTargetSize.padded,
             ),
             onPressed: canControl
                 ? () => _speedSheet(context, ref, speed)
@@ -424,26 +428,28 @@ class _Controls extends ConsumerWidget {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          ChoiceChip(
-                            selected: speed == option,
-                            showCheckmark: false,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 14,
-                            ),
-                            labelPadding: EdgeInsets.zero,
-                            label: ConstrainedBox(
-                              constraints: const BoxConstraints(minWidth: 52),
-                              child: Center(
-                                widthFactor: 1,
-                                child: Text(
-                                  '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
-                                  style: const TextStyle(fontSize: 16),
+                          ChipSurface(
+                            child: ChoiceChip(
+                              selected: speed == option,
+                              showCheckmark: false,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 14,
+                              ),
+                              labelPadding: EdgeInsets.zero,
+                              label: ConstrainedBox(
+                                constraints: const BoxConstraints(minWidth: 52),
+                                child: Center(
+                                  widthFactor: 1,
+                                  child: Text(
+                                    '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
                                 ),
                               ),
+                              onSelected: (_) =>
+                                  Navigator.of(context).pop(option),
                             ),
-                            onSelected: (_) =>
-                                Navigator.of(context).pop(option),
                           ),
                           if (option == 1.0)
                             Padding(
@@ -488,11 +494,20 @@ class PodcastEpisodeMetadata extends ConsumerWidget {
             false,
       ),
     );
+    final bytes = downloaded
+        ? ref
+              .watch(
+                podcastDownloadedSizeProvider(episode.podcastId, episode.id),
+              )
+              .value
+        : null;
     return Text(
       [
         if (episode.publicationDate != null)
           podcastDate(episode.publicationDate!),
         if (episode.duration != null) podcastDuration(episode.duration),
+        if (bytes != null)
+          podcastFileSize(bytes, Localizations.localeOf(context).toString()),
         if (downloaded) 'Downloaded',
       ].join(' · '),
       textAlign: TextAlign.center,

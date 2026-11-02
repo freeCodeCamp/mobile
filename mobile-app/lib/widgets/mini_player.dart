@@ -10,7 +10,7 @@ import 'package:freecodecamp/routing/code_radio.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 
-/// A view of the already loaded source. Observing it never starts playback.
+// A view of the already loaded source. Observing it never starts playback.
 class MiniPlayer extends ConsumerWidget {
   const MiniPlayer({super.key, this.beforeNavigate});
 
@@ -50,10 +50,7 @@ class MiniPlayer extends ConsumerWidget {
               child: Material(
                 color: colors.surfaceContainer,
                 clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  side: BorderSide(color: colors.outlineVariant),
-                ),
+                shape: FccTheme.cardShape(context),
                 child: InkWell(
                   onTap: !canOpen
                       ? null
@@ -148,6 +145,33 @@ class MiniPlayer extends ConsumerWidget {
                                           ? Icons.pause_rounded
                                           : Icons.play_arrow_rounded,
                                     ),
+                            ),
+                            IconButton(
+                              tooltip: 'Dismiss player',
+                              style: IconButton.styleFrom(
+                                minimumSize: const Size.square(48),
+                              ),
+                              onPressed: () async {
+                                if (handler.mediaItem.value?.id != item.id ||
+                                    (handler.episodeId == null &&
+                                        handler.codeRadioSongId == null)) {
+                                  return;
+                                }
+                                try {
+                                  await handler.stop();
+                                } catch (_) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Unable to stop audio. Please try again.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              icon: const Icon(Icons.close_rounded),
                             ),
                           ],
                         ),

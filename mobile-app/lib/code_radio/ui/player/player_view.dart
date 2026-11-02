@@ -7,9 +7,8 @@ import 'package:freecodecamp/code_radio/models/code_radio_model.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
-import 'package:freecodecamp/widgets/app_page_title.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-import 'package:freecodecamp/widgets/listen_tabs.dart';
+import 'package:freecodecamp/widgets/listen_header.dart';
 
 class CodeRadioPlayerView extends ConsumerWidget {
   const CodeRadioPlayerView({super.key});
@@ -19,36 +18,28 @@ class CodeRadioPlayerView extends ConsumerWidget {
     final nowPlaying = ref.watch(codeRadioNowPlayingProvider);
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: false,
-            toolbarHeight: AppPageTitle.toolbarHeight(context),
-            title: const AppPageTitle('Listen'),
-          ),
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: ListenTabs(isRadio: true),
-            ),
-          ),
-          switch (nowPlaying) {
-            AsyncData(:final value) => SliverToBoxAdapter(
-              child: _Player(radio: value),
-            ),
-            AsyncError() => SliverFillRemaining(
-              hasScrollBody: false,
-              child: ErrorRetry(
-                message: 'Unable to load Code Radio.\nPlease try again.',
-                onRetry: () => ref.invalidate(codeRadioNowPlayingProvider),
+      body: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverToBoxAdapter(child: ListenHeader(isRadio: true)),
+            switch (nowPlaying) {
+              AsyncData(:final value) => SliverToBoxAdapter(
+                child: _Player(radio: value),
               ),
-            ),
-            AsyncLoading() => const SliverToBoxAdapter(
-              child: CodeRadioSkeleton(),
-            ),
-          },
-        ],
+              AsyncError() => SliverFillRemaining(
+                hasScrollBody: false,
+                child: ErrorRetry(
+                  message: 'Unable to load Code Radio.\nPlease try again.',
+                  onRetry: () => ref.invalidate(codeRadioNowPlayingProvider),
+                ),
+              ),
+              AsyncLoading() => const SliverToBoxAdapter(
+                child: CodeRadioSkeleton(),
+              ),
+            },
+          ],
+        ),
       ),
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.listen,
@@ -104,7 +95,7 @@ class CodeRadioAlbumArt extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surfaceContainer,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colors.outlineVariant),
+        border: Border.all(color: FccDesignColors.of(context).artworkBorder),
         boxShadow: [
           BoxShadow(
             color: colors.primary.withValues(alpha: 0.15),
@@ -397,7 +388,7 @@ class CodeRadioSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final artworkSize = math.min(240.0, MediaQuery.sizeOf(context).width * .58);
+    final artworkSize = math.min(220.0, MediaQuery.sizeOf(context).width * .58);
     Widget placeholder({
       double? width,
       required double height,
@@ -421,7 +412,7 @@ class CodeRadioSkeleton extends StatelessWidget {
                 placeholder(
                   width: artworkSize,
                   height: artworkSize,
-                  radius: 22,
+                  radius: 20,
                 ),
                 const SizedBox(height: 18),
                 FractionallySizedBox(
@@ -436,9 +427,9 @@ class CodeRadioSkeleton extends StatelessWidget {
                 const SizedBox(height: 24),
                 placeholder(height: 6),
                 const SizedBox(height: 20),
-                placeholder(width: 76, height: 76, radius: 38),
+                placeholder(width: 72, height: 72, radius: 36),
                 const SizedBox(height: 20),
-                placeholder(height: 108, radius: 18),
+                placeholder(height: 108, radius: 16),
               ],
             ),
           ),

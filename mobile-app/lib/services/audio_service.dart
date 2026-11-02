@@ -135,7 +135,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() async {
-    _loadId++;
+    final load = ++_loadId;
     _loading = false;
     _audioConfig = null;
     _currentPodcastEpisode = null;
@@ -143,6 +143,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     _resumeNeedsLiveEdge = false;
 
     await _audioPlayer.stop();
+    if (load != _loadId) return;
 
     playbackState.add(
       playbackState.value.copyWith(

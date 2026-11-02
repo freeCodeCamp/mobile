@@ -4,6 +4,7 @@ import 'package:freecodecamp/news/models/search_post_model.dart';
 import 'package:freecodecamp/news/ui/search/search_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/search_result_tile.dart';
 import 'package:freecodecamp/routing/news.dart';
+import 'package:freecodecamp/widgets/chip_surface.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:go_router/go_router.dart';
 
@@ -38,7 +39,15 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
           padding: const EdgeInsets.fromLTRB(4, 12, 20, 8),
           child: Row(
             children: [
-              BackButton(onPressed: () => context.go(newsFeedPath)),
+              BackButton(
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(newsFeedPath);
+                  }
+                },
+              ),
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(
@@ -92,7 +101,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
     error: (_, _) => ErrorRetry(
       message: 'Unable to search articles.',
       detail:
-          'Something went wrong on our side or with your connection. Please try again.',
+          'Something went wrong on our side or with your connection. Your progress is safe.',
       onRetry: () => _search(_searchBarController.text),
     ),
     data: (posts) => CustomScrollView(
@@ -177,9 +186,11 @@ class NewsSearchEmptyState extends StatelessWidget {
             alignment: WrapAlignment.center,
             children: [
               for (final term in const ['JavaScript', 'Python', 'CSS'])
-                ActionChip(
-                  label: Text(term),
-                  onPressed: () => onSuggestion(term),
+                ChipSurface(
+                  child: ActionChip(
+                    label: Text(term),
+                    onPressed: () => onSuggestion(term),
+                  ),
                 ),
             ],
           ),

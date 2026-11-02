@@ -118,7 +118,7 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
       separatorBuilder: (_, _) => Divider(
         color: Theme.of(context).colorScheme.outlineVariant,
         thickness: 1,
-        height: 1,
+        height: widget.compact ? 1 : 29,
       ),
       itemBuilder: (context, index) => index == feed.posts.length
           ? footer

@@ -20,26 +20,15 @@ class NewsPostHeader extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: TagButtonColumn(
         children: [
           if (post.tags.isNotEmpty) ...[
-            SizedBox(
-              height: 38,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                    top: -6,
-                    child: TagButton(
-                      tagName: post.tags.first.name,
-                      tagSlug: post.tags.first.slug,
-                      variant: TagButtonVariant.articleEyebrow,
-                    ),
-                  ),
-                ],
-              ),
+            TagButton(
+              tagName: post.tags.first.name,
+              tagSlug: post.tags.first.slug,
+              variant: TagButtonVariant.articleEyebrow,
             ),
+            const SizedBox(height: 4),
           ],
           Text(
             post.title,
@@ -49,7 +38,7 @@ class NewsPostHeader extends StatelessWidget {
               fontWeight: FontWeight.w900,
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 4),
           InkWell(
             onTap: () => NewsAuthorRoute(
               username: post.author.username,
