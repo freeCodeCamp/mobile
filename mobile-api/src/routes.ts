@@ -35,7 +35,7 @@ async function getPodcasts(req: Request, res: Response) {
           numOfEps: feed.items.length,
         },
         {
-          new: true,
+          returnDocument: 'after',
           upsert: true,
         },
       );

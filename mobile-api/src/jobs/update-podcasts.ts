@@ -28,11 +28,11 @@ void (async function () {
         feedUrl: feedUrl,
         podcastLink: feed.link,
         imageLink: feed.image?.url || feed.itunes?.image,
-        copyright: feed.copyright as string,
+        copyright: feed.copyright,
         numOfEps: feed.items.length,
       },
       {
-        new: true,
+        returnDocument: 'after',
         upsert: true,
       },
     );
@@ -54,7 +54,7 @@ void (async function () {
           duration: episode.itunes?.duration,
         },
         {
-          new: true,
+          returnDocument: 'after',
           upsert: true,
         },
       );

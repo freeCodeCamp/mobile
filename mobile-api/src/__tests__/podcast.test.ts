@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import fetch from 'node-fetch';
 import { Podcast } from '../models/Podcast';
 import { Episode } from '../models/Episode';
 

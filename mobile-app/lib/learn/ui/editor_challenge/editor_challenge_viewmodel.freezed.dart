@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'editor_challenge_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'editor_challenge_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $EditorChallengeStateCopyWith<EditorChallengeState> get copyWith => _$EditorChal
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditorChallengeState&&(identical(other.file, file) || other.file == file)&&(identical(other.panel, panel) || other.panel == panel)&&(identical(other.body, body) || other.body == body)&&(identical(other.testsRunning, testsRunning) || other.testsRunning == testsRunning)&&(identical(other.passed, passed) || other.passed == passed)&&(identical(other.hint, hint) || other.hint == hint)&&const DeepCollectionEquality().equals(other.testConsole, testConsole)&&const DeepCollectionEquality().equals(other.userConsole, userConsole)&&const DeepCollectionEquality().equals(other.testResults, testResults)&&(identical(other.resetCount, resetCount) || other.resetCount == resetCount));
+  final _this = this as EditorChallengeState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditorChallengeState&&(identical(other.file, _this.file) || other.file == _this.file)&&(identical(other.panel, _this.panel) || other.panel == _this.panel)&&(identical(other.body, _this.body) || other.body == _this.body)&&(identical(other.testsRunning, _this.testsRunning) || other.testsRunning == _this.testsRunning)&&(identical(other.passed, _this.passed) || other.passed == _this.passed)&&(identical(other.hint, _this.hint) || other.hint == _this.hint)&&const DeepCollectionEquality().equals(other.testConsole, _this.testConsole)&&const DeepCollectionEquality().equals(other.userConsole, _this.userConsole)&&const DeepCollectionEquality().equals(other.testResults, _this.testResults)&&(identical(other.resetCount, _this.resetCount) || other.resetCount == _this.resetCount));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,file,panel,body,testsRunning,passed,hint,const DeepCollectionEquality().hash(testConsole),const DeepCollectionEquality().hash(userConsole),const DeepCollectionEquality().hash(testResults),resetCount);
+int get hashCode {
+  final _this = this as EditorChallengeState;
+  return Object.hash(runtimeType,_this.file,_this.panel,_this.body,_this.testsRunning,_this.passed,_this.hint,const DeepCollectionEquality().hash(_this.testConsole),const DeepCollectionEquality().hash(_this.userConsole),const DeepCollectionEquality().hash(_this.testResults),_this.resetCount);
+}
 
 @override
 String toString() {
-  return 'EditorChallengeState(file: $file, panel: $panel, body: $body, testsRunning: $testsRunning, passed: $passed, hint: $hint, testConsole: $testConsole, userConsole: $userConsole, testResults: $testResults, resetCount: $resetCount)';
+  final _this = this as EditorChallengeState;
+  return 'EditorChallengeState(file: ${_this.file}, panel: ${_this.panel}, body: ${_this.body}, testsRunning: ${_this.testsRunning}, passed: ${_this.passed}, hint: ${_this.hint}, testConsole: ${_this.testConsole}, userConsole: ${_this.userConsole}, testResults: ${_this.testResults}, resetCount: ${_this.resetCount})';
 }
 
 
@@ -63,7 +69,7 @@ class _$EditorChallengeStateCopyWithImpl<$Res>
 /// Create a copy of EditorChallengeState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? file = null,Object? panel = null,Object? body = null,Object? testsRunning = null,Object? passed = null,Object? hint = null,Object? testConsole = null,Object? userConsole = null,Object? testResults = freezed,Object? resetCount = null,}) {
-  return _then(_self.copyWith(
+  return _then(EditorChallengeState(
 file: null == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
 as ChallengeFile,panel: null == panel ? _self.panel : panel // ignore: cast_nullable_to_non_nullable
 as EditorPanel,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
@@ -224,7 +230,7 @@ return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passe
 
 
 class _EditorChallengeState implements EditorChallengeState {
-  const _EditorChallengeState({required this.file, this.panel = EditorPanel.instruction, this.body = EditorBody.editor, this.testsRunning = false, this.passed = false, this.hint = '', final  List<String> testConsole = const [], final  List<String> userConsole = const [], final  List<bool>? testResults, this.resetCount = 0}): _testConsole = testConsole,_userConsole = userConsole,_testResults = testResults;
+  const _EditorChallengeState({required this.file, this.panel = EditorPanel.instruction, this.body = EditorBody.editor, this.testsRunning = false, this.passed = false, this.hint = '',  List<String> testConsole = const [],  List<String> userConsole = const [],  List<bool>? testResults, this.resetCount = 0}): _testConsole = testConsole,_userConsole = userConsole,_testResults = testResults;
   
 
 @override final  ChallengeFile file;
@@ -268,16 +274,18 @@ _$EditorChallengeStateCopyWith<_EditorChallengeState> get copyWith => __$EditorC
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditorChallengeState&&(identical(other.file, file) || other.file == file)&&(identical(other.panel, panel) || other.panel == panel)&&(identical(other.body, body) || other.body == body)&&(identical(other.testsRunning, testsRunning) || other.testsRunning == testsRunning)&&(identical(other.passed, passed) || other.passed == passed)&&(identical(other.hint, hint) || other.hint == hint)&&const DeepCollectionEquality().equals(other._testConsole, _testConsole)&&const DeepCollectionEquality().equals(other._userConsole, _userConsole)&&const DeepCollectionEquality().equals(other._testResults, _testResults)&&(identical(other.resetCount, resetCount) || other.resetCount == resetCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditorChallengeState&&(identical(other.file, file) || other.file == file)&&(identical(other.panel, panel) || other.panel == panel)&&(identical(other.body, body) || other.body == body)&&(identical(other.testsRunning, testsRunning) || other.testsRunning == testsRunning)&&(identical(other.passed, passed) || other.passed == passed)&&(identical(other.hint, hint) || other.hint == hint)&&const DeepCollectionEquality().equals(other.testConsole, _testConsole)&&const DeepCollectionEquality().equals(other.userConsole, _userConsole)&&const DeepCollectionEquality().equals(other.testResults, _testResults)&&(identical(other.resetCount, resetCount) || other.resetCount == resetCount));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,file,panel,body,testsRunning,passed,hint,const DeepCollectionEquality().hash(_testConsole),const DeepCollectionEquality().hash(_userConsole),const DeepCollectionEquality().hash(_testResults),resetCount);
+int get hashCode {
+    return Object.hash(runtimeType,file,panel,body,testsRunning,passed,hint,const DeepCollectionEquality().hash(_testConsole),const DeepCollectionEquality().hash(_userConsole),const DeepCollectionEquality().hash(_testResults),resetCount);
+}
 
 @override
 String toString() {
-  return 'EditorChallengeState(file: $file, panel: $panel, body: $body, testsRunning: $testsRunning, passed: $passed, hint: $hint, testConsole: $testConsole, userConsole: $userConsole, testResults: $testResults, resetCount: $resetCount)';
+    return 'EditorChallengeState(file: $file, panel: $panel, body: $body, testsRunning: $testsRunning, passed: $passed, hint: $hint, testConsole: $testConsole, userConsole: $userConsole, testResults: $testResults, resetCount: $resetCount)';
 }
 
 
