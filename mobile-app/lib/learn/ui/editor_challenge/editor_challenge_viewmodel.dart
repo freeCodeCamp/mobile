@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -11,6 +12,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'editor_challenge_viewmodel.freezed.dart';
 part 'editor_challenge_viewmodel.g.dart';
+
+const _consoleDebounce = Duration(milliseconds: 700);
+// NOTE: A timed-out evaluate leaves the runner webview hung, so the runner is discarded.
+const _consoleTimeout = Duration(seconds: 5);
+// NOTE: The webview reports console output asynchronously, so wait briefly after evaluate returns.
+const _consoleSettle = Duration(milliseconds: 100);
+const _timeoutMessage =
+    '<p>Your code took too long to run. Check for an infinite loop.</p>';
 
 enum EditorPanel { instruction, hint, pass }
 
@@ -43,8 +52,12 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   LearnTestRunnerServiceProvider get _runner =>
       learnTestRunnerServiceProvider(workerTypeOf(challenge.challengeType));
 
+  Timer? _consoleTimer;
+  int _consoleRun = 0;
+
   @override
   EditorChallengeState build(Challenge challenge) {
+    ref.onDispose(() => _consoleTimer?.cancel());
     final files = challenge.challengeFiles;
     return EditorChallengeState(
       file:
@@ -67,6 +80,61 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   Future<void> codeChanged(ChallengeFile file, String text) async {
     if (state.passed) state = state.copyWith(passed: false);
     await ref.read(learnCodeServiceProvider).save(challenge, file, text);
+    if (!ref.mounted) return;
+    _scheduleConsole();
+  }
+
+  void _scheduleConsole() {
+    if (workerTypeOf(challenge.challengeType) != 'javascript') return;
+    _consoleTimer?.cancel();
+    _consoleTimer = Timer(_consoleDebounce, runConsole);
+  }
+
+  bool _isCurrentConsoleRun(int run) =>
+      ref.mounted && run == _consoleRun && !state.testsRunning;
+
+  Future<void> runConsole() async {
+    final run = ++_consoleRun;
+    if (state.testsRunning) return;
+
+    try {
+      final runner = await ref.read(_runner.future);
+      final String userCode;
+      try {
+        userCode = await ref
+            .read(learnCodeServiceProvider)
+            .userCode(
+              challenge,
+              (js) => runner.transpile(js, challengeId: challenge.id),
+            );
+      } on BabelException catch (e) {
+        if (_isCurrentConsoleRun(run)) {
+          state = state.copyWith(userConsole: ['<p>${syntaxErrorHint(e)}</p>']);
+        }
+        return;
+      }
+      if (!_isCurrentConsoleRun(run)) return;
+
+      final output = <String>[];
+      final logs = runner.consoleMessages.listen(
+        (message) => output.add('<p>$message</p>'),
+      );
+      try {
+        final error = await runner.evaluate(userCode).timeout(_consoleTimeout);
+        await Future<void>.delayed(_consoleSettle);
+        if (error != null) output.add('<p>$error</p>');
+      } on TimeoutException {
+        output.add(_timeoutMessage);
+        ref.invalidate(_runner);
+      } finally {
+        unawaited(logs.cancel());
+      }
+
+      if (!_isCurrentConsoleRun(run)) return;
+      state = state.copyWith(userConsole: output);
+    } catch (e, stack) {
+      log('Editor: console failed to run', error: e, stackTrace: stack);
+    }
   }
 
   Future<void> reset() async {
@@ -92,6 +160,8 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     final runner = await ref.read(_runner.future);
     final code = ref.read(learnCodeServiceProvider);
 
+    _consoleTimer?.cancel();
+    _consoleRun++;
     state = state.copyWith(
       testsRunning: true,
       testConsole: ['<p>// running tests</p>'],
