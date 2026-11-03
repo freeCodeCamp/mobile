@@ -223,10 +223,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             )
           else
             const SizedBox.shrink(),
-          ConsoleOutput(
-            testConsole: state.testConsole,
-            userConsole: state.userConsole,
-          ),
+          ConsoleOutput(userConsole: state.userConsole),
         ],
       ),
     );

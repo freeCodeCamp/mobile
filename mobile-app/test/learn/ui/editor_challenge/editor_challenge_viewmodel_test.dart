@@ -235,7 +235,6 @@ void main() {
         async.elapse(const Duration(seconds: 2));
 
         expect(harness.state.userConsole, ['<p>foo</p>']);
-        expect(harness.state.testConsole, isEmpty);
         expect(harness.state.testResults, isNull);
         expect(harness.runner.runCalls, 0);
       });

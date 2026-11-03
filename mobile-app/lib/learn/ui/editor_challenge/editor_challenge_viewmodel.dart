@@ -34,7 +34,6 @@ abstract class EditorChallengeState with _$EditorChallengeState {
     @Default(false) bool testsRunning,
     @Default(false) bool passed,
     @Default('') String hint,
-    @Default([]) List<String> testConsole,
     @Default([]) List<String> userConsole,
     // NOTE: Null until a run reaches the tests.
     List<bool>? testResults,
@@ -169,7 +168,6 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     _consoleRun++;
     state = state.copyWith(
       testsRunning: true,
-      testConsole: ['<p>// running tests</p>'],
       userConsole: [],
       testResults: null,
     );
@@ -190,15 +188,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       } on BabelException catch (e) {
         if (!ref.mounted) return;
         final hint = syntaxErrorHint(e);
-        state = state.copyWith(
-          panel: EditorPanel.hint,
-          hint: '<p>$hint</p>',
-          testConsole: [
-            ...state.testConsole,
-            '<p>$hint</p>',
-            '<p>// tests completed</p>',
-          ],
-        );
+        state = state.copyWith(panel: EditorPanel.hint, hint: '<p>$hint</p>');
         return;
       }
 
@@ -232,22 +222,14 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         panel: failures.isEmpty ? EditorPanel.pass : EditorPanel.hint,
         passed: failures.isEmpty,
         hint: failures.firstOrNull ?? state.hint,
-        testConsole: [
-          ...state.testConsole,
-          if (failures.isNotEmpty)
-            '<ol>${failures.map((f) => '<li>$f</li>').join()}</ol>',
-          '<p>// tests completed</p>',
-        ],
       );
     } catch (e, stack) {
       log('Editor: tests failed to run', error: e, stackTrace: stack);
       if (!ref.mounted) return;
       state = state.copyWith(
-        testConsole: [
-          ...state.testConsole,
-          '<p>The tests could not run: ${const HtmlEscape().convert('$e')}</p>',
-          '<p>// tests completed</p>',
-        ],
+        panel: EditorPanel.hint,
+        hint:
+            '<p>The tests could not run: ${const HtmlEscape().convert('$e')}</p>',
       );
     } finally {
       await logs.cancel();
