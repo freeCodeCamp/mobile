@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
@@ -77,6 +78,12 @@ class LearnTestRunnerService {
       isInspectable: kDebugMode,
       mediaPlaybackRequiresUserGesture: false,
     ),
+    initialUserScripts: UnmodifiableListView([
+      UserScript(
+        source: _formatConsoleScript,
+        injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+      ),
+    ]),
     onConsoleMessage: (_, message) {
       if (message.messageLevel == ConsoleMessageLevel.LOG &&
           !_console.isClosed) {
@@ -223,6 +230,27 @@ String workerTypeOf(int challengeType) => switch (challengeType) {
   20 || 23 || 27 || 29 => 'python',
   _ => 'dom',
 };
+
+// NOTE: The webview stringifies console arguments with String(), which turns objects into "[object Object]".
+const _formatConsoleScript = '''
+(() => {
+  const format = (value) => {
+    if (typeof value === 'string') return value;
+    if (value instanceof Error) return value.stack || String(value);
+    if (typeof value === 'function' || typeof value === 'symbol' || typeof value === 'bigint' || value === undefined) return String(value);
+    if (typeof value === 'object' && value !== null) {
+      try {
+        return JSON.stringify(value, (_, v) => typeof v === 'bigint' ? String(v) : v, 2);
+      } catch (e) {
+        return String(value);
+      }
+    }
+    return String(value);
+  };
+  const log = console.log.bind(console);
+  console.log = (...args) => log(args.map(format).join(' '));
+})();
+''';
 
 const _transpileScript = '''
 try {

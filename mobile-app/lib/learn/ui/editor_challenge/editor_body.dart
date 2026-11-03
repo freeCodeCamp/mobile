@@ -45,37 +45,23 @@ class TestList extends StatelessWidget {
 }
 
 class ConsoleOutput extends StatelessWidget {
-  const ConsoleOutput({
-    super.key,
-    required this.testConsole,
-    required this.userConsole,
-  });
+  const ConsoleOutput({super.key, required this.userConsole});
 
-  final List<String> testConsole;
   final List<String> userConsole;
-
-  static final _styles = {
-    'body': Style(margin: Margins.symmetric(vertical: 0, horizontal: 8)),
-    'p': Style(margin: Margins.zero),
-    'ol': Style(padding: HtmlPaddings.only(inlineStart: 20)),
-  };
 
   @override
   Widget build(BuildContext context) {
-    final messages = [
-      if (testConsole.isEmpty)
-        '<p>/**<br/>* Your test output will go here<br/>*/</p>'
-      else
-        ...testConsole,
-      if (userConsole.isNotEmpty) '<p>// console output</p>',
-      ...userConsole,
-    ];
-
     return ListView(
       padding: const EdgeInsets.all(8),
       children: [
-        for (final message in messages)
-          ParsedHtml(message, customStyles: _styles),
+        for (final message in userConsole)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              message,
+              style: const TextStyle(color: FccColors.gray00),
+            ),
+          ),
       ],
     );
   }

@@ -25,6 +25,8 @@ abstract class ChallengeFile with _$ChallengeFile {
 
   String get fileName => '$name.${ext.name}';
 
+  bool get isScript => ext == Ext.js || ext == Ext.jsx || ext == Ext.py;
+
   factory ChallengeFile.fromJson(Map<String, Object?> json) =>
       _$ChallengeFileFromJson(json);
 }
