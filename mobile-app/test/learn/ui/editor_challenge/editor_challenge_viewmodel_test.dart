@@ -116,15 +116,89 @@ class _Harness {
 void _withHarness(
   void Function(_Harness harness, FakeAsync async) body, {
   int challengeType = 1,
+  bool settleInitialRun = true,
 }) {
   fakeAsync((async) {
     final harness = _Harness(challengeType: challengeType);
+    if (settleInitialRun) {
+      harness.state;
+      async.elapse(const Duration(seconds: 1));
+      harness.runner.evaluateCalls = 0;
+    }
     body(harness, async);
     harness.dispose();
   });
 }
 
 void main() {
+  group('EditorChallengeNotifier initial console run', () {
+    test('should show console output of the seed code on open', () {
+      _withHarness(settleInitialRun: false, (harness, async) {
+        harness.runner.onEvaluate = (_) async {
+          harness.runner.messages.add('seed');
+          return null;
+        };
+
+        harness.state;
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, ['<p>seed</p>']);
+      });
+    });
+
+    test('should hide a syntax error in the seed code', () {
+      _withHarness(settleInitialRun: false, (harness, async) {
+        harness.runner.transpileError = BabelException(
+          'SyntaxError: Unexpected token (3:5)',
+        );
+
+        harness.state;
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, isEmpty);
+        expect(harness.runner.evaluateCalls, 0);
+      });
+    });
+
+    test('should keep seed output and hide its runtime error', () {
+      _withHarness(settleInitialRun: false, (harness, async) {
+        harness.runner.onEvaluate = (_) async {
+          harness.runner.messages.add('before');
+          return 'ReferenceError: x';
+        };
+
+        harness.state;
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, ['<p>before</p>']);
+      });
+    });
+
+    test('should hide the timeout message for the seed code', () {
+      _withHarness(settleInitialRun: false, (harness, async) {
+        harness.runner.onEvaluate = (_) => Future.error(TimeoutException(null));
+
+        harness.state;
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, isEmpty);
+      });
+    });
+
+    test('should show errors again after the first edit', () {
+      _withHarness(settleInitialRun: false, (harness, async) {
+        harness.runner.onEvaluate = (_) async => 'ReferenceError: x';
+
+        harness.state;
+        async.elapse(const Duration(seconds: 2));
+        harness.type('x');
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, ['<p>ReferenceError: x</p>']);
+      });
+    });
+  });
+
   group('EditorChallengeNotifier console run', () {
     test('should not evaluate until typing pauses', () {
       _withHarness((harness, async) {

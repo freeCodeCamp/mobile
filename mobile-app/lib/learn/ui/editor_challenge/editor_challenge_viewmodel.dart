@@ -58,6 +58,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   @override
   EditorChallengeState build(Challenge challenge) {
     ref.onDispose(() => _consoleTimer?.cancel());
+    _scheduleConsole(delay: Duration.zero, showErrors: false);
     final files = challenge.challengeFiles;
     return EditorChallengeState(
       file:
@@ -84,16 +85,20 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     _scheduleConsole();
   }
 
-  void _scheduleConsole() {
+  void _scheduleConsole({
+    Duration delay = _consoleDebounce,
+    bool showErrors = true,
+  }) {
     if (workerTypeOf(challenge.challengeType) != 'javascript') return;
     _consoleTimer?.cancel();
-    _consoleTimer = Timer(_consoleDebounce, runConsole);
+    _consoleTimer = Timer(delay, () => runConsole(showErrors: showErrors));
   }
 
   bool _isCurrentConsoleRun(int run) =>
       ref.mounted && run == _consoleRun && !state.testsRunning;
 
-  Future<void> runConsole() async {
+  // NOTE: The seed code runs without errors, since it is often incomplete on purpose.
+  Future<void> runConsole({bool showErrors = true}) async {
     final run = ++_consoleRun;
     if (state.testsRunning) return;
 
@@ -108,7 +113,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
               (js) => runner.transpile(js, challengeId: challenge.id),
             );
       } on BabelException catch (e) {
-        if (_isCurrentConsoleRun(run)) {
+        if (showErrors && _isCurrentConsoleRun(run)) {
           state = state.copyWith(userConsole: ['<p>${syntaxErrorHint(e)}</p>']);
         }
         return;
@@ -122,9 +127,9 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       try {
         final error = await runner.evaluate(userCode).timeout(_consoleTimeout);
         await Future<void>.delayed(_consoleSettle);
-        if (error != null) output.add('<p>$error</p>');
+        if (showErrors && error != null) output.add('<p>$error</p>');
       } on TimeoutException {
-        output.add(_timeoutMessage);
+        if (showErrors) output.add(_timeoutMessage);
         ref.invalidate(_runner);
       } finally {
         unawaited(logs.cancel());
