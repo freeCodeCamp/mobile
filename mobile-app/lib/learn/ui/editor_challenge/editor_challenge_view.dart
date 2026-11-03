@@ -280,6 +280,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   Widget _bottomBar(EditorChallengeState state) {
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
     final workerType = workerTypeOf(widget.challenge.challengeType);
+    final hasConsole = widget.challenge.challengeFiles.any((f) => f.isScript);
     final runner = ref.watch(learnTestRunnerServiceProvider(workerType));
     final failed = runner.hasError && !runner.isLoading;
     final busy = state.testsRunning || (!runner.hasValue && !failed);
@@ -316,12 +317,14 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                         .read(_provider.notifier)
                         .showBody(EditorBody.preview),
                   ),
-                _PanelButton(
-                  icon: Icons.terminal,
-                  active: state.body == EditorBody.console,
-                  onPressed: () =>
-                      ref.read(_provider.notifier).showBody(EditorBody.console),
-                ),
+                if (hasConsole)
+                  _PanelButton(
+                    icon: Icons.terminal,
+                    active: state.body == EditorBody.console,
+                    onPressed: () => ref
+                        .read(_provider.notifier)
+                        .showBody(EditorBody.console),
+                  ),
                 const Spacer(),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 8),
