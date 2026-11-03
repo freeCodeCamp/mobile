@@ -49,18 +49,19 @@ class ConsoleOutput extends StatelessWidget {
 
   final List<String> userConsole;
 
-  static final _styles = {
-    'body': Style(margin: Margins.symmetric(vertical: 0, horizontal: 8)),
-    'p': Style(margin: Margins.zero),
-  };
-
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(8),
       children: [
         for (final message in userConsole)
-          ParsedHtml(message, customStyles: _styles),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              message,
+              style: const TextStyle(color: FccColors.gray00),
+            ),
+          ),
       ],
     );
   }

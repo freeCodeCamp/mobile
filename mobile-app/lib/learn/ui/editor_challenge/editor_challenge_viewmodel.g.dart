@@ -101,7 +101,7 @@ final class EditorChallengeNotifierProvider
 }
 
 String _$editorChallengeNotifierHash() =>
-    r'ac13f4504262f937f448ec460b98e728b2aa6ae3';
+    r'81ee5f41c1ea32ea7a2cc34d2e1d890d96817066';
 
 final class EditorChallengeNotifierFamily extends $Family
     with

@@ -19,7 +19,7 @@ const _consoleTimeout = Duration(seconds: 5);
 // NOTE: The webview reports console output asynchronously, so wait briefly after evaluate returns.
 const _consoleSettle = Duration(milliseconds: 100);
 const _timeoutMessage =
-    '<p>Your code took too long to run. Check for an infinite loop.</p>';
+    'Your code took too long to run. Check for an infinite loop.';
 
 enum EditorPanel { instruction, hint, pass }
 
@@ -113,20 +113,18 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
             );
       } on BabelException catch (e) {
         if (showErrors && _isCurrentConsoleRun(run)) {
-          state = state.copyWith(userConsole: ['<p>${syntaxErrorHint(e)}</p>']);
+          state = state.copyWith(userConsole: [syntaxErrorHint(e)]);
         }
         return;
       }
       if (!_isCurrentConsoleRun(run)) return;
 
       final output = <String>[];
-      final logs = runner.consoleMessages.listen(
-        (message) => output.add('<p>$message</p>'),
-      );
+      final logs = runner.consoleMessages.listen(output.add);
       try {
         final error = await runner.evaluate(userCode).timeout(_consoleTimeout);
         await Future<void>.delayed(_consoleSettle);
-        if (showErrors && error != null) output.add('<p>$error</p>');
+        if (showErrors && error != null) output.add(error);
       } on TimeoutException {
         if (showErrors) output.add(_timeoutMessage);
         ref.invalidate(_runner);
@@ -173,9 +171,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     );
     final logs = runner.consoleMessages.listen((message) {
       if (!ref.mounted) return;
-      state = state.copyWith(
-        userConsole: [...state.userConsole, '<p>$message</p>'],
-      );
+      state = state.copyWith(userConsole: [...state.userConsole, message]);
     });
 
     try {
@@ -196,9 +192,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         final error = await runner.evaluate(userCode);
         if (!ref.mounted) return;
         if (error != null) {
-          state = state.copyWith(
-            userConsole: [...state.userConsole, '<p>$error</p>'],
-          );
+          state = state.copyWith(userConsole: [...state.userConsole, error]);
         }
       }
 

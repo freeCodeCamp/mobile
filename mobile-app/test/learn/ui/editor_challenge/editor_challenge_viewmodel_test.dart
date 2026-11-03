@@ -142,7 +142,7 @@ void main() {
         harness.state;
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>seed</p>']);
+        expect(harness.state.userConsole, ['seed']);
       });
     });
 
@@ -170,7 +170,7 @@ void main() {
         harness.state;
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>before</p>']);
+        expect(harness.state.userConsole, ['before']);
       });
     });
 
@@ -194,7 +194,7 @@ void main() {
         harness.type('x');
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>ReferenceError: x</p>']);
+        expect(harness.state.userConsole, ['ReferenceError: x']);
       });
     });
   });
@@ -224,6 +224,20 @@ void main() {
       });
     });
 
+    test('should keep whitespace in console output', () {
+      _withHarness((harness, async) {
+        harness.runner.onEvaluate = (_) async {
+          harness.runner.messages.add('  padded <b>  ');
+          return null;
+        };
+
+        harness.type('console.log("  padded <b>  ")');
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, ['  padded <b>  ']);
+      });
+    });
+
     test('should show console output without running tests', () {
       _withHarness((harness, async) {
         harness.runner.onEvaluate = (_) async {
@@ -234,7 +248,7 @@ void main() {
         harness.type("console.log('foo')");
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>foo</p>']);
+        expect(harness.state.userConsole, ['foo']);
         expect(harness.state.testResults, isNull);
         expect(harness.runner.runCalls, 0);
       });
@@ -247,7 +261,7 @@ void main() {
         harness.type('x');
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>ReferenceError: x</p>']);
+        expect(harness.state.userConsole, ['ReferenceError: x']);
       });
     });
 
@@ -259,7 +273,7 @@ void main() {
         harness.type("console.log('foo'");
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>${syntaxErrorHint(error)}</p>']);
+        expect(harness.state.userConsole, [syntaxErrorHint(error)]);
         expect(harness.runner.evaluateCalls, 0);
       });
     });
@@ -287,7 +301,7 @@ void main() {
         harness.type('second');
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, ['<p>second</p>']);
+        expect(harness.state.userConsole, ['second']);
       });
     });
 
