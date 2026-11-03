@@ -62,14 +62,7 @@ class ConsoleOutput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final messages = [
-      if (testConsole.isEmpty)
-        '<p>/**<br/>* Your test output will go here<br/>*/</p>'
-      else
-        ...testConsole,
-      if (userConsole.isNotEmpty) '<p>// console output</p>',
-      ...userConsole,
-    ];
+    final messages = [...testConsole, ...userConsole];
 
     return ListView(
       padding: const EdgeInsets.all(8),
