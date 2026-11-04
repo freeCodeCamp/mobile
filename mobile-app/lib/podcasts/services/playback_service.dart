@@ -58,7 +58,7 @@ class PodcastPlaybackService {
   bool _suspended = false;
   Future<void> _pendingWrites = Future<void>.value();
 
-  /// Stop new progress writes and drain existing writes before clearing prefs.
+  // Stop new progress writes and drain existing writes before clearing prefs.
   Future<void> suspendForReset() async {
     _suspended = true;
     await _pendingWrites;

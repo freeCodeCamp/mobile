@@ -28,7 +28,7 @@ class NewsBookmarkRepository {
     return _file ??= File(path.join(baseDir.path, 'storage', _fileName));
   }
 
-  /// Reset is serialized with saves so a pending file write cannot restore data.
+  // Reset is serialized with saves so a pending file write cannot restore data.
   Future<void> clearForReset() {
     _resetGeneration++;
     return _serialized(() => _write([]));

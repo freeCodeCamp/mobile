@@ -11,8 +11,8 @@ final learningReminderServiceProvider = Provider<LearningReminderService>(
 
 class ReminderPermissionDenied implements Exception {}
 
-/// A daily learning reminder, separate from podcast download notifications.
-/// The OS owns recurrence, so reminders continue while the app is closed.
+// A daily learning reminder, separate from podcast download notifications.
+// The OS owns recurrence, so reminders continue while the app is closed.
 class LearningReminderService {
   LearningReminderService(this._notifications);
 
@@ -96,7 +96,7 @@ class LearningReminderService {
   }
 }
 
-/// Construct calendar dates instead of adding 24 hours across DST changes.
+// Construct calendar dates instead of adding 24 hours across DST changes.
 tz.TZDateTime nextReminderTime(tz.TZDateTime now) {
   final today = tz.TZDateTime(now.location, now.year, now.month, now.day, 9);
   return today.isAfter(now)

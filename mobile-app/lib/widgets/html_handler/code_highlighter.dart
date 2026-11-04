@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:highlight/highlight.dart' as syntax;
 import 'package:phone_ide/highlighting/textmate_highlighter_registry.dart';
 
-/// Uses PhoneIDE's JavaScript/CSS grammars and semantic article grammars for
-/// HTML and other News languages (TypeScript, Python, SQL, etc.).
+// Uses PhoneIDE's JavaScript/CSS grammars and semantic article grammars for
+// HTML and other News languages (TypeScript, Python, SQL, etc.).
 Future<TextSpan> highlightArticleCode(String code, String language) async {
   final normalized = switch (language.trim().toLowerCase()) {
     // PhoneIDE emits the same color for HTML attributes and numeric literals.

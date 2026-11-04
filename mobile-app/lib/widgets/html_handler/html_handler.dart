@@ -323,7 +323,7 @@ class HTMLParser {
   }
 }
 
-/// Owns the platform player independently of HTML parsing and reader styling.
+// Owns the platform player independently of HTML parsing and reader styling.
 class _YouTubeEmbed extends StatefulWidget {
   const _YouTubeEmbed({super.key, required this.videoId});
 

@@ -4,7 +4,7 @@ import 'package:freecodecamp/news/ui/widgets/back_to_top_button.dart';
 import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// The same reading controls are available for live and offline articles.
+// The same reading controls are available for live and offline articles.
 class ArticleReader extends StatefulWidget {
   const ArticleReader({
     super.key,

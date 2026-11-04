@@ -28,8 +28,8 @@ final downloadedStorageBytesProvider = FutureProvider<int>((ref) {
   return ref.watch(localDataFilesProvider).downloadedBytes();
 });
 
-/// Only the app-owned podcast folders are removed. Do not recursively delete
-/// the documents directory: a future editor may keep user-created work there.
+// Only the app-owned podcast folders are removed. Do not recursively delete
+// the documents directory: a future editor may keep user-created work there.
 class LocalDataFiles {
   LocalDataFiles({Future<Directory> Function()? documentsDirectory})
     : _documentsDirectory =
@@ -110,9 +110,9 @@ final localDataResetServiceProvider = Provider<LocalDataResetService>((ref) {
   );
 });
 
-/// Reset the data explicitly named in the confirmation. Learning progress in
-/// the freeCodeCamp account is remote and is never deleted by a local reset.
-/// All operations are injectable so destructive behavior is tested with mocks.
+// Reset the data explicitly named in the confirmation. Learning progress in
+// the freeCodeCamp account is remote and is never deleted by a local reset.
+// All operations are injectable so destructive behavior is tested with mocks.
 class LocalDataResetService {
   LocalDataResetService({
     required this.downloadsInProgress,

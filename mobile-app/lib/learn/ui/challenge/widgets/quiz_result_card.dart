@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/ui/widgets/celebration_confetti.dart';
 
-/// The score summary and a decorative celebration for a passed quiz.
+// The score summary and a decorative celebration for a passed quiz.
 class QuizResultCard extends StatelessWidget {
   const QuizResultCard({
     super.key,

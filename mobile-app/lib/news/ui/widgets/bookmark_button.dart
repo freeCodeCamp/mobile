@@ -5,7 +5,7 @@ import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
 import 'package:freecodecamp/news/models/post_model.dart';
 import 'package:freecodecamp/news/services/api_service.dart';
 
-/// Saves the full article, including HTML, so list bookmarks work offline too.
+// Saves the full article, including HTML, so list bookmarks work offline too.
 class BookmarkButton extends ConsumerStatefulWidget {
   BookmarkButton({super.key, required Post post})
     : post = post,

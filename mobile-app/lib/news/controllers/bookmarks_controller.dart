@@ -14,8 +14,8 @@ class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {
   Future<void> toggle(BookmarkedPost post) =>
       toggleById(post.id, () async => post);
 
-  /// Retain the service while loading a summary's HTML so scrolling its tile
-  /// offscreen cannot cancel an in-flight save.
+  // Retain the service while loading a summary's HTML so scrolling its tile
+  // offscreen cannot cancel an in-flight save.
   Future<void> toggleById(
     String id,
     Future<BookmarkedPost> Function() loadPost,

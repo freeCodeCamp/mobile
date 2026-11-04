@@ -3,7 +3,7 @@ import 'package:freecodecamp/routing/news.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Articles saved on this device remain reachable when the feed is unavailable.
+// Articles saved on this device remain reachable when the feed is unavailable.
 class NewsLoadError extends StatelessWidget {
   const NewsLoadError({super.key, required this.onRetry});
 

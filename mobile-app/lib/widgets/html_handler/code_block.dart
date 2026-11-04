@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/widgets/html_handler/code_highlighter.dart';
 
-/// A read-only article snippet using PhoneIDE and additional article grammars.
-///
-/// PhoneIDE 3's Editor hard-codes its text colors and font size. Rendering its
-/// highlighted spans here lets article snippets follow the app theme and reader
-/// size setting, remain selectable, and retain their natural height.
+// A read-only article snippet using PhoneIDE and additional article grammars.
+//
+// PhoneIDE 3's Editor hard-codes its text colors and font size. Rendering its
+// highlighted spans here lets article snippets follow the app theme and reader
+// size setting, remain selectable, and retain their natural height.
 class FccCodeBlock extends StatefulWidget {
   const FccCodeBlock({
     super.key,
@@ -22,7 +22,7 @@ class FccCodeBlock extends StatefulWidget {
   final String language;
   final double fontSize;
 
-  /// Quiz prompts use unframed code with a persistent overflow indicator.
+  // Quiz prompts use unframed code with a persistent overflow indicator.
   final bool plain;
   final bool selectable;
 
@@ -216,9 +216,9 @@ class _FccCodeBlockState extends State<FccCodeBlock> {
   }
 }
 
-/// PhoneIDE 3.0.0 emits a fixed Atom One Dark theme. This adapter translates its
-/// token colors (and syntax_highlight 0.5's bracket colors) to Sunny Day / Starry
-/// Night without replacing its grammar handling or changing shared global state.
+// PhoneIDE 3.0.0 emits a fixed Atom One Dark theme. This adapter translates its
+// token colors (and syntax_highlight 0.5's bracket colors) to Sunny Day / Starry
+// Night without replacing its grammar handling or changing shared global state.
 class _CodePalette {
   _CodePalette(ThemeData theme) {
     final colors = theme.colorScheme;
