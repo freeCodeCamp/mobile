@@ -775,11 +775,12 @@ class FccTheme {
         ),
       ),
       snackBarTheme: SnackBarThemeData(
+        backgroundColor: raised,
         contentTextStyle: TextStyle(
           fontFamily: 'Lato',
           letterSpacing: 0,
           fontSize: 14,
-          color: colors.onInverseSurface,
+          color: foreground,
         ),
       ),
       sliderTheme: SliderThemeData(
