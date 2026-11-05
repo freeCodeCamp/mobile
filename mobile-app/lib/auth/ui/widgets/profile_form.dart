@@ -132,7 +132,24 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
                 ),
               ).copyWith(shape: FccTheme.focusShape(context, radius: 999)),
               onPressed: widget.saving ? null : widget.onSave,
-              child: Text(widget.saving ? 'Saving…' : 'Save'),
+              child: widget.saving
+                  ? Builder(
+                      builder: (context) => Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 8,
+                        children: [
+                          SizedBox.square(
+                            dimension: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: DefaultTextStyle.of(context).style.color,
+                            ),
+                          ),
+                          const Text('Saving'),
+                        ],
+                      ),
+                    )
+                  : const Text('Save'),
             ),
           ),
         ],
