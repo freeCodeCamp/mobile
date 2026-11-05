@@ -50,8 +50,9 @@ class AppPreferencesNotifier extends AsyncNotifier<AppPreferences> {
       await prefs.reload();
       rethrow;
     }
+    final latest = state.value ?? current;
     state = AsyncData(
-      AppPreferences(themeMode: mode, dailyReminder: current.dailyReminder),
+      AppPreferences(themeMode: mode, dailyReminder: latest.dailyReminder),
     );
   }
 
@@ -82,8 +83,9 @@ class AppPreferencesNotifier extends AsyncNotifier<AppPreferences> {
       }
       rethrow;
     }
+    final latest = state.value ?? current;
     state = AsyncData(
-      AppPreferences(themeMode: current.themeMode, dailyReminder: enabled),
+      AppPreferences(themeMode: latest.themeMode, dailyReminder: enabled),
     );
   }
 }

@@ -6,60 +6,25 @@ import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/services/app_preferences.dart';
-import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
+import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
 
-class SettingsView extends ConsumerStatefulWidget {
-  const SettingsView({super.key});
-
-  @override
-  ConsumerState<SettingsView> createState() => _SettingsViewState();
+void _showMessage(BuildContext context, String? message) {
+  if (message == null || !context.mounted) return;
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(message)));
 }
 
-class _SettingsViewState extends ConsumerState<SettingsView> {
-  bool _busy = false;
-  bool _savingReminder = false;
+class SettingsView extends ConsumerWidget {
+  const SettingsView({super.key});
 
-  void _message(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  Future<void> _change(
-    Future<void> Function() action, {
-    bool isReminder = false,
-  }) async {
-    if (_busy) return;
-    setState(() {
-      _busy = true;
-      _savingReminder = isReminder;
-    });
-    try {
-      await action();
-    } on ReminderPermissionDenied {
-      _message(
-        'Allow notifications in your device settings to enable reminders.',
-      );
-    } catch (_) {
-      _message('Could not save this change. Please try again.');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _busy = false;
-          _savingReminder = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _confirmReset() async {
+  Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
     final confirmed = await showConfirmDialog(
       context,
       title: 'Reset app data?',
@@ -68,44 +33,35 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       confirmLabel: 'Reset app data',
       destructive: true,
     );
-    if (!confirmed || !mounted || _busy) return;
-    setState(() => _busy = true);
-    try {
-      await ref.read(localDataResetServiceProvider).reset();
-      _message('Local app data cleared. Your online progress is safe.');
-    } on DownloadsInProgress {
-      _message('Finish or cancel your episode downloads before resetting.');
-    } catch (_) {
-      _message('Some local data could not be cleared. Please try again.');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
+    if (!confirmed || !context.mounted) return;
+    final message = await ref.read(settingsProvider.notifier).resetLocalData();
+    if (context.mounted) _showMessage(context, message);
   }
 
-  Future<void> _confirmLogOut() async {
-    if (_busy) return;
+  Future<void> _confirmLogOut(BuildContext context, WidgetRef ref) async {
+    if (ref.read(settingsProvider).busy) return;
     final confirmed = await showLogOutDialog(context);
-    if (!confirmed || !mounted || _busy) return;
-    await _change(() => ref.read(authProvider.notifier).signOut());
+    if (!confirmed || !context.mounted) return;
+    final message = await ref.read(settingsProvider.notifier).signOut();
+    if (context.mounted) _showMessage(context, message);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
-    final preferences = ref.watch(appPreferencesProvider);
     final storage = ref.watch(downloadedStorageBytesProvider);
     final version = ref.watch(appVersionProvider);
-    final current = preferences.value;
+    final busy = ref.watch(settingsProvider.select((s) => s.busy));
     final colors = Theme.of(context).colorScheme;
     return PopScope(
-      canPop: !_busy,
+      canPop: !busy,
       child: Stack(
         children: [
           Scaffold(
             appBar: AppBar(
               title: const Text('Settings'),
               leading: BackButton(
-                onPressed: _busy
+                onPressed: busy
                     ? null
                     : () => context.canPop()
                           ? context.pop()
@@ -121,84 +77,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                     children: [
-                      _Group(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  'Theme',
-                                  style: Theme.of(context).textTheme.bodyLarge
-                                      ?.copyWith(fontWeight: FontWeight.w700),
-                                ),
-                                const SizedBox(height: 8),
-                                if (preferences.isLoading)
-                                  const LinearProgressIndicator()
-                                else if (preferences.hasError)
-                                  TextButton.icon(
-                                    onPressed: () => ref.invalidate(
-                                      settingsPreferencesStoreProvider,
-                                    ),
-                                    icon: const Icon(Icons.refresh),
-                                    label: const Text(
-                                      'Could not load settings. Retry',
-                                    ),
-                                  )
-                                else
-                                  SegmentedTabs<ThemeMode>(
-                                    tabs: const [
-                                      (
-                                        value: ThemeMode.system,
-                                        label: 'System',
-                                        icon: null,
-                                      ),
-                                      (
-                                        value: ThemeMode.light,
-                                        label: 'Light',
-                                        icon: null,
-                                      ),
-                                      (
-                                        value: ThemeMode.dark,
-                                        label: 'Dark',
-                                        icon: null,
-                                      ),
-                                    ],
-                                    selected: current!.themeMode,
-                                    onSelected: _busy
-                                        ? null
-                                        : (mode) => _change(
-                                            () => ref
-                                                .read(
-                                                  appPreferencesProvider
-                                                      .notifier,
-                                                )
-                                                .setTheme(mode),
-                                          ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      const _ThemeGroup(),
                       _Group(
                         title: 'Learning',
                         children: [
-                          _SettingsSwitchRow(
-                            title: 'Daily challenge reminder',
-                            subtitle: 'A nudge when a new challenge is out',
-                            value: current?.dailyReminder ?? false,
-                            onChanged:
-                                current == null || (_busy && !_savingReminder)
-                                ? null
-                                : (enabled) => _change(
-                                    () => ref
-                                        .read(appPreferencesProvider.notifier)
-                                        .setDailyReminder(enabled),
-                                    isReminder: true,
-                                  ),
-                          ),
+                          const _ReminderRow(),
                           const _SettingsTile(
                             title: 'Language',
                             trailingLabel: 'English',
@@ -241,7 +124,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               await const PodcastDownloadsRoute().push<void>(
                                 context,
                               );
-                              if (mounted) {
+                              if (context.mounted) {
                                 ref.invalidate(downloadedStorageBytesProvider);
                               }
                             },
@@ -250,7 +133,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                             title: 'Reset app data',
                             subtitle: 'Clears all local data and progress',
                             destructive: true,
-                            onTap: _confirmReset,
+                            onTap: () => _confirmReset(context, ref),
                           ),
                         ],
                       ),
@@ -280,7 +163,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               ? [
                                   _SettingsTile(
                                     title: 'Log out',
-                                    onTap: _confirmLogOut,
+                                    onTap: () => _confirmLogOut(context, ref),
                                   ),
                                   _SettingsTile(
                                     title: 'Delete account',
@@ -317,23 +200,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               ),
             ),
           ),
-          if (_busy) ...[
-            ModalBarrier(
-              dismissible: false,
-              color: _savingReminder ? Colors.transparent : Colors.black26,
-            ),
-            if (_savingReminder)
-              Semantics(
-                liveRegion: true,
-                label: 'Saving reminder',
-                child: const SizedBox.shrink(),
-              )
-            else
-              const Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: 'Updating settings',
-                ),
+          if (busy) ...[
+            const ModalBarrier(dismissible: false, color: Colors.black26),
+            const Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: 'Updating settings',
               ),
+            ),
           ],
         ],
       ),
@@ -348,6 +221,89 @@ String formatStorageBytes(int bytes) {
     return '${(bytes / 1024 / 1024).toStringAsFixed(1)} MB';
   }
   return '${(bytes / 1024 / 1024 / 1024).toStringAsFixed(1)} GB';
+}
+
+class _ThemeGroup extends ConsumerWidget {
+  const _ThemeGroup();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final preferences = ref.watch(appPreferencesProvider);
+    final busy = ref.watch(settingsProvider.select((s) => s.busy));
+    return _Group(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Theme',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              if (preferences.isLoading)
+                const LinearProgressIndicator()
+              else if (preferences.hasError)
+                TextButton.icon(
+                  onPressed: () =>
+                      ref.invalidate(settingsPreferencesStoreProvider),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Could not load settings. Retry'),
+                )
+              else
+                SegmentedTabs<ThemeMode>(
+                  tabs: const [
+                    (value: ThemeMode.system, label: 'System', icon: null),
+                    (value: ThemeMode.light, label: 'Light', icon: null),
+                    (value: ThemeMode.dark, label: 'Dark', icon: null),
+                  ],
+                  selected: preferences.requireValue.themeMode,
+                  onSelected: busy
+                      ? null
+                      : (mode) async {
+                          final message = await ref
+                              .read(settingsProvider.notifier)
+                              .setTheme(mode);
+                          if (context.mounted) _showMessage(context, message);
+                        },
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ReminderRow extends ConsumerWidget {
+  const _ReminderRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final saved = ref.watch(
+      appPreferencesProvider.select((p) => p.value?.dailyReminder),
+    );
+    final pending = ref.watch(
+      settingsProvider.select((s) => s.pendingReminder),
+    );
+    final busy = ref.watch(settingsProvider.select((s) => s.busy));
+    return _SettingsSwitchRow(
+      title: 'Daily challenge reminder',
+      subtitle: 'A nudge when a new challenge is out',
+      value: pending ?? saved ?? false,
+      onChanged: saved == null || busy
+          ? null
+          : (enabled) async {
+              final message = await ref
+                  .read(settingsProvider.notifier)
+                  .setDailyReminder(enabled);
+              if (context.mounted) _showMessage(context, message);
+            },
+    );
+  }
 }
 
 class _SettingsSwitchRow extends StatelessWidget {
