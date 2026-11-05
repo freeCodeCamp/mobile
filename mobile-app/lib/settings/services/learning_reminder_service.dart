@@ -1,13 +1,16 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:freecodecamp/services/notification_service.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-final learningReminderServiceProvider = Provider<LearningReminderService>(
-  (ref) => LearningReminderService(ref.watch(notificationServiceProvider)),
-);
+part 'learning_reminder_service.g.dart';
+
+@Riverpod(keepAlive: true)
+LearningReminderService learningReminderService(Ref ref) {
+  return LearningReminderService(ref.watch(notificationServiceProvider));
+}
 
 class ReminderPermissionDenied implements Exception {}
 
@@ -36,9 +39,13 @@ class LearningReminderService {
     return _enqueue(() async {
       // Settings already applied the recurring schedule for this session.
       // A delayed startup/completion callback must not reverse that choice.
-      if (_changedInSettings) return;
+      if (_changedInSettings) {
+        return;
+      }
       final enabled = await readEnabled();
-      if (_changedInSettings) return;
+      if (_changedInSettings) {
+        return;
+      }
       if (enabled) {
         await _enable();
       } else {

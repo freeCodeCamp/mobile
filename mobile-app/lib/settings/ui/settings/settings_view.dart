@@ -4,10 +4,10 @@ import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
+import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:freecodecamp/settings/services/app_preferences.dart';
 import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
-import 'package:freecodecamp/settings/services/local_data_service.dart';
+import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
@@ -71,7 +71,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     if (!confirmed || !mounted || _busy) return;
     setState(() => _busy = true);
     try {
-      await ref.read(localDataResetServiceProvider).reset();
+      await ref.read(localDataResetProvider).reset();
       _message('Local app data cleared. Your online progress is safe.');
     } on DownloadsInProgress {
       _message('Finish or cancel your episode downloads before resetting.');
@@ -138,9 +138,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                   const LinearProgressIndicator()
                                 else if (preferences.hasError)
                                   TextButton.icon(
-                                    onPressed: () => ref.invalidate(
-                                      settingsPreferencesStoreProvider,
-                                    ),
+                                    onPressed: () =>
+                                        ref.invalidate(appPreferencesProvider),
                                     icon: const Icon(Icons.refresh),
                                     label: const Text(
                                       'Could not load settings. Retry',

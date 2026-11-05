@@ -33,6 +33,8 @@ class PodcastLibraryService {
   final PodcastDownloadRepository _files;
   final NotificationService _notifications;
 
+  Future<void> clearForReset() => _repo.clearForReset();
+
   Future<void> download(
     Podcast podcast,
     Episode episode, {
