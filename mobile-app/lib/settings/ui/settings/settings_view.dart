@@ -88,27 +88,22 @@ class SettingsView extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      _Group(
-                        title: 'Privacy',
-                        children: [
-                          _SettingsTile(
-                            title: 'Profile visibility',
-                            subtitle: auth.isLoggedIn
-                                ? 'Choose who sees your profile and what it shows'
-                                : 'Sign in to manage profile visibility',
-                            trailingLabel: auth.value == null
-                                ? null
-                                : auth.value!.profileUI.isLocked
-                                ? 'Private'
-                                : 'Public',
-                            onTap: () => auth.isLoggedIn
-                                ? const ProfileVisibilityRoute().push<void>(
-                                    context,
-                                  )
-                                : const LoginRoute().push<void>(context),
-                          ),
-                        ],
-                      ),
+                      if (auth.value case final user?)
+                        _Group(
+                          title: 'Privacy',
+                          children: [
+                            _SettingsTile(
+                              title: 'Profile visibility',
+                              subtitle:
+                                  'Choose who sees your profile and what it shows',
+                              trailingLabel: user.profileUI.isLocked
+                                  ? 'Private'
+                                  : 'Public',
+                              onTap: () => const ProfileVisibilityRoute()
+                                  .push<void>(context),
+                            ),
+                          ],
+                        ),
                       _Group(
                         title: 'Storage',
                         children: [
