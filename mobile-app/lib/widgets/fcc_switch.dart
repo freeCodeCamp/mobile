@@ -43,7 +43,10 @@ class _FccSwitchState extends State<FccSwitch> {
     final colors = theme.colorScheme;
     final enabled = widget.onChanged != null;
     final on = widget.value;
-    final states = {if (on) WidgetState.selected};
+    final states = {
+      if (on) WidgetState.selected,
+      if (!enabled) WidgetState.disabled,
+    };
     final switchTheme = theme.switchTheme;
     // The off state keeps its own colors. The on state follows the switch theme.
     final trackColor = on
