@@ -214,7 +214,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
       await tester.pumpAndSettle();
       expect(enabled, isTrue);
-      expect(find.byType(Switch), findsOneWidget);
+      expect(find.byType(Switch), findsNothing);
       expect(FocusManager.instance.primaryFocus, same(focus));
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
       await tester.pumpAndSettle();
