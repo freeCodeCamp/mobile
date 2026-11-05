@@ -7,62 +7,88 @@ class SuperBlockButton extends StatelessWidget {
     super.key,
     required this.title,
     required this.onPressed,
-    this.icon,
-    this.svgAsset,
+    required this.iconAsset,
     this.isEnabled = true,
+    this.isExternal = false,
+    this.subtitle,
   });
-
   final String title;
   final VoidCallback onPressed;
-  final IconData? icon;
-  final String? svgAsset;
+  final String iconAsset;
   final bool isEnabled;
+  final bool isExternal;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: isEnabled ? 1 : 0.7,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-        constraints: const BoxConstraints(minHeight: 80),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.all(5),
-            backgroundColor: FccColors.gray80,
-            side: const BorderSide(width: 2, color: FccColors.gray75),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-            ),
-          ),
-          onPressed: onPressed,
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: SizedBox(
-                  width: 36,
-                  height: 36,
-                  child: svgAsset != null
-                      ? SvgPicture.asset(
-                          svgAsset!,
-                          fit: BoxFit.contain,
-                          colorFilter: const ColorFilter.mode(
-                            FccColors.gray00,
-                            BlendMode.srcIn,
-                          ),
-                        )
-                      : Icon(icon, color: FccColors.gray00, size: 36),
+    final colors = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colors.surfaceContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: SvgPicture.asset(
+                iconAsset,
+                width: 28,
+                height: 28,
+                colorFilter: ColorFilter.mode(
+                  colors.onSurface,
+                  BlendMode.srcIn,
                 ),
+                excludeFromSemantics: true,
               ),
-              Expanded(
-                child: Text(title, style: const TextStyle(fontSize: 20)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      height: 1.25,
+                      fontWeight: FontWeight.w700,
+                      color: colors.onSurface,
+                    ),
+                  ),
+                  if (subtitle != null || !isEnabled) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle ?? 'Not available in the app',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color:
+                            subtitle == 'Start here' ||
+                                subtitle == 'In progress'
+                            ? FccDesignColors.of(context).accentText
+                            : colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: Icon(Icons.arrow_forward_ios),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              isExternal
+                  ? Icons.open_in_new
+                  : isEnabled
+                  ? Icons.chevron_right
+                  : Icons.info_outline,
+              size: 18,
+              color: colors.onSurfaceVariant,
+            ),
+          ],
         ),
       ),
     );

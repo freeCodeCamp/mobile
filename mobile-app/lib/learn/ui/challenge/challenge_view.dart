@@ -24,49 +24,84 @@ class ChallengeView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = challengeScreenProvider(superBlock, block, challengeId);
 
-    switch (ref.watch(provider)) {
-      case AsyncData(value: (:final challenge, :final block)):
+    return switch (ref.watch(provider)) {
+      AsyncData(value: (:final challenge, :final block)) =>
         switch (challenge.challengeType) {
-          case 8: // quiz
-            return QuizView(challenge: challenge, block: block);
-          case 10: // pythonProject
-            return PythonProjectView(challenge: challenge, block: block);
-          case 11: // video
-          case 15: // theOdinProject
-          case 19: // multipleChoice
-          case 24: // generic
-          case 31: // review
-            return LessonView(challenge: challenge, block: block);
-          case 21: // dialogue
-          case 22: // fillInTheBlank
-            return EnglishView(challenge: challenge, block: block);
-          case 0: // html
-          case 1: // js
-          case 14: // multifileCertProject
-          case 20: // python
-          case 23: // multifilePythonCertProject
-          case 25: // lab
-          case 26: // jsLab
-          case 27: // pyLab
-            return EditorChallengeView(challenge: challenge, block: block);
-          default:
-            return _Message(
-              child: Text(
-                'This challenge type (${challenge.challengeType}) is not available in the app yet.',
-                textAlign: TextAlign.center,
-              ),
-            );
-        }
-      case AsyncError():
-        return _Message(
-          child: ErrorRetry(
-            message: 'Something went wrong!',
-            onRetry: () => ref.invalidate(provider),
+          // quiz
+          8 => QuizView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
           ),
-        );
-      default:
-        return const _Message(child: CircularProgressIndicator());
-    }
+          // pythonProject
+          10 => PythonProjectView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // video
+          11 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // theOdinProject
+          15 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // multipleChoice
+          19 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // generic
+          24 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // review
+          31 => LessonView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // dialogue
+          21 => EnglishView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // fillInTheBlank
+          22 => EnglishView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          // Editor challenges, including multi-file projects and labs.
+          0 || 1 || 14 || 20 || 23 || 25 || 26 || 27 => EditorChallengeView(
+            key: ValueKey(challenge.id),
+            challenge: challenge,
+            block: block,
+          ),
+          final type => _Message(
+            child: Text(
+              'This challenge type ($type) is not available in the app yet.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        },
+      AsyncError() => _Message(
+        child: ErrorRetry(
+          message: 'Something went wrong!',
+          onRetry: () => ref.invalidate(provider),
+        ),
+      ),
+      _ => const _Message(child: CircularProgressIndicator()),
+    };
   }
 }
 

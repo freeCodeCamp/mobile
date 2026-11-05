@@ -149,7 +149,9 @@ class LearnCurriculumService {
       name: meta['name'] as String,
       layout: BlockLayout.fromValue(meta['blockLayout']),
       // NOTE: `blockType` is the older name for `blockLabel`.
-      label: BlockLabel.fromValue(meta['blockLabel'] ?? meta['blockType']),
+      label: examBlocksWithoutLabel[superBlock] == meta['dashedName']
+          ? BlockLabel.exam
+          : BlockLabel.fromValue(meta['blockLabel'] ?? meta['blockType']),
       description: description.isEmpty
           ? const ['Continue to improve your skills']
           : description,

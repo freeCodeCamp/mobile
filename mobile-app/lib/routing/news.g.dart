@@ -110,13 +110,22 @@ RouteBase get $newsImageRoute => GoRouteData.$route(
 );
 
 mixin $NewsImageRoute on GoRouteData {
-  static NewsImageRoute _fromState(GoRouterState state) =>
-      NewsImageRoute($extra: state.extra as String);
+  static NewsImageRoute _fromState(GoRouterState state) => NewsImageRoute(
+    caption: state.uri.queryParameters['caption'],
+    alt: state.uri.queryParameters['alt'],
+    $extra: state.extra as String,
+  );
 
   NewsImageRoute get _self => this as NewsImageRoute;
 
   @override
-  String get location => GoRouteData.$location('/news/image');
+  String get location => GoRouteData.$location(
+    '/news/image',
+    queryParams: {
+      if (_self.caption != null) 'caption': _self.caption,
+      if (_self.alt != null) 'alt': _self.alt,
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);

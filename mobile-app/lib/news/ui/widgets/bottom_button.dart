@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 
 class NewsBottomButton extends StatelessWidget {
   const NewsBottomButton({
@@ -19,7 +18,7 @@ class NewsBottomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white),
+        icon: Icon(icon),
         onPressed: onPressed,
         label: FittedBox(
           fit: BoxFit.scaleDown,
@@ -34,7 +33,6 @@ class NewsBottomButton extends StatelessWidget {
               bottomRight: Radius.circular(rightSided ? 10 : 0),
             ),
           ),
-          backgroundColor: FccColors.gray80,
         ),
       ),
     );

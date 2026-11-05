@@ -106,16 +106,18 @@ class NotificationService {
     id: _random.nextInt(pow(2, 31).toInt() - 1),
     title: title,
     body: body,
-    notificationDetails: const NotificationDetails(
+    notificationDetails: NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,
         _channelName,
         channelDescription: 'Notifications about podcast episode downloads',
         priority: Priority.high,
         importance: Importance.max,
-        color: FccColors.gray90,
+        color: FccTheme.themeLight.colorScheme.onSurface,
       ),
-      iOS: DarwinNotificationDetails(threadIdentifier: 'fcc-ios-notif-channel'),
+      iOS: const DarwinNotificationDetails(
+        threadIdentifier: 'fcc-ios-notif-channel',
+      ),
     ),
   );
 }

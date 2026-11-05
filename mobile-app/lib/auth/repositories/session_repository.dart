@@ -15,6 +15,8 @@ typedef AuthTokens = ({String csrf, String csrfToken, String jwtAccessToken});
 // NOTE: The API rejected the stored session (401), or there is none.
 class SessionExpiredException implements Exception {}
 
+class SessionChangedException implements Exception {}
+
 const _scopes = {'openid', 'profile', 'email'};
 
 // v7's secure storage keys.
@@ -123,12 +125,15 @@ class AuthSessionRepository {
     );
   }
 
-  Future<Map<String, dynamic>?> fetchSessionUser() async {
+  Future<Map<String, dynamic>?> fetchSessionUser({
+    AuthTokens? expectedTokens,
+  }) async {
     final res = await authenticated(
       (options) => _dio.get<Map<String, dynamic>>(
         '$apiUrl/user/session-user',
         options: options,
       ),
+      expectedTokens: expectedTokens,
     );
 
     final data = res.data;
@@ -145,13 +150,19 @@ class AuthSessionRepository {
     );
   }
 
-  // NOTE: Every call carrying the session goes through here, so any 401 signs the user out.
-  Future<T> authenticated<T>(Future<T> Function(Options) request) async {
+  // NOTE: A 401 for the current session signs the user out everywhere.
+  Future<T> authenticated<T>(
+    Future<T> Function(Options) request, {
+    AuthTokens? expectedTokens,
+  }) async {
     final tokens = await readTokens();
     if (tokens == null) throw SessionExpiredException();
+    if (expectedTokens != null && tokens != expectedTokens) {
+      throw SessionChangedException();
+    }
 
     try {
-      return await request(
+      final result = await request(
         Options(
           headers: {
             'CSRF-Token': tokens.csrfToken,
@@ -160,7 +171,16 @@ class AuthSessionRepository {
           },
         ),
       );
+      if (expectedTokens != null && _tokens != expectedTokens) {
+        throw SessionChangedException();
+      }
+      return result;
     } on DioException catch (e) {
+      // A response from an earlier account must not sign out the newer session.
+      if ((e.response?.statusCode == 401 || e.response?.statusCode == 403) &&
+          _tokens != tokens) {
+        throw SessionChangedException();
+      }
       if (e.response?.statusCode != 401) rethrow;
 
       await clearTokens();

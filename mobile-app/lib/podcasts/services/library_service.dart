@@ -90,6 +90,16 @@ class PodcastLibraryService {
     );
   }
 
+  Future<int?> downloadedSize(String podcastId, String episodeId) async {
+    if (!await _repo.containsEpisode(
+      podcastId: podcastId,
+      episodeId: episodeId,
+    )) {
+      return null;
+    }
+    return _files.episodeSize(podcastId, episodeId);
+  }
+
   Future<void> removeEpisode(String podcastId, String episodeId) async {
     final podcastEmptied = await _repo.removeEpisode(
       podcastId: podcastId,

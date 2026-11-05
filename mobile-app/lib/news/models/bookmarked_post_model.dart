@@ -11,6 +11,8 @@ abstract class BookmarkedPost with _$BookmarkedPost {
     required String title,
     required String authorName,
     required String text,
+    String? coverImageUrl,
+    DateTime? savedAt,
   }) = _BookmarkedPost;
 
   static BookmarkedPost fromPost(Post post) => BookmarkedPost(
@@ -18,6 +20,7 @@ abstract class BookmarkedPost with _$BookmarkedPost {
     title: post.title,
     authorName: post.author.name,
     text: post.content.html,
+    coverImageUrl: post.coverImage?.url,
   );
 
   factory BookmarkedPost.fromJson(Map<String, Object?> json) =>

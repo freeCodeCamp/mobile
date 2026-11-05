@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/answer_feedback.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_audio_player.dart';
-import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
 
 typedef QuestionItem = ({
   String text,
   List<Answer> answers,
-  // NOTE: 0-based index into answers.
   int solution,
   QuizAudioData? audioData,
 });
-
 QuestionItem questionItem(Question q) => (
   text: q.text,
   answers: q.answers,
@@ -21,156 +19,167 @@ QuestionItem questionItem(Question q) => (
   audioData: null,
 );
 
-class Questions extends StatefulWidget {
+class Questions extends StatelessWidget {
   const Questions({
     super.key,
     required this.questions,
     required this.selected,
     required this.validated,
     required this.onChanged,
+    this.currentIndex,
+    this.enabled = true,
+    this.plainCodeBlocks = false,
+    this.outlinedFeedbackCode = false,
+    this.explanation = '',
   });
-
   final List<QuestionItem> questions;
   final List<int?> selected;
   final bool validated;
   final void Function(int question, int answer) onChanged;
+  final int? currentIndex;
+  final bool enabled;
+  final bool plainCodeBlocks;
+  final bool outlinedFeedbackCode;
+  final String explanation;
 
   @override
-  State<Questions> createState() => _QuestionsState();
-}
-
-class _QuestionsState extends State<Questions> {
-  late List<List<Widget>> _texts;
-  late List<List<List<Widget>>> _answers;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _parse();
-  }
-
-  @override
-  void didUpdateWidget(Questions oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.questions, widget.questions)) _parse();
-  }
-
-  void _parse() {
-    final parser = HTMLParser(context: context);
-    _texts = [for (final q in widget.questions) parser.parse(q.text)];
-    _answers = [
-      for (final q in widget.questions)
-        [
-          for (final a in q.answers)
-            parser.parse(
-              a.answer,
-              isSelectable: false,
-              customStyles: {'p': Style(margin: Margins.zero)},
-            ),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      for (final (i, question) in questions.indexed)
+        if (currentIndex == null || currentIndex == i) ...[
+          ParsedHtml(
+            question.text,
+            plainCodeBlocks: plainCodeBlocks,
+            customStyles: {
+              '*': Style(
+                fontSize: FontSize(24),
+                fontWeight: FontWeight.w800,
+                lineHeight: const LineHeight(1.35),
+              ),
+              for (final tag in ['body', 'div', 'p'])
+                tag: Style(margin: Margins.zero, padding: HtmlPaddings.zero),
+              'strong': Style(fontWeight: FontWeight.w800),
+              'b': Style(fontWeight: FontWeight.w800),
+            },
+          ),
+          if (question.audioData case final audio?) ...[
+            const SizedBox(height: 16),
+            QuizAudioPlayer(key: ValueKey(i), audioData: audio),
+          ],
+          const SizedBox(height: 20),
+          for (final (j, answer) in question.answers.indexed)
+            _option(context, i, j, answer),
+          if (validated && selected[i] != null) _feedback(context, i),
         ],
-    ];
-  }
+    ],
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    final multiple = widget.questions.length > 1;
-
-    return Column(
-      children: [
-        for (final (i, question) in widget.questions.indexed)
-          ChallengeCard(
-            title: multiple ? 'Question ${i + 1}' : 'Question',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ..._texts[i],
-                if (question.audioData case final audio?) ...[
-                  const SizedBox(height: 16),
-                  QuizAudioPlayer(audioData: audio),
-                ],
-                const SizedBox(height: 8),
-                RadioGroup<int>(
-                  groupValue: widget.selected[i],
-                  onChanged: (answer) {
-                    if (answer != null) widget.onChanged(i, answer);
-                  },
-                  child: Column(
-                    children: [
-                      for (final (j, answer) in question.answers.indexed)
-                        _option(i, j, answer),
-                    ],
+  Widget _option(BuildContext context, int question, int index, Answer answer) {
+    final colors = Theme.of(context).colorScheme;
+    final isSelected = selected[question] == index;
+    final isCorrect = questions[question].solution == index;
+    final checked = validated && isSelected;
+    final accent = checked
+        ? (isCorrect ? FccDesignColors.of(context).success : colors.error)
+        : colors.primary;
+    final background = isSelected
+        ? (checked ? accent.withValues(alpha: .09) : colors.primaryContainer)
+        : colors.surface;
+    final badgeSize = (MediaQuery.textScalerOf(context).scale(16) * 1.2 + 12)
+        .clamp(32.0, double.infinity);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Semantics(
+        checked: isSelected,
+        inMutuallyExclusiveGroup: true,
+        button: true,
+        child: Material(
+          color: background,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(
+              color: isSelected ? accent : colors.outline,
+              width: isSelected ? 2 : 1,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: enabled ? () => onChanged(question, index) : null,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: badgeSize,
+                    height: badgeSize,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelected ? accent : colors.surfaceContainer,
+                    ),
+                    child: checked
+                        ? Icon(
+                            isCorrect ? Icons.check : Icons.close,
+                            size: 18,
+                            color: colors.surface,
+                          )
+                        : Text(
+                            String.fromCharCode(65 + index),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              height: 1.2,
+                              color: isSelected
+                                  ? colors.onPrimary
+                                  : colors.onSurfaceVariant,
+                            ),
+                          ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: IgnorePointer(
+                      // Quiz code answers need their horizontal scroll gestures.
+                      // Nested actions are disabled so taps reach this option.
+                      ignoring: !plainCodeBlocks,
+                      child: ParsedHtml(
+                        answer.answer,
+                        selectable: false,
+                        plainCodeBlocks: plainCodeBlocks,
+                        enableTapActions: false,
+                        customStyles: {
+                          '*': Style(lineHeight: const LineHeight(1.4)),
+                          for (final tag in ['body', 'div', 'p'])
+                            tag: Style(
+                              margin: Margins.zero,
+                              padding: HtmlPaddings.zero,
+                            ),
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-      ],
-    );
-  }
-
-  Widget _option(int question, int index, Answer answer) {
-    final isSelected = widget.selected[question] == index;
-    final isCorrect = widget.questions[question].solution == index;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Material(
-        child: RadioListTile<int>(
-          value: index,
-          selected: isSelected,
-          tileColor: FccColors.gray90,
-          selectedTileColor: FccColors.gray90,
-          shape: const RoundedRectangleBorder(
-            side: BorderSide(color: Color(0xFFAAAAAA), width: 2),
-          ),
-          title: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _answers[question][index],
-            ),
-          ),
-          subtitle: isSelected && widget.validated
-              ? _Feedback(isCorrect: isCorrect, feedback: answer.feedback)
-              : null,
         ),
       ),
     );
   }
-}
 
-class _Feedback extends StatelessWidget {
-  const _Feedback({required this.isCorrect, required this.feedback});
-
-  final bool isCorrect;
-  final String? feedback;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isCorrect ? FccColors.green40 : FccColors.red15;
-    final feedback = this.feedback ?? '';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 12, bottom: feedback.isEmpty ? 24 : 0),
-          child: Text(
-            isCorrect ? 'Correct!' : 'Incorrect!',
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-        ),
-        if (feedback.isNotEmpty)
-          ...HTMLParser(context: context).parse(
-            feedback,
-            customStyles: {'*:not(pre):not(code)': Style(color: color)},
-          ),
-      ],
+  Widget _feedback(BuildContext context, int question) {
+    final index = selected[question]!;
+    final correct = questions[question].solution == index;
+    final feedback = questions[question].answers[index].feedback ?? '';
+    return AnswerFeedback(
+      correct: correct,
+      html: [if (correct && explanation.isNotEmpty) explanation else feedback],
+      fallback: correct
+          ? null
+          : 'Try another answer. You can revisit the lesson for a hint.',
+      outlinedInlineCode: outlinedFeedbackCode,
+      margin: const EdgeInsets.only(top: 4, bottom: 16),
     );
   }
 }

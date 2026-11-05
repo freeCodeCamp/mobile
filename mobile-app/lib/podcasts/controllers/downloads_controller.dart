@@ -21,6 +21,10 @@ sealed class DownloadStatus with _$DownloadStatus {
 @riverpod
 class PodcastDownloadsNotifier extends _$PodcastDownloadsNotifier {
   final _cancelTokens = <String, CancelToken>{};
+  final _pendingTransfers = <String>{};
+
+  // Cancellation hides progress before the transfer, artwork, and storage settle.
+  bool hasPendingTransfers() => _pendingTransfers.isNotEmpty;
 
   // NOTE: Pinned only while transfers are in flight, so an idle notifier is disposed.
   KeepAliveLink? _link;
@@ -29,9 +33,10 @@ class PodcastDownloadsNotifier extends _$PodcastDownloadsNotifier {
   Map<String, DownloadStatus> build() => const {};
 
   Future<void> start(Podcast podcast, Episode episode) async {
-    if (_cancelTokens.containsKey(episode.id)) return;
+    if (_pendingTransfers.contains(episode.id)) return;
 
     final token = CancelToken();
+    _pendingTransfers.add(episode.id);
     _cancelTokens[episode.id] = token;
     _link ??= ref.keepAlive();
     _set(episode.id, const DownloadStatus.running(0));
@@ -65,13 +70,14 @@ class PodcastDownloadsNotifier extends _$PodcastDownloadsNotifier {
       log('Podcast download failed for ${episode.id}: $e');
       _set(episode.id, const DownloadStatus.failed());
     } finally {
+      _pendingTransfers.remove(episode.id);
       _cancelTokens.remove(episode.id);
       _releaseWhenIdle();
     }
   }
 
   void _releaseWhenIdle() {
-    if (_cancelTokens.isNotEmpty) return;
+    if (_pendingTransfers.isNotEmpty) return;
 
     _link?.close();
     _link = null;

@@ -104,6 +104,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
             page: next,
             hasNextPage: page.hasMore,
             isLoadingMore: false,
+            loadMoreError: null,
           ),
         );
       } catch (error) {

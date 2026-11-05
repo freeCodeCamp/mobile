@@ -10,3 +10,10 @@ String parseDate(String date) {
     return '';
   }
 }
+
+String articleDate(String value) {
+  final date = DateTime.tryParse(value);
+  return date == null
+      ? ''
+      : Jiffy.parseFromDateTime(date).format(pattern: 'MMM d, yyyy');
+}

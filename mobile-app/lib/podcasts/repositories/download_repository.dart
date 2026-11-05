@@ -50,6 +50,16 @@ class PodcastDownloadRepository {
     path.join((await _episodesRoot()).path, podcastId, '$episodeId.mp3'),
   );
 
+  Future<int?> episodeSize(String podcastId, String episodeId) async {
+    final file = await episodeFile(podcastId, episodeId);
+    try {
+      final bytes = await file.length();
+      return bytes > 0 ? bytes : null;
+    } on FileSystemException {
+      return null;
+    }
+  }
+
   Future<File> artworkFile(String podcastId) async =>
       File(path.join((await _artworkRoot()).path, '$podcastId.jpg'));
 

@@ -97,7 +97,7 @@ final class SceneNotifierProvider
   }
 }
 
-String _$sceneNotifierHash() => r'7225660aba5379098cffc259277d97dcbc787b9b';
+String _$sceneNotifierHash() => r'e266f5ffe2d003eb329eeb3fb692f976a090b28b';
 
 final class SceneNotifierFamily extends $Family
     with
