@@ -24,9 +24,14 @@ class PodcastsShellRoute extends ShellRouteData {
   const PodcastsShellRoute();
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return PodcastsShell(child: navigator);
-  }
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) => NoTransitionPage(
+    key: state.pageKey,
+    child: PodcastsShell(child: navigator),
+  );
 }
 
 class PodcastListRoute extends GoRouteData with $PodcastListRoute {

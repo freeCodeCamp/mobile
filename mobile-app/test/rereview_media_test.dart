@@ -327,11 +327,16 @@ void main() {
     });
   }
   testWidgets(
-    'LIST-N1 same rendered header bounds on both actual Listen routes',
+    'LIST-N1 Listen routes switch without transitions and keep header bounds',
     (tester) async {
       await _pumpRoutes(tester, path: '/podcasts');
       expect(find.text('1,051 episodes'), findsOneWidget);
       final before = tester.getRect(find.byType(ListenTabs));
+      final podcastsRoute = ModalRoute.of(
+        tester.element(find.byType(ListenTabs)),
+      )!;
+      expect(podcastsRoute.transitionDuration, Duration.zero);
+      expect(podcastsRoute.reverseTransitionDuration, Duration.zero);
       final titleBefore = tester.getRect(find.text('Listen').first);
       expect(before.left, 16);
       expect(before.width, 358);
@@ -339,6 +344,11 @@ void main() {
       await tester.tap(find.text('Code Radio'));
       await tester.pumpAndSettle();
       expect(find.byType(CodeRadioPlayerView), findsOneWidget);
+      final radioRoute = ModalRoute.of(
+        tester.element(find.byType(ListenTabs)),
+      )!;
+      expect(radioRoute.transitionDuration, Duration.zero);
+      expect(radioRoute.reverseTransitionDuration, Duration.zero);
       expect(tester.getRect(find.byType(ListenTabs)), before);
       expect(tester.getRect(find.text('Listen').first), titleBefore);
       expect(_rendered(tester, 'Code Radio').fontFamily, 'Lato');
@@ -360,6 +370,10 @@ void main() {
       expect(decoration.borderRadius, BorderRadius.circular(20));
       expect(decoration.boxShadow, isNotEmpty);
       expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Podcasts'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CodeRadioPlayerView), findsNothing);
+      expect(tester.getRect(find.byType(ListenTabs)), before);
     },
   );
   testWidgets(
@@ -680,24 +694,29 @@ void main() {
       );
     }
   }
-  testWidgets('EP3 downloaded metadata shows actual size and completion', (
-    tester,
-  ) async {
-    final router = await _pumpRoutes(
+  for (final brightness in Brightness.values) {
+    testWidgets('EP3 episode player omits the metadata row ($brightness)', (
       tester,
-      path: '/podcasts',
-      downloaded: true,
-      downloadedBytes: 54000000,
-    );
-    unawaited(
-      router.push('/podcasts/podcast/episode', extra: (_podcast, _episode)),
-    );
-    await tester.pumpAndSettle();
-    expect(
-      find.text('May 19, 2026 · 1 hr 19 min · 54 MB · Downloaded'),
-      findsOneWidget,
-    );
-  });
+    ) async {
+      final router = await _pumpRoutes(
+        tester,
+        path: '/podcasts',
+        downloaded: true,
+        downloadedBytes: 54000000,
+        brightness: brightness,
+      );
+      unawaited(
+        router.push('/podcasts/podcast/episode', extra: (_podcast, _episode)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(_episode.title), findsOneWidget);
+      expect(find.textContaining('May 19, 2026'), findsNothing);
+      expect(find.textContaining('1 hr 19 min'), findsNothing);
+      expect(find.textContaining('54 MB'), findsNothing);
+      expect(find.textContaining('Downloaded'), findsNothing);
+      expect(find.byTooltip('Remove download'), findsOneWidget);
+    });
+  }
   testWidgets(
     'USER-player dismiss stops and clears persistent player across tabs; explicit playback can reopen',
     (tester) async {

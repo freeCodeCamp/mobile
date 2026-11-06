@@ -23,6 +23,7 @@ class CodeRadioPlayerView extends ConsumerWidget {
     final nowPlaying = ref.watch(codeRadioNowPlayingProvider);
 
     return Scaffold(
+      extendBody: true,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -58,6 +59,14 @@ class CodeRadioPlayerView extends ConsumerWidget {
                     child: CodeRadioSkeleton(),
                   ),
                 },
+                const SliverToBoxAdapter(
+                  child: SafeArea(
+                    top: false,
+                    left: false,
+                    right: false,
+                    child: SizedBox.shrink(),
+                  ),
+                ),
               ],
             ),
           ),

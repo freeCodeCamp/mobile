@@ -23,6 +23,7 @@ class PodcastDownloadedEpisodesView extends ConsumerWidget {
     final provider = podcastDownloadedEpisodesProvider(podcastId);
     final episodes = ref.watch(provider);
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Back to Downloads',
@@ -42,6 +43,7 @@ class PodcastDownloadedEpisodesView extends ConsumerWidget {
       ),
       body: SafeArea(
         top: false,
+        bottom: false,
         child: episodes.when(
           skipLoadingOnReload: true,
           loading: () => const Center(child: CircularProgressIndicator()),

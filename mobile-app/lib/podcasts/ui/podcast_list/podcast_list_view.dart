@@ -33,7 +33,12 @@ class PodcastListView extends ConsumerWidget {
                 .then<void>((_) {}, onError: (_) {});
           },
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),
+            padding: EdgeInsets.fromLTRB(
+              18,
+              0,
+              18,
+              24 + MediaQuery.paddingOf(context).bottom,
+            ),
             physics: const AlwaysScrollableScrollPhysics(),
             children: [
               if (fcc.isNotEmpty)

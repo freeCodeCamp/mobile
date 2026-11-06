@@ -8,7 +8,6 @@ import 'package:freecodecamp/podcasts/ui/widgets/episode_tile.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-import 'package:freecodecamp/widgets/mini_player.dart';
 
 class PodcastEpisodeListView extends ConsumerStatefulWidget {
   const PodcastEpisodeListView({super.key, required this.source});
@@ -50,16 +49,13 @@ class _PodcastEpisodeListViewState
     final episodes = ref.watch(_provider);
 
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         title: const Text('Podcast'),
         backgroundColor: colors.surfaceContainerLow,
       ),
-      bottomNavigationBar: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MiniPlayer(),
-          AppBottomNavigation(selected: AppDestination.listen),
-        ],
+      bottomNavigationBar: const AppNavigationFooter(
+        selected: AppDestination.listen,
       ),
       body: episodes.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -141,7 +137,14 @@ class _PodcastEpisodeListViewState
                       child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
-                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                const SliverToBoxAdapter(
+                  child: SafeArea(
+                    top: false,
+                    left: false,
+                    right: false,
+                    child: SizedBox(height: 24),
+                  ),
+                ),
               ],
             ),
           );

@@ -23,6 +23,7 @@ class PodcastDownloadsView extends ConsumerWidget {
         if (!didPop) const AccountRoute().go(context);
       },
       child: Scaffold(
+        extendBody: true,
         appBar: AppBar(
           title: const Text('Downloads'),
           leading: IconButton(

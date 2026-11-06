@@ -68,7 +68,12 @@ class _DownloadManagementListState extends State<DownloadManagementList> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
+      padding: EdgeInsets.fromLTRB(
+        18,
+        16,
+        18,
+        24 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         if (widget.header != null) widget.header!,
         if (widget.items.isEmpty)
