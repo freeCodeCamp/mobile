@@ -19,7 +19,7 @@ final class NewsSearchNotifierProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'newsSearchProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -43,7 +43,7 @@ final class NewsSearchNotifierProvider
 }
 
 String _$newsSearchNotifierHash() =>
-    r'9a71f563daa8cfb10e82dda064b58242bbdd5522';
+    r'78c9277192ba4156b05f28e0d5aa6e615db9b8f7';
 
 abstract class _$NewsSearchNotifier
     extends $Notifier<AsyncValue<List<SearchPost>>> {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BackToTopButton extends StatefulWidget {
-  const BackToTopButton({
+class NewsBackToTopButton extends StatefulWidget {
+  const NewsBackToTopButton({
     super.key,
     required this.controller,
     this.showAfter = 100,
@@ -11,10 +11,10 @@ class BackToTopButton extends StatefulWidget {
   final double showAfter;
 
   @override
-  State<BackToTopButton> createState() => _BackToTopButtonState();
+  State<NewsBackToTopButton> createState() => _NewsBackToTopButtonState();
 }
 
-class _BackToTopButtonState extends State<BackToTopButton> {
+class _NewsBackToTopButtonState extends State<NewsBackToTopButton> {
   bool _visible = false;
 
   @override

@@ -4,9 +4,8 @@ import 'package:freecodecamp/news/ui/widgets/back_to_top_button.dart';
 import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
-// The same reading controls are available for live and offline articles.
-class ArticleReader extends StatefulWidget {
-  const ArticleReader({
+class NewsArticleReader extends StatefulWidget {
+  const NewsArticleReader({
     super.key,
     required this.html,
     required this.header,
@@ -22,10 +21,10 @@ class ArticleReader extends StatefulWidget {
   final Widget? footer;
 
   @override
-  State<ArticleReader> createState() => _ArticleReaderState();
+  State<NewsArticleReader> createState() => _NewsArticleReaderState();
 }
 
-class _ArticleReaderState extends State<ArticleReader> {
+class _NewsArticleReaderState extends State<NewsArticleReader> {
   final _scrollController = ScrollController();
   final _progress = ValueNotifier<double>(0);
   final _shareButtonKey = GlobalKey();
@@ -45,7 +44,7 @@ class _ArticleReaderState extends State<ArticleReader> {
   }
 
   @override
-  void didUpdateWidget(covariant ArticleReader oldWidget) {
+  void didUpdateWidget(covariant NewsArticleReader oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.html != widget.html) _htmlWidgets = null;
   }
@@ -156,7 +155,7 @@ class _ArticleReaderState extends State<ArticleReader> {
           ),
         ),
       ),
-      floatingActionButton: BackToTopButton(
+      floatingActionButton: NewsBackToTopButton(
         controller: _scrollController,
         showAfter: 600,
       ),

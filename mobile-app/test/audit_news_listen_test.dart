@@ -22,7 +22,7 @@ import 'package:freecodecamp/news/ui/post/post_view.dart';
 import 'package:freecodecamp/news/ui/search/search_view.dart';
 import 'package:freecodecamp/news/ui/search/search_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/article_reader.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/offline_banner.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_skeleton.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
@@ -293,7 +293,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byType(OfflineBanner), findsNothing);
+        expect(find.byType(NewsOfflineBanner), findsNothing);
         expect(
           find.text('Tap the bookmark on an article to save it.'),
           findsOneWidget,
@@ -311,18 +311,18 @@ void main() {
           ),
           brightness,
         );
-        expect(find.byType(OfflineBanner), findsOneWidget);
+        expect(find.byType(NewsOfflineBanner), findsOneWidget);
         expect(_textStyle(tester, 'A saved article').fontSize, 15);
         final image = tester.widget<NewsImage>(find.byType(NewsImage));
         expect((image.width, image.height, image.radius), (64, 64, 10));
         final banner = tester.widget<Container>(
           find.descendant(
-            of: find.byType(OfflineBanner),
+            of: find.byType(NewsOfflineBanner),
             matching: find.byType(Container),
           ),
         );
         final colors = FccDesignColors.of(
-          tester.element(find.byType(OfflineBanner)),
+          tester.element(find.byType(NewsOfflineBanner)),
         );
         expect(
           (banner.decoration! as BoxDecoration).color,
@@ -347,7 +347,7 @@ void main() {
           ),
           brightness,
         );
-        expect(find.byType(PostFeedSkeleton), findsOneWidget);
+        expect(find.byType(NewsPostFeedSkeleton), findsOneWidget);
         expect(find.text('Search articles'), findsOneWidget);
         expect(find.byType(CircularProgressIndicator), findsNothing);
         await _pump(
@@ -356,18 +356,18 @@ void main() {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  TagButton(
+                  NewsTagButton(
                     tagName: 'List',
                     tagSlug: 'list',
-                    variant: TagButtonVariant.listEyebrow,
+                    variant: NewsTagButtonVariant.listEyebrow,
                   ),
-                  TagButton(
+                  NewsTagButton(
                     tagName: 'Header',
                     tagSlug: 'header',
-                    variant: TagButtonVariant.articleEyebrow,
+                    variant: NewsTagButtonVariant.articleEyebrow,
                   ),
-                  TagButton(tagName: 'Footer', tagSlug: 'footer'),
-                  PostTile(post: _summary),
+                  NewsTagButton(tagName: 'Footer', tagSlug: 'footer'),
+                  NewsPostTile(post: _summary),
                 ],
               ),
             ),
@@ -398,7 +398,7 @@ void main() {
             child: Column(
               children: [
                 NewsPostHeader(post: _post),
-                SearchResultTile(
+                NewsSearchResultTile(
                   post: SearchPost(
                     objectID: 'result',
                     title: 'Search result',
@@ -423,7 +423,7 @@ void main() {
       expect(_textStyle(tester, 'Search result').fontSize, 15);
       await _pump(
         tester,
-        const ArticleReader(
+        const NewsArticleReader(
           html: '<h2>Section title</h2><p>Body text.</p>',
           header: SizedBox.shrink(),
           bookmarkButton: SizedBox.shrink(),

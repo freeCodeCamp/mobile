@@ -23,8 +23,8 @@ import 'package:freecodecamp/news/ui/post/post_view.dart';
 import 'package:freecodecamp/news/ui/post/post_viewmodel.dart';
 import 'package:freecodecamp/news/ui/search/search_view.dart';
 import 'package:freecodecamp/news/ui/search/search_viewmodel.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
-import 'package:freecodecamp/news/ui/widgets/news_load_error.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
+import 'package:freecodecamp/news/ui/widgets/load_error.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/podcasts/controllers/downloads_controller.dart';
@@ -411,15 +411,15 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: FccTheme.themeDark,
-          home: const Scaffold(body: PostTile(post: _summary)),
+          home: const Scaffold(body: NewsPostTile(post: _summary)),
         ),
       );
       await tester.pumpAndSettle();
-      final tag = tester.getRect(find.byType(TagButton));
+      final tag = tester.getRect(find.byType(NewsTagButton));
       final title = tester.getRect(find.text(_summary.title));
       final image = tester.getRect(find.byType(NewsImage));
       expect(tag.top, image.top);
-      expect(tag.top, tester.getRect(find.byType(PostTile)).top);
+      expect(tag.top, tester.getRect(find.byType(NewsPostTile)).top);
       expect(title.top - tag.bottom, closeTo(4, .001));
       expect(_rendered(tester, '#JavaScript').fontWeight, FontWeight.w400);
       expect(_rendered(tester, '#JavaScript').fontFamily, 'JetBrains Mono');
@@ -435,7 +435,7 @@ void main() {
       routes: [
         GoRoute(
           path: '/news',
-          builder: (_, _) => const Scaffold(body: PostTile(post: _summary)),
+          builder: (_, _) => const Scaffold(body: NewsPostTile(post: _summary)),
         ),
         GoRoute(
           path: '/news/tag/javascript',
@@ -452,9 +452,9 @@ void main() {
       MaterialApp.router(theme: FccTheme.themeDark, routerConfig: router),
     );
     await tester.pumpAndSettle();
-    final node = tester.getSemantics(find.byType(TagButton));
+    final node = tester.getSemantics(find.byType(NewsTagButton));
     expect(node.rect.height, greaterThanOrEqualTo(48));
-    final tag = tester.getRect(find.byType(TagButton));
+    final tag = tester.getRect(find.byType(NewsTagButton));
     await tester.tapAt(Offset(tag.left + 8, tag.top + 40));
     await tester.pumpAndSettle();
     expect(find.text('Selected tag'), findsOneWidget);
@@ -471,7 +471,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: FccTheme.themeDark,
-          home: Scaffold(body: PostTile(post: post)),
+          home: Scaffold(body: NewsPostTile(post: post)),
         ),
       );
       await tester.pumpAndSettle();
@@ -491,12 +491,12 @@ void main() {
     (tester) async {
       await _pumpRoutes(tester, withRows: true);
       final second = find.byWidgetPredicate(
-        (widget) => widget is PostTile && widget.post.id == 'two',
+        (widget) => widget is NewsPostTile && widget.post.id == 'two',
       );
       await tester.ensureVisible(second);
       await tester.pumpAndSettle();
       final tiles = find
-          .byType(PostTile)
+          .byType(NewsPostTile)
           .evaluate()
           .map((e) => tester.getRect(find.byWidget(e.widget)))
           .toList();
@@ -520,7 +520,7 @@ void main() {
   ) async {
     await _pumpRoutes(tester, path: '/news/article');
     final header = tester.getRect(find.byType(NewsPostHeader));
-    final tag = tester.getRect(find.byType(TagButton).first);
+    final tag = tester.getRect(find.byType(NewsTagButton).first);
     final title = tester.getRect(find.text(_post.title));
     expect(tag.left, 16);
     expect(title.left, 16);

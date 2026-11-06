@@ -3,8 +3,8 @@ import 'package:freecodecamp/news/models/post_summary_model.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:jiffy/jiffy.dart';
 
-class AuthorPostTile extends StatelessWidget {
-  const AuthorPostTile({super.key, required this.post});
+class NewsAuthorPostTile extends StatelessWidget {
+  const NewsAuthorPostTile({super.key, required this.post});
 
   final PostSummary post;
 

@@ -51,7 +51,7 @@ class NewsShell extends StatelessWidget {
         MediaQuery.sizeOf(context).width -
             MediaQuery.paddingOf(context).horizontal;
     final viewBookmarks = OutlinedButton.icon(
-      onPressed: () => context.push(newsBookmarksPath),
+      onPressed: () => const NewsBookmarksRoute().push<void>(context),
       icon: const Icon(Icons.bookmark_border_rounded, size: 20),
       label: const Text('View bookmarks'),
       style: FccTheme.compactOutlineStyle(context).copyWith(
@@ -74,7 +74,7 @@ class NewsShell extends StatelessWidget {
                         if (context.canPop()) {
                           context.pop();
                         } else {
-                          context.go(newsFeedPath);
+                          const NewsFeedRoute().go(context);
                         }
                       },
                     )
@@ -115,7 +115,7 @@ class NewsShell extends StatelessWidget {
       canPop: (!isSaved && !isSearch) || context.canPop(),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
-          context.go(newsFeedPath);
+          const NewsFeedRoute().go(context);
         }
       },
       child: scaffold,

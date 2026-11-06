@@ -44,7 +44,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
                   if (context.canPop()) {
                     context.pop();
                   } else {
-                    context.go(newsFeedPath);
+                    const NewsFeedRoute().go(context);
                   }
                 },
               ),
@@ -88,7 +88,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
           ),
         ),
         Expanded(
-          child: _searchBarController.text.trim().isEmpty
+          child: _searchBarController.text.trim().isEmpty && !results.hasError
               ? const SizedBox.shrink()
               : _buildResults(results),
         ),
@@ -102,7 +102,7 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
       message: 'Unable to search articles.',
       detail:
           'Something went wrong on our side or with your connection. Your progress is safe.',
-      onRetry: () => _search(_searchBarController.text),
+      onRetry: () => ref.read(newsSearchProvider.notifier).retry(),
     ),
     data: (posts) => CustomScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -138,7 +138,8 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
                 height: 1,
                 color: Theme.of(context).colorScheme.outlineVariant,
               ),
-              itemBuilder: (_, index) => SearchResultTile(post: posts[index]),
+              itemBuilder: (_, index) =>
+                  NewsSearchResultTile(post: posts[index]),
             ),
           ),
       ],

@@ -24,7 +24,7 @@ final class NewsSearchRepositoryProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'newsSearchRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -55,4 +55,4 @@ final class NewsSearchRepositoryProvider
 }
 
 String _$newsSearchRepositoryHash() =>
-    r'e98a8d3f4250ccf351e79082c1d019c6bf48bf27';
+    r'829a84c2d5be5a8fea27f9bf5a4f7012b0a78920';

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
 import 'package:freecodecamp/news/models/post_model.dart';
-import 'package:freecodecamp/news/models/post_summary_model.dart';
+import 'package:freecodecamp/news/ui/feed/feed_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_list.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/chip_surface.dart';
-import 'package:go_router/go_router.dart';
 
 class NewsFeedView extends ConsumerStatefulWidget {
   const NewsFeedView({super.key});
@@ -21,15 +20,9 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final allPosts = ref.watch(newsFeedProvider(const NewsFeedSource.all()));
-    final tags = <String, Tag>{};
-    for (final post in allPosts.value?.posts ?? const <PostSummary>[]) {
-      for (final tag in post.tags) {
-        tags.putIfAbsent(tag.slug, () => tag);
-      }
-    }
+    final tags = ref.watch(newsFeedTagsProvider);
 
-    return PostFeedList(
+    return NewsPostFeedList(
       key: ValueKey(_selectedTag?.slug),
       source: _selectedTag == null
           ? const NewsFeedSource.all()
@@ -47,7 +40,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
               ),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
-                onTap: () => context.push(newsSearchPath),
+                onTap: () => const NewsSearchRoute().push<void>(context),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 48),
                   child: Padding(
@@ -81,8 +74,7 @@ class _NewsFeedViewState extends ConsumerState<NewsFeedView> {
             child: Row(
               children: [
                 _filter(context, 'Latest', null),
-                for (final tag in tags.values.take(12))
-                  _filter(context, tag.name, tag),
+                for (final tag in tags) _filter(context, tag.name, tag),
               ],
             ),
           ),

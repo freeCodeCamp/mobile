@@ -8,12 +8,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bookmark_repository.g.dart';
 
-typedef BookmarkEntry = Map<String, String>;
+typedef BookmarkEntry = Map<String, dynamic>;
 
 const _fileName = 'bookmarked-articles.json';
 const _storeVersion = 1;
 
-@riverpod
+// All saves and resets must share the same file-write queue.
+@Riverpod(keepAlive: true)
 NewsBookmarkRepository newsBookmarkRepository(Ref ref) {
   return NewsBookmarkRepository();
 }

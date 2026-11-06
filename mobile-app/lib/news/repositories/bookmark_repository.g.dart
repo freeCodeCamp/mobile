@@ -26,7 +26,7 @@ final class NewsBookmarkRepositoryProvider
         argument: null,
         retry: null,
         name: r'newsBookmarkRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class NewsBookmarkRepositoryProvider
 }
 
 String _$newsBookmarkRepositoryHash() =>
-    r'26f6e95a45517cb80b2397d773582152a38e58f2';
+    r'68838f8c4ad4b96abfe62dbfe7c104df548aafdf';
