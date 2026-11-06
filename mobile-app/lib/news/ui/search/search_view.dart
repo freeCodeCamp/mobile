@@ -97,12 +97,18 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
   }
 
   Widget _buildResults(AsyncValue<List<SearchPost>> results) => results.when(
-    loading: () => const Center(child: CircularProgressIndicator()),
-    error: (_, _) => ErrorRetry(
-      message: 'Unable to search articles.',
-      detail:
-          'Something went wrong on our side or with your connection. Your progress is safe.',
-      onRetry: () => _search(_searchBarController.text),
+    loading: () => const SafeArea(
+      top: false,
+      child: Center(child: CircularProgressIndicator()),
+    ),
+    error: (_, _) => SafeArea(
+      top: false,
+      child: ErrorRetry(
+        message: 'Unable to search articles.',
+        detail:
+            'Something went wrong on our side or with your connection. Your progress is safe.',
+        onRetry: () => _search(_searchBarController.text),
+      ),
     ),
     data: (posts) => CustomScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -141,6 +147,9 @@ class _NewsSearchViewState extends ConsumerState<NewsSearchView> {
               itemBuilder: (_, index) => SearchResultTile(post: posts[index]),
             ),
           ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+        ),
       ],
     ),
   );

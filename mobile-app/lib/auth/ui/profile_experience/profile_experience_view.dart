@@ -152,6 +152,12 @@ class _ProfileExperienceViewState extends ConsumerState<ProfileExperienceView> {
               ),
             ],
           ],
+          const SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: SizedBox.shrink(),
+          ),
         ],
       ),
     );

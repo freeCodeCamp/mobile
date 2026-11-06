@@ -64,6 +64,7 @@ class NewsShell extends StatelessWidget {
     );
 
     final scaffold = Scaffold(
+      extendBody: true,
       appBar: isSearch
           ? null
           : AppBar(

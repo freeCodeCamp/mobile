@@ -5,7 +5,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/podcasts/constants.dart';
-import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
 import 'package:freecodecamp/podcasts/controllers/player_controller.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
@@ -60,19 +59,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          Builder(
-            builder: (buttonContext) => IconButton(
-              tooltip: 'Share episode',
-              onPressed: () => sharePodcast(
-                buttonContext,
-                widget.episode.title,
-                widget.episode.audioUrl,
-              ),
-              icon: const Icon(Icons.ios_share_rounded, size: 22),
-            ),
-          ),
-        ],
+        actions: const [SizedBox(width: kToolbarHeight)],
       ),
       body: SafeArea(
         top: false,
@@ -110,8 +97,6 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
                 height: 1.25,
               ),
             ),
-            const SizedBox(height: 8),
-            PodcastEpisodeMetadata(episode: widget.episode),
             const SizedBox(height: 12),
             _Scrubber(
               episode: widget.episode,
@@ -432,6 +417,18 @@ class _Controls extends ConsumerWidget {
                             child: ChoiceChip(
                               selected: speed == option,
                               showCheckmark: false,
+                              color: WidgetStatePropertyAll(
+                                speed == option
+                                    ? colors.primaryContainer
+                                    : Colors.transparent,
+                              ),
+                              side: BorderSide(
+                                color: speed == option
+                                    ? FccDesignColors.of(context).accentText
+                                    : colors.outline,
+                                width: speed == option ? 1.5 : 1,
+                              ),
+                              shape: const StadiumBorder(),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 14,
@@ -443,7 +440,15 @@ class _Controls extends ConsumerWidget {
                                   widthFactor: 1,
                                   child: Text(
                                     '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
-                                    style: const TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: speed == option
+                                          ? FontWeight.w900
+                                          : FontWeight.w700,
+                                      color: speed == option
+                                          ? colors.onSurface
+                                          : colors.onSurfaceVariant,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -476,46 +481,6 @@ class _Controls extends ConsumerWidget {
     if (ref.read(podcastPlayerProvider).isCurrent(episode.id)) {
       await ref.read(podcastPlayerProvider.notifier).setSpeed(value);
     }
-  }
-}
-
-class PodcastEpisodeMetadata extends ConsumerWidget {
-  const PodcastEpisodeMetadata({super.key, required this.episode});
-  final Episode episode;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final downloaded = ref.watch(
-      podcastLibraryProvider.select(
-        (library) =>
-            library.value?.episodesByPodcastId[episode.podcastId]?.any(
-              (saved) => saved.id == episode.id,
-            ) ??
-            false,
-      ),
-    );
-    final bytes = downloaded
-        ? ref
-              .watch(
-                podcastDownloadedSizeProvider(episode.podcastId, episode.id),
-              )
-              .value
-        : null;
-    return Text(
-      [
-        if (episode.publicationDate != null)
-          podcastDate(episode.publicationDate!),
-        if (episode.duration != null) podcastDuration(episode.duration),
-        if (bytes != null)
-          podcastFileSize(bytes, Localizations.localeOf(context).toString()),
-        if (downloaded) 'Downloaded',
-      ].join(' · '),
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 13,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
-    );
   }
 }
 

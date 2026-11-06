@@ -113,24 +113,22 @@ class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
     _syncKeepAlive();
 
     try {
-      final uris = await ref
-          .read(podcastPlaybackServiceProvider)
-          .playbackUris(podcast, episode);
+      final service = ref.read(podcastPlaybackServiceProvider);
+      final uris = await service.playbackUris(podcast, episode);
 
       final loaded = await handler.loadEpisode(
         episode,
         podcast,
         source: uris.audio,
         artUri: uris.artwork,
-        startAt: await ref
-            .read(podcastPlaybackServiceProvider)
-            .readPosition(episode.id),
+        startAt: await service.readPosition(episode.id),
       );
 
       if (loaded) await handler.play();
     } finally {
       if (ref.mounted && state.loadingEpisodeId == episode.id) {
-        state = state.copyWith(loadingEpisodeId: null);
+        // The load can finish before its playback-state event reaches us.
+        state = _fromPlayback(handler, handler.playbackState.value);
         _syncKeepAlive();
       }
     }

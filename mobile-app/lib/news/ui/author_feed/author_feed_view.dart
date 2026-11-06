@@ -22,17 +22,24 @@ class NewsAuthorFeedView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final author = this.author;
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(title: const Text('Author')),
       body: author != null
           ? _buildFeed(author)
           : ref
                 .watch(newsAuthorProvider(username))
                 .when(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (_, _) => ErrorRetry(
-                    message: 'Unable to load author.',
-                    onRetry: () => ref.invalidate(newsAuthorProvider(username)),
+                  loading: () => const SafeArea(
+                    top: false,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (_, _) => SafeArea(
+                    top: false,
+                    child: ErrorRetry(
+                      message: 'Unable to load author.',
+                      onRetry: () =>
+                          ref.invalidate(newsAuthorProvider(username)),
+                    ),
                   ),
                   data: _buildFeed,
                 ),

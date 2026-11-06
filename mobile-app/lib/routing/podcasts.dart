@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
+import 'package:freecodecamp/podcasts/ui/downloaded_episodes/downloaded_episodes_view.dart';
 import 'package:freecodecamp/podcasts/ui/downloads/downloads_view.dart';
 import 'package:freecodecamp/podcasts/ui/episode/episode_view.dart';
 import 'package:freecodecamp/podcasts/ui/episode_list/episode_list_view.dart';
@@ -17,18 +18,20 @@ const podcastEpisodeListPath = '/podcasts/:podcastId';
 const podcastEpisodePath = '/podcasts/:podcastId/:episodeId';
 
 @TypedShellRoute<PodcastsShellRoute>(
-  routes: [
-    TypedGoRoute<PodcastListRoute>(path: podcastListPath),
-    TypedGoRoute<PodcastDownloadsRoute>(path: podcastDownloadsPath),
-  ],
+  routes: [TypedGoRoute<PodcastListRoute>(path: podcastListPath)],
 )
 class PodcastsShellRoute extends ShellRouteData {
   const PodcastsShellRoute();
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return PodcastsShell(child: navigator);
-  }
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) => NoTransitionPage(
+    key: state.pageKey,
+    child: PodcastsShell(child: navigator),
+  );
 }
 
 class PodcastListRoute extends GoRouteData with $PodcastListRoute {
@@ -39,6 +42,7 @@ class PodcastListRoute extends GoRouteData with $PodcastListRoute {
       const NoTransitionPage(child: PodcastListView());
 }
 
+@TypedGoRoute<PodcastDownloadsRoute>(path: podcastDownloadsPath)
 class PodcastDownloadsRoute extends GoRouteData with $PodcastDownloadsRoute {
   const PodcastDownloadsRoute();
 
@@ -59,12 +63,9 @@ class PodcastEpisodeListRoute extends GoRouteData
   final bool downloaded;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      PodcastEpisodeListView(
-        source: downloaded
-            ? PodcastEpisodeSource.downloaded(podcastId)
-            : PodcastEpisodeSource.remote(podcastId),
-      );
+  Widget build(BuildContext context, GoRouterState state) => downloaded
+      ? PodcastDownloadedEpisodesView(podcastId: podcastId)
+      : PodcastEpisodeListView(source: PodcastEpisodeSource.remote(podcastId));
 }
 
 @TypedGoRoute<PodcastEpisodeRoute>(path: podcastEpisodePath)

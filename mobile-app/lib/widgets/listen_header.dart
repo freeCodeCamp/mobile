@@ -13,7 +13,13 @@ class ListenHeader extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AppPageTitle('Listen'),
+        if (isRadio)
+          DefaultTextStyle.merge(
+            style: const TextStyle(color: Colors.white),
+            child: const AppPageTitle('Listen'),
+          )
+        else
+          const AppPageTitle('Listen'),
         const SizedBox(height: 32),
         ListenTabs(isRadio: isRadio),
       ],

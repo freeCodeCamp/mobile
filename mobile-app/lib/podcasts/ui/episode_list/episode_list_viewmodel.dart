@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 import 'package:freecodecamp/podcasts/services/api_service.dart';
+import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -18,6 +21,8 @@ sealed class PodcastEpisodeSource with _$PodcastEpisodeSource {
 
 @freezed
 abstract class PodcastEpisodesState with _$PodcastEpisodesState {
+  const PodcastEpisodesState._();
+
   const factory PodcastEpisodesState({
     required Podcast podcast,
     @Default([]) List<Episode> episodes,
@@ -27,9 +32,29 @@ abstract class PodcastEpisodesState with _$PodcastEpisodesState {
     // NOTE: Set when appending a page failed; the episodes already loaded stay valid.
     Object? loadMoreError,
   }) = _PodcastEpisodesState;
+
+  List<Episode> get orderedEpisodes => [...episodes]
+    ..sort(
+      (a, b) => (b.publicationDate ?? DateTime(0)).compareTo(
+        a.publicationDate ?? DateTime(0),
+      ),
+    );
+
+  Episode? get latestEpisode {
+    Episode? latest;
+    for (final episode in episodes) {
+      if (latest == null ||
+          (episode.publicationDate ?? DateTime(0)).isAfter(
+            latest.publicationDate ?? DateTime(0),
+          )) {
+        latest = episode;
+      }
+    }
+    return latest;
+  }
 }
 
-@riverpod
+@Riverpod(retry: noRetry)
 class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
   Podcast? _lastKnownPodcast;
 
@@ -38,14 +63,17 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
 
   @override
   FutureOr<PodcastEpisodesState> build(PodcastEpisodeSource source) async {
-    _generation++;
+    final generation = ++_generation;
+    ref.onDispose(() => _generation++);
     switch (source) {
       case RemoteEpisodes(:final podcastId):
         final page = await ref
             .watch(podcastApiServiceProvider)
             .getEpisodes(podcastId);
 
-        _lastKnownPodcast = page.podcast;
+        if (ref.mounted && generation == _generation) {
+          _lastKnownPodcast = page.podcast;
+        }
 
         return PodcastEpisodesState(
           podcast: page.podcast,
@@ -66,7 +94,9 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
           throw StateError('Podcast $podcastId has no downloaded episodes');
         }
 
-        _lastKnownPodcast = podcast;
+        if (ref.mounted && generation == _generation) {
+          _lastKnownPodcast = podcast;
+        }
 
         return PodcastEpisodesState(
           podcast: podcast,
@@ -75,9 +105,26 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
     }
   }
 
+  Future<void> loadMore() => fetchNextPage();
+
+  Future<void> retryLoadMore() => fetchNextPage(isRetry: true);
+
+  Future<void> refresh() async {
+    ref.invalidateSelf();
+    try {
+      await future;
+    } catch (_) {
+      // The provider's error state is rendered by the view.
+    }
+  }
+
   Future<void> fetchNextPage({bool isRetry = false}) async {
     final current = state.value;
-    if (current == null || !current.hasNextPage || current.isLoadingMore) {
+    if (state.isLoading ||
+        state.hasError ||
+        current == null ||
+        !current.hasNextPage ||
+        current.isLoadingMore) {
       return;
     }
 
@@ -99,7 +146,7 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
         if (!ref.mounted || generation != _generation) return;
 
         state = AsyncData(
-          current.copyWith(
+          state.requireValue.copyWith(
             episodes: [...current.episodes, ...page.episodes],
             page: next,
             hasNextPage: page.hasMore,
@@ -110,7 +157,10 @@ class PodcastEpisodesNotifier extends _$PodcastEpisodesNotifier {
       } catch (error) {
         if (!ref.mounted || generation != _generation) return;
         state = AsyncData(
-          current.copyWith(isLoadingMore: false, loadMoreError: error),
+          state.requireValue.copyWith(
+            isLoadingMore: false,
+            loadMoreError: error,
+          ),
         );
       }
     }
