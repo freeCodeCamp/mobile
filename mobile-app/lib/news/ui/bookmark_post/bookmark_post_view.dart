@@ -44,7 +44,7 @@ class _NewsBookmarkPostViewState extends ConsumerState<NewsBookmarkPostView> {
         (bookmarks) => bookmarks.value?.any((b) => b.id == post.id) ?? false,
       ),
     );
-    return ArticleReader(
+    return NewsArticleReader(
       html: post.text,
       bookmarkButton: IconButton(
         tooltip: isBookmarked ? 'Remove saved article' : 'Save article',

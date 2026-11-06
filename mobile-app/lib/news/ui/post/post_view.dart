@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/models/post_model.dart';
 import 'package:freecodecamp/news/ui/post/post_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/article_reader.dart';
+import 'package:freecodecamp/news/ui/widgets/back_button.dart';
 import 'package:freecodecamp/news/ui/widgets/bookmark_button.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/utils/date_utils.dart';
@@ -20,13 +21,13 @@ class NewsPostHeader extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      child: TagButtonColumn(
+      child: NewsTagButtonColumn(
         children: [
           if (post.tags.isNotEmpty) ...[
-            TagButton(
+            NewsTagButton(
               tagName: post.tags.first.name,
               tagSlug: post.tags.first.slug,
-              variant: TagButtonVariant.articleEyebrow,
+              variant: NewsTagButtonVariant.articleEyebrow,
             ),
             const SizedBox(height: 4),
           ],
@@ -107,20 +108,20 @@ class NewsPostView extends ConsumerWidget {
       .watch(newsPostProvider(slug))
       .when(
         loading: () => Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(leading: const NewsBackButton()),
           body: const Center(child: CircularProgressIndicator()),
         ),
         error: (_, _) => Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(leading: const NewsBackButton()),
           body: ErrorRetry(
             message: 'Unable to load article.',
             onRetry: () => ref.invalidate(newsPostProvider(slug)),
           ),
         ),
-        data: (post) => ArticleReader(
+        data: (post) => NewsArticleReader(
           html: post.content.html,
           header: NewsPostHeader(post: post),
-          bookmarkButton: BookmarkButton(post: post),
+          bookmarkButton: NewsBookmarkButton(post: post),
           shareText: '${post.title}\n\n${post.url}',
           footer: post.tags.isEmpty
               ? null
@@ -142,7 +143,7 @@ class NewsPostView extends ConsumerWidget {
                       Wrap(
                         children: [
                           for (final tag in post.tags)
-                            TagButton(tagName: tag.name, tagSlug: tag.slug),
+                            NewsTagButton(tagName: tag.name, tagSlug: tag.slug),
                         ],
                       ),
                     ],

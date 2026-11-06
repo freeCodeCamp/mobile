@@ -3,24 +3,24 @@ import 'package:flutter/rendering.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/news.dart';
 
-enum TagButtonVariant { listEyebrow, articleEyebrow, link }
+enum NewsTagButtonVariant { listEyebrow, articleEyebrow, link }
 
-class TagButton extends StatelessWidget {
-  const TagButton({
+class NewsTagButton extends StatelessWidget {
+  const NewsTagButton({
     super.key,
     required this.tagName,
     required this.tagSlug,
-    this.variant = TagButtonVariant.link,
+    this.variant = NewsTagButtonVariant.link,
   });
 
   final String tagName;
   final String tagSlug;
-  final TagButtonVariant variant;
+  final NewsTagButtonVariant variant;
 
   @override
   Widget build(BuildContext context) {
-    final link = variant == TagButtonVariant.link;
-    final listEyebrow = variant == TagButtonVariant.listEyebrow;
+    final link = variant == NewsTagButtonVariant.link;
+    final listEyebrow = variant == NewsTagButtonVariant.listEyebrow;
     final button = Padding(
       padding: EdgeInsets.only(right: 6, bottom: link ? 8 : 0),
       child: ConstrainedBox(
@@ -100,8 +100,8 @@ class _EyebrowTargetBox extends RenderProxyBox {
   }
 }
 
-class TagButtonColumn extends Column {
-  const TagButtonColumn({super.key, required super.children})
+class NewsTagButtonColumn extends Column {
+  const NewsTagButtonColumn({super.key, required super.children})
     : super(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

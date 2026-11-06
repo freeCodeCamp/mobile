@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/news/models/post_summary_model.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/utils/date_utils.dart';
 
-class PostTile extends StatelessWidget {
-  const PostTile({
+class NewsPostTile extends StatelessWidget {
+  const NewsPostTile({
     super.key,
     required this.post,
     this.featured = false,
@@ -64,13 +64,13 @@ class PostTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: TagButtonColumn(
+                    child: NewsTagButtonColumn(
                       children: [
                         if (tag != null)
-                          TagButton(
+                          NewsTagButton(
                             tagName: tag.name,
                             tagSlug: tag.slug,
-                            variant: TagButtonVariant.listEyebrow,
+                            variant: NewsTagButtonVariant.listEyebrow,
                           ),
                         if (tag != null) const SizedBox(height: 4),
                         title,

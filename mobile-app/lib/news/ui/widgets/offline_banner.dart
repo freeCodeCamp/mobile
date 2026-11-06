@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 
-class OfflineBanner extends StatelessWidget {
-  const OfflineBanner({super.key});
+class NewsOfflineBanner extends StatelessWidget {
+  const NewsOfflineBanner({super.key});
 
   @override
   Widget build(BuildContext context) {

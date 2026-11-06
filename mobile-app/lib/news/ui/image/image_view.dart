@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:go_router/go_router.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
@@ -39,8 +40,7 @@ class _NewsImageViewState extends State<NewsImageView> {
     super.dispose();
   }
 
-  // Observe pointers without taking the gesture arena away from PhotoView.
-  // A pinch or a pan of a zoomed image must never dismiss the viewer.
+  // Observe raw pointers so a pinch or zoomed pan cannot dismiss PhotoView.
   void _pointerDown(PointerDownEvent event) {
     _pointers.add(event.pointer);
     _initialScale ??= _controller.scale;
@@ -120,12 +120,8 @@ class _NewsImageViewState extends State<NewsImageView> {
                             base64Decode(widget.imgUrl.split(',').last),
                           )
                         : NetworkImage(widget.imgUrl),
-                    errorBuilder: (_, _, _) => const Center(
-                      child: Text(
-                        'Unable to load image',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    errorBuilder: (_, _, _) =>
+                        const ErrorRetry(message: 'Unable to load image'),
                   ),
                 ),
               ),
