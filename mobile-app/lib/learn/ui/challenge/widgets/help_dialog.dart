@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
+import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _forum = 'https://forum.freecodecamp.org';
@@ -32,7 +35,7 @@ Future<void> showHelpDialog(
   );
   if (proceed != true || !context.mounted) return;
 
-  await showDialog<void>(
+  final opened = await showDialog<bool>(
     context: context,
     useSafeArea: false,
     barrierDismissible: false,
@@ -41,6 +44,18 @@ Future<void> showHelpDialog(
       postUrl: (description) =>
           _forumPostUrl(challenge, blockName, description, code),
     ),
+  );
+  if (opened != true || !context.mounted) return;
+
+  unawaited(
+    ProviderScope.containerOf(context, listen: false)
+        .read(analyticsProvider)
+        .helpRequested(
+          challengeId: challenge.id,
+          superBlock: challenge.superBlock,
+          block: challenge.block,
+          challengeType: challenge.challengeType,
+        ),
   );
 }
 
@@ -218,7 +233,8 @@ class _CreatePostDialogState extends State<_CreatePostDialog> {
       final opened = await launchUrl(widget.postUrl(_description.text));
       if (!mounted) return;
       if (opened) {
-        Navigator.of(context).pop();
+        // NOTE: true tells showHelpDialog the forum post opened.
+        Navigator.of(context).pop(true);
         return;
       }
     } catch (_) {

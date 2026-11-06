@@ -9,6 +9,9 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:networkSecurityConfig="@xml/network_security_config">
+        <!-- Screen views are logged from the router. The automatic one is nameless and wipes the current screen on every resume. -->
+        <meta-data android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
         <activity android:name="com.ryanheise.audioservice.AudioServiceActivity"
             android:launchMode="singleTop"
             android:taskAffinity=""

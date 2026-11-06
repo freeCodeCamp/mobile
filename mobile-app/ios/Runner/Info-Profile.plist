@@ -4,6 +4,10 @@
 	<dict>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
+		<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
+		<true/>
+		<key>FirebaseAutomaticScreenReportingEnabled</key>
+		<false/>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleExecutable</key>
