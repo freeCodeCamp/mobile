@@ -321,7 +321,7 @@ final List<_VisibilityGroup> _visibilityGroups = [
         update: (p, v) => p.copyWith(showName: v),
       ),
       (
-        label: 'Location',
+        label: 'Stated location',
         subtitle: null,
         value: (p) => p.showLocation,
         update: (p, v) => p.copyWith(showLocation: v),
