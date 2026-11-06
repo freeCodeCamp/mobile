@@ -159,7 +159,7 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
       title: 'Edit profile',
       isDirty: editor.isDirty,
       saving: editor.saving,
-      onSave: _save,
+      onSave: editor.isDirty ? _save : null,
       child: Stack(
         children: [
           ListView(
