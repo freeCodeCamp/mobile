@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/podcasts/constants.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
-import 'package:freecodecamp/podcasts/ui/downloads/downloads_view.dart';
 import 'package:freecodecamp/podcasts/ui/podcast_list/podcast_list_viewmodel.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_grid_tile.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 
 class PodcastListView extends ConsumerWidget {
   const PodcastListView({super.key});
@@ -15,8 +15,8 @@ class PodcastListView extends ConsumerWidget {
     final podcasts = ref.watch(podcastListProvider);
     return podcasts.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => PodcastDownloadsView(
-        offline: true,
+      error: (error, stack) => ErrorRetry(
+        message: 'Unable to load podcasts.',
         onRetry: () => ref.invalidate(podcastListProvider),
       ),
       data: (podcasts) {

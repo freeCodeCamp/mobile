@@ -273,7 +273,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
       log('loadEpisode: Cannot play audio: $e');
       await stop();
-      return false;
+      rethrow;
     } finally {
       if (load == _loadId) _loading = false;
     }

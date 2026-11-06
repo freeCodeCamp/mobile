@@ -1,311 +1,123 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
-import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
-import 'package:freecodecamp/podcasts/ui/widgets/episode_play_button.dart';
+import 'package:freecodecamp/podcasts/ui/widgets/downloads_management_list.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_format.dart';
+import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
+import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:intl/intl.dart';
 
-class PodcastDownloadsView extends ConsumerStatefulWidget {
-  const PodcastDownloadsView({super.key, this.offline = false, this.onRetry});
-  final bool offline;
-  final VoidCallback? onRetry;
-
-  @override
-  ConsumerState<PodcastDownloadsView> createState() =>
-      _PodcastDownloadsViewState();
-}
-
-class _PodcastDownloadsViewState extends ConsumerState<PodcastDownloadsView> {
-  bool _managing = false;
-  bool _removing = false;
-  final _selected = <String>{};
+class PodcastDownloadsView extends ConsumerWidget {
+  const PodcastDownloadsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final library = ref.watch(podcastLibraryProvider);
-    return library.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => ErrorRetry(
-        message: 'Unable to load downloads.',
-        onRetry: () => ref.invalidate(podcastLibraryProvider),
-      ),
-      data: (library) {
-        final episodes = <(Podcast, Episode)>[
-          for (final podcast in library.podcasts)
-            for (final episode
-                in library.episodesByPodcastId[podcast.id] ?? <Episode>[])
-              (podcast, episode),
-        ];
-        return ListView(
-          padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),
-          children: [
-            if (widget.offline) ...[
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: colors.secondaryContainer,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: colors.outlineVariant),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.wifi_off_rounded),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Can't load podcasts",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'Check your connection and try again. Your downloaded episodes still play.',
-                          ),
-                          const SizedBox(height: 8),
-                          OutlinedButton(
-                            onPressed: widget.onRetry,
-                            child: const Text('Try again'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 22),
-              Text(
-                'Available offline',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 16),
-            ] else if (episodes.isNotEmpty) ...[
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _removing
-                      ? null
-                      : () => setState(() {
-                          _managing = !_managing;
-                          _selected.clear();
-                        }),
-                  child: Text(_managing ? 'Done' : 'Manage'),
-                ),
-              ),
-              const SizedBox(height: 14),
-            ],
-            if (_managing) ...[
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                spacing: 12,
-                runSpacing: 8,
-                children: [
-                  TextButton(
-                    onPressed: _removing
-                        ? null
-                        : () => setState(() {
-                            if (_selected.length == episodes.length) {
-                              _selected.clear();
-                            } else {
-                              _selected.addAll(
-                                episodes.map((entry) => entry.$2.id),
-                              );
-                            }
-                          }),
-                    child: Text(
-                      _selected.length == episodes.length
-                          ? 'Deselect all'
-                          : 'Select all',
-                    ),
-                  ),
-                  TextButton.icon(
-                    onPressed: _selected.isEmpty || _removing
-                        ? null
-                        : () => _remove(episodes),
-                    icon: _removing
-                        ? const SizedBox.square(
-                            dimension: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.delete_outline_rounded, size: 18),
-                    label: Text('Remove (${_selected.length})'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-            ],
-            if (episodes.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 48,
-                  horizontal: 20,
-                ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.download_rounded,
-                      size: 44,
-                      color: colors.primary,
-                    ),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'No downloaded episodes',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Download an episode to listen wherever you are.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: colors.onSurfaceVariant),
-                    ),
-                  ],
-                ),
-              )
-            else
-              Material(
-                color: colors.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: colors.outlineVariant),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  children: [
-                    for (var i = 0; i < episodes.length; i++) ...[
-                      if (i > 0)
-                        Divider(height: 1, color: colors.outlineVariant),
-                      _DownloadRow(
-                        podcast: episodes[i].$1,
-                        episode: episodes[i].$2,
-                        managing: _managing,
-                        selected: _selected.contains(episodes[i].$2.id),
-                        onSelect: _removing
-                            ? null
-                            : () => setState(() {
-                                final id = episodes[i].$2.id;
-                                if (!_selected.add(id)) _selected.remove(id);
-                              }),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-          ],
-        );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final podcasts = ref.watch(podcastDownloadedPodcastsProvider);
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) const AccountRoute().go(context);
       },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Downloads'),
+          leading: IconButton(
+            tooltip: 'Back to Account',
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => const AccountRoute().go(context),
+          ),
+        ),
+        bottomNavigationBar: const AppNavigationFooter(
+          selected: AppDestination.account,
+        ),
+        body: podcasts.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => ErrorRetry(
+            message: 'Unable to load downloads.',
+            onRetry: () => ref.invalidate(podcastLibraryProvider),
+          ),
+          data: (podcasts) => DownloadManagementList(
+            items: podcasts.map((podcast) => podcast.id).toList(),
+            onRemove: (ids) =>
+                ref.read(podcastLibraryProvider.notifier).removePodcasts(ids),
+            emptyState: const DownloadsEmptyState(),
+            itemBuilder: (context, index, managing, selected, onSelect) =>
+                PodcastDownloadGroupTile(
+                  podcast: podcasts[index],
+                  managing: managing,
+                  selected: selected,
+                  onSelect: onSelect,
+                ),
+          ),
+        ),
+      ),
     );
   }
-
-  Future<void> _remove(List<(Podcast, Episode)> episodes) async {
-    setState(() => _removing = true);
-    try {
-      for (final (_, episode) in episodes.where(
-        (entry) => _selected.contains(entry.$2.id),
-      )) {
-        await ref
-            .read(podcastLibraryProvider.notifier)
-            .remove(episode.podcastId, episode.id);
-        if (!mounted) return;
-      }
-      if (mounted) {
-        setState(() {
-          _selected.clear();
-          _managing = false;
-        });
-      }
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Unable to remove some downloads. Please try again.'),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _removing = false);
-    }
-  }
 }
 
-class _DownloadRow extends StatelessWidget {
-  const _DownloadRow({
+class PodcastDownloadGroupTile extends ConsumerWidget {
+  const PodcastDownloadGroupTile({
+    super.key,
     required this.podcast,
-    required this.episode,
     required this.managing,
     required this.selected,
     required this.onSelect,
   });
+
   final Podcast podcast;
-  final Episode episode;
   final bool managing;
   final bool selected;
   final VoidCallback? onSelect;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
+    final count = ref.watch(podcastDownloadedEpisodeCountProvider(podcast.id));
+    final bytes = ref
+        .watch(podcastDownloadedPodcastSizeProvider(podcast.id))
+        .value;
+    final locale = Localizations.localeOf(context).toString();
+    final details = [
+      '${NumberFormat.decimalPattern(locale).format(count)} ${count == 1 ? 'episode' : 'episodes'}',
+      if (bytes != null) podcastFileSize(bytes, locale),
+    ].join(' · ');
     return InkWell(
       onTap: managing
           ? onSelect
-          : () => PodcastEpisodeRoute(
+          : () => PodcastEpisodeListRoute(
               podcastId: podcast.id,
-              episodeId: episode.id,
-              $extra: (podcast, episode),
+              downloaded: true,
             ).push<void>(context),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
         child: Row(
           children: [
-            PodcastArtwork(podcast: podcast, size: 60),
-            const SizedBox(width: 12),
+            PodcastArtwork(podcast: podcast, size: 52, radius: 8),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     podcast.title,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colors.onSurfaceVariant,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    episode.title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      height: 1.35,
+                    details,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
-                  if (episode.duration != null) ...[
-                    const SizedBox(height: 5),
-                    Text(
-                      podcastDuration(episode.duration),
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -316,7 +128,7 @@ class _DownloadRow extends StatelessWidget {
                 onChanged: onSelect == null ? null : (_) => onSelect!(),
               )
             else
-              EpisodePlayButton(podcast: podcast, episode: episode),
+              Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
           ],
         ),
       ),

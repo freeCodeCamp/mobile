@@ -6,9 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/code_radio/controllers/player_controller.dart';
 import 'package:freecodecamp/code_radio/models/code_radio_model.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_view.dart';
-import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
@@ -354,35 +354,32 @@ void main() {
       );
       expect(
         tester.getSize(find.byType(CodeRadioAlbumArt)),
-        const Size(220, 220),
+        const Size(340, 340),
       );
       final decoration = art.decoration! as BoxDecoration;
       expect(decoration.borderRadius, BorderRadius.circular(20));
-      expect((decoration.border! as Border).top.color, const Color(0xff3e329c));
+      expect(decoration.boxShadow, isNotEmpty);
       expect(tester.takeException(), isNull);
     },
   );
-  testWidgets('P1 P2 PODC-N1 PODC-N2 real podcast labels and share sizing', (
-    tester,
-  ) async {
-    await _pumpRoutes(tester, path: '/podcasts/podcast');
-    expect(find.byType(PodcastEpisodeListView), findsOneWidget);
-    for (final label in ['Play latest', '1 hr 19 min']) {
-      expect(_rendered(tester, label).fontFamily, 'Lato');
-      expect(_rendered(tester, label).letterSpacing, 0);
-    }
-    expect(_rendered(tester, '1 hr 19 min').fontSize, 14);
-    expect(_rendered(tester, 'Play latest').fontWeight, FontWeight.w900);
-    expect(_rendered(tester, 'Episodes').fontSize, 20);
-    expect(_rendered(tester, 'Episodes').fontWeight, FontWeight.w900);
-    expect(_rendered(tester, 'Newest first').fontSize, 14);
-    final share = find.widgetWithIcon(IconButton, Icons.ios_share_rounded);
-    expect(tester.getSize(share), const Size(48, 48));
-    expect(
-      tester.widget<Material>(_materialInside(share)).color,
-      Colors.transparent,
-    );
-  });
+  testWidgets(
+    'Podcast episode list keeps labels and omits sort and share controls',
+    (tester) async {
+      await _pumpRoutes(tester, path: '/podcasts/podcast');
+      expect(find.byType(PodcastEpisodeListView), findsOneWidget);
+      for (final label in ['Play latest', '1 hr 19 min']) {
+        expect(_rendered(tester, label).fontFamily, 'Lato');
+        expect(_rendered(tester, label).letterSpacing, 0);
+      }
+      expect(_rendered(tester, '1 hr 19 min').fontSize, 14);
+      expect(_rendered(tester, 'Play latest').fontWeight, FontWeight.w900);
+      expect(_rendered(tester, 'Episodes').fontSize, 20);
+      expect(_rendered(tester, 'Episodes').fontWeight, FontWeight.w900);
+      expect(find.text('Newest first'), findsNothing);
+      expect(find.text('Oldest first'), findsNothing);
+      expect(find.byTooltip('Share podcast'), findsNothing);
+    },
+  );
   testWidgets('A2 G15 rendered search edge and filter chip height', (
     tester,
   ) async {

@@ -14,14 +14,6 @@ Future<void> togglePodcastEpisode(
 ) async {
   try {
     await ref.read(podcastPlayerProvider.notifier).toggle(podcast, episode);
-    if (!context.mounted) return;
-    if (!ref.read(podcastPlayerProvider).isCurrent(episode.id)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to play this episode. Please try again.'),
-        ),
-      );
-    }
   } catch (_) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

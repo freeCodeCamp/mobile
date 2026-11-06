@@ -60,19 +60,7 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          Builder(
-            builder: (buttonContext) => IconButton(
-              tooltip: 'Share episode',
-              onPressed: () => sharePodcast(
-                buttonContext,
-                widget.episode.title,
-                widget.episode.audioUrl,
-              ),
-              icon: const Icon(Icons.ios_share_rounded, size: 22),
-            ),
-          ),
-        ],
+        actions: const [SizedBox(width: kToolbarHeight)],
       ),
       body: SafeArea(
         top: false,
@@ -432,6 +420,18 @@ class _Controls extends ConsumerWidget {
                             child: ChoiceChip(
                               selected: speed == option,
                               showCheckmark: false,
+                              color: WidgetStatePropertyAll(
+                                speed == option
+                                    ? colors.primaryContainer
+                                    : Colors.transparent,
+                              ),
+                              side: BorderSide(
+                                color: speed == option
+                                    ? FccDesignColors.of(context).accentText
+                                    : colors.outline,
+                                width: speed == option ? 1.5 : 1,
+                              ),
+                              shape: const StadiumBorder(),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 14,
@@ -443,7 +443,15 @@ class _Controls extends ConsumerWidget {
                                   widthFactor: 1,
                                   child: Text(
                                     '${option.toString().replaceFirst(RegExp(r'\.0$'), '')}×',
-                                    style: const TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: speed == option
+                                          ? FontWeight.w900
+                                          : FontWeight.w700,
+                                      color: speed == option
+                                          ? colors.onSurface
+                                          : colors.onSurfaceVariant,
+                                    ),
                                   ),
                                 ),
                               ),

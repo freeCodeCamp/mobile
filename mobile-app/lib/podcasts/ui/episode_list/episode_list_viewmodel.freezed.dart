@@ -541,8 +541,8 @@ return $default(_that.podcast,_that.episodes,_that.page,_that.hasNextPage,_that.
 /// @nodoc
 
 
-class _PodcastEpisodesState implements PodcastEpisodesState {
-  const _PodcastEpisodesState({required this.podcast, final  List<Episode> episodes = const [], this.page = 0, this.hasNextPage = false, this.isLoadingMore = false, this.loadMoreError}): _episodes = episodes;
+class _PodcastEpisodesState extends PodcastEpisodesState {
+  const _PodcastEpisodesState({required this.podcast, final  List<Episode> episodes = const [], this.page = 0, this.hasNextPage = false, this.isLoadingMore = false, this.loadMoreError}): _episodes = episodes,super._();
   
 
 @override final  Podcast podcast;

@@ -1,15 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 import 'package:freecodecamp/podcasts/ui/episode_list/episode_list_viewmodel.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/episode_play_button.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/episode_tile.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
-import 'package:freecodecamp/podcasts/ui/widgets/podcast_format.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/mini_player.dart';
@@ -26,9 +22,6 @@ class PodcastEpisodeListView extends ConsumerStatefulWidget {
 class _PodcastEpisodeListViewState
     extends ConsumerState<PodcastEpisodeListView> {
   final _scrollController = ScrollController();
-  bool _oldestFirst = false;
-  bool _loadingOlder = false;
-  int _sortGeneration = 0;
 
   PodcastEpisodesNotifierProvider get _provider =>
       podcastEpisodesProvider(widget.source);
@@ -41,160 +34,20 @@ class _PodcastEpisodeListViewState
 
   @override
   void dispose() {
-    _sortGeneration++;
     _scrollController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
-    if (!_oldestFirst && _scrollController.position.extentAfter < 1000) {
-      ref.read(_provider.notifier).fetchNextPage();
+    if (_scrollController.position.extentAfter < 1000) {
+      ref.read(_provider.notifier).loadMore();
     }
-  }
-
-  // The feed endpoint returns newest-first pages. Wait for the complete list
-  // before displaying oldest-first, rather than incorrectly reversing page one.
-  Future<void> _loadOlder({bool retry = false}) async {
-    if (_loadingOlder || !_oldestFirst) return;
-    final initial = ref.read(_provider).value;
-    if (initial == null || initial.isLoadingMore || !initial.hasNextPage) {
-      return;
-    }
-    if (initial.loadMoreError != null && !retry) return;
-    _loadingOlder = true;
-    final generation = _sortGeneration;
-    try {
-      while (mounted && _oldestFirst && generation == _sortGeneration) {
-        final current = ref.read(_provider).value;
-        if (current == null || !current.hasNextPage || current.isLoadingMore) {
-          break;
-        }
-        if (current.loadMoreError != null && !retry) break;
-        await ref.read(_provider.notifier).fetchNextPage(isRetry: retry);
-        retry = false;
-      }
-    } finally {
-      _loadingOlder = false;
-      if (mounted && _oldestFirst && generation != _sortGeneration) {
-        unawaited(_loadOlder());
-      }
-    }
-  }
-
-  Future<void> _sort() async {
-    final oldest = await showModalBottomSheet<bool>(
-      context: context,
-      showDragHandle: false,
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        final colors = Theme.of(context).colorScheme;
-        final accentText = FccDesignColors.of(context).accentText;
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: colors.outlineVariant,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Sort episodes',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(height: 16),
-                for (final value in [false, true]) ...[
-                  Material(
-                    color: _oldestFirst == value
-                        ? colors.primaryContainer
-                        : Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: _oldestFirst == value
-                            ? accentText
-                            : colors.outline,
-                        width: _oldestFirst == value ? 1.5 : 1,
-                      ),
-                    ),
-                    child: InkWell(
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      onTap: () => Navigator.of(context).pop(value),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minHeight: 56),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  value ? 'Oldest first' : 'Newest first',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: _oldestFirst == value
-                                        ? FontWeight.w900
-                                        : FontWeight.w700,
-                                    color: colors.onSurface,
-                                  ),
-                                ),
-                              ),
-                              if (_oldestFirst == value)
-                                Icon(
-                                  Icons.check_rounded,
-                                  size: 20,
-                                  color: accentText,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (!value) const SizedBox(height: 12),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
-    );
-    if (oldest == null || !mounted || oldest == _oldestFirst) return;
-    setState(() {
-      _oldestFirst = oldest;
-      _sortGeneration++;
-    });
-    if (_scrollController.hasClients) _scrollController.jumpTo(0);
-    if (oldest) unawaited(_loadOlder());
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final episodes = ref.watch(_provider);
-    ref.listen(_provider, (_, next) {
-      final state = next.value;
-      if (_oldestFirst &&
-          state != null &&
-          !state.isLoadingMore &&
-          state.loadMoreError == null &&
-          state.hasNextPage) {
-        unawaited(_loadOlder());
-      }
-    });
 
     return Scaffold(
       appBar: AppBar(
@@ -212,31 +65,12 @@ class _PodcastEpisodeListViewState
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => ErrorRetry(
           message: 'Unable to load episodes.',
-          onRetry: () => ref.invalidate(_provider),
+          onRetry: () => ref.read(_provider.notifier).refresh(),
         ),
         data: (state) {
-          final ordered = [...state.episodes]
-            ..sort((a, b) {
-              final comparison = (a.publicationDate ?? DateTime(0)).compareTo(
-                b.publicationDate ?? DateTime(0),
-              );
-              return _oldestFirst ? comparison : -comparison;
-            });
-          final newest = [...state.episodes]
-            ..sort(
-              (a, b) => (b.publicationDate ?? DateTime(0)).compareTo(
-                a.publicationDate ?? DateTime(0),
-              ),
-            );
-          final waitingForOldest = _oldestFirst && state.hasNextPage;
+          final ordered = state.orderedEpisodes;
           return RefreshIndicator(
-            onRefresh: () async {
-              _sortGeneration++;
-              await ref
-                  .refresh(_provider.future)
-                  .then<void>((_) {}, onError: (_) {});
-              if (mounted && _oldestFirst) unawaited(_loadOlder());
-            },
+            onRefresh: () => ref.read(_provider.notifier).refresh(),
             child: CustomScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
@@ -244,81 +78,33 @@ class _PodcastEpisodeListViewState
                 SliverToBoxAdapter(
                   child: _Header(
                     podcast: state.podcast,
-                    latest: newest.firstOrNull,
+                    latest: state.latestEpisode,
                   ),
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   sliver: SliverToBoxAdapter(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.source is DownloadedEpisodes
-                                    ? 'Downloaded episodes'
-                                    : 'Episodes',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            widget.source is DownloadedEpisodes
+                                ? 'Downloaded episodes'
+                                : 'Episodes',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
                             ),
-                            TextButton(
-                              onPressed: _sort,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    _oldestFirst
-                                        ? 'Oldest first'
-                                        : 'Newest first',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Icon(
-                                    Icons.expand_more_rounded,
-                                    size: 16,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                         Divider(height: 1, color: colors.outlineVariant),
                       ],
                     ),
                   ),
                 ),
-                if (waitingForOldest)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: state.loadMoreError != null
-                          ? ErrorRetry(
-                              margin: EdgeInsets.zero,
-                              message: 'Unable to load older episodes.',
-                              onRetry: () => _loadOlder(retry: true),
-                            )
-                          : Column(
-                              children: [
-                                const CircularProgressIndicator(),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Loading older episodes…',
-                                  style: TextStyle(
-                                    color: colors.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                    ),
-                  )
-                else if (ordered.isEmpty)
+                if (ordered.isEmpty)
                   const SliverFillRemaining(
                     hasScrollBody: false,
                     child: Center(child: Text('No episodes available.')),
@@ -337,19 +123,18 @@ class _PodcastEpisodeListViewState
                       ),
                     ),
                   ),
-                if (!waitingForOldest && state.loadMoreError != null)
+                if (state.loadMoreError != null)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: ErrorRetry(
                         message: 'Unable to load more episodes.',
-                        onRetry: () => ref
-                            .read(_provider.notifier)
-                            .fetchNextPage(isRetry: true),
+                        onRetry: () =>
+                            ref.read(_provider.notifier).retryLoadMore(),
                       ),
                     ),
                   ),
-                if (!waitingForOldest && state.isLoadingMore)
+                if (state.isLoadingMore)
                   const SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.all(24),
@@ -418,28 +203,6 @@ class _Header extends ConsumerWidget {
                           togglePodcastEpisode(context, ref, podcast, latest!),
                 icon: const Icon(Icons.play_arrow_rounded, size: 19),
                 label: const Text('Play latest'),
-              ),
-              const SizedBox(width: 8),
-              Builder(
-                builder: (buttonContext) => IconButton.filled(
-                  tooltip: 'Share podcast',
-                  style:
-                      FccTheme.surfaceButtonStyle(
-                        context,
-                        fill: Colors.transparent,
-                        compact: true,
-                      ).copyWith(
-                        minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
-                      ),
-                  onPressed: () => sharePodcast(
-                    buttonContext,
-                    podcast.title,
-                    podcast.podcastLink.isEmpty
-                        ? podcast.feedUrl
-                        : podcast.podcastLink,
-                  ),
-                  icon: const Icon(Icons.ios_share_rounded, size: 20),
-                ),
               ),
             ],
           ),
