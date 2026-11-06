@@ -53,6 +53,7 @@ class ProfileFormScaffold extends StatefulWidget {
     this.saving = false,
     this.onCancel,
     this.navigationDirty = false,
+    this.showNavigation = true,
   });
 
   final String title;
@@ -62,6 +63,7 @@ class ProfileFormScaffold extends StatefulWidget {
   final bool saving;
   final Future<bool> Function()? onCancel;
   final bool navigationDirty;
+  final bool showNavigation;
 
   @override
   State<ProfileFormScaffold> createState() => ProfileFormScaffoldState();
@@ -154,10 +156,12 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
           ),
         ],
       ),
-      bottomNavigationBar: AppNavigationFooter(
-        selected: AppDestination.account,
-        beforeNavigate: () => _canLeave(navigation: true),
-      ),
+      bottomNavigationBar: widget.showNavigation
+          ? AppNavigationFooter(
+              selected: AppDestination.account,
+              beforeNavigate: () => _canLeave(navigation: true),
+            )
+          : null,
       body: SafeArea(
         top: false,
         child: Align(

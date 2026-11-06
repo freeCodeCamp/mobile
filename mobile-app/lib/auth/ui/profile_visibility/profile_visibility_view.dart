@@ -61,6 +61,7 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
     return ProfileFormScaffold(
       key: _scaffold,
       title: 'Profile visibility',
+      showNavigation: false,
       isDirty: state?.isDirty ?? false,
       saving: state?.saving ?? false,
       onSave: enabled && state.isDirty ? _save : null,
