@@ -18,15 +18,15 @@ import 'package:freecodecamp/news/models/post_summary_model.dart';
 import 'package:freecodecamp/news/models/search_post_model.dart';
 import 'package:freecodecamp/news/ui/bookmark_feed/bookmark_feed_view.dart';
 import 'package:freecodecamp/news/ui/feed/feed_view.dart';
+import 'package:freecodecamp/news/ui/feed/feed_viewmodel.dart';
 import 'package:freecodecamp/news/ui/post/post_view.dart';
-import 'package:freecodecamp/news/ui/search/search_view.dart';
-import 'package:freecodecamp/news/ui/search/search_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/article_reader.dart';
 import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/offline_banner.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_skeleton.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
 import 'package:freecodecamp/news/ui/widgets/search_result_tile.dart';
+import 'package:freecodecamp/news/ui/widgets/search_results.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/podcasts/controllers/downloads_controller.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
@@ -89,7 +89,8 @@ final _episode = Episode(
 );
 
 class _Search extends NewsSearchNotifier {
-  final terms = <String>[];
+  _Search(this.terms);
+  final List<String> terms;
   @override
   AsyncValue<List<SearchPost>> build() => const AsyncData([]);
   @override
@@ -225,12 +226,17 @@ void main() {
     testWidgets(
       'search suggestions replace query and suppress zero count ($brightness)',
       (tester) async {
-        final search = _Search();
+        final terms = <String>[];
         await _pump(
           tester,
           ProviderScope(
-            overrides: [newsSearchProvider.overrideWith(() => search)],
-            child: const Scaffold(body: NewsSearchView()),
+            overrides: [
+              newsSearchProvider.overrideWith(() => _Search(terms)),
+              newsFeedProvider(
+                const NewsFeedSource.all(),
+              ).overrideWith(_Feed.new),
+            ],
+            child: const Scaffold(body: NewsFeedView()),
           ),
           brightness,
         );
@@ -246,7 +252,7 @@ void main() {
         await tester.ensureVisible(find.widgetWithText(ActionChip, 'Python'));
         await tester.tap(find.widgetWithText(ActionChip, 'Python'));
         await tester.pumpAndSettle();
-        expect(search.terms.last, 'Python');
+        expect(terms.last, 'Python');
         expect(
           tester.widget<TextField>(find.byType(TextField)).controller!.text,
           'Python',
@@ -256,7 +262,12 @@ void main() {
             .decoration!;
         final focused = decoration.focusedBorder! as OutlineInputBorder;
         expect(focused.borderRadius, BorderRadius.circular(12));
-        expect(focused.borderSide.width, 2);
+        expect(focused.borderSide.width, 1.5);
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pumpAndSettle();
+        expect(find.byType(NewsSearchEmptyState), findsNothing);
+        expect(find.byType(NewsPostTile), findsOneWidget);
+        expect(find.widgetWithText(ChoiceChip, 'Latest'), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );

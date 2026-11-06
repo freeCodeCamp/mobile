@@ -16,7 +16,6 @@ class NewsShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     final isSaved = location == newsBookmarksPath;
-    final isSearch = location == newsSearchPath;
     final scaler = MediaQuery.textScalerOf(context);
     const bookmarkStyle = TextStyle(
       fontFamily: 'Lato',
@@ -64,47 +63,45 @@ class NewsShell extends StatelessWidget {
     );
 
     final scaffold = Scaffold(
-      appBar: isSearch
-          ? null
-          : AppBar(
-              automaticallyImplyLeading: false,
-              leading: isSaved
-                  ? BackButton(
-                      onPressed: () {
-                        if (context.canPop()) {
-                          context.pop();
-                        } else {
-                          const NewsFeedRoute().go(context);
-                        }
-                      },
-                    )
-                  : null,
-              title: isSaved
-                  ? const Text('Saved articles')
-                  : const AppPageTitle('Articles'),
-              toolbarHeight: isSaved ? 64 : AppPageTitle.toolbarHeight(context),
-              bottom: !isSaved && stackBookmarks
-                  ? PreferredSize(
-                      preferredSize: Size.fromHeight(bookmarkHeight + 12),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: viewBookmarks,
-                        ),
-                      ),
-                    )
-                  : null,
-              actions: isSaved || stackBookmarks
-                  ? null
-                  : [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: viewBookmarks,
-                      ),
-                    ],
-            ),
-      body: SafeArea(top: isSearch, bottom: false, child: child),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: isSaved
+            ? BackButton(
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    const NewsFeedRoute().go(context);
+                  }
+                },
+              )
+            : null,
+        title: isSaved
+            ? const Text('Saved articles')
+            : const AppPageTitle('Articles'),
+        toolbarHeight: isSaved ? 64 : AppPageTitle.toolbarHeight(context),
+        bottom: !isSaved && stackBookmarks
+            ? PreferredSize(
+                preferredSize: Size.fromHeight(bookmarkHeight + 12),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: viewBookmarks,
+                  ),
+                ),
+              )
+            : null,
+        actions: isSaved || stackBookmarks
+            ? null
+            : [
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: viewBookmarks,
+                ),
+              ],
+      ),
+      body: SafeArea(top: false, bottom: false, child: child),
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.tutorials,
       ),
@@ -112,7 +109,7 @@ class NewsShell extends StatelessWidget {
 
     // Deep-linked subpages have no feed underneath them.
     return PopScope(
-      canPop: (!isSaved && !isSearch) || context.canPop(),
+      canPop: !isSaved || context.canPop(),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
           const NewsFeedRoute().go(context);

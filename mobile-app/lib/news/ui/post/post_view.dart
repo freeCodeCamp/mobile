@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/models/post_model.dart';
 import 'package:freecodecamp/news/ui/post/post_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/article_reader.dart';
+import 'package:freecodecamp/news/ui/widgets/back_button.dart';
 import 'package:freecodecamp/news/ui/widgets/bookmark_button.dart';
 import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
@@ -107,11 +108,11 @@ class NewsPostView extends ConsumerWidget {
       .watch(newsPostProvider(slug))
       .when(
         loading: () => Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(leading: const NewsBackButton()),
           body: const Center(child: CircularProgressIndicator()),
         ),
         error: (_, _) => Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(leading: const NewsBackButton()),
           body: ErrorRetry(
             message: 'Unable to load article.',
             onRetry: () => ref.invalidate(newsPostProvider(slug)),

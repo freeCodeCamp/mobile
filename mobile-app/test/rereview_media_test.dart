@@ -19,13 +19,14 @@ import 'package:freecodecamp/news/models/post_summary_model.dart';
 import 'package:freecodecamp/news/models/search_post_model.dart';
 import 'package:freecodecamp/news/ui/bookmark_feed/bookmark_feed_view.dart';
 import 'package:freecodecamp/news/ui/feed/feed_view.dart';
+import 'package:freecodecamp/news/ui/feed/feed_viewmodel.dart';
 import 'package:freecodecamp/news/ui/post/post_view.dart';
 import 'package:freecodecamp/news/ui/post/post_viewmodel.dart';
-import 'package:freecodecamp/news/ui/search/search_view.dart';
-import 'package:freecodecamp/news/ui/search/search_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/load_error.dart';
+import 'package:freecodecamp/news/ui/widgets/post_feed_list.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
+import 'package:freecodecamp/news/ui/widgets/search_results.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/podcasts/controllers/downloads_controller.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
@@ -272,28 +273,62 @@ Finder _materialInside(Finder finder) =>
 
 void main() {
   for (final entry in ['View bookmarks', 'Search articles']) {
-    testWidgets('SAVE-N1 real $entry entry supports system back', (
-      tester,
-    ) async {
-      final router = await _pumpRoutes(tester);
-      await tester.tap(find.text(entry));
-      await tester.pumpAndSettle();
-      expect(router.canPop(), isTrue);
-      expect(
-        find.byType(
-          entry == 'View bookmarks' ? NewsBookmarkFeedView : NewsSearchView,
-        ),
-        findsOneWidget,
-      );
-      if (entry == 'View bookmarks') {
-        expect(find.widgetWithText(AppBar, 'Saved articles'), findsOneWidget);
-      }
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      expect(router.routeInformationProvider.value.uri.path, '/news');
-      expect(find.byType(NewsFeedView), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      entry == 'View bookmarks'
+          ? 'SAVE-N1 real $entry entry supports system back'
+          : 'SAVE-N1 inline search preserves Articles navigation',
+      (tester) async {
+        final router = await _pumpRoutes(tester);
+        final feed = tester.element(find.byType(NewsPostFeedList));
+        await tester.tap(
+          entry == 'View bookmarks' ? find.text(entry) : find.byType(TextField),
+        );
+        await tester.pumpAndSettle();
+        if (entry == 'View bookmarks') {
+          expect(router.canPop(), isTrue);
+          expect(find.byType(NewsBookmarkFeedView), findsOneWidget);
+          expect(find.widgetWithText(AppBar, 'Saved articles'), findsOneWidget);
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+        } else {
+          expect(router.canPop(), isFalse);
+          expect(router.routeInformationProvider.value.uri.path, '/news');
+          expect(
+            tester
+                .widget<TextField>(find.byType(TextField))
+                .focusNode!
+                .hasFocus,
+            isTrue,
+          );
+          expect(find.byType(NewsPostTile), findsOneWidget);
+          await tester.enterText(find.byType(TextField), 'HTML');
+          await tester.pumpAndSettle();
+          expect(find.byType(NewsSearchResults), findsOneWidget);
+          expect(router.routeInformationProvider.value.uri.path, '/news');
+          expect(
+            tester.element(find.byType(NewsPostFeedList, skipOffstage: false)),
+            same(feed),
+          );
+          await tester.tap(find.byTooltip('Clear search'));
+          await tester.pumpAndSettle();
+          expect(find.byType(NewsSearchResults), findsNothing);
+          expect(find.byType(NewsPostTile), findsOneWidget);
+          expect(tester.element(find.byType(NewsPostFeedList)), same(feed));
+          await tester.tap(find.byTooltip('Dismiss keyboard'));
+          await tester.pumpAndSettle();
+          expect(
+            tester
+                .widget<TextField>(find.byType(TextField))
+                .focusNode!
+                .hasFocus,
+            isFalse,
+          );
+        }
+        expect(router.routeInformationProvider.value.uri.path, '/news');
+        expect(find.byType(NewsFeedView), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
   testWidgets('SAVE-N1 Saved articles error entry supports system back', (
     tester,
@@ -308,23 +343,53 @@ void main() {
     expect(router.routeInformationProvider.value.uri.path, '/news');
   });
   for (final path in ['/news/bookmarks', '/news/search']) {
-    testWidgets('SAVE-N1 $path deep link arrow returns to Articles', (
-      tester,
-    ) async {
-      final router = await _pumpRoutes(tester, path: path);
-      await tester.tap(find.byType(BackButton));
-      await tester.pumpAndSettle();
-      expect(router.routeInformationProvider.value.uri.path, '/news');
-      expect(find.byType(NewsFeedView), findsOneWidget);
-    });
-    testWidgets('SAVE-N1 $path deep link system back returns to Articles', (
-      tester,
-    ) async {
-      final router = await _pumpRoutes(tester, path: path);
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      expect(router.routeInformationProvider.value.uri.path, '/news');
-    });
+    testWidgets(
+      path == '/news/bookmarks'
+          ? 'SAVE-N1 $path deep link arrow returns to Articles'
+          : 'SAVE-N1 $path deep link redirects to inline Articles',
+      (tester) async {
+        final router = await _pumpRoutes(tester, path: path);
+        if (path == '/news/bookmarks') {
+          await tester.tap(find.byType(BackButton));
+          await tester.pumpAndSettle();
+        } else {
+          expect(find.byType(BackButton), findsNothing);
+          expect(router.canPop(), isFalse);
+          expect(
+            tester
+                .widget<TextField>(find.byType(TextField))
+                .focusNode!
+                .hasFocus,
+            isFalse,
+          );
+        }
+        expect(router.routeInformationProvider.value.uri.path, '/news');
+        expect(find.byType(NewsFeedView), findsOneWidget);
+      },
+    );
+    testWidgets(
+      path == '/news/bookmarks'
+          ? 'SAVE-N1 $path deep link system back returns to Articles'
+          : 'SAVE-N1 $path deep link search clears to Articles',
+      (tester) async {
+        final router = await _pumpRoutes(tester, path: path);
+        if (path == '/news/bookmarks') {
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+        } else {
+          await tester.enterText(find.byType(TextField), 'HTML');
+          await tester.pumpAndSettle();
+          expect(find.byType(NewsSearchResults), findsOneWidget);
+          await tester.tap(find.byTooltip('Clear search'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.byTooltip('Dismiss keyboard'));
+          await tester.pumpAndSettle();
+          expect(find.byType(NewsSearchResults), findsNothing);
+          expect(find.byType(NewsPostTile), findsOneWidget);
+        }
+        expect(router.routeInformationProvider.value.uri.path, '/news');
+      },
+    );
   }
   testWidgets(
     'LIST-N1 same rendered header bounds on both actual Listen routes',
@@ -387,16 +452,15 @@ void main() {
     tester,
   ) async {
     await _pumpRoutes(tester);
-    final search = find
-        .ancestor(
-          of: find.text('Search articles'),
-          matching: find.byType(Material),
-        )
-        .first;
-    final material = tester.widget<Material>(search);
-    final shape = material.shape! as RoundedRectangleBorder;
-    expect(material.color, const Color(0xff2b2140));
-    expect(shape.side, const BorderSide(color: Color(0xff4c4066), width: 1.5));
+    final decoration = tester
+        .widget<TextField>(find.byType(TextField))
+        .decoration!;
+    final border = decoration.enabledBorder! as OutlineInputBorder;
+    expect(decoration.fillColor, const Color(0xff2b2140));
+    expect(
+      border.borderSide,
+      const BorderSide(color: Color(0xff4c4066), width: 1.5),
+    );
     for (final chip in find.byType(ChoiceChip).evaluate()) {
       expect(
         tester.getSize(find.byWidget(chip.widget)).height,
@@ -569,7 +633,7 @@ void main() {
   testWidgets('S3 actual search failure has body and width at1.3 scale', (
     tester,
   ) async {
-    await _pumpRoutes(
+    final router = await _pumpRoutes(
       tester,
       path: '/news/search',
       searchError: true,
@@ -577,6 +641,8 @@ void main() {
     );
     await tester.enterText(find.byType(TextField), 'HTML');
     await tester.pumpAndSettle();
+    expect(router.routeInformationProvider.value.uri.path, '/news');
+    expect(find.byType(NewsFeedView), findsOneWidget);
     expect(find.byType(ErrorRetry), findsOneWidget);
     expect(find.textContaining('Your progress is safe.'), findsOneWidget);
     final card = tester.getRect(find.byType(Card));
