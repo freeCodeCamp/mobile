@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
@@ -10,24 +11,26 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
+import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart';
 
 const _wordStyle = TextStyle(fontSize: 20, height: 1.8, letterSpacing: 0);
 
 String _plain(String html) => parseFragment(html).text ?? '';
 
-class EnglishView extends StatefulWidget {
+class EnglishView extends ConsumerStatefulWidget {
   const EnglishView({super.key, required this.challenge, required this.block});
 
   final Challenge challenge;
   final Block block;
 
   @override
-  State<EnglishView> createState() => _EnglishViewState();
+  ConsumerState<EnglishView> createState() => _EnglishViewState();
 }
 
-class _EnglishViewState extends State<EnglishView> {
+class _EnglishViewState extends ConsumerState<EnglishView> {
   late final _blanks = widget.challenge.fillInTheBlank?.blanks ?? const [];
   late final _inputs = [for (final _ in _blanks) TextEditingController()];
   late final _assignments = List.filled(
@@ -56,6 +59,13 @@ class _EnglishViewState extends State<EnglishView> {
   @override
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
+    final completed = ref.watch(
+      authProvider.select(
+        (auth) =>
+            auth.value?.completedChallenges.any((c) => c.id == challenge.id) ??
+            false,
+      ),
+    );
     final firstWrong = _results?.indexOf(false) ?? -1;
     final feedback = firstWrong == -1 ? '' : _blanks[firstWrong].feedback;
     final dialogue = challenge.challengeType == 21;
@@ -70,6 +80,16 @@ class _EnglishViewState extends State<EnglishView> {
         context,
         title: challenge.title,
         subtitle: widget.block.name,
+        actions: [
+          if (completed)
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Tooltip(
+                message: 'Step completed',
+                child: LearnStatus(complete: true),
+              ),
+            ),
+        ],
       ),
       body: SafeArea(
         bottom: false,

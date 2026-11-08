@@ -15,6 +15,7 @@ import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
@@ -445,6 +446,15 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         ? 'Step ${index + 1} of ${block!.challenges.length}'
         : widget.challenge.title;
     final scale = MediaQuery.textScalerOf(context);
+    final completed = ref.watch(
+      authProvider.select(
+        (auth) =>
+            auth.value?.completedChallenges.any(
+              (c) => c.id == widget.challenge.id,
+            ) ??
+            false,
+      ),
+    );
     return AppBar(
       leading: IconButton(
         tooltip: 'Back',
@@ -510,6 +520,14 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             ),
           )
         else ...[
+          if (completed)
+            const Padding(
+              padding: EdgeInsets.only(right: 4),
+              child: Tooltip(
+                message: 'Step completed',
+                child: LearnStatus(complete: true),
+              ),
+            ),
           IconButton(
             tooltip: 'Reset code',
             onPressed:
@@ -808,10 +826,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       _EditorSheet.pass => 430.0,
       _ => 320.0 * math.min(scale, 1.4),
     };
-    final height = (_panelHeight ?? defaultHeight).clamp(
-      minHeight,
-      maxHeight,
-    );
+    final height = (_panelHeight ?? defaultHeight).clamp(minHeight, maxHeight);
     final title = switch (sheet) {
       _EditorSheet.tests => 'Tests',
       _EditorSheet.pass => 'Tests',
