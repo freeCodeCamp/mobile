@@ -221,7 +221,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
           children: [
             if (current != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: SizedBox(
