@@ -198,10 +198,11 @@ class _ResumeCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              next?.course.title ?? course.title,
-              style: const TextStyle(fontSize: 14, height: 1.4),
-            ),
+            if (next != null || !resume.isLoading)
+              Text(
+                next?.course.title ?? course.title,
+                style: const TextStyle(fontSize: 14, height: 1.4),
+              ),
             if (next != null) ...[
               Text(
                 next.block.name,
