@@ -57,6 +57,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   double? _panelHeight;
   int _editorLoad = 0;
   int _codeEdit = 0;
+  final _warmRunners = <String>{};
 
   bool get _daily => widget.dailyChallengeNumber != null;
 
@@ -97,10 +98,13 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.challenge != widget.challenge) {
       _sheet = null;
-      _instructionsExpanded = true;
-      _instructionHeight = null;
-      _instructionDragHeight = null;
-      _panelHeight = null;
+      // A daily challenge switching language keeps its instruction layout.
+      if (oldWidget.challenge.id != widget.challenge.id) {
+        _instructionsExpanded = true;
+        _instructionHeight = null;
+        _instructionDragHeight = null;
+        _panelHeight = null;
+      }
       _modifiedFiles.clear();
       _loadEditor(ref.read(_provider).file);
     }
@@ -122,10 +126,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   Future<void> _loadEditor(ChallengeFile file) async {
     final load = ++_editorLoad;
     _cancelSubscriptions();
-    setState(() {
-      _editor = null;
-      _focused = null;
-    });
+    // The previous editor stays on screen until the new one is ready, so a
+    // reload never flashes a spinner.
+    _focused = null;
     final challenge = widget.challenge;
     final resetCount = ref.read(_provider).resetCount;
     final contents = await ref
@@ -314,6 +317,14 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
     final state = ref.watch(_provider);
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+    if (_daily) {
+      // Runners are auto-dispose and one exists per language, so keep every
+      // one used so far alive. Switching back then finds it ready.
+      _warmRunners.add(workerTypeOf(widget.challenge.challengeType));
+      for (final workerType in _warmRunners) {
+        ref.watch(learnTestRunnerServiceProvider(workerType));
+      }
+    }
     return PopScope(
       canPop: _sheet == null,
       onPopInvokedWithResult: (didPop, result) {
@@ -326,90 +337,47 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
           padding: EdgeInsets.only(bottom: keyboard),
           child: SafeArea(
             top: false,
-            child: _daily
-                ? _dailyBody(state, keyboard > 0)
-                : Column(
-                    children: [
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) => Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              Column(
-                                children: [
-                                  _instructions(
-                                    math.min(
-                                      keyboard > 0 ? 140 : 220,
-                                      constraints.maxHeight * .32,
-                                    ),
-                                    _instructionHeightLimit(
-                                      constraints.maxHeight,
-                                    ),
-                                  ),
-                                  _fileSelector(state),
-                                  Expanded(
-                                    child: _editorArea(
-                                      state,
-                                      keyboard > 0,
-                                      withPanel: false,
-                                    ),
-                                  ),
-                                ],
+            child: Column(
+              children: [
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Column(
+                          children: [
+                            _instructions(
+                              math.min(
+                                keyboard > 0 ? 140 : 220,
+                                constraints.maxHeight * .32,
                               ),
-                              if (_sheet != null && keyboard == 0)
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: _panel(state, constraints.maxHeight),
-                                ),
-                            ],
-                          ),
+                              _instructionHeightLimit(constraints.maxHeight),
+                            ),
+                            _fileSelector(state),
+                            Expanded(
+                              child: _editorArea(
+                                state,
+                                keyboard > 0,
+                                withPanel: false,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      _bottomBar(state, keyboard > 0),
-                    ],
+                        if (_sheet != null && keyboard == 0)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: _panel(state, constraints.maxHeight),
+                          ),
+                      ],
+                    ),
                   ),
+                ),
+                _bottomBar(state, keyboard > 0),
+              ],
+            ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _dailyBody(EditorChallengeState state, bool keyboard) {
-    return CustomScrollView(
-      key: const ValueKey('daily-challenge-scroll'),
-      slivers: [
-        SliverToBoxAdapter(
-          child: DailyInstructionCard(
-            challenge: widget.challenge,
-            maxHeight: double.infinity,
-          ),
-        ),
-        SliverToBoxAdapter(child: _fileSelector(state)),
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Column(
-            children: [
-              Expanded(
-                // The editor keeps usable space when a long example or the
-                // keyboard makes the whole screen need to scroll.
-                child: SizedBox(
-                  height: 184,
-                  child: Container(
-                    margin: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: _editorArea(state, keyboard),
-                  ),
-                ),
-              ),
-              _bottomBar(state, keyboard),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -572,12 +540,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   }
 
   Widget _instructions(double defaultBodyHeight, double maxBodyHeight) {
-    if (_daily) {
-      return DailyInstructionCard(
-        challenge: widget.challenge,
-        maxHeight: defaultBodyHeight + 44,
-      );
-    }
     final colors = Theme.of(context).colorScheme;
     final customHeight = _instructionDragHeight ?? _instructionHeight;
     final bodyHeight = (customHeight ?? defaultBodyHeight).clamp(
@@ -692,7 +654,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   }
 
   Widget _fileSelector(EditorChallengeState state) {
-    if (_daily && widget.selector != null) return widget.selector!;
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final shadow = theme.colorScheme.shadow;
@@ -1021,47 +982,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         ),
       ),
     );
-    if (_daily) {
-      final example = widget.challenge.tests.firstOrNull;
-      final dailyStyle = actionStyle.copyWith(
-        minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 50)),
-      );
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (example != null) ...[
-              DailyChallengeExample(test: example),
-              const SizedBox(height: 8),
-            ],
-            if (state.passed)
-              CompleteButton(
-                challenge: widget.challenge,
-                block: null,
-                label: nextLabel,
-                buttonStyle: dailyStyle,
-              )
-            else
-              FilledButton(
-                style: dailyStyle,
-                onPressed: busy
-                    ? null
-                    : failed
-                    ? () => _retryRunner(workerType)
-                    : _runTests,
-                child: Text(
-                  state.testsRunning
-                      ? 'Checking…'
-                      : failed
-                      ? 'Retry'
-                      : 'Check your code',
-                ),
-              ),
-          ],
-        ),
-      );
-    }
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
