@@ -35,7 +35,8 @@ class _LessonViewState extends ConsumerState<LessonView> {
     widget.challenge.assignments.length,
     false,
   );
-  final _scroll = ScrollController(keepScrollOffset: false);
+  var _scroll = ScrollController(keepScrollOffset: false);
+  double _lessonOffset = 0;
   late final _review = ReviewController(widget.challenge.nodules)
     ..addListener(_onTopicChanged);
   void _onTopicChanged() {
@@ -67,9 +68,24 @@ class _LessonViewState extends ConsumerState<LessonView> {
   }
 
   void _show(int? index) {
-    setState(() => _current = index);
+    if (_current == null && index != null && _scroll.hasClients) {
+      _lessonOffset = _scroll.position.pixels;
+    }
+    final previous = _scroll;
+    setState(() {
+      _current = index;
+      // A fresh controller starts the new list at its offset on the first
+      // frame, so the content never renders at the top and then jumps.
+      _scroll = ScrollController(
+        initialScrollOffset: index == null ? _lessonOffset : 0,
+        keepScrollOffset: false,
+      );
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _scroll.hasClients) _scroll.jumpTo(0);
+      previous.dispose();
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
