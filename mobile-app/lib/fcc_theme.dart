@@ -774,15 +774,6 @@ class FccTheme {
           color: foreground,
         ),
       ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: raised,
-        contentTextStyle: TextStyle(
-          fontFamily: 'Lato',
-          letterSpacing: 0,
-          fontSize: 14,
-          color: foreground,
-        ),
-      ),
       sliderTheme: SliderThemeData(
         activeTrackColor: accent,
         inactiveTrackColor: line,
