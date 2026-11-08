@@ -354,78 +354,55 @@ class _WatchDialogue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final design = FccDesignColors.of(context);
+    final radius = BorderRadius.circular(12);
 
-    final status = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.check, size: 14, color: FccDesignColors.of(context).success),
-        const SizedBox(width: 4),
-        Text(
-          'Watched',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: FccDesignColors.of(context).success,
-          ),
+    return Semantics(
+      label: watched ? '${challenge.title}, completed' : null,
+      child: Material(
+        color: watched ? design.successContainer : colors.primaryContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: watched
+              ? BorderSide(
+                  color: design.onSuccessContainer,
+                  width: colors.brightness == Brightness.dark ? 1.5 : 1,
+                )
+              : BorderSide.none,
         ),
-      ],
-    );
-
-    return Material(
-      color: colors.primaryContainer,
-      borderRadius: BorderRadius.circular(12),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _open(context, block, challenge),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final stacked =
-                  constraints.maxWidth < 260 ||
-                  MediaQuery.textScalerOf(context).scale(16) > 20;
-              return Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: colors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.play_arrow,
-                      size: 22,
-                      color: colors.onPrimary,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _open(context, block, challenge),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: watched ? design.onSuccessContainer : colors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    watched ? Icons.check : Icons.play_arrow,
+                    size: 22,
+                    color: watched ? colors.surface : colors.onPrimary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    challenge.title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.15,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Watch the dialogue',
-                          style: TextStyle(
-                            fontSize: 16,
-                            height: 1.15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        if (watched && stacked) ...[
-                          const SizedBox(height: 6),
-                          status,
-                        ],
-                      ],
-                    ),
-                  ),
-                  if (watched && !stacked) ...[
-                    const SizedBox(width: 8),
-                    status,
-                  ],
-                ],
-              );
-            },
+                ),
+              ],
+            ),
           ),
         ),
       ),
