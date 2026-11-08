@@ -53,6 +53,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   final _instructionBodyKey = GlobalKey();
   double? _instructionHeight;
   double? _instructionDragHeight;
+  double? _panelHeight;
   int _editorLoad = 0;
   int _codeEdit = 0;
 
@@ -98,6 +99,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       _instructionsExpanded = true;
       _instructionHeight = null;
       _instructionDragHeight = null;
+      _panelHeight = null;
       _modifiedFiles.clear();
       _loadEditor(ref.read(_provider).file);
     }
@@ -329,17 +331,35 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                     children: [
                       Expanded(
                         child: LayoutBuilder(
-                          builder: (context, constraints) => Column(
+                          builder: (context, constraints) => Stack(
+                            fit: StackFit.expand,
                             children: [
-                              _instructions(
-                                math.min(
-                                  keyboard > 0 ? 140 : 220,
-                                  constraints.maxHeight * .32,
-                                ),
-                                _instructionHeightLimit(constraints.maxHeight),
+                              Column(
+                                children: [
+                                  _instructions(
+                                    math.min(
+                                      keyboard > 0 ? 140 : 220,
+                                      constraints.maxHeight * .32,
+                                    ),
+                                    _instructionHeightLimit(
+                                      constraints.maxHeight,
+                                    ),
+                                  ),
+                                  _fileSelector(state),
+                                  Expanded(
+                                    child: _editorArea(
+                                      state,
+                                      keyboard > 0,
+                                      withPanel: false,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              _fileSelector(state),
-                              Expanded(child: _editorArea(state, keyboard > 0)),
+                              if (_sheet != null && keyboard == 0)
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: _panel(state, constraints.maxHeight),
+                                ),
                             ],
                           ),
                         ),
@@ -392,13 +412,17 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
   }
 
-  Widget _editorArea(EditorChallengeState state, bool keyboard) {
+  Widget _editorArea(
+    EditorChallengeState state,
+    bool keyboard, {
+    bool withPanel = true,
+  }) {
     return LayoutBuilder(
       builder: (context, editorSpace) => Stack(
         fit: StackFit.expand,
         children: [
           _editor ?? const Center(child: CircularProgressIndicator()),
-          if (_sheet != null && !keyboard)
+          if (withPanel && _sheet != null && !keyboard)
             Align(
               alignment: Alignment.bottomCenter,
               child: _panel(state, editorSpace.maxHeight),
@@ -778,12 +802,16 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final sheet = _sheet!;
     final colors = Theme.of(context).colorScheme;
     final scale = MediaQuery.textScalerOf(context).scale(1);
-    final desiredHeight = switch (sheet) {
-      _EditorSheet.console => 280.0,
-      _EditorSheet.preview => 360.0,
+    final maxHeight = availableHeight;
+    final minHeight = math.min(140.0, maxHeight);
+    final defaultHeight = switch (sheet) {
       _EditorSheet.pass => 430.0,
-      _EditorSheet.tests => 320.0,
+      _ => 320.0 * math.min(scale, 1.4),
     };
+    final height = (_panelHeight ?? defaultHeight).clamp(
+      minHeight,
+      maxHeight,
+    );
     final title = switch (sheet) {
       _EditorSheet.tests => 'Tests',
       _EditorSheet.pass => 'Tests',
@@ -797,10 +825,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         : colors.error;
     return Container(
       key: ValueKey('editor-sheet-${sheet.name}'),
-      height: math.min(
-        desiredHeight * math.min(scale, 1.4),
-        availableHeight * .88,
-      ),
+      height: height,
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -821,14 +846,25 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             )
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: colors.outlineVariant,
-                      borderRadius: BorderRadius.circular(2),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onVerticalDragUpdate: (details) => setState(
+                    () => _panelHeight = (height - details.delta.dy).clamp(
+                      minHeight,
+                      maxHeight,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: colors.outlineVariant,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                     ),
                   ),
                 ),
