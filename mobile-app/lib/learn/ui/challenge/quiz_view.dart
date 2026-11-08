@@ -381,13 +381,6 @@ class _QuizViewState extends State<QuizView> {
                               color: colors.error,
                               inline: true,
                             ),
-                            const SizedBox(height: 4),
-                            _resultHtml(
-                              '<span>Correct answer: </span>${q.answers[q.solution].answer}',
-                              color: success,
-                              weight: FontWeight.w700,
-                              inline: true,
-                            ),
                           ],
                         ],
                       ),
