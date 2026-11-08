@@ -593,16 +593,19 @@ class _Header extends StatelessWidget {
         user.isDonating && (visibility.showDonation || !preview);
     final supporterPrivate = markPrivate && !visibility.showDonation;
     final showTopContributor = user.yearsTopContributor.isNotEmpty;
-    final description = [
-      if (visibility.showAbout) ...[
-        if (user.about?.trim().isNotEmpty ?? false) user.about!.trim(),
-      ],
+    final meta = [
       if (visibility.showLocation &&
           (user.location?.trim().isNotEmpty ?? false))
         user.location!.trim(),
       if (visibility.showAbout)
         'Joined ${Jiffy.parseFromDateTime(user.joinDate).yMMMM}',
     ];
+    final about = visibility.showAbout ? (user.about?.trim() ?? '') : '';
+    final bodyStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontSize: 14,
+      height: 1.5,
+      color: colors.onSurfaceVariant,
+    );
     final links = [
       if (user.githubProfile?.trim().isNotEmpty ?? false)
         ('GitHub', user.githubProfile!),
@@ -684,16 +687,13 @@ class _Header extends StatelessWidget {
               ),
             ],
           ),
-          if (description.isNotEmpty) ...[
+          if (meta.isNotEmpty || about.isNotEmpty) ...[
             const SizedBox(height: 14),
-            Text(
-              description.join(' · '),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 14,
-                height: 1.5,
-                color: colors.onSurfaceVariant,
-              ),
-            ),
+            if (meta.isNotEmpty) Text(meta.join(' · '), style: bodyStyle),
+            if (about.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(about, style: bodyStyle),
+            ],
           ],
           if (links.isNotEmpty) ...[
             const SizedBox(height: 12),
