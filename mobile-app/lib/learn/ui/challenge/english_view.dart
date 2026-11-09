@@ -13,6 +13,7 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/description_panel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/ui/widgets/scene/scene_transcript.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart';
@@ -114,6 +115,17 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                         children: [
                           if (challenge.instructions.isNotEmpty)
                             ParsedHtml(challenge.instructions),
+                          if (challenge.transcript.isNotEmpty)
+                            HtmlCard(
+                              title: 'Transcript',
+                              html: challenge.transcript,
+                              collapsible: true,
+                            )
+                          else if (dialogue && challenge.scene != null)
+                            SceneTranscript(
+                              scene: challenge.scene!,
+                              title: challenge.title,
+                            ),
                           if (challenge.assignments.isNotEmpty)
                             ChallengeCard(
                               title: 'Assignments',
@@ -157,46 +169,6 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                                   ? null
                                   : 'Check the highlighted words and try again.',
                               outlinedInlineCode: true,
-                            ),
-                          if (challenge.transcript.isNotEmpty)
-                            HtmlCard(
-                              title: 'Transcript',
-                              html: challenge.transcript,
-                              collapsible: !dialogue,
-                            )
-                          else if (dialogue && challenge.scene != null)
-                            ChallengeCard(
-                              title: 'Transcript',
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  for (final command
-                                      in challenge.scene!.commands)
-                                    if (command.dialogue case final line?)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 16,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              command.character,
-                                              style: TextStyle(
-                                                color: FccDesignColors.of(
-                                                  context,
-                                                ).accentText,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            ParsedHtml(line.text),
-                                          ],
-                                        ),
-                                      ),
-                                ],
-                              ),
                             ),
                         ],
                       ),

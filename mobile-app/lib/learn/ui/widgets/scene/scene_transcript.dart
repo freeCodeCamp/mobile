@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/controllers/scene_controller.dart';
+import 'package:freecodecamp/learn/models/challenge_model.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+
+final _lineStyles = {
+  '*': Style(fontSize: FontSize(14), lineHeight: const LineHeight(1.4)),
+};
+
+class SceneTranscript extends ConsumerWidget {
+  const SceneTranscript({super.key, required this.scene, required this.title});
+
+  final Scene scene;
+  final String title;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeLine = ref.watch(
+      sceneProvider(scene, title).select((state) => state.line),
+    );
+    final colors = Theme.of(context).colorScheme;
+    final accent = FccDesignColors.of(context).accentText;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: ExpansionTile(
+        title: const Text('Transcript'),
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+        textColor: colors.onSurface,
+        collapsedTextColor: colors.onSurface,
+        iconColor: accent,
+        collapsedIconColor: colors.onSurfaceVariant,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        children: [
+          Column(
+            spacing: 8,
+            children: [
+              for (final command in scene.commands)
+                if (command.dialogue case final line?)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color:
+                          activeLine?.character == command.character &&
+                              activeLine?.text == line.text
+                          ? accent.withValues(alpha: 0.18)
+                          : Colors.transparent,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 46,
+                          child: Text(
+                            command.character,
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.4,
+                              color: accent,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ParsedHtml(
+                            line.text,
+                            customStyles: _lineStyles,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

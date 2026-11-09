@@ -18,6 +18,7 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/questions.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/review_content.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/ui/widgets/scene/scene_transcript.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 
@@ -160,6 +161,10 @@ class _LessonViewState extends ConsumerState<LessonView> {
         ),
       if (!languageTask && challenge.scene != null)
         SceneView(scene: challenge.scene!, title: challenge.title),
+      if (languageTask &&
+          challenge.transcript.isEmpty &&
+          challenge.scene != null)
+        SceneTranscript(scene: challenge.scene!, title: challenge.title),
       if (challenge.instructions.isNotEmpty) ParsedHtml(challenge.instructions),
       if (challenge.assignments.isNotEmpty && !review)
         ChallengeCard(
