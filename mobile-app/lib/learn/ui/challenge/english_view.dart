@@ -9,6 +9,7 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/description_panel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
@@ -87,101 +88,124 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
       ),
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            if (challenge.scene case final scene?)
-              SceneView(scene: scene, title: challenge.title, edgeToEdge: true),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (challenge.description.isNotEmpty)
-                    ParsedHtml(challenge.description),
-                  if (challenge.instructions.isNotEmpty)
-                    ParsedHtml(challenge.instructions),
-                  if (challenge.assignments.isNotEmpty)
-                    ChallengeCard(
-                      title: 'Assignments',
+        child: LayoutBuilder(
+          builder: (context, constraints) => Column(
+            children: [
+              if (challenge.description.isNotEmpty)
+                DescriptionPanel(
+                  key: ValueKey(challenge.id),
+                  html: challenge.description,
+                  availableHeight: constraints.maxHeight,
+                ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    if (challenge.scene case final scene?)
+                      SceneView(
+                        scene: scene,
+                        title: challenge.title,
+                        edgeToEdge: true,
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          for (final (i, assignment)
-                              in challenge.assignments.indexed)
-                            AssignmentTile(
-                              label: assignment,
-                              value: _assignments[i],
-                              onToggle: () => setState(
-                                () => _assignments[i] = !_assignments[i],
+                          if (challenge.instructions.isNotEmpty)
+                            ParsedHtml(challenge.instructions),
+                          if (challenge.assignments.isNotEmpty)
+                            ChallengeCard(
+                              title: 'Assignments',
+                              child: Column(
+                                children: [
+                                  for (final (i, assignment)
+                                      in challenge.assignments.indexed)
+                                    AssignmentTile(
+                                      label: assignment,
+                                      value: _assignments[i],
+                                      onToggle: () => setState(
+                                        () =>
+                                            _assignments[i] = !_assignments[i],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          if (challenge.fillInTheBlank case final fill?) ...[
+                            if (challenge.instructions.isNotEmpty)
+                              const SizedBox(height: 12),
+                            Text(
+                              'Fill in the blank',
+                              style: TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: FccDesignColors.of(context).accentText,
+                              ),
+                            ),
+                            ..._sentences(fill.sentence),
+                            const SizedBox(height: 24),
+                          ],
+                          if (_results != null)
+                            AnswerFeedback(
+                              correct: _allCorrect,
+                              html: [
+                                _allCorrect ? challenge.explanation : feedback,
+                              ],
+                              fallback: _allCorrect
+                                  ? null
+                                  : 'Check the highlighted words and try again.',
+                              outlinedInlineCode: true,
+                            ),
+                          if (challenge.transcript.isNotEmpty)
+                            HtmlCard(
+                              title: 'Transcript',
+                              html: challenge.transcript,
+                              collapsible: !dialogue,
+                            )
+                          else if (dialogue && challenge.scene != null)
+                            ChallengeCard(
+                              title: 'Transcript',
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  for (final command
+                                      in challenge.scene!.commands)
+                                    if (command.dialogue case final line?)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 16,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              command.character,
+                                              style: TextStyle(
+                                                color: FccDesignColors.of(
+                                                  context,
+                                                ).accentText,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            ParsedHtml(line.text),
+                                          ],
+                                        ),
+                                      ),
+                                ],
                               ),
                             ),
                         ],
                       ),
                     ),
-                  if (challenge.fillInTheBlank case final fill?) ...[
-                    if (challenge.instructions.isNotEmpty)
-                      const SizedBox(height: 12),
-                    Text(
-                      'Fill in the blank',
-                      style: TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: FccDesignColors.of(context).accentText,
-                      ),
-                    ),
-                    ..._sentences(fill.sentence),
-                    const SizedBox(height: 24),
                   ],
-                  if (_results != null)
-                    AnswerFeedback(
-                      correct: _allCorrect,
-                      html: [_allCorrect ? challenge.explanation : feedback],
-                      fallback: _allCorrect
-                          ? null
-                          : 'Check the highlighted words and try again.',
-                      outlinedInlineCode: true,
-                    ),
-                  if (challenge.transcript.isNotEmpty)
-                    HtmlCard(
-                      title: 'Transcript',
-                      html: challenge.transcript,
-                      collapsible: !dialogue,
-                    )
-                  else if (dialogue && challenge.scene != null)
-                    ChallengeCard(
-                      title: 'Transcript',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (final command in challenge.scene!.commands)
-                            if (command.dialogue case final line?)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      command.character,
-                                      style: TextStyle(
-                                        color: FccDesignColors.of(
-                                          context,
-                                        ).accentText,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    ParsedHtml(line.text),
-                                  ],
-                                ),
-                              ),
-                        ],
-                      ),
-                    ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: ChallengeFooter(

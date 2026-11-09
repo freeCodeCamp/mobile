@@ -11,6 +11,7 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_video.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/description_panel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/example_editor.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
@@ -145,7 +146,8 @@ class _LessonViewState extends ConsumerState<LessonView> {
         ),
         const SizedBox(height: 16),
       ],
-      if (challenge.description.isNotEmpty) ParsedHtml(challenge.description),
+      if (!languageTask && challenge.description.isNotEmpty)
+        ParsedHtml(challenge.description),
       if (challenge.nodules.isNotEmpty)
         review
             ? ReviewContent(nodules: challenge.nodules, controller: _review)
@@ -213,82 +215,100 @@ class _LessonViewState extends ConsumerState<LessonView> {
       ),
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            if (current != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    // Keep short lectures compact; parent constraints shrink
-                    // the row safely if a lesson has many questions.
-                    width: _questions.length * 28 + (_questions.length - 1) * 6,
-                    child: QuestionProgress(
-                      total: _questions.length,
-                      current: current,
-                      answered: _checked,
-                      height: 6,
-                      spacing: 6,
-                      currentColor: colors.secondary,
-                      answeredColor: colors.primary,
+        child: LayoutBuilder(
+          builder: (context, constraints) => Column(
+            children: [
+              if (current != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      // Keep short lectures compact; parent constraints shrink
+                      // the row safely if a lesson has many questions.
+                      width:
+                          _questions.length * 28 + (_questions.length - 1) * 6,
+                      child: QuestionProgress(
+                        total: _questions.length,
+                        current: current,
+                        answered: _checked,
+                        height: 6,
+                        spacing: 6,
+                        currentColor: colors.secondary,
+                        answeredColor: colors.primary,
+                      ),
                     ),
                   ),
+                )
+              else if (!languageTask)
+                ListenableBuilder(
+                  listenable: _scroll,
+                  builder: (context, _) => LinearProgressIndicator(
+                    value: _readProgress,
+                    color: lectureColor,
+                    minHeight: 3,
+                  ),
                 ),
-              )
-            else if (!languageTask)
-              ListenableBuilder(
-                listenable: _scroll,
-                builder: (context, _) => LinearProgressIndicator(
-                  value: _readProgress,
-                  color: lectureColor,
-                  minHeight: 3,
+              if (current == null && review && _review.topicCount > 0)
+                ReviewTopics(controller: _review),
+              if (languageTask && challenge.description.isNotEmpty)
+                AnimatedSize(
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  alignment: Alignment.topCenter,
+                  child: current == null
+                      ? DescriptionPanel(
+                          key: ValueKey(challenge.id),
+                          html: challenge.description,
+                          availableHeight: constraints.maxHeight,
+                        )
+                      : const SizedBox(width: double.infinity),
                 ),
-              ),
-            if (current == null && review && _review.topicCount > 0)
-              ReviewTopics(controller: _review),
-            Expanded(
-              child: ListView(
-                key: ValueKey(current),
-                controller: _scroll,
-                padding: languageTask && current == null
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.all(16),
-                children: [
-                  if (current == null) ...[
-                    if (languageTask && challenge.scene != null)
-                      SceneView(
-                        scene: challenge.scene!,
-                        title: challenge.title,
-                        edgeToEdge: true,
-                      ),
-                    if (languageTask)
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: readingContent,
+              Expanded(
+                child: ListView(
+                  key: ValueKey(current),
+                  controller: _scroll,
+                  padding: languageTask && current == null
+                      ? EdgeInsets.zero
+                      : const EdgeInsets.all(16),
+                  children: [
+                    if (current == null) ...[
+                      if (languageTask && challenge.scene != null)
+                        SceneView(
+                          scene: challenge.scene!,
+                          title: challenge.title,
+                          edgeToEdge: true,
                         ),
-                      )
-                    else
-                      ...readingContent,
-                  ] else
-                    Questions(
-                      questions: _questions,
-                      selected: _selected,
-                      currentIndex: current,
-                      validated: _checked[current],
-                      outlinedFeedbackCode: languageTask,
-                      explanation: languageTask ? challenge.explanation : '',
-                      onChanged: (question, answer) => setState(() {
-                        _selected[question] = answer;
-                        _checked[question] = false;
-                      }),
-                    ),
-                ],
+                      if (languageTask)
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: readingContent,
+                          ),
+                        )
+                      else
+                        ...readingContent,
+                    ] else
+                      Questions(
+                        questions: _questions,
+                        selected: _selected,
+                        currentIndex: current,
+                        validated: _checked[current],
+                        outlinedFeedbackCode: languageTask,
+                        explanation: languageTask ? challenge.explanation : '',
+                        onChanged: (question, answer) => setState(() {
+                          _selected[question] = answer;
+                          _checked[question] = false;
+                        }),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: ChallengeFooter(
