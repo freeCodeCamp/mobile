@@ -40,8 +40,13 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
     false,
   );
   List<bool>? _results;
+  bool _exercise = false;
 
   bool get _allCorrect => _results?.every((r) => r) ?? false;
+  bool get _split =>
+      widget.challenge.scene != null && widget.challenge.fillInTheBlank != null;
+
+  void _showExercise(bool value) => setState(() => _exercise = value);
 
   @override
   void dispose() {
@@ -71,11 +76,17 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
     final firstWrong = _results?.indexOf(false) ?? -1;
     final feedback = firstWrong == -1 ? '' : _blanks[firstWrong].feedback;
     final dialogue = challenge.challengeType == 21;
-    return Scaffold(
+    final exercise = _split && _exercise;
+    final showLesson = !exercise;
+    final showFill = !_split || exercise;
+    final scaffold = Scaffold(
       appBar: challengeAppBar(
         context,
         title: challenge.title,
-        subtitle: widget.block.name,
+        subtitle: exercise ? 'Fill in the blank' : widget.block.name,
+        leading: exercise
+            ? BackButton(onPressed: () => _showExercise(false))
+            : null,
         actions: [
           if (completed)
             const Padding(
@@ -93,18 +104,28 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
           builder: (context, constraints) => Column(
             children: [
               if (challenge.description.isNotEmpty)
-                DescriptionPanel(
-                  key: ValueKey(challenge.id),
-                  html: challenge.description,
-                  availableHeight: constraints.maxHeight,
+                AnimatedSize(
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  alignment: Alignment.topCenter,
+                  child: exercise
+                      ? const SizedBox(width: double.infinity)
+                      : DescriptionPanel(
+                          key: ValueKey(challenge.id),
+                          html: challenge.description,
+                          availableHeight: constraints.maxHeight,
+                        ),
                 ),
               Expanded(
                 child: ListView(
+                  key: ValueKey(exercise),
                   padding: EdgeInsets.zero,
                   children: [
-                    if (challenge.scene case final scene?)
+                    if (showLesson && challenge.scene != null)
                       SceneView(
-                        scene: scene,
+                        scene: challenge.scene!,
                         title: challenge.title,
                         edgeToEdge: true,
                       ),
@@ -113,52 +134,59 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (challenge.instructions.isNotEmpty)
-                            ParsedHtml(challenge.instructions),
-                          if (challenge.transcript.isNotEmpty)
-                            HtmlCard(
-                              title: 'Transcript',
-                              html: challenge.transcript,
-                              collapsible: true,
-                            )
-                          else if (dialogue && challenge.scene != null)
-                            SceneTranscript(
-                              scene: challenge.scene!,
-                              title: challenge.title,
-                            ),
-                          if (challenge.assignments.isNotEmpty)
-                            ChallengeCard(
-                              title: 'Assignments',
-                              child: Column(
-                                children: [
-                                  for (final (i, assignment)
-                                      in challenge.assignments.indexed)
-                                    AssignmentTile(
-                                      label: assignment,
-                                      value: _assignments[i],
-                                      onToggle: () => setState(
-                                        () =>
-                                            _assignments[i] = !_assignments[i],
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          if (challenge.fillInTheBlank case final fill?) ...[
+                          if (showLesson) ...[
                             if (challenge.instructions.isNotEmpty)
-                              const SizedBox(height: 12),
-                            Text(
-                              'Fill in the blank',
-                              style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: FccDesignColors.of(context).accentText,
+                              ParsedHtml(challenge.instructions),
+                            if (challenge.transcript.isNotEmpty)
+                              HtmlCard(
+                                title: 'Transcript',
+                                html: challenge.transcript,
+                                collapsible: true,
+                              )
+                            else if (dialogue && challenge.scene != null)
+                              SceneTranscript(
+                                scene: challenge.scene!,
+                                title: challenge.title,
                               ),
-                            ),
-                            ..._sentences(fill.sentence),
-                            const SizedBox(height: 24),
+                            if (challenge.assignments.isNotEmpty)
+                              ChallengeCard(
+                                title: 'Assignments',
+                                child: Column(
+                                  children: [
+                                    for (final (i, assignment)
+                                        in challenge.assignments.indexed)
+                                      AssignmentTile(
+                                        label: assignment,
+                                        value: _assignments[i],
+                                        onToggle: () => setState(
+                                          () => _assignments[i] =
+                                              !_assignments[i],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
                           ],
+                          if (showFill)
+                            if (challenge.fillInTheBlank case final fill?) ...[
+                              if (showLesson &&
+                                  challenge.instructions.isNotEmpty)
+                                const SizedBox(height: 12),
+                              if (!exercise)
+                                Text(
+                                  'Fill in the blank',
+                                  style: TextStyle(
+                                    fontFamily: 'Lato',
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: FccDesignColors.of(
+                                      context,
+                                    ).accentText,
+                                  ),
+                                ),
+                              ..._sentences(fill.sentence),
+                              const SizedBox(height: 24),
+                            ],
                           if (_results != null)
                             AnswerFeedback(
                               correct: _allCorrect,
@@ -182,29 +210,64 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
       ),
       bottomNavigationBar: ChallengeFooter(
         padding: const EdgeInsets.all(12),
-        child: _blanks.isEmpty || _allCorrect
-            ? CompleteButton(
-                challenge: challenge,
-                block: widget.block,
-                label: dialogue
-                    ? 'Start tasks'
-                    : _blanks.isEmpty
-                    ? 'Continue'
-                    : 'Next lesson',
-                buttonStyle: _buttonStyle,
-                enabled: _assignments.every((done) => done),
-              )
-            : ChallengeButton(
-                label: _results == null ? 'Check answer' : 'Check again',
+        child: _split && !exercise
+            ? ChallengeButton(
+                label: 'Continue to exercise',
                 style: _buttonStyle,
-                onPressed:
-                    _inputs.every((input) => input.text.trim().isNotEmpty)
-                    ? _check
+                onPressed: _assignments.every((done) => done)
+                    ? () => _showExercise(true)
                     : null,
-              ),
+              )
+            : exercise
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ChallengeButton(
+                      label: 'Lesson',
+                      secondary: true,
+                      style: _buttonStyle,
+                      onPressed: () => _showExercise(false),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(flex: 2, child: _primaryButton(challenge, dialogue)),
+                ],
+              )
+            : _primaryButton(challenge, dialogue),
       ),
     );
+    return PopScope(
+      canPop: !exercise,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _showExercise(false);
+        }
+      },
+      child: scaffold,
+    );
   }
+
+  Widget _primaryButton(Challenge challenge, bool dialogue) =>
+      _blanks.isEmpty || _allCorrect
+      ? CompleteButton(
+          challenge: challenge,
+          block: widget.block,
+          label: dialogue
+              ? 'Start tasks'
+              : _blanks.isEmpty
+              ? 'Continue'
+              : 'Next lesson',
+          buttonStyle: _buttonStyle,
+          enabled: _assignments.every((done) => done),
+        )
+      : ChallengeButton(
+          label: _results == null ? 'Check answer' : 'Check again',
+          style: _buttonStyle,
+          onPressed: _inputs.every((input) => input.text.trim().isNotEmpty)
+              ? _check
+              : null,
+        );
 
   ButtonStyle get _buttonStyle => FilledButton.styleFrom(
     minimumSize: const Size(double.infinity, 50),
