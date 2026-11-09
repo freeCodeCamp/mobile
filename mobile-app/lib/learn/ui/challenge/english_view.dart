@@ -69,12 +69,6 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
     final firstWrong = _results?.indexOf(false) ?? -1;
     final feedback = firstWrong == -1 ? '' : _blanks[firstWrong].feedback;
     final dialogue = challenge.challengeType == 21;
-    // Fill-in-the-blank tasks carry their teaching note in description, while
-    // some curriculum versions also provide a separate explanation.
-    final explanation = {
-      if (!dialogue) challenge.description.trim(),
-      challenge.explanation.trim(),
-    }.where((html) => html.isNotEmpty).join('\n');
     return Scaffold(
       appBar: challengeAppBar(
         context,
@@ -103,7 +97,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (dialogue && challenge.description.isNotEmpty)
+                  if (challenge.description.isNotEmpty)
                     ParsedHtml(challenge.description),
                   if (challenge.instructions.isNotEmpty)
                     ParsedHtml(challenge.instructions),
@@ -142,7 +136,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                   if (_results != null)
                     AnswerFeedback(
                       correct: _allCorrect,
-                      html: [_allCorrect ? explanation : feedback],
+                      html: [_allCorrect ? challenge.explanation : feedback],
                       fallback: _allCorrect
                           ? null
                           : 'Check the highlighted words and try again.',

@@ -13,6 +13,13 @@ const chapterBasedSuperBlocks = [
   'python-v9',
 ];
 
+final _languageSuperBlock = RegExp(
+  r'(english-for-developers|professional-(spanish|chinese))$',
+);
+
+bool isLanguageSuperBlock(String superBlock) =>
+    _languageSuperBlock.hasMatch(superBlock);
+
 // NOTE: available-superblocks.json stages shown, in order. `legacy` is deliberately absent.
 const stageTitles = {
   'core': 'Recommended curriculum',

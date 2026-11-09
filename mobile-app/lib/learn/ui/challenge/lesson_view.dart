@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
@@ -119,13 +120,9 @@ class _LessonViewState extends ConsumerState<LessonView> {
     final colors = Theme.of(context).colorScheme;
     final current = _current;
     final review = challenge.challengeType == 31;
-    final englishTask =
+    final languageTask =
         challenge.challengeType == 19 &&
-        widget.block.layout == BlockLayout.challengeDialogue;
-    final taskExplanation = {
-      challenge.description.trim(),
-      challenge.explanation.trim(),
-    }.where((html) => html.isNotEmpty).join('\n');
+        isLanguageSuperBlock(widget.block.superBlock);
     final shortViewport = MediaQuery.sizeOf(context).height < 600;
     final index = widget.block.challenges.indexWhere(
       (c) => c.id == challenge.id,
@@ -134,7 +131,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
       Theme.of(context).brightness == Brightness.dark ? 0xFF8EC5FF : 0xFF1F6FD1,
     );
     final readingContent = <Widget>[
-      if (!englishTask) ...[
+      if (!languageTask) ...[
         Text(
           challenge.title,
           style: Theme.of(context).textTheme.headlineMedium,
@@ -148,8 +145,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
         ),
         const SizedBox(height: 16),
       ],
-      if (!englishTask && challenge.description.isNotEmpty)
-        ParsedHtml(challenge.description),
+      if (challenge.description.isNotEmpty) ParsedHtml(challenge.description),
       if (challenge.nodules.isNotEmpty)
         review
             ? ReviewContent(nodules: challenge.nodules, controller: _review)
@@ -160,7 +156,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
           html: challenge.transcript,
           collapsible: true,
         ),
-      if (!englishTask && challenge.scene != null)
+      if (!languageTask && challenge.scene != null)
         SceneView(scene: challenge.scene!, title: challenge.title),
       if (challenge.instructions.isNotEmpty) ParsedHtml(challenge.instructions),
       if (challenge.assignments.isNotEmpty && !review)
@@ -178,7 +174,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
             ],
           ),
         ),
-      if (!englishTask && challenge.explanation.isNotEmpty)
+      if (!languageTask && challenge.explanation.isNotEmpty)
         HtmlCard(
           title: 'Explanation',
           html: challenge.explanation,
@@ -202,8 +198,8 @@ class _LessonViewState extends ConsumerState<LessonView> {
         leading: current == null
             ? null
             : BackButton(onPressed: () => _show(null)),
-        title: englishTask ? challenge.title : widget.block.name,
-        subtitle: current == null && englishTask
+        title: languageTask ? challenge.title : widget.block.name,
+        subtitle: current == null && languageTask
             ? widget.block.name
             : current == null && review && _review.topicCount > 0
             ? 'Topic ${_review.selected + 1} of ${_review.topicCount}'
@@ -240,7 +236,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                   ),
                 ),
               )
-            else if (!englishTask)
+            else if (!languageTask)
               ListenableBuilder(
                 listenable: _scroll,
                 builder: (context, _) => LinearProgressIndicator(
@@ -255,18 +251,18 @@ class _LessonViewState extends ConsumerState<LessonView> {
               child: ListView(
                 key: ValueKey(current),
                 controller: _scroll,
-                padding: englishTask && current == null
+                padding: languageTask && current == null
                     ? EdgeInsets.zero
                     : const EdgeInsets.all(16),
                 children: [
                   if (current == null) ...[
-                    if (englishTask && challenge.scene != null)
+                    if (languageTask && challenge.scene != null)
                       SceneView(
                         scene: challenge.scene!,
                         title: challenge.title,
                         edgeToEdge: true,
                       ),
-                    if (englishTask)
+                    if (languageTask)
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -282,8 +278,8 @@ class _LessonViewState extends ConsumerState<LessonView> {
                       selected: _selected,
                       currentIndex: current,
                       validated: _checked[current],
-                      outlinedFeedbackCode: englishTask,
-                      explanation: englishTask ? taskExplanation : '',
+                      outlinedFeedbackCode: languageTask,
+                      explanation: languageTask ? challenge.explanation : '',
                       onChanged: (question, answer) => setState(() {
                         _selected[question] = answer;
                         _checked[question] = false;
@@ -355,7 +351,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                       ? CompleteButton(
                           challenge: challenge,
                           block: widget.block,
-                          label: englishTask ? 'Next lesson' : 'Continue',
+                          label: languageTask ? 'Next lesson' : 'Continue',
                           buttonStyle: _buttonStyle(context),
                           enabled: _assignmentsDone,
                         )
