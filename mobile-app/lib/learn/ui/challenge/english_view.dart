@@ -6,7 +6,6 @@ import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/answer_feedback.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/description_panel.dart';
@@ -79,6 +78,16 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
     final exercise = _split && _exercise;
     final showLesson = !exercise;
     final showFill = !_split || exercise;
+    final shortViewport = MediaQuery.sizeOf(context).height < 600;
+    final confirmations = [
+      if (showLesson)
+        for (final (i, assignment) in challenge.assignments.indexed)
+          AssignmentTile(
+            label: assignment,
+            value: _assignments[i],
+            onToggle: () => setState(() => _assignments[i] = !_assignments[i]),
+          ),
+    ];
     final scaffold = Scaffold(
       appBar: challengeAppBar(
         context,
@@ -130,7 +139,12 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                         edgeToEdge: true,
                       ),
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        showLesson && challenge.scene != null ? 0 : 16,
+                        16,
+                        16,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -148,24 +162,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                                 scene: challenge.scene!,
                                 title: challenge.title,
                               ),
-                            if (challenge.assignments.isNotEmpty)
-                              ChallengeCard(
-                                title: 'Assignments',
-                                child: Column(
-                                  children: [
-                                    for (final (i, assignment)
-                                        in challenge.assignments.indexed)
-                                      AssignmentTile(
-                                        label: assignment,
-                                        value: _assignments[i],
-                                        onToggle: () => setState(
-                                          () => _assignments[i] =
-                                              !_assignments[i],
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
+                            if (shortViewport) ...confirmations,
                           ],
                           if (showFill)
                             if (challenge.fillInTheBlank case final fill?) ...[
@@ -209,17 +206,22 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
         ),
       ),
       bottomNavigationBar: ChallengeFooter(
-        padding: const EdgeInsets.all(12),
-        child: _split && !exercise
-            ? ChallengeButton(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (!shortViewport) ...confirmations,
+            if (_split && !exercise)
+              ChallengeButton(
                 label: 'Continue to exercise',
                 style: _buttonStyle,
                 onPressed: _assignments.every((done) => done)
                     ? () => _showExercise(true)
                     : null,
               )
-            : exercise
-            ? Row(
+            else if (exercise)
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
@@ -234,7 +236,10 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                   Expanded(flex: 2, child: _primaryButton(challenge, dialogue)),
                 ],
               )
-            : _primaryButton(challenge, dialogue),
+            else
+              _primaryButton(challenge, dialogue),
+          ],
+        ),
       ),
     );
     return PopScope(

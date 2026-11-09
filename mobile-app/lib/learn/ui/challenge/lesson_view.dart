@@ -103,6 +103,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
     else
       CheckboxListTile(
         contentPadding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
         title: const Text('I have reviewed these concepts'),
         value: _reviewed,
         onChanged: (value) => setState(() => _reviewed = value ?? false),
@@ -317,7 +318,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
         ),
       ),
       bottomNavigationBar: ChallengeFooter(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
