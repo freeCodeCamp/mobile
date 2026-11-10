@@ -239,6 +239,7 @@ Future<GoRouter> _pumpRoutes(
         podcastPlaybackPositionProvider.overrideWith(
           (ref) => Stream.value(Duration.zero),
         ),
+        podcastSavedPositionProvider.overrideWith((ref, episodeId) => null),
         codeRadioNowPlayingProvider.overrideWith((ref) => Stream.value(_radio)),
         codeRadioElapsedProvider.overrideWith((ref) => Stream.value(30)),
       ],
@@ -750,6 +751,35 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'persistent player should stay mounted while an episode switch loads',
+    (tester) async {
+      final audio = _PlaybackAudio()..start();
+      await _pumpRoutes(tester, audio: audio, scale: 1.0);
+      final before = tester.element(find.byType(MiniPlayer));
+
+      audio.switching = true;
+      audio.playbackState.add(
+        PlaybackState(
+          playing: false,
+          processingState: AudioProcessingState.loading,
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byType(MiniPlayer), findsOneWidget);
+      expect(find.byTooltip('Dismiss player'), findsOneWidget);
+      expect(find.text(_episode.title), findsWidgets);
+      expect(tester.element(find.byType(MiniPlayer)), same(before));
+
+      audio.switching = false;
+      audio.start();
+      await tester.pump();
+
+      expect(find.byTooltip('Pause audio'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
   test('EP3 size labels use locale, one decimal under10MB', () {
     expect(podcastFileSize(54000000, 'en_US'), '54 MB');
     expect(podcastFileSize(1500000, 'en_US'), '1.5 MB');
@@ -776,18 +806,19 @@ class _LocalDownloads extends PodcastDownloadRepository {
 
 class _PlaybackAudio extends _Audio {
   bool loaded = false;
+  bool switching = false;
   int stops = 0;
   int plays = 0;
   @override
-  String? get episodeId => loaded ? _episode.id : null;
+  String? get episodeId => loaded && !switching ? _episode.id : null;
   @override
   Duration? get duration => _episode.duration;
   @override
   Stream<Duration> get positionStream =>
       Stream.value(const Duration(minutes: 2));
   @override
-  (Podcast, Episode)? get currentPodcastEpisode =>
-      loaded ? (_podcast, _episode) : null;
+  PublishedSource? get published =>
+      loaded ? PublishedPodcast(_podcast, _episode) : null;
   void start({bool playing = true}) {
     loaded = true;
     mediaItem.add(

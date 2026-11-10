@@ -49,12 +49,21 @@ class MediaPlayerNotifier extends _$MediaPlayerNotifier {
     final item = handler.mediaItem.value;
     final playback = handler.playbackState.value;
     if (item == null) return MediaPlayerState(playback: playback);
+
+    final published = handler.published;
+    final isLoading = playback.processingState == AudioProcessingState.loading;
+
     return MediaPlayerState(
       item: item,
       playback: playback,
-      isRadio: handler.codeRadioSongId != null,
-      episode: handler.currentPodcastEpisode,
-      duration: handler.duration ?? item.duration,
+      isRadio: published is PublishedCodeRadio,
+      episode: switch (published) {
+        PublishedPodcast(:final podcast, :final episode) => (podcast, episode),
+        _ => null,
+      },
+      // NOTE: While a new source loads, the player still reports its duration,
+      // not the published item's.
+      duration: isLoading ? item.duration : handler.duration ?? item.duration,
     );
   }
 

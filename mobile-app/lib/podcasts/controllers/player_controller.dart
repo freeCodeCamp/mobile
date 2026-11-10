@@ -40,6 +40,18 @@ Stream<Duration> podcastPlaybackPosition(Ref ref) =>
     ref.watch(audioHandlerProvider).positionStream;
 
 @riverpod
+Duration? podcastSavedPosition(Ref ref, String episodeId) {
+  final service = ref.watch(podcastPlaybackServiceProvider);
+
+  final subscription = service.positionChanges
+      .where((id) => id == episodeId)
+      .listen((_) => ref.invalidateSelf());
+  ref.onDispose(subscription.cancel);
+
+  return service.savedPosition(episodeId);
+}
+
+@riverpod
 class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
   // NOTE: Pinned while an episode is loaded, released once the handler holds
   // none at all.

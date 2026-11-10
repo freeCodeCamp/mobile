@@ -73,12 +73,13 @@ class EpisodePlayButton extends ConsumerWidget {
     if (compact) {
       final position = current
           ? ref.watch(podcastPlaybackPositionProvider).value ?? Duration.zero
-          : Duration.zero;
+          : ref.watch(podcastSavedPositionProvider(episode.id)) ??
+                Duration.zero;
       final duration = current
           ? player.duration ?? episode.duration
           : episode.duration;
       final remaining = duration == null ? null : duration - position;
-      final label = current && position > Duration.zero && remaining != null
+      final label = position > Duration.zero && remaining != null
           ? '${podcastDuration(remaining.isNegative ? Duration.zero : remaining)} left'
           : podcastDuration(duration);
       return Tooltip(

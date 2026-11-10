@@ -460,6 +460,9 @@ void main() {
               podcastPlaybackPositionProvider.overrideWith(
                 (ref) => Stream.value(Duration.zero),
               ),
+              podcastSavedPositionProvider.overrideWith(
+                (ref, episodeId) => null,
+              ),
             ],
             child: Scaffold(
               body: SingleChildScrollView(
