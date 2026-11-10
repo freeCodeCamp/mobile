@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'scene_controller.dart';
@@ -9,6 +9,7 @@ part of 'scene_controller.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $CharacterStateCopyWith<CharacterState> get copyWith => _$CharacterStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterState&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.mouthOpen, mouthOpen) || other.mouthOpen == mouthOpen)&&(identical(other.eyesClosed, eyesClosed) || other.eyesClosed == eyesClosed)&&(identical(other.opacity, opacity) || other.opacity == opacity));
+  final _this = this as CharacterState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterState&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.position, _this.position) || other.position == _this.position)&&(identical(other.mouthOpen, _this.mouthOpen) || other.mouthOpen == _this.mouthOpen)&&(identical(other.eyesClosed, _this.eyesClosed) || other.eyesClosed == _this.eyesClosed)&&(identical(other.opacity, _this.opacity) || other.opacity == _this.opacity));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,position,mouthOpen,eyesClosed,opacity);
+int get hashCode {
+  final _this = this as CharacterState;
+  return Object.hash(runtimeType,_this.name,_this.position,_this.mouthOpen,_this.eyesClosed,_this.opacity);
+}
 
 @override
 String toString() {
-  return 'CharacterState(name: $name, position: $position, mouthOpen: $mouthOpen, eyesClosed: $eyesClosed, opacity: $opacity)';
+  final _this = this as CharacterState;
+  return 'CharacterState(name: ${_this.name}, position: ${_this.position}, mouthOpen: ${_this.mouthOpen}, eyesClosed: ${_this.eyesClosed}, opacity: ${_this.opacity})';
 }
 
 
@@ -63,7 +69,7 @@ class _$CharacterStateCopyWithImpl<$Res>
 /// Create a copy of CharacterState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? position = null,Object? mouthOpen = null,Object? eyesClosed = null,Object? opacity = null,}) {
-  return _then(_self.copyWith(
+  return _then(CharacterState(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as ScenePosition,mouthOpen: null == mouthOpen ? _self.mouthOpen : mouthOpen // ignore: cast_nullable_to_non_nullable
@@ -238,16 +244,18 @@ _$CharacterStateCopyWith<_CharacterState> get copyWith => __$CharacterStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterState&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.mouthOpen, mouthOpen) || other.mouthOpen == mouthOpen)&&(identical(other.eyesClosed, eyesClosed) || other.eyesClosed == eyesClosed)&&(identical(other.opacity, opacity) || other.opacity == opacity));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterState&&(identical(other.name, name) || other.name == name)&&(identical(other.position, position) || other.position == position)&&(identical(other.mouthOpen, mouthOpen) || other.mouthOpen == mouthOpen)&&(identical(other.eyesClosed, eyesClosed) || other.eyesClosed == eyesClosed)&&(identical(other.opacity, opacity) || other.opacity == opacity));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,position,mouthOpen,eyesClosed,opacity);
+int get hashCode {
+    return Object.hash(runtimeType,name,position,mouthOpen,eyesClosed,opacity);
+}
 
 @override
 String toString() {
-  return 'CharacterState(name: $name, position: $position, mouthOpen: $mouthOpen, eyesClosed: $eyesClosed, opacity: $opacity)';
+    return 'CharacterState(name: $name, position: $position, mouthOpen: $mouthOpen, eyesClosed: $eyesClosed, opacity: $opacity)';
 }
 
 
@@ -312,16 +320,21 @@ $SceneStateCopyWith<SceneState> get copyWith => _$SceneStateCopyWithImpl<SceneSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other.characters, characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  final _this = this as SceneState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneState&&(identical(other.background, _this.background) || other.background == _this.background)&&const DeepCollectionEquality().equals(other.characters, _this.characters)&&(identical(other.line, _this.line) || other.line == _this.line)&&(identical(other.showCaptions, _this.showCaptions) || other.showCaptions == _this.showCaptions)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,background,const DeepCollectionEquality().hash(characters),line,showCaptions,isActive);
+int get hashCode {
+  final _this = this as SceneState;
+  return Object.hash(runtimeType,_this.background,const DeepCollectionEquality().hash(_this.characters),_this.line,_this.showCaptions,_this.isActive);
+}
 
 @override
 String toString() {
-  return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive)';
+  final _this = this as SceneState;
+  return 'SceneState(background: ${_this.background}, characters: ${_this.characters}, line: ${_this.line}, showCaptions: ${_this.showCaptions}, isActive: ${_this.isActive})';
 }
 
 
@@ -350,7 +363,7 @@ class _$SceneStateCopyWithImpl<$Res>
 /// Create a copy of SceneState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? characters = null,Object? line = freezed,Object? showCaptions = null,Object? isActive = null,}) {
-  return _then(_self.copyWith(
+  return _then(SceneState(
 background: null == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
 as String,characters: null == characters ? _self.characters : characters // ignore: cast_nullable_to_non_nullable
 as List<CharacterState>,line: freezed == line ? _self.line : line // ignore: cast_nullable_to_non_nullable
@@ -497,7 +510,7 @@ return $default(_that.background,_that.characters,_that.line,_that.showCaptions,
 
 
 class _SceneState implements SceneState {
-  const _SceneState({required this.background, required final  List<CharacterState> characters, this.line, this.showCaptions = false, this.isActive = false}): _characters = characters;
+  const _SceneState({required this.background, required  List<CharacterState> characters, this.line, this.showCaptions = false, this.isActive = false}): _characters = characters;
   
 
 @override final  String background;
@@ -522,16 +535,18 @@ _$SceneStateCopyWith<_SceneState> get copyWith => __$SceneStateCopyWithImpl<_Sce
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other._characters, _characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneState&&(identical(other.background, background) || other.background == background)&&const DeepCollectionEquality().equals(other.characters, _characters)&&(identical(other.line, line) || other.line == line)&&(identical(other.showCaptions, showCaptions) || other.showCaptions == showCaptions)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,background,const DeepCollectionEquality().hash(_characters),line,showCaptions,isActive);
+int get hashCode {
+    return Object.hash(runtimeType,background,const DeepCollectionEquality().hash(_characters),line,showCaptions,isActive);
+}
 
 @override
 String toString() {
-  return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive)';
+    return 'SceneState(background: $background, characters: $characters, line: $line, showCaptions: $showCaptions, isActive: $isActive)';
 }
 
 

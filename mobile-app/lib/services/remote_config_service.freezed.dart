@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'remote_config_service.dart';
@@ -9,6 +9,7 @@ part of 'remote_config_service.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $RemoteConfigCopyWith<RemoteConfig> get copyWith => _$RemoteConfigCopyWithImpl<R
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteConfig&&const DeepCollectionEquality().equals(other.activationOverrides, activationOverrides)&&(identical(other.minAppVersion, minAppVersion) || other.minAppVersion == minAppVersion));
+  final _this = this as RemoteConfig;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteConfig&&const DeepCollectionEquality().equals(other.activationOverrides, _this.activationOverrides)&&(identical(other.minAppVersion, _this.minAppVersion) || other.minAppVersion == _this.minAppVersion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(activationOverrides),minAppVersion);
+int get hashCode {
+  final _this = this as RemoteConfig;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.activationOverrides),_this.minAppVersion);
+}
 
 @override
 String toString() {
-  return 'RemoteConfig(activationOverrides: $activationOverrides, minAppVersion: $minAppVersion)';
+  final _this = this as RemoteConfig;
+  return 'RemoteConfig(activationOverrides: ${_this.activationOverrides}, minAppVersion: ${_this.minAppVersion})';
 }
 
 
@@ -63,7 +69,7 @@ class _$RemoteConfigCopyWithImpl<$Res>
 /// Create a copy of RemoteConfig
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? activationOverrides = null,Object? minAppVersion = null,}) {
-  return _then(_self.copyWith(
+  return _then(RemoteConfig(
 activationOverrides: null == activationOverrides ? _self.activationOverrides : activationOverrides // ignore: cast_nullable_to_non_nullable
 as Map<String, bool>,minAppVersion: null == minAppVersion ? _self.minAppVersion : minAppVersion // ignore: cast_nullable_to_non_nullable
 as String,
@@ -207,7 +213,7 @@ return $default(_that.activationOverrides,_that.minAppVersion);case _:
 
 
 class _RemoteConfig extends RemoteConfig {
-  const _RemoteConfig({required final  Map<String, bool> activationOverrides, required this.minAppVersion}): _activationOverrides = activationOverrides,super._();
+  const _RemoteConfig({required  Map<String, bool> activationOverrides, required this.minAppVersion}): _activationOverrides = activationOverrides,super._();
   
 
  final  Map<String, bool> _activationOverrides;
@@ -229,16 +235,18 @@ _$RemoteConfigCopyWith<_RemoteConfig> get copyWith => __$RemoteConfigCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoteConfig&&const DeepCollectionEquality().equals(other._activationOverrides, _activationOverrides)&&(identical(other.minAppVersion, minAppVersion) || other.minAppVersion == minAppVersion));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RemoteConfig&&const DeepCollectionEquality().equals(other.activationOverrides, _activationOverrides)&&(identical(other.minAppVersion, minAppVersion) || other.minAppVersion == minAppVersion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_activationOverrides),minAppVersion);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_activationOverrides),minAppVersion);
+}
 
 @override
 String toString() {
-  return 'RemoteConfig(activationOverrides: $activationOverrides, minAppVersion: $minAppVersion)';
+    return 'RemoteConfig(activationOverrides: $activationOverrides, minAppVersion: $minAppVersion)';
 }
 
 

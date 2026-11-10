@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'post_model.dart';
@@ -9,6 +9,7 @@ part of 'post_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $TagCopyWith<Tag> get copyWith => _$TagCopyWithImpl<Tag>(this as Tag, _$identity
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Tag&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug));
+  final _this = this as Tag;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Tag&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.slug, _this.slug) || other.slug == _this.slug));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,slug);
+int get hashCode {
+  final _this = this as Tag;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.slug);
+}
 
 @override
 String toString() {
-  return 'Tag(id: $id, name: $name, slug: $slug)';
+  final _this = this as Tag;
+  return 'Tag(id: ${_this.id}, name: ${_this.name}, slug: ${_this.slug})';
 }
 
 
@@ -66,7 +72,7 @@ class _$TagCopyWithImpl<$Res>
 /// Create a copy of Tag
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? slug = null,}) {
-  return _then(_self.copyWith(
+  return _then(Tag(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,slug: null == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Tag&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Tag&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,slug);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,slug);
+}
 
 @override
 String toString() {
-  return 'Tag(id: $id, name: $name, slug: $slug)';
+    return 'Tag(id: $id, name: $name, slug: $slug)';
 }
 
 
@@ -297,16 +305,21 @@ $CoverImageCopyWith<CoverImage> get copyWith => _$CoverImageCopyWithImpl<CoverIm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CoverImage&&(identical(other.url, url) || other.url == url));
+  final _this = this as CoverImage;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CoverImage&&(identical(other.url, _this.url) || other.url == _this.url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,url);
+int get hashCode {
+  final _this = this as CoverImage;
+  return Object.hash(runtimeType,_this.url);
+}
 
 @override
 String toString() {
-  return 'CoverImage(url: $url)';
+  final _this = this as CoverImage;
+  return 'CoverImage(url: ${_this.url})';
 }
 
 
@@ -335,7 +348,7 @@ class _$CoverImageCopyWithImpl<$Res>
 /// Create a copy of CoverImage
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? url = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(CoverImage(
 url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -496,16 +509,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CoverImage&&(identical(other.url, url) || other.url == url));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CoverImage&&(identical(other.url, url) || other.url == url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,url);
+int get hashCode {
+    return Object.hash(runtimeType,url);
+}
 
 @override
 String toString() {
-  return 'CoverImage(url: $url)';
+    return 'CoverImage(url: $url)';
 }
 
 
@@ -560,16 +575,21 @@ $ContentCopyWith<Content> get copyWith => _$ContentCopyWithImpl<Content>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Content&&(identical(other.html, html) || other.html == html));
+  final _this = this as Content;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Content&&(identical(other.html, _this.html) || other.html == _this.html));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,html);
+int get hashCode {
+  final _this = this as Content;
+  return Object.hash(runtimeType,_this.html);
+}
 
 @override
 String toString() {
-  return 'Content(html: $html)';
+  final _this = this as Content;
+  return 'Content(html: ${_this.html})';
 }
 
 
@@ -598,7 +618,7 @@ class _$ContentCopyWithImpl<$Res>
 /// Create a copy of Content
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? html = null,}) {
-  return _then(_self.copyWith(
+  return _then(Content(
 html: null == html ? _self.html : html // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -759,16 +779,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Content&&(identical(other.html, html) || other.html == html));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Content&&(identical(other.html, html) || other.html == html));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,html);
+int get hashCode {
+    return Object.hash(runtimeType,html);
+}
 
 @override
 String toString() {
-  return 'Content(html: $html)';
+    return 'Content(html: $html)';
 }
 
 
@@ -823,16 +845,21 @@ $PostCopyWith<Post> get copyWith => _$PostCopyWithImpl<Post>(this as Post, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Post&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&(identical(other.readTimeInMinutes, readTimeInMinutes) || other.readTimeInMinutes == readTimeInMinutes)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
+  final _this = this as Post;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Post&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.author, _this.author) || other.author == _this.author)&&const DeepCollectionEquality().equals(other.tags, _this.tags)&&(identical(other.coverImage, _this.coverImage) || other.coverImage == _this.coverImage)&&(identical(other.readTimeInMinutes, _this.readTimeInMinutes) || other.readTimeInMinutes == _this.readTimeInMinutes)&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,title,url,author,const DeepCollectionEquality().hash(tags),coverImage,readTimeInMinutes,content,publishedAt);
+int get hashCode {
+  final _this = this as Post;
+  return Object.hash(runtimeType,_this.id,_this.slug,_this.title,_this.url,_this.author,const DeepCollectionEquality().hash(_this.tags),_this.coverImage,_this.readTimeInMinutes,_this.content,_this.publishedAt);
+}
 
 @override
 String toString() {
-  return 'Post(id: $id, slug: $slug, title: $title, url: $url, author: $author, tags: $tags, coverImage: $coverImage, readTimeInMinutes: $readTimeInMinutes, content: $content, publishedAt: $publishedAt)';
+  final _this = this as Post;
+  return 'Post(id: ${_this.id}, slug: ${_this.slug}, title: ${_this.title}, url: ${_this.url}, author: ${_this.author}, tags: ${_this.tags}, coverImage: ${_this.coverImage}, readTimeInMinutes: ${_this.readTimeInMinutes}, content: ${_this.content}, publishedAt: ${_this.publishedAt})';
 }
 
 
@@ -861,7 +888,7 @@ class _$PostCopyWithImpl<$Res>
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? slug = null,Object? title = null,Object? url = null,Object? author = null,Object? tags = null,Object? coverImage = freezed,Object? readTimeInMinutes = null,Object? content = null,Object? publishedAt = null,}) {
-  return _then(_self.copyWith(
+  return _then(Post(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,slug: null == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -1043,7 +1070,7 @@ return $default(_that.id,_that.slug,_that.title,_that.url,_that.author,_that.tag
 @JsonSerializable()
 
 class _Post implements Post {
-  const _Post({required this.id, required this.slug, required this.title, required this.url, required this.author, final  List<Tag> tags = const [], this.coverImage, required this.readTimeInMinutes, required this.content, required this.publishedAt}): _tags = tags;
+  const _Post({required this.id, required this.slug, required this.title, required this.url, required this.author,  List<Tag> tags = const [], this.coverImage, required this.readTimeInMinutes, required this.content, required this.publishedAt}): _tags = tags;
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
 @override final  String id;
@@ -1076,16 +1103,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Post&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&(identical(other.readTimeInMinutes, readTimeInMinutes) || other.readTimeInMinutes == readTimeInMinutes)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Post&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other.tags, _tags)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&(identical(other.readTimeInMinutes, readTimeInMinutes) || other.readTimeInMinutes == readTimeInMinutes)&&(identical(other.content, content) || other.content == content)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,title,url,author,const DeepCollectionEquality().hash(_tags),coverImage,readTimeInMinutes,content,publishedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,slug,title,url,author,const DeepCollectionEquality().hash(_tags),coverImage,readTimeInMinutes,content,publishedAt);
+}
 
 @override
 String toString() {
-  return 'Post(id: $id, slug: $slug, title: $title, url: $url, author: $author, tags: $tags, coverImage: $coverImage, readTimeInMinutes: $readTimeInMinutes, content: $content, publishedAt: $publishedAt)';
+    return 'Post(id: $id, slug: $slug, title: $title, url: $url, author: $author, tags: $tags, coverImage: $coverImage, readTimeInMinutes: $readTimeInMinutes, content: $content, publishedAt: $publishedAt)';
 }
 
 
