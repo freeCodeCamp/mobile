@@ -70,7 +70,7 @@ class _DownloadManagementListState extends State<DownloadManagementList> {
     return ListView(
       padding: EdgeInsets.fromLTRB(
         18,
-        16,
+        widget.header == null ? 0 : 16,
         18,
         24 + MediaQuery.paddingOf(context).bottom,
       ),
@@ -82,6 +82,7 @@ class _DownloadManagementListState extends State<DownloadManagementList> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
+              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
               onPressed: _removing
                   ? null
                   : () => setState(() {
