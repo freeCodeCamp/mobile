@@ -49,7 +49,12 @@ final Map<String, Style> defaultStyles = {
   'strong': Style(fontWeight: FontWeight.bold),
   'a': Style(textDecoration: TextDecoration.underline),
   'p': Style(fontSize: FontSize(20), margin: Margins.only(top: 8, bottom: 8)),
-  'li': Style(margin: Margins.only(top: 8), lineHeight: const LineHeight(1.5)),
+  'ol': Style(padding: HtmlPaddings.only(inlineStart: 24)),
+  'ul': Style(padding: HtmlPaddings.only(inlineStart: 24)),
+  'li': Style(margin: Margins.only(top: 4), lineHeight: const LineHeight(1.5)),
+  'li p': Style(margin: Margins.zero),
+  'li ol': Style(margin: Margins.zero),
+  'li ul': Style(margin: Margins.zero),
   'td': Style(padding: HtmlPaddings.all(12), fontSize: FontSize.medium),
   'th': Style(padding: HtmlPaddings.all(12)),
   'th strong': Style(fontSize: FontSize.medium),
@@ -58,6 +63,8 @@ final Map<String, Style> defaultStyles = {
   'code': Style(fontFamily: 'monospace', fontSize: FontSize.xLarge),
   'pre': Style(fontFamily: 'monospace'),
 };
+
+final _listTagWhitespace = RegExp(r'\s*(</?(?:ol|ul|li)(?:\s[^>]*)?>)\s*');
 
 class HTMLParser {
   const HTMLParser({Key? key, required this.context});
@@ -72,7 +79,11 @@ class HTMLParser {
     bool outlinedInlineCode = false,
     bool enableTapActions = true,
   }) {
-    final result = parser.parse(html);
+    // Whitespace between list tags becomes inline text nodes that make list
+    // items flow like words and break their spacing.
+    final result = parser.parse(
+      html.replaceAllMapped(_listTagWhitespace, (match) => match[1]!),
+    );
     if (!enableTapActions) {
       // flutter_html gives anchors their own tap recognizer even when its
       // onLinkTap callback is null. In answer choices, the card owns the tap.
