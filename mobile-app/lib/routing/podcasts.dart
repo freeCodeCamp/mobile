@@ -47,8 +47,8 @@ class PodcastDownloadsRoute extends GoRouteData with $PodcastDownloadsRoute {
   const PodcastDownloadsRoute();
 
   @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: PodcastDownloadsView());
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PodcastDownloadsView();
 }
 
 @TypedGoRoute<PodcastEpisodeListRoute>(path: podcastEpisodeListPath)
