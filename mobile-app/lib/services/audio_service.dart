@@ -189,7 +189,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> rewind() => _seekBy(-_skipBackward);
 
   @override
-  Future<void> setSpeed(double speed) => _audioPlayer.setSpeed(speed);
+  Future<void> setSpeed(double speed) async {
+    await _audioPlayer.setSpeed(speed);
+    // just_audio emits no playback event for a speed change alone.
+    playbackState.add(playbackState.value.copyWith(speed: _audioPlayer.speed));
+  }
 
   @override
   Future<void> onTaskRemoved() async {
