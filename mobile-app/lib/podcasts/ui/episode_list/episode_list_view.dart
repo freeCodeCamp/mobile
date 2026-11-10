@@ -51,6 +51,11 @@ class _PodcastEpisodeListViewState
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
+        leading: IconButton(
+          tooltip: 'Back',
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
         title: const Text('Podcast'),
         backgroundColor: colors.surfaceContainerLow,
       ),
