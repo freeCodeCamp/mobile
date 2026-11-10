@@ -9,10 +9,19 @@ import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class PodcastDownloadsView extends ConsumerWidget {
   const PodcastDownloadsView({super.key});
+
+  void _back(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      const AccountRoute().go(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,16 +29,16 @@ class PodcastDownloadsView extends ConsumerWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) const AccountRoute().go(context);
+        if (!didPop) _back(context);
       },
       child: Scaffold(
         extendBody: true,
         appBar: AppBar(
           title: const Text('Downloads'),
           leading: IconButton(
-            tooltip: 'Back to Account',
+            tooltip: 'Back',
             icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => const AccountRoute().go(context),
+            onPressed: () => _back(context),
           ),
         ),
         bottomNavigationBar: const AppNavigationFooter(
