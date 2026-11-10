@@ -226,6 +226,40 @@ class HTMLParser {
       );
     }
 
+    InlineSpan inlineKbd(ExtensionContext child) {
+      final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      // Monospace glyphs look taller than Lato at the same point size.
+      final fontSize =
+          (child.style?.fontSize?.value ?? FontSize.xLarge.value) * 0.9;
+      return WidgetSpan(
+        alignment: PlaceholderAlignment.baseline,
+        baseline: TextBaseline.alphabetic,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+          decoration: BoxDecoration(
+            color: colors.surfaceContainer,
+            border: Border(
+              top: BorderSide(color: colors.outline),
+              left: BorderSide(color: colors.outline),
+              right: BorderSide(color: colors.outline),
+              bottom: BorderSide(color: colors.outline, width: 2),
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            parsed,
+            style: TextStyle(
+              fontFamily: 'monospace',
+              color: colors.onSurface,
+              fontSize: fontSize,
+              letterSpacing: 0,
+              height: 1.25,
+            ),
+          ),
+        ),
+      );
+    }
+
     Html htmlWidget = Html(
       shrinkWrap: true,
       data: child,
@@ -293,6 +327,7 @@ class HTMLParser {
           },
         ),
         TagExtension.inline(tagsToExtend: {'code'}, builder: inlineCode),
+        TagExtension.inline(tagsToExtend: {'kbd'}, builder: inlineKbd),
         if (outlinedInlineCode)
           MatcherExtension.inline(
             matcher: (child) =>
