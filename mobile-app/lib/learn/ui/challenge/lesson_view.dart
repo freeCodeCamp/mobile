@@ -7,7 +7,6 @@ import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_video.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
@@ -126,6 +125,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
     final languageTask =
         challenge.challengeType == 19 &&
         isLanguageSuperBlock(widget.block.superBlock);
+    final hasConfirmations = review || challenge.assignments.isNotEmpty;
     final shortViewport = MediaQuery.sizeOf(context).height < 600;
     final index = widget.block.challenges.indexWhere(
       (c) => c.id == challenge.id,
@@ -167,28 +167,13 @@ class _LessonViewState extends ConsumerState<LessonView> {
           challenge.scene != null)
         SceneTranscript(scene: challenge.scene!, title: challenge.title),
       if (challenge.instructions.isNotEmpty) ParsedHtml(challenge.instructions),
-      if (challenge.assignments.isNotEmpty && !review)
-        ChallengeCard(
-          title: 'Before you continue',
-          child: Column(
-            children: [
-              for (final (i, assignment) in challenge.assignments.indexed)
-                AssignmentTile(
-                  label: assignment,
-                  value: _assignments[i],
-                  onToggle: () =>
-                      setState(() => _assignments[i] = !_assignments[i]),
-                ),
-            ],
-          ),
-        ),
       if (!languageTask && challenge.explanation.isNotEmpty)
         HtmlCard(
           title: 'Explanation',
           html: challenge.explanation,
           collapsible: true,
         ),
-      if (review && shortViewport) ..._reviewConfirmations(),
+      if (hasConfirmations && shortViewport) ..._reviewConfirmations(),
     ];
     final scaffold = Scaffold(
       appBar: challengeAppBar(
@@ -327,7 +312,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
               _questionNavigation(context, current),
               const SizedBox(height: 8),
             ],
-            if (current == null && review && !shortViewport)
+            if (current == null && hasConfirmations && !shortViewport)
               ..._reviewConfirmations(),
             if (current == null && _questions.isNotEmpty)
               ChallengeButton(
