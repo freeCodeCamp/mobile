@@ -136,8 +136,22 @@ class HTMLParser {
       // Backticks in en-US, es, and zh-CN challenges produce this class.
       'span.highlighted-text': Style(backgroundColor: colors.surfaceContainer),
     };
-    Widget inlineCode(ExtensionContext child, {bool copyable = true}) {
+    InlineSpan inlineCode(ExtensionContext child, {bool copyable = true}) {
       final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      // A WidgetSpan is atomic and cannot wrap across lines, so long code
+      // becomes a plain text span that flows with the sentence.
+      if (parsed.length > 24) {
+        return TextSpan(
+          text: parsed,
+          style: TextStyle(
+            fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
+            color: colors.onSurface,
+            backgroundColor: colors.surfaceContainer,
+            fontSize: customStyles['code']?.fontSize?.value ?? 16,
+            letterSpacing: 0,
+          ),
+        );
+      }
       final borderRadius = BorderRadius.circular(outlinedInlineCode ? 4 : 6);
       final pill = Container(
         padding: EdgeInsets.symmetric(horizontal: outlinedInlineCode ? 4 : 3),
@@ -160,25 +174,27 @@ class HTMLParser {
         ),
       );
       if (!copyable) {
-        return pill;
+        return WidgetSpan(child: pill);
       }
-      return InkWell(
-        onTap: !enableTapActions
-            ? null
-            : () {
-                Clipboard.setData(ClipboardData(text: parsed));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Copied to clipboard: $parsed',
-                      style: const TextStyle(fontSize: 20),
+      return WidgetSpan(
+        child: InkWell(
+          onTap: !enableTapActions
+              ? null
+              : () {
+                  Clipboard.setData(ClipboardData(text: parsed));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Copied to clipboard: $parsed',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      duration: const Duration(seconds: 1),
                     ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-        borderRadius: borderRadius,
-        child: pill,
+                  );
+                },
+          borderRadius: borderRadius,
+          child: pill,
+        ),
       );
     }
 
@@ -248,9 +264,9 @@ class HTMLParser {
             return Container();
           },
         ),
-        TagExtension(tagsToExtend: {'code'}, builder: inlineCode),
+        TagExtension.inline(tagsToExtend: {'code'}, builder: inlineCode),
         if (outlinedInlineCode)
-          MatcherExtension(
+          MatcherExtension.inline(
             matcher: (child) =>
                 child.elementName == 'span' &&
                 child.classes.contains('highlighted-text'),
