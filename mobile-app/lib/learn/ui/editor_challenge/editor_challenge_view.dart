@@ -16,8 +16,8 @@ import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmode
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/ui/widgets/resizable_panel.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
 
@@ -50,10 +50,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   ThemeData? _editorTheme;
   TextFieldData? _focused;
   _EditorSheet? _sheet;
-  bool _instructionsExpanded = true;
-  final _instructionBodyKey = GlobalKey();
-  double? _instructionHeight;
-  double? _instructionDragHeight;
+  final _instructionsPanel = ResizablePanelController();
+  final _fileSelectorKey = GlobalKey();
+  double? _selectorHeight;
   double? _panelHeight;
   int _editorLoad = 0;
   int _codeEdit = 0;
@@ -100,9 +99,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
       _sheet = null;
       // A daily challenge switching language keeps its instruction layout.
       if (oldWidget.challenge.id != widget.challenge.id) {
-        _instructionsExpanded = true;
-        _instructionHeight = null;
-        _instructionDragHeight = null;
+        _instructionsPanel.reset();
         _panelHeight = null;
       }
       _modifiedFiles.clear();
@@ -113,6 +110,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   @override
   void dispose() {
     _cancelSubscriptions();
+    _instructionsPanel.dispose();
     super.dispose();
   }
 
@@ -226,7 +224,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     }
     setState(() {
       _sheet = sheet;
-      if (sheet != null) _instructionsExpanded = false;
+      if (sheet != null) {
+        _instructionsPanel.update(expanded: false);
+      }
     });
   }
 
@@ -291,7 +291,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     if (!mounted || widget.challenge != challenge) return;
     setState(() {
       _sheet = null;
-      _instructionsExpanded = true;
+      _instructionsPanel.update(expanded: true);
       _modifiedFiles.clear();
     });
   }
@@ -309,8 +309,27 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
   }
 
+  void _measureFileSelector() {
+    if (!mounted) {
+      return;
+    }
+    final selector = _fileSelectorKey.currentContext?.size?.height;
+    if (selector != _selectorHeight) {
+      setState(() => _selectorHeight = selector);
+    }
+  }
+
+  // Sizes measured after layout avoid a gap; the estimate covers the first frame.
+  double _instructionsMaxHeight(double availableHeight) {
+    final scale = MediaQuery.textScalerOf(context);
+    final selector =
+        _selectorHeight ?? math.max(44.0, scale.scale(16) * 1.5 + 22);
+    return math.max(0.0, availableHeight - selector);
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureFileSelector());
     ref.listen(
       _provider.select((s) => (s.file, s.resetCount)),
       (_, next) => _loadEditor(next.$1),
@@ -346,12 +365,17 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       children: [
                         Column(
                           children: [
-                            _instructions(
-                              math.min(
-                                keyboard > 0 ? 140 : 220,
-                                constraints.maxHeight * .32,
+                            ResizablePanel(
+                              controller: _instructionsPanel,
+                              title: 'Instructions',
+                              summaryHtml: widget.challenge.instructions,
+                              maxHeight: _instructionsMaxHeight(
+                                constraints.maxHeight,
                               ),
-                              _instructionHeightLimit(constraints.maxHeight),
+                              child: InstructionPanel(
+                                key: const ValueKey('editor-instructions-body'),
+                                challenge: widget.challenge,
+                              ),
                             ),
                             _fileSelector(state),
                             Expanded(
@@ -515,175 +539,42 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
   }
 
-  double _instructionHeightLimit(double availableHeight) {
-    final scale = MediaQuery.textScalerOf(context);
-    // Reserve the header, file/language selector and at least 80px of editor.
-    final headerHeight = math.max(44, scale.scale(14) * 1.5 + 22);
-    final selectorHeight = math.max(44, scale.scale(16) * 1.5 + 22);
-    return math.max(
-      0,
-      math.min(
-        availableHeight * .65,
-        availableHeight - headerHeight - selectorHeight - 80,
-      ),
-    );
-  }
-
-  void _finishInstructionDrag(double limit) {
-    final height = _instructionDragHeight;
-    if (height == null) return;
-    setState(() {
-      _instructionsExpanded = height >= math.min(48, limit) && height > 0;
-      if (_instructionsExpanded) _instructionHeight = height;
-      _instructionDragHeight = null;
-    });
-  }
-
-  Widget _instructions(double defaultBodyHeight, double maxBodyHeight) {
-    final colors = Theme.of(context).colorScheme;
-    final customHeight = _instructionDragHeight ?? _instructionHeight;
-    final bodyHeight = (customHeight ?? defaultBodyHeight).clamp(
-      0.0,
-      maxBodyHeight,
-    );
-    final summary =
-        parseFragment(
-          widget.challenge.instructions,
-        ).text?.replaceAll(RegExp(r'\s+'), ' ').trim() ??
-        '';
-    return Material(
-      color: FccDesignColors.of(context).editorHighlight,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onVerticalDragStart: (_) {
-              _instructionDragHeight = _instructionsExpanded
-                  ? _instructionBodyKey.currentContext?.size?.height ??
-                        bodyHeight
-                  : 0;
-            },
-            onVerticalDragUpdate: (details) => setState(() {
-              _instructionDragHeight =
-                  ((_instructionDragHeight ?? 0) + details.delta.dy).clamp(
-                    0.0,
-                    maxBodyHeight,
-                  );
-              _instructionsExpanded = _instructionDragHeight! > 0;
-            }),
-            onVerticalDragEnd: (_) => _finishInstructionDrag(maxBodyHeight),
-            onVerticalDragCancel: () => _finishInstructionDrag(maxBodyHeight),
-            child: InkWell(
-              key: const ValueKey('editor-instructions-toggle'),
-              onTap: () => setState(
-                () => _instructionsExpanded = !_instructionsExpanded,
-              ),
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 44),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.symmetric(
-                    horizontal: BorderSide(color: colors.outlineVariant),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.menu_book_outlined,
-                      size: 18,
-                      color: colors.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        _instructionsExpanded || summary.isEmpty
-                            ? 'Instructions'
-                            : summary,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: _instructionsExpanded
-                              ? FontWeight.w700
-                              : FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _instructionsExpanded ? 'Hide' : 'Show',
-                      style: TextStyle(
-                        color: FccDesignColors.of(context).accentText,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      _instructionsExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: colors.primary,
-                      size: 18,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          if (_instructionsExpanded)
-            ConstrainedBox(
-              key: _instructionBodyKey,
-              constraints: BoxConstraints(
-                minHeight: customHeight == null ? 0 : bodyHeight,
-                maxHeight: bodyHeight,
-              ),
-              child: InstructionPanel(
-                key: const ValueKey('editor-instructions-body'),
-                challenge: widget.challenge,
-                block: widget.block,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget _fileSelector(EditorChallengeState state) {
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final shadow = theme.colorScheme.shadow;
     return Stack(
+      key: _fileSelectorKey,
       children: [
         widget.selector ?? _fileTabs(state),
         // Paint after the opaque tabs so the instruction panel's shadow is visible.
-        if (_instructionsExpanded)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 20,
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0, .5, 1],
-                    colors: [
-                      shadow.withValues(alpha: dark ? .28 : .12),
-                      shadow.withValues(alpha: dark ? .08 : .035),
-                      shadow.withValues(alpha: 0),
-                    ],
+        ListenableBuilder(
+          listenable: _instructionsPanel,
+          builder: (context, _) => _instructionsPanel.expanded
+              ? Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 20,
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [0, .5, 1],
+                          colors: [
+                            shadow.withValues(alpha: dark ? .28 : .12),
+                            shadow.withValues(alpha: dark ? .08 : .035),
+                            shadow.withValues(alpha: 0),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }

@@ -12,10 +12,9 @@ import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 
 class InstructionPanel extends StatelessWidget {
-  const InstructionPanel({super.key, required this.challenge, this.block});
+  const InstructionPanel({super.key, required this.challenge});
 
   final Challenge challenge;
-  final Block? block;
 
   @override
   Widget build(BuildContext context) => SingleChildScrollView(

@@ -113,19 +113,11 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
           builder: (context, constraints) => Column(
             children: [
               if (challenge.description.isNotEmpty)
-                AnimatedSize(
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  alignment: Alignment.topCenter,
-                  child: exercise
-                      ? const SizedBox(width: double.infinity)
-                      : DescriptionPanel(
-                          key: ValueKey(challenge.id),
-                          html: challenge.description,
-                          availableHeight: constraints.maxHeight,
-                        ),
+                DescriptionPanel(
+                  key: ValueKey(challenge.id),
+                  html: challenge.description,
+                  availableHeight: constraints.maxHeight,
+                  visible: !exercise,
                 ),
               Expanded(
                 child: ListView(

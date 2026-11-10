@@ -243,19 +243,11 @@ class _LessonViewState extends ConsumerState<LessonView> {
               if (current == null && review && _review.topicCount > 0)
                 ReviewTopics(controller: _review),
               if (languageTask && challenge.description.isNotEmpty)
-                AnimatedSize(
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  alignment: Alignment.topCenter,
-                  child: current == null
-                      ? DescriptionPanel(
-                          key: ValueKey(challenge.id),
-                          html: challenge.description,
-                          availableHeight: constraints.maxHeight,
-                        )
-                      : const SizedBox(width: double.infinity),
+                DescriptionPanel(
+                  key: ValueKey(challenge.id),
+                  html: challenge.description,
+                  availableHeight: constraints.maxHeight,
+                  visible: current == null,
                 ),
               Expanded(
                 child: ListView(
