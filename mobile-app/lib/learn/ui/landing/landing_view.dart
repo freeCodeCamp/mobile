@@ -55,7 +55,7 @@ class LearnLandingView extends ConsumerWidget {
               const DailyChallengeCard(),
               ...switch (stages) {
                 AsyncData(:final value) => [
-                  for (final stage in value) ..._stage(context, ref, stage),
+                  for (final stage in value) ..._stage(context, stage),
                 ],
                 AsyncError() => [
                   Padding(
@@ -77,13 +77,7 @@ class LearnLandingView extends ConsumerWidget {
     );
   }
 
-  List<Widget> _stage(
-    BuildContext context,
-    WidgetRef ref,
-    CurriculumStage stage,
-  ) {
-    final returning =
-        ref.watch(learningResumeProvider).value?.isReturning ?? false;
+  List<Widget> _stage(BuildContext context, CurriculumStage stage) {
     return [
       const SizedBox(height: 24),
       Text(
@@ -111,10 +105,6 @@ class LearnLandingView extends ConsumerWidget {
                     ? 'Temporarily unavailable'
                     : !superBlock.isPublic
                     ? 'Opens freecodecamp.org'
-                    : superBlock.dashedName.contains('responsive-web-design')
-                    ? returning
-                          ? 'In progress'
-                          : 'Start here'
                     : null,
                 isExternal:
                     !superBlock.isPublic && !superBlock.isDisabledByOverride,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:freecodecamp/fcc_theme.dart';
 
 class SuperBlockButton extends StatelessWidget {
   const SuperBlockButton({
@@ -67,11 +66,7 @@ class SuperBlockButton extends StatelessWidget {
                       subtitle ?? 'Not available in the app',
                       style: TextStyle(
                         fontSize: 13,
-                        color:
-                            subtitle == 'Start here' ||
-                                subtitle == 'In progress'
-                            ? FccDesignColors.of(context).accentText
-                            : colors.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
