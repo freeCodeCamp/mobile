@@ -46,6 +46,7 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
       ),
     );
     return Scaffold(
+      extendBody: true,
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.learn,
       ),
@@ -75,33 +76,50 @@ class _SuperBlockViewState extends ConsumerState<SuperBlockView> {
           ),
         ),
       ),
-      body: superBlock.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => ErrorRetry(
-          message: 'Something went wrong!',
-          onRetry: () => ref.invalidate(provider),
-        ),
-        data: (superBlock) => RefreshIndicator(
-          onRefresh: () =>
-              ref.refresh(provider.future).then((_) {}, onError: (_) {}),
-          child: switch (superBlock) {
-            BlockSuperBlock(:final blocks) => BlockList(
-              blocks: blocks,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-              header: _CourseHero(
-                title: title ?? 'Course',
-                blocks: [
-                  for (final b in blocks)
-                    if (b.label != BlockLabel.exam) b,
-                ],
+      body: Builder(
+        builder: (context) => superBlock.when(
+          loading: () => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          ),
+          error: (error, stack) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
+            child: ErrorRetry(
+              message: 'Something went wrong!',
+              onRetry: () => ref.invalidate(provider),
+            ),
+          ),
+          data: (superBlock) => RefreshIndicator(
+            onRefresh: () =>
+                ref.refresh(provider.future).then((_) {}, onError: (_) {}),
+            child: switch (superBlock) {
+              BlockSuperBlock(:final blocks) => BlockList(
+                blocks: blocks,
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  8,
+                  16,
+                  32 + MediaQuery.paddingOf(context).bottom,
+                ),
+                header: _CourseHero(
+                  title: title ?? 'Course',
+                  blocks: [
+                    for (final b in blocks)
+                      if (b.label != BlockLabel.exam) b,
+                  ],
+                ),
               ),
-            ),
-            ChapterSuperBlock(:final chapters) => _Chapters(
-              title: title ?? 'Course',
-              superBlock: widget.dashedName,
-              chapters: chapters,
-            ),
-          },
+              ChapterSuperBlock(:final chapters) => _Chapters(
+                title: title ?? 'Course',
+                superBlock: widget.dashedName,
+                chapters: chapters,
+              ),
+            },
+          ),
         ),
       ),
     );
@@ -154,7 +172,12 @@ class _Chapters extends ConsumerWidget {
     );
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        32 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         _CourseHero(title: title, blocks: blocks, chapters: this.chapters),
         if (chapters.isEmpty)

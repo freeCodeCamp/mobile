@@ -36,6 +36,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
         if (!didPop && preview) setState(() => _preview = false);
       },
       child: Scaffold(
+        extendBody: true,
         appBar: AppBar(
           leading: BackButton(
             onPressed: () {
@@ -63,16 +64,23 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
         ),
         body: SafeArea(
           top: false,
+          bottom: false,
           child: Align(
             alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 640),
               child: auth.isLoading && user == null
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const SafeArea(
+                      top: false,
+                      child: Center(child: CircularProgressIndicator()),
+                    )
                   : auth.hasError || refresh.hasError
-                  ? ErrorRetry(
-                      message: 'Unable to load your profile.',
-                      onRetry: () => ref.invalidate(profileRefreshProvider),
+                  ? SafeArea(
+                      top: false,
+                      child: ErrorRetry(
+                        message: 'Unable to load your profile.',
+                        onRetry: () => ref.invalidate(profileRefreshProvider),
+                      ),
                     )
                   : user == null
                   ? const _GuestProfile()
@@ -120,7 +128,12 @@ class _PrivateProfile extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      padding: EdgeInsets.fromLTRB(
+        32,
+        24,
+        32,
+        24 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         Center(
           child: Container(
@@ -322,7 +335,12 @@ class _GuestProfile extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        16 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         _Section(
           child: Column(
@@ -402,7 +420,12 @@ class _ProfileBody extends ConsumerWidget {
       ],
     ];
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        32 + MediaQuery.paddingOf(context).bottom,
+      ),
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
         if (!preview && visibility.isLocked) ...[

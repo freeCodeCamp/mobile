@@ -100,6 +100,22 @@ class PodcastLibraryService {
     return _files.episodeSize(podcastId, episodeId);
   }
 
+  Future<int?> downloadedPodcastSize(
+    String podcastId,
+    Iterable<String> episodeIds,
+  ) async {
+    final ids = episodeIds.toSet();
+    if (ids.isEmpty) return null;
+
+    var total = 0;
+    for (final episodeId in ids) {
+      final bytes = await downloadedSize(podcastId, episodeId);
+      if (bytes == null) return null;
+      total += bytes;
+    }
+    return total;
+  }
+
   Future<void> removeEpisode(String podcastId, String episodeId) async {
     final podcastEmptied = await _repo.removeEpisode(
       podcastId: podcastId,

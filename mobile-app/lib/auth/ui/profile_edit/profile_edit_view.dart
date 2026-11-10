@@ -104,11 +104,17 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
         isDirty: false,
         onSave: null,
         child: auth.isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const SafeArea(
+                top: false,
+                child: Center(child: CircularProgressIndicator()),
+              )
             : auth.hasError
-            ? ErrorRetry(
-                message: 'Unable to load your profile.',
-                onRetry: () => ref.invalidate(authProvider),
+            ? SafeArea(
+                top: false,
+                child: ErrorRetry(
+                  message: 'Unable to load your profile.',
+                  onRetry: () => ref.invalidate(authProvider),
+                ),
               )
             : ListView(
                 padding: const EdgeInsets.all(16),
@@ -119,6 +125,12 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
                   FilledButton(
                     onPressed: () => const LoginRoute().push<void>(context),
                     child: const Text('Sign in'),
+                  ),
+                  const SafeArea(
+                    top: false,
+                    left: false,
+                    right: false,
+                    child: SizedBox.shrink(),
                   ),
                 ],
               ),
@@ -304,6 +316,12 @@ class _ProfileEditViewState extends ConsumerState<ProfileEditView> {
                 onPressed: enabled
                     ? () => const ProfileExperienceRoute().push<void>(context)
                     : null,
+              ),
+              const SafeArea(
+                top: false,
+                left: false,
+                right: false,
+                child: SizedBox.shrink(),
               ),
             ],
           ),
