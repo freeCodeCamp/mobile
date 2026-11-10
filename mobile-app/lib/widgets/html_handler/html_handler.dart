@@ -39,9 +39,9 @@ final Map<String, Style> defaultStyles = {
     margin: Margins.only(left: 2, top: 32, right: 2),
     fontSize: FontSize.large,
   ),
-  '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-    fontSize: FontSize.xLarge,
-  ),
+  // highlighted-text is excluded so it inherits its parent's size.
+  '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.highlighted-text)':
+      Style(fontSize: FontSize.xLarge),
   'body': Style(
     fontFamily: 'Lato',
     padding: HtmlPaddings.only(left: 4, right: 4),
@@ -147,18 +147,29 @@ class HTMLParser {
       // Backticks in en-US, es, and zh-CN challenges produce this class.
       'span.highlighted-text': Style(backgroundColor: colors.surfaceContainer),
     };
-    InlineSpan inlineCode(ExtensionContext child, {bool copyable = true}) {
+    InlineSpan inlineCode(
+      ExtensionContext child, {
+      bool copyable = true,
+      bool monospace = true,
+    }) {
       final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      final fontFamily = monospace
+          ? customStyles['code']?.fontFamily ?? 'monospace'
+          : 'Lato';
+      final fontSize = monospace
+          ? customStyles['code']?.fontSize?.value ?? 16
+          : child.style?.fontSize?.value ?? FontSize.xLarge.value;
       // A WidgetSpan is atomic and cannot wrap across lines, so long code
-      // becomes a plain text span that flows with the sentence.
-      if (parsed.length > 24) {
+      // becomes a plain text span that flows with the sentence. Highlighted
+      // sentences get a higher limit so they keep the pill look.
+      if (parsed.length > (monospace ? 24 : 60)) {
         return TextSpan(
           text: parsed,
           style: TextStyle(
-            fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
+            fontFamily: fontFamily,
             color: colors.onSurface,
             backgroundColor: colors.surfaceContainer,
-            fontSize: customStyles['code']?.fontSize?.value ?? 16,
+            fontSize: fontSize,
             letterSpacing: 0,
           ),
         );
@@ -176,18 +187,24 @@ class HTMLParser {
         child: Text(
           parsed,
           style: TextStyle(
-            fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
+            fontFamily: fontFamily,
             color: colors.onSurface,
-            fontSize: customStyles['code']?.fontSize?.value ?? 16,
+            fontSize: fontSize,
             letterSpacing: 0,
             height: 1.25,
           ),
         ),
       );
       if (!copyable) {
-        return WidgetSpan(child: pill);
+        return WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: pill,
+        );
       }
       return WidgetSpan(
+        alignment: PlaceholderAlignment.baseline,
+        baseline: TextBaseline.alphabetic,
         child: InkWell(
           onTap: !enableTapActions
               ? null
@@ -281,7 +298,8 @@ class HTMLParser {
             matcher: (child) =>
                 child.elementName == 'span' &&
                 child.classes.contains('highlighted-text'),
-            builder: (child) => inlineCode(child, copyable: false),
+            builder: (child) =>
+                inlineCode(child, copyable: false, monospace: false),
           ),
         TagExtension(
           tagsToExtend: {'img'},
