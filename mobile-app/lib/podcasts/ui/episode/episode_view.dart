@@ -46,17 +46,13 @@ class _PodcastEpisodeViewState extends State<PodcastEpisodeView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          tooltip: 'Close player',
-          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+          tooltip: 'Back',
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(
           widget.podcast.title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: colors.onSurfaceVariant,
-          ),
+          style: TextStyle(color: colors.onSurfaceVariant),
         ),
         centerTitle: true,
         actions: const [SizedBox(width: kToolbarHeight)],
