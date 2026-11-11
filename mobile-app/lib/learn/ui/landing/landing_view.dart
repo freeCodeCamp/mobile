@@ -35,6 +35,7 @@ class LearnLandingView extends ConsumerWidget {
         .where((s) => s.isPublic)
         .firstOrNull;
     return Scaffold(
+      extendBody: true,
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.learn,
       ),
@@ -43,34 +44,41 @@ class LearnLandingView extends ConsumerWidget {
         title: const AppPageTitle('Courses'),
         toolbarHeight: AppPageTitle.toolbarHeight(context),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => _refresh(ref),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (first != null) _ResumeCard(course: first),
-              const DailyChallengeCard(),
-              ...switch (stages) {
-                AsyncData(:final value) => [
-                  for (final stage in value) ..._stage(context, stage),
-                ],
-                AsyncError() => [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32),
-                    child: ErrorRetry(
-                      margin: EdgeInsets.zero,
-                      message:
-                          'Could not load the curriculum. Please try again.',
-                      onRetry: () => _refresh(ref),
+      body: Builder(
+        builder: (context) => RefreshIndicator(
+          onRefresh: () => _refresh(ref),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              16,
+              8,
+              16,
+              32 + MediaQuery.paddingOf(context).bottom,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (first != null) _ResumeCard(course: first),
+                const DailyChallengeCard(),
+                ...switch (stages) {
+                  AsyncData(:final value) => [
+                    for (final stage in value) ..._stage(context, stage),
+                  ],
+                  AsyncError() => [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: ErrorRetry(
+                        margin: EdgeInsets.zero,
+                        message:
+                            'Could not load the curriculum. Please try again.',
+                        onRetry: () => _refresh(ref),
+                      ),
                     ),
-                  ),
-                ],
-                _ => [const CoursesSkeleton()],
-              },
-            ],
+                  ],
+                  _ => [const CoursesSkeleton()],
+                },
+              ],
+            ),
           ),
         ),
       ),

@@ -11,6 +11,6 @@ class CodeRadioRoute extends GoRouteData with $CodeRadioRoute {
   const CodeRadioRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const CodeRadioPlayerView();
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      NoTransitionPage(key: state.pageKey, child: const CodeRadioPlayerView());
 }

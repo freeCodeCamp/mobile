@@ -13,6 +13,12 @@ class SegmentedTabs<T> extends StatelessWidget {
     this.fontSize = 15,
     this.selectedWeight = FontWeight.w900,
     this.unselectedWeight = FontWeight.w700,
+    this.backgroundColor,
+    this.borderColor,
+    this.selectedBackgroundColor,
+    this.selectedBorderColor,
+    this.selectedForegroundColor,
+    this.unselectedForegroundColor,
   });
 
   final List<SegmentedTab<T>> tabs;
@@ -22,6 +28,12 @@ class SegmentedTabs<T> extends StatelessWidget {
   final double fontSize;
   final FontWeight selectedWeight;
   final FontWeight unselectedWeight;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? selectedBackgroundColor;
+  final Color? selectedBorderColor;
+  final Color? selectedForegroundColor;
+  final Color? unselectedForegroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +42,8 @@ class SegmentedTabs<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
-        color: colors.surface,
-        border: Border.all(color: colors.outlineVariant),
+        color: backgroundColor ?? colors.surface,
+        border: Border.all(color: borderColor ?? colors.outlineVariant),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -47,7 +59,12 @@ class SegmentedTabs<T> extends StatelessWidget {
                     : () {
                         if (tab.value != selected) onSelected!(tab.value);
                       },
-                accent: design.accentText,
+                accent: selectedBorderColor ?? design.accentText,
+                selectedBackground:
+                    selectedBackgroundColor ?? colors.primaryContainer,
+                selectedForeground: selectedForegroundColor ?? colors.onSurface,
+                unselectedForeground:
+                    unselectedForegroundColor ?? colors.onSurfaceVariant,
                 fontFamily: fontFamily,
                 fontSize: fontSize,
                 selectedWeight: selectedWeight,
@@ -67,6 +84,9 @@ class _Segment extends StatefulWidget {
     required this.isSelected,
     required this.onTap,
     required this.accent,
+    required this.selectedBackground,
+    required this.selectedForeground,
+    required this.unselectedForeground,
     required this.fontFamily,
     required this.fontSize,
     required this.selectedWeight,
@@ -78,6 +98,9 @@ class _Segment extends StatefulWidget {
   final bool isSelected;
   final VoidCallback? onTap;
   final Color accent;
+  final Color selectedBackground;
+  final Color selectedForeground;
+  final Color unselectedForeground;
   final String fontFamily;
   final double fontSize;
   final FontWeight selectedWeight;
@@ -97,8 +120,8 @@ class _SegmentState extends State<_Segment> {
     final foreground = !enabled
         ? colors.outline
         : widget.isSelected
-        ? colors.onSurface
-        : colors.onSurfaceVariant;
+        ? widget.selectedForeground
+        : widget.unselectedForeground;
     final shape = FccTheme.focusShape(context, radius: 8)
         .resolve({
           if (_focused) WidgetState.focused,
@@ -132,7 +155,7 @@ class _SegmentState extends State<_Segment> {
                 color: !enabled
                     ? colors.surfaceContainer
                     : widget.isSelected
-                    ? colors.primaryContainer
+                    ? widget.selectedBackground
                     : Colors.transparent,
                 shape: shape,
                 child: ConstrainedBox(

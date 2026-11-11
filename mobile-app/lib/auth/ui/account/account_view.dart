@@ -51,6 +51,7 @@ class _AccountViewState extends ConsumerState<AccountView> {
     final user = auth.value;
     final theme = Theme.of(context);
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const AppPageTitle('Account'),
@@ -61,51 +62,59 @@ class _AccountViewState extends ConsumerState<AccountView> {
       ),
       body: SafeArea(
         top: false,
+        bottom: false,
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
             child: RefreshIndicator(
               onRefresh: () => ref.refresh(profileRefreshProvider.future),
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  if (user != null) _AccountHeader(user: user),
-                  if (user == null && auth.isLoading)
-                    const Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(32),
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    )
-                  else if (user == null && !auth.hasError)
-                    const _GuestAccount(),
-                  if (auth.hasError || refresh.hasError) ...[
-                    if (user != null) const SizedBox(height: 12),
-                    ErrorRetry(
-                      margin: EdgeInsets.zero,
-                      message: 'Unable to refresh your account.',
-                      onRetry: () => ref.invalidate(profileRefreshProvider),
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                  const _AccountLinks(),
-                  if (user != null) ...[
-                    const SizedBox(height: 16),
-                    OutlinedButton(
-                      style: FccTheme.dangerOutlineStyle(context),
-                      onPressed: _signingOut ? null : _signOut,
-                      child: Text(_signingOut ? 'Logging out…' : 'Log out'),
-                    ),
-                  ],
-                  const SizedBox(height: 18),
-                  Text(
-                    'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) charity.',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+              child: Builder(
+                builder: (context) => ListView(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    12,
+                    16,
+                    32 + MediaQuery.paddingOf(context).bottom,
                   ),
-                ],
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    if (user != null) _AccountHeader(user: user),
+                    if (user == null && auth.isLoading)
+                      const Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(32),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      )
+                    else if (user == null && !auth.hasError)
+                      const _GuestAccount(),
+                    if (auth.hasError || refresh.hasError) ...[
+                      if (user != null) const SizedBox(height: 12),
+                      ErrorRetry(
+                        margin: EdgeInsets.zero,
+                        message: 'Unable to refresh your account.',
+                        onRetry: () => ref.invalidate(profileRefreshProvider),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    const _AccountLinks(),
+                    if (user != null) ...[
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                        style: FccTheme.dangerOutlineStyle(context),
+                        onPressed: _signingOut ? null : _signOut,
+                        child: Text(_signingOut ? 'Logging out…' : 'Log out'),
+                      ),
+                    ],
+                    const SizedBox(height: 18),
+                    Text(
+                      'freeCodeCamp is a donor-supported tax-exempt 501(c)(3) charity.',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

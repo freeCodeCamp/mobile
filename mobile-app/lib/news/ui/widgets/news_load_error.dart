@@ -12,10 +12,19 @@ class NewsLoadError extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) => SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        24 + MediaQuery.paddingOf(context).bottom,
+      ),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: (constraints.maxHeight - 48).clamp(0, double.infinity),
+          minHeight:
+              (constraints.maxHeight -
+                      48 -
+                      MediaQuery.paddingOf(context).bottom)
+                  .clamp(0, double.infinity),
         ),
         child: Center(
           child: Column(

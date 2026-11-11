@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'login_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'login_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $LoginStateCopyWith<LoginState> get copyWith => _$LoginStateCopyWithImpl<LoginSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.showOtpField, showOtpField) || other.showOtpField == showOtpField)&&(identical(other.incorrectOtp, incorrectOtp) || other.incorrectOtp == incorrectOtp)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  final _this = this as LoginState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.showOtpField, _this.showOtpField) || other.showOtpField == _this.showOtpField)&&(identical(other.incorrectOtp, _this.incorrectOtp) || other.incorrectOtp == _this.incorrectOtp)&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,showOtpField,incorrectOtp,isLoading);
+int get hashCode {
+  final _this = this as LoginState;
+  return Object.hash(runtimeType,_this.showOtpField,_this.incorrectOtp,_this.isLoading);
+}
 
 @override
 String toString() {
-  return 'LoginState(showOtpField: $showOtpField, incorrectOtp: $incorrectOtp, isLoading: $isLoading)';
+  final _this = this as LoginState;
+  return 'LoginState(showOtpField: ${_this.showOtpField}, incorrectOtp: ${_this.incorrectOtp}, isLoading: ${_this.isLoading})';
 }
 
 
@@ -63,7 +69,7 @@ class _$LoginStateCopyWithImpl<$Res>
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? showOtpField = null,Object? incorrectOtp = null,Object? isLoading = null,}) {
-  return _then(_self.copyWith(
+  return _then(LoginState(
 showOtpField: null == showOtpField ? _self.showOtpField : showOtpField // ignore: cast_nullable_to_non_nullable
 as bool,incorrectOtp: null == incorrectOtp ? _self.incorrectOtp : incorrectOtp // ignore: cast_nullable_to_non_nullable
 as bool,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$LoginStateCopyWith<_LoginState> get copyWith => __$LoginStateCopyWithImpl<_Log
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.showOtpField, showOtpField) || other.showOtpField == showOtpField)&&(identical(other.incorrectOtp, incorrectOtp) || other.incorrectOtp == incorrectOtp)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.showOtpField, showOtpField) || other.showOtpField == showOtpField)&&(identical(other.incorrectOtp, incorrectOtp) || other.incorrectOtp == incorrectOtp)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,showOtpField,incorrectOtp,isLoading);
+int get hashCode {
+    return Object.hash(runtimeType,showOtpField,incorrectOtp,isLoading);
+}
 
 @override
 String toString() {
-  return 'LoginState(showOtpField: $showOtpField, incorrectOtp: $incorrectOtp, isLoading: $isLoading)';
+    return 'LoginState(showOtpField: $showOtpField, incorrectOtp: $incorrectOtp, isLoading: $isLoading)';
 }
 
 

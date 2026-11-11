@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'challenge_model.dart';
@@ -9,6 +9,7 @@ part of 'challenge_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ChallengeCopyWith<Challenge> get copyWith => _$ChallengeCopyWithImpl<Challenge>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Challenge&&(identical(other.id, id) || other.id == id)&&(identical(other.block, block) || other.block == block)&&(identical(other.superBlock, superBlock) || other.superBlock == superBlock)&&(identical(other.title, title) || other.title == title)&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.challengeType, challengeType) || other.challengeType == challengeType)&&(identical(other.helpCategory, helpCategory) || other.helpCategory == helpCategory)&&(identical(other.description, description) || other.description == description)&&(identical(other.instructions, instructions) || other.instructions == instructions)&&(identical(other.explanation, explanation) || other.explanation == explanation)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&const DeepCollectionEquality().equals(other.questions, questions)&&const DeepCollectionEquality().equals(other.assignments, assignments)&&const DeepCollectionEquality().equals(other.quizzes, quizzes)&&const DeepCollectionEquality().equals(other.nodules, nodules)&&(identical(other.fillInTheBlank, fillInTheBlank) || other.fillInTheBlank == fillInTheBlank)&&(identical(other.scene, scene) || other.scene == scene)&&const DeepCollectionEquality().equals(other.tests, tests)&&const DeepCollectionEquality().equals(other.challengeFiles, challengeFiles)&&(identical(other.hooks, hooks) || other.hooks == hooks));
+  final _this = this as Challenge;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Challenge&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.block, _this.block) || other.block == _this.block)&&(identical(other.superBlock, _this.superBlock) || other.superBlock == _this.superBlock)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.dashedName, _this.dashedName) || other.dashedName == _this.dashedName)&&(identical(other.challengeType, _this.challengeType) || other.challengeType == _this.challengeType)&&(identical(other.helpCategory, _this.helpCategory) || other.helpCategory == _this.helpCategory)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.instructions, _this.instructions) || other.instructions == _this.instructions)&&(identical(other.explanation, _this.explanation) || other.explanation == _this.explanation)&&(identical(other.transcript, _this.transcript) || other.transcript == _this.transcript)&&(identical(other.videoId, _this.videoId) || other.videoId == _this.videoId)&&const DeepCollectionEquality().equals(other.questions, _this.questions)&&const DeepCollectionEquality().equals(other.assignments, _this.assignments)&&const DeepCollectionEquality().equals(other.quizzes, _this.quizzes)&&const DeepCollectionEquality().equals(other.nodules, _this.nodules)&&(identical(other.fillInTheBlank, _this.fillInTheBlank) || other.fillInTheBlank == _this.fillInTheBlank)&&(identical(other.scene, _this.scene) || other.scene == _this.scene)&&const DeepCollectionEquality().equals(other.tests, _this.tests)&&const DeepCollectionEquality().equals(other.challengeFiles, _this.challengeFiles)&&(identical(other.hooks, _this.hooks) || other.hooks == _this.hooks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,block,superBlock,title,dashedName,challengeType,helpCategory,description,instructions,explanation,transcript,videoId,const DeepCollectionEquality().hash(questions),const DeepCollectionEquality().hash(assignments),const DeepCollectionEquality().hash(quizzes),const DeepCollectionEquality().hash(nodules),fillInTheBlank,scene,const DeepCollectionEquality().hash(tests),const DeepCollectionEquality().hash(challengeFiles),hooks]);
+int get hashCode {
+  final _this = this as Challenge;
+  return Object.hashAll([runtimeType,_this.id,_this.block,_this.superBlock,_this.title,_this.dashedName,_this.challengeType,_this.helpCategory,_this.description,_this.instructions,_this.explanation,_this.transcript,_this.videoId,const DeepCollectionEquality().hash(_this.questions),const DeepCollectionEquality().hash(_this.assignments),const DeepCollectionEquality().hash(_this.quizzes),const DeepCollectionEquality().hash(_this.nodules),_this.fillInTheBlank,_this.scene,const DeepCollectionEquality().hash(_this.tests),const DeepCollectionEquality().hash(_this.challengeFiles),_this.hooks]);
+}
 
 @override
 String toString() {
-  return 'Challenge(id: $id, block: $block, superBlock: $superBlock, title: $title, dashedName: $dashedName, challengeType: $challengeType, helpCategory: $helpCategory, description: $description, instructions: $instructions, explanation: $explanation, transcript: $transcript, videoId: $videoId, questions: $questions, assignments: $assignments, quizzes: $quizzes, nodules: $nodules, fillInTheBlank: $fillInTheBlank, scene: $scene, tests: $tests, challengeFiles: $challengeFiles, hooks: $hooks)';
+  final _this = this as Challenge;
+  return 'Challenge(id: ${_this.id}, block: ${_this.block}, superBlock: ${_this.superBlock}, title: ${_this.title}, dashedName: ${_this.dashedName}, challengeType: ${_this.challengeType}, helpCategory: ${_this.helpCategory}, description: ${_this.description}, instructions: ${_this.instructions}, explanation: ${_this.explanation}, transcript: ${_this.transcript}, videoId: ${_this.videoId}, questions: ${_this.questions}, assignments: ${_this.assignments}, quizzes: ${_this.quizzes}, nodules: ${_this.nodules}, fillInTheBlank: ${_this.fillInTheBlank}, scene: ${_this.scene}, tests: ${_this.tests}, challengeFiles: ${_this.challengeFiles}, hooks: ${_this.hooks})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ChallengeCopyWithImpl<$Res>
 /// Create a copy of Challenge
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? block = null,Object? superBlock = null,Object? title = null,Object? dashedName = null,Object? challengeType = null,Object? helpCategory = null,Object? description = null,Object? instructions = null,Object? explanation = null,Object? transcript = null,Object? videoId = freezed,Object? questions = null,Object? assignments = null,Object? quizzes = null,Object? nodules = null,Object? fillInTheBlank = freezed,Object? scene = freezed,Object? tests = null,Object? challengeFiles = null,Object? hooks = null,}) {
-  return _then(_self.copyWith(
+  return _then(Challenge(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,block: null == block ? _self.block : block // ignore: cast_nullable_to_non_nullable
 as String,superBlock: null == superBlock ? _self.superBlock : superBlock // ignore: cast_nullable_to_non_nullable
@@ -262,7 +268,7 @@ return $default(_that.id,_that.block,_that.superBlock,_that.title,_that.dashedNa
 @JsonSerializable()
 
 class _Challenge implements Challenge {
-  const _Challenge({required this.id, required this.block, required this.superBlock, required this.title, required this.dashedName, required this.challengeType, this.helpCategory = '', this.description = '', this.instructions = '', this.explanation = '', this.transcript = '', this.videoId, final  List<Question> questions = const [], final  List<String> assignments = const [], final  List<Quiz> quizzes = const [], final  List<Nodule> nodules = const [], this.fillInTheBlank, this.scene, final  List<ChallengeTest> tests = const [], final  List<ChallengeFile> challengeFiles = const [], this.hooks = const Hooks()}): _questions = questions,_assignments = assignments,_quizzes = quizzes,_nodules = nodules,_tests = tests,_challengeFiles = challengeFiles;
+  const _Challenge({required this.id, required this.block, required this.superBlock, required this.title, required this.dashedName, required this.challengeType, this.helpCategory = '', this.description = '', this.instructions = '', this.explanation = '', this.transcript = '', this.videoId,  List<Question> questions = const [],  List<String> assignments = const [],  List<Quiz> quizzes = const [],  List<Nodule> nodules = const [], this.fillInTheBlank, this.scene,  List<ChallengeTest> tests = const [],  List<ChallengeFile> challengeFiles = const [], this.hooks = const Hooks()}): _questions = questions,_assignments = assignments,_quizzes = quizzes,_nodules = nodules,_tests = tests,_challengeFiles = challengeFiles;
   factory _Challenge.fromJson(Map<String, dynamic> json) => _$ChallengeFromJson(json);
 
 @override final  String id;
@@ -336,16 +342,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Challenge&&(identical(other.id, id) || other.id == id)&&(identical(other.block, block) || other.block == block)&&(identical(other.superBlock, superBlock) || other.superBlock == superBlock)&&(identical(other.title, title) || other.title == title)&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.challengeType, challengeType) || other.challengeType == challengeType)&&(identical(other.helpCategory, helpCategory) || other.helpCategory == helpCategory)&&(identical(other.description, description) || other.description == description)&&(identical(other.instructions, instructions) || other.instructions == instructions)&&(identical(other.explanation, explanation) || other.explanation == explanation)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&const DeepCollectionEquality().equals(other._questions, _questions)&&const DeepCollectionEquality().equals(other._assignments, _assignments)&&const DeepCollectionEquality().equals(other._quizzes, _quizzes)&&const DeepCollectionEquality().equals(other._nodules, _nodules)&&(identical(other.fillInTheBlank, fillInTheBlank) || other.fillInTheBlank == fillInTheBlank)&&(identical(other.scene, scene) || other.scene == scene)&&const DeepCollectionEquality().equals(other._tests, _tests)&&const DeepCollectionEquality().equals(other._challengeFiles, _challengeFiles)&&(identical(other.hooks, hooks) || other.hooks == hooks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Challenge&&(identical(other.id, id) || other.id == id)&&(identical(other.block, block) || other.block == block)&&(identical(other.superBlock, superBlock) || other.superBlock == superBlock)&&(identical(other.title, title) || other.title == title)&&(identical(other.dashedName, dashedName) || other.dashedName == dashedName)&&(identical(other.challengeType, challengeType) || other.challengeType == challengeType)&&(identical(other.helpCategory, helpCategory) || other.helpCategory == helpCategory)&&(identical(other.description, description) || other.description == description)&&(identical(other.instructions, instructions) || other.instructions == instructions)&&(identical(other.explanation, explanation) || other.explanation == explanation)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.videoId, videoId) || other.videoId == videoId)&&const DeepCollectionEquality().equals(other.questions, _questions)&&const DeepCollectionEquality().equals(other.assignments, _assignments)&&const DeepCollectionEquality().equals(other.quizzes, _quizzes)&&const DeepCollectionEquality().equals(other.nodules, _nodules)&&(identical(other.fillInTheBlank, fillInTheBlank) || other.fillInTheBlank == fillInTheBlank)&&(identical(other.scene, scene) || other.scene == scene)&&const DeepCollectionEquality().equals(other.tests, _tests)&&const DeepCollectionEquality().equals(other.challengeFiles, _challengeFiles)&&(identical(other.hooks, hooks) || other.hooks == hooks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,block,superBlock,title,dashedName,challengeType,helpCategory,description,instructions,explanation,transcript,videoId,const DeepCollectionEquality().hash(_questions),const DeepCollectionEquality().hash(_assignments),const DeepCollectionEquality().hash(_quizzes),const DeepCollectionEquality().hash(_nodules),fillInTheBlank,scene,const DeepCollectionEquality().hash(_tests),const DeepCollectionEquality().hash(_challengeFiles),hooks]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,block,superBlock,title,dashedName,challengeType,helpCategory,description,instructions,explanation,transcript,videoId,const DeepCollectionEquality().hash(_questions),const DeepCollectionEquality().hash(_assignments),const DeepCollectionEquality().hash(_quizzes),const DeepCollectionEquality().hash(_nodules),fillInTheBlank,scene,const DeepCollectionEquality().hash(_tests),const DeepCollectionEquality().hash(_challengeFiles),hooks]);
+}
 
 @override
 String toString() {
-  return 'Challenge(id: $id, block: $block, superBlock: $superBlock, title: $title, dashedName: $dashedName, challengeType: $challengeType, helpCategory: $helpCategory, description: $description, instructions: $instructions, explanation: $explanation, transcript: $transcript, videoId: $videoId, questions: $questions, assignments: $assignments, quizzes: $quizzes, nodules: $nodules, fillInTheBlank: $fillInTheBlank, scene: $scene, tests: $tests, challengeFiles: $challengeFiles, hooks: $hooks)';
+    return 'Challenge(id: $id, block: $block, superBlock: $superBlock, title: $title, dashedName: $dashedName, challengeType: $challengeType, helpCategory: $helpCategory, description: $description, instructions: $instructions, explanation: $explanation, transcript: $transcript, videoId: $videoId, questions: $questions, assignments: $assignments, quizzes: $quizzes, nodules: $nodules, fillInTheBlank: $fillInTheBlank, scene: $scene, tests: $tests, challengeFiles: $challengeFiles, hooks: $hooks)';
 }
 
 
@@ -453,16 +461,21 @@ $ChallengeTestCopyWith<ChallengeTest> get copyWith => _$ChallengeTestCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChallengeTest&&(identical(other.text, text) || other.text == text)&&(identical(other.testString, testString) || other.testString == testString));
+  final _this = this as ChallengeTest;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChallengeTest&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.testString, _this.testString) || other.testString == _this.testString));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,testString);
+int get hashCode {
+  final _this = this as ChallengeTest;
+  return Object.hash(runtimeType,_this.text,_this.testString);
+}
 
 @override
 String toString() {
-  return 'ChallengeTest(text: $text, testString: $testString)';
+  final _this = this as ChallengeTest;
+  return 'ChallengeTest(text: ${_this.text}, testString: ${_this.testString})';
 }
 
 
@@ -491,7 +504,7 @@ class _$ChallengeTestCopyWithImpl<$Res>
 /// Create a copy of ChallengeTest
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? text = null,Object? testString = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChallengeTest(
 text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,testString: null == testString ? _self.testString : testString // ignore: cast_nullable_to_non_nullable
 as String,
@@ -654,16 +667,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChallengeTest&&(identical(other.text, text) || other.text == text)&&(identical(other.testString, testString) || other.testString == testString));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChallengeTest&&(identical(other.text, text) || other.text == text)&&(identical(other.testString, testString) || other.testString == testString));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,testString);
+int get hashCode {
+    return Object.hash(runtimeType,text,testString);
+}
 
 @override
 String toString() {
-  return 'ChallengeTest(text: $text, testString: $testString)';
+    return 'ChallengeTest(text: $text, testString: $testString)';
 }
 
 
@@ -719,16 +734,21 @@ $HooksCopyWith<Hooks> get copyWith => _$HooksCopyWithImpl<Hooks>(this as Hooks, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Hooks&&(identical(other.beforeAll, beforeAll) || other.beforeAll == beforeAll)&&(identical(other.beforeEach, beforeEach) || other.beforeEach == beforeEach)&&(identical(other.afterEach, afterEach) || other.afterEach == afterEach));
+  final _this = this as Hooks;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Hooks&&(identical(other.beforeAll, _this.beforeAll) || other.beforeAll == _this.beforeAll)&&(identical(other.beforeEach, _this.beforeEach) || other.beforeEach == _this.beforeEach)&&(identical(other.afterEach, _this.afterEach) || other.afterEach == _this.afterEach));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,beforeAll,beforeEach,afterEach);
+int get hashCode {
+  final _this = this as Hooks;
+  return Object.hash(runtimeType,_this.beforeAll,_this.beforeEach,_this.afterEach);
+}
 
 @override
 String toString() {
-  return 'Hooks(beforeAll: $beforeAll, beforeEach: $beforeEach, afterEach: $afterEach)';
+  final _this = this as Hooks;
+  return 'Hooks(beforeAll: ${_this.beforeAll}, beforeEach: ${_this.beforeEach}, afterEach: ${_this.afterEach})';
 }
 
 
@@ -757,7 +777,7 @@ class _$HooksCopyWithImpl<$Res>
 /// Create a copy of Hooks
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? beforeAll = null,Object? beforeEach = null,Object? afterEach = null,}) {
-  return _then(_self.copyWith(
+  return _then(Hooks(
 beforeAll: null == beforeAll ? _self.beforeAll : beforeAll // ignore: cast_nullable_to_non_nullable
 as String,beforeEach: null == beforeEach ? _self.beforeEach : beforeEach // ignore: cast_nullable_to_non_nullable
 as String,afterEach: null == afterEach ? _self.afterEach : afterEach // ignore: cast_nullable_to_non_nullable
@@ -922,16 +942,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Hooks&&(identical(other.beforeAll, beforeAll) || other.beforeAll == beforeAll)&&(identical(other.beforeEach, beforeEach) || other.beforeEach == beforeEach)&&(identical(other.afterEach, afterEach) || other.afterEach == afterEach));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Hooks&&(identical(other.beforeAll, beforeAll) || other.beforeAll == beforeAll)&&(identical(other.beforeEach, beforeEach) || other.beforeEach == beforeEach)&&(identical(other.afterEach, afterEach) || other.afterEach == afterEach));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,beforeAll,beforeEach,afterEach);
+int get hashCode {
+    return Object.hash(runtimeType,beforeAll,beforeEach,afterEach);
+}
 
 @override
 String toString() {
-  return 'Hooks(beforeAll: $beforeAll, beforeEach: $beforeEach, afterEach: $afterEach)';
+    return 'Hooks(beforeAll: $beforeAll, beforeEach: $beforeEach, afterEach: $afterEach)';
 }
 
 
@@ -988,16 +1010,21 @@ $QuestionCopyWith<Question> get copyWith => _$QuestionCopyWithImpl<Question>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Question&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other.answers, answers)&&(identical(other.solution, solution) || other.solution == solution));
+  final _this = this as Question;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Question&&(identical(other.text, _this.text) || other.text == _this.text)&&const DeepCollectionEquality().equals(other.answers, _this.answers)&&(identical(other.solution, _this.solution) || other.solution == _this.solution));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(answers),solution);
+int get hashCode {
+  final _this = this as Question;
+  return Object.hash(runtimeType,_this.text,const DeepCollectionEquality().hash(_this.answers),_this.solution);
+}
 
 @override
 String toString() {
-  return 'Question(text: $text, answers: $answers, solution: $solution)';
+  final _this = this as Question;
+  return 'Question(text: ${_this.text}, answers: ${_this.answers}, solution: ${_this.solution})';
 }
 
 
@@ -1026,7 +1053,7 @@ class _$QuestionCopyWithImpl<$Res>
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? text = null,Object? answers = null,Object? solution = null,}) {
-  return _then(_self.copyWith(
+  return _then(Question(
 text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,answers: null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
 as List<Answer>,solution: null == solution ? _self.solution : solution // ignore: cast_nullable_to_non_nullable
@@ -1171,7 +1198,7 @@ return $default(_that.text,_that.answers,_that.solution);case _:
 @JsonSerializable()
 
 class _Question implements Question {
-  const _Question({required this.text, required final  List<Answer> answers, required this.solution}): _answers = answers;
+  const _Question({required this.text, required  List<Answer> answers, required this.solution}): _answers = answers;
   factory _Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
 
 @override final  String text;
@@ -1197,16 +1224,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Question&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other._answers, _answers)&&(identical(other.solution, solution) || other.solution == solution));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Question&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other.answers, _answers)&&(identical(other.solution, solution) || other.solution == solution));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(_answers),solution);
+int get hashCode {
+    return Object.hash(runtimeType,text,const DeepCollectionEquality().hash(_answers),solution);
+}
 
 @override
 String toString() {
-  return 'Question(text: $text, answers: $answers, solution: $solution)';
+    return 'Question(text: $text, answers: $answers, solution: $solution)';
 }
 
 
@@ -1263,16 +1292,21 @@ $AnswerCopyWith<Answer> get copyWith => _$AnswerCopyWithImpl<Answer>(this as Ans
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Answer&&(identical(other.answer, answer) || other.answer == answer)&&(identical(other.feedback, feedback) || other.feedback == feedback));
+  final _this = this as Answer;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Answer&&(identical(other.answer, _this.answer) || other.answer == _this.answer)&&(identical(other.feedback, _this.feedback) || other.feedback == _this.feedback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,answer,feedback);
+int get hashCode {
+  final _this = this as Answer;
+  return Object.hash(runtimeType,_this.answer,_this.feedback);
+}
 
 @override
 String toString() {
-  return 'Answer(answer: $answer, feedback: $feedback)';
+  final _this = this as Answer;
+  return 'Answer(answer: ${_this.answer}, feedback: ${_this.feedback})';
 }
 
 
@@ -1301,7 +1335,7 @@ class _$AnswerCopyWithImpl<$Res>
 /// Create a copy of Answer
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? answer = null,Object? feedback = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Answer(
 answer: null == answer ? _self.answer : answer // ignore: cast_nullable_to_non_nullable
 as String,feedback: freezed == feedback ? _self.feedback : feedback // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -1464,16 +1498,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Answer&&(identical(other.answer, answer) || other.answer == answer)&&(identical(other.feedback, feedback) || other.feedback == feedback));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Answer&&(identical(other.answer, answer) || other.answer == answer)&&(identical(other.feedback, feedback) || other.feedback == feedback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,answer,feedback);
+int get hashCode {
+    return Object.hash(runtimeType,answer,feedback);
+}
 
 @override
 String toString() {
-  return 'Answer(answer: $answer, feedback: $feedback)';
+    return 'Answer(answer: $answer, feedback: $feedback)';
 }
 
 
@@ -1529,16 +1565,21 @@ $QuizCopyWith<Quiz> get copyWith => _$QuizCopyWithImpl<Quiz>(this as Quiz, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Quiz&&const DeepCollectionEquality().equals(other.questions, questions));
+  final _this = this as Quiz;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Quiz&&const DeepCollectionEquality().equals(other.questions, _this.questions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(questions));
+int get hashCode {
+  final _this = this as Quiz;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.questions));
+}
 
 @override
 String toString() {
-  return 'Quiz(questions: $questions)';
+  final _this = this as Quiz;
+  return 'Quiz(questions: ${_this.questions})';
 }
 
 
@@ -1567,7 +1608,7 @@ class _$QuizCopyWithImpl<$Res>
 /// Create a copy of Quiz
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? questions = null,}) {
-  return _then(_self.copyWith(
+  return _then(Quiz(
 questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as List<QuizQuestion>,
   ));
@@ -1710,7 +1751,7 @@ return $default(_that.questions);case _:
 @JsonSerializable()
 
 class _Quiz implements Quiz {
-  const _Quiz({required final  List<QuizQuestion> questions}): _questions = questions;
+  const _Quiz({required  List<QuizQuestion> questions}): _questions = questions;
   factory _Quiz.fromJson(Map<String, dynamic> json) => _$QuizFromJson(json);
 
  final  List<QuizQuestion> _questions;
@@ -1734,16 +1775,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Quiz&&const DeepCollectionEquality().equals(other._questions, _questions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Quiz&&const DeepCollectionEquality().equals(other.questions, _questions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_questions));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_questions));
+}
 
 @override
 String toString() {
-  return 'Quiz(questions: $questions)';
+    return 'Quiz(questions: $questions)';
 }
 
 
@@ -1798,16 +1841,21 @@ $QuizQuestionCopyWith<QuizQuestion> get copyWith => _$QuizQuestionCopyWithImpl<Q
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuizQuestion&&(identical(other.text, text) || other.text == text)&&(identical(other.answer, answer) || other.answer == answer)&&const DeepCollectionEquality().equals(other.distractors, distractors)&&(identical(other.audioData, audioData) || other.audioData == audioData));
+  final _this = this as QuizQuestion;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuizQuestion&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.answer, _this.answer) || other.answer == _this.answer)&&const DeepCollectionEquality().equals(other.distractors, _this.distractors)&&(identical(other.audioData, _this.audioData) || other.audioData == _this.audioData));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,answer,const DeepCollectionEquality().hash(distractors),audioData);
+int get hashCode {
+  final _this = this as QuizQuestion;
+  return Object.hash(runtimeType,_this.text,_this.answer,const DeepCollectionEquality().hash(_this.distractors),_this.audioData);
+}
 
 @override
 String toString() {
-  return 'QuizQuestion(text: $text, answer: $answer, distractors: $distractors, audioData: $audioData)';
+  final _this = this as QuizQuestion;
+  return 'QuizQuestion(text: ${_this.text}, answer: ${_this.answer}, distractors: ${_this.distractors}, audioData: ${_this.audioData})';
 }
 
 
@@ -1836,7 +1884,7 @@ class _$QuizQuestionCopyWithImpl<$Res>
 /// Create a copy of QuizQuestion
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? text = null,Object? answer = null,Object? distractors = null,Object? audioData = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(QuizQuestion(
 text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,answer: null == answer ? _self.answer : answer // ignore: cast_nullable_to_non_nullable
 as String,distractors: null == distractors ? _self.distractors : distractors // ignore: cast_nullable_to_non_nullable
@@ -1994,7 +2042,7 @@ return $default(_that.text,_that.answer,_that.distractors,_that.audioData);case 
 @JsonSerializable()
 
 class _QuizQuestion implements QuizQuestion {
-  const _QuizQuestion({required this.text, required this.answer, required final  List<String> distractors, this.audioData}): _distractors = distractors;
+  const _QuizQuestion({required this.text, required this.answer, required  List<String> distractors, this.audioData}): _distractors = distractors;
   factory _QuizQuestion.fromJson(Map<String, dynamic> json) => _$QuizQuestionFromJson(json);
 
 @override final  String text;
@@ -2021,16 +2069,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuizQuestion&&(identical(other.text, text) || other.text == text)&&(identical(other.answer, answer) || other.answer == answer)&&const DeepCollectionEquality().equals(other._distractors, _distractors)&&(identical(other.audioData, audioData) || other.audioData == audioData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuizQuestion&&(identical(other.text, text) || other.text == text)&&(identical(other.answer, answer) || other.answer == answer)&&const DeepCollectionEquality().equals(other.distractors, _distractors)&&(identical(other.audioData, audioData) || other.audioData == audioData));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,answer,const DeepCollectionEquality().hash(_distractors),audioData);
+int get hashCode {
+    return Object.hash(runtimeType,text,answer,const DeepCollectionEquality().hash(_distractors),audioData);
+}
 
 @override
 String toString() {
-  return 'QuizQuestion(text: $text, answer: $answer, distractors: $distractors, audioData: $audioData)';
+    return 'QuizQuestion(text: $text, answer: $answer, distractors: $distractors, audioData: $audioData)';
 }
 
 
@@ -2100,16 +2150,21 @@ $QuizAudioDataCopyWith<QuizAudioData> get copyWith => _$QuizAudioDataCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuizAudioData&&(identical(other.audio, audio) || other.audio == audio)&&const DeepCollectionEquality().equals(other.transcript, transcript));
+  final _this = this as QuizAudioData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuizAudioData&&(identical(other.audio, _this.audio) || other.audio == _this.audio)&&const DeepCollectionEquality().equals(other.transcript, _this.transcript));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,audio,const DeepCollectionEquality().hash(transcript));
+int get hashCode {
+  final _this = this as QuizAudioData;
+  return Object.hash(runtimeType,_this.audio,const DeepCollectionEquality().hash(_this.transcript));
+}
 
 @override
 String toString() {
-  return 'QuizAudioData(audio: $audio, transcript: $transcript)';
+  final _this = this as QuizAudioData;
+  return 'QuizAudioData(audio: ${_this.audio}, transcript: ${_this.transcript})';
 }
 
 
@@ -2138,7 +2193,7 @@ class _$QuizAudioDataCopyWithImpl<$Res>
 /// Create a copy of QuizAudioData
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? audio = null,Object? transcript = null,}) {
-  return _then(_self.copyWith(
+  return _then(QuizAudioData(
 audio: null == audio ? _self.audio : audio // ignore: cast_nullable_to_non_nullable
 as AudioClip,transcript: null == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
 as List<TranscriptLine>,
@@ -2291,7 +2346,7 @@ return $default(_that.audio,_that.transcript);case _:
 @JsonSerializable()
 
 class _QuizAudioData implements QuizAudioData {
-  const _QuizAudioData({required this.audio, final  List<TranscriptLine> transcript = const []}): _transcript = transcript;
+  const _QuizAudioData({required this.audio,  List<TranscriptLine> transcript = const []}): _transcript = transcript;
   factory _QuizAudioData.fromJson(Map<String, dynamic> json) => _$QuizAudioDataFromJson(json);
 
 @override final  AudioClip audio;
@@ -2316,16 +2371,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuizAudioData&&(identical(other.audio, audio) || other.audio == audio)&&const DeepCollectionEquality().equals(other._transcript, _transcript));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuizAudioData&&(identical(other.audio, audio) || other.audio == audio)&&const DeepCollectionEquality().equals(other.transcript, _transcript));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,audio,const DeepCollectionEquality().hash(_transcript));
+int get hashCode {
+    return Object.hash(runtimeType,audio,const DeepCollectionEquality().hash(_transcript));
+}
 
 @override
 String toString() {
-  return 'QuizAudioData(audio: $audio, transcript: $transcript)';
+    return 'QuizAudioData(audio: $audio, transcript: $transcript)';
 }
 
 
@@ -2390,16 +2447,21 @@ $TranscriptLineCopyWith<TranscriptLine> get copyWith => _$TranscriptLineCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TranscriptLine&&(identical(other.character, character) || other.character == character)&&(identical(other.text, text) || other.text == text));
+  final _this = this as TranscriptLine;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TranscriptLine&&(identical(other.character, _this.character) || other.character == _this.character)&&(identical(other.text, _this.text) || other.text == _this.text));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,character,text);
+int get hashCode {
+  final _this = this as TranscriptLine;
+  return Object.hash(runtimeType,_this.character,_this.text);
+}
 
 @override
 String toString() {
-  return 'TranscriptLine(character: $character, text: $text)';
+  final _this = this as TranscriptLine;
+  return 'TranscriptLine(character: ${_this.character}, text: ${_this.text})';
 }
 
 
@@ -2428,7 +2490,7 @@ class _$TranscriptLineCopyWithImpl<$Res>
 /// Create a copy of TranscriptLine
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? character = null,Object? text = null,}) {
-  return _then(_self.copyWith(
+  return _then(TranscriptLine(
 character: null == character ? _self.character : character // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,
@@ -2591,16 +2653,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TranscriptLine&&(identical(other.character, character) || other.character == character)&&(identical(other.text, text) || other.text == text));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TranscriptLine&&(identical(other.character, character) || other.character == character)&&(identical(other.text, text) || other.text == text));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,character,text);
+int get hashCode {
+    return Object.hash(runtimeType,character,text);
+}
 
 @override
 String toString() {
-  return 'TranscriptLine(character: $character, text: $text)';
+    return 'TranscriptLine(character: $character, text: $text)';
 }
 
 
@@ -2656,16 +2720,21 @@ $AudioClipCopyWith<AudioClip> get copyWith => _$AudioClipCopyWithImpl<AudioClip>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioClip&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.startTimestamp, startTimestamp) || other.startTimestamp == startTimestamp)&&(identical(other.finishTimestamp, finishTimestamp) || other.finishTimestamp == finishTimestamp));
+  final _this = this as AudioClip;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AudioClip&&(identical(other.filename, _this.filename) || other.filename == _this.filename)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.startTimestamp, _this.startTimestamp) || other.startTimestamp == _this.startTimestamp)&&(identical(other.finishTimestamp, _this.finishTimestamp) || other.finishTimestamp == _this.finishTimestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,filename,startTime,startTimestamp,finishTimestamp);
+int get hashCode {
+  final _this = this as AudioClip;
+  return Object.hash(runtimeType,_this.filename,_this.startTime,_this.startTimestamp,_this.finishTimestamp);
+}
 
 @override
 String toString() {
-  return 'AudioClip(filename: $filename, startTime: $startTime, startTimestamp: $startTimestamp, finishTimestamp: $finishTimestamp)';
+  final _this = this as AudioClip;
+  return 'AudioClip(filename: ${_this.filename}, startTime: ${_this.startTime}, startTimestamp: ${_this.startTimestamp}, finishTimestamp: ${_this.finishTimestamp})';
 }
 
 
@@ -2694,7 +2763,7 @@ class _$AudioClipCopyWithImpl<$Res>
 /// Create a copy of AudioClip
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? filename = null,Object? startTime = null,Object? startTimestamp = freezed,Object? finishTimestamp = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(AudioClip(
 filename: null == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
 as String,startTime: null == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
 as num,startTimestamp: freezed == startTimestamp ? _self.startTimestamp : startTimestamp // ignore: cast_nullable_to_non_nullable
@@ -2861,16 +2930,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioClip&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.startTimestamp, startTimestamp) || other.startTimestamp == startTimestamp)&&(identical(other.finishTimestamp, finishTimestamp) || other.finishTimestamp == finishTimestamp));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AudioClip&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.startTimestamp, startTimestamp) || other.startTimestamp == startTimestamp)&&(identical(other.finishTimestamp, finishTimestamp) || other.finishTimestamp == finishTimestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,filename,startTime,startTimestamp,finishTimestamp);
+int get hashCode {
+    return Object.hash(runtimeType,filename,startTime,startTimestamp,finishTimestamp);
+}
 
 @override
 String toString() {
-  return 'AudioClip(filename: $filename, startTime: $startTime, startTimestamp: $startTimestamp, finishTimestamp: $finishTimestamp)';
+    return 'AudioClip(filename: $filename, startTime: $startTime, startTimestamp: $startTimestamp, finishTimestamp: $finishTimestamp)';
 }
 
 
@@ -2928,16 +2999,21 @@ $FillInTheBlankCopyWith<FillInTheBlank> get copyWith => _$FillInTheBlankCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FillInTheBlank&&(identical(other.sentence, sentence) || other.sentence == sentence)&&const DeepCollectionEquality().equals(other.blanks, blanks));
+  final _this = this as FillInTheBlank;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FillInTheBlank&&(identical(other.sentence, _this.sentence) || other.sentence == _this.sentence)&&const DeepCollectionEquality().equals(other.blanks, _this.blanks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,sentence,const DeepCollectionEquality().hash(blanks));
+int get hashCode {
+  final _this = this as FillInTheBlank;
+  return Object.hash(runtimeType,_this.sentence,const DeepCollectionEquality().hash(_this.blanks));
+}
 
 @override
 String toString() {
-  return 'FillInTheBlank(sentence: $sentence, blanks: $blanks)';
+  final _this = this as FillInTheBlank;
+  return 'FillInTheBlank(sentence: ${_this.sentence}, blanks: ${_this.blanks})';
 }
 
 
@@ -2966,7 +3042,7 @@ class _$FillInTheBlankCopyWithImpl<$Res>
 /// Create a copy of FillInTheBlank
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? sentence = null,Object? blanks = null,}) {
-  return _then(_self.copyWith(
+  return _then(FillInTheBlank(
 sentence: null == sentence ? _self.sentence : sentence // ignore: cast_nullable_to_non_nullable
 as String,blanks: null == blanks ? _self.blanks : blanks // ignore: cast_nullable_to_non_nullable
 as List<Blank>,
@@ -3110,7 +3186,7 @@ return $default(_that.sentence,_that.blanks);case _:
 @JsonSerializable()
 
 class _FillInTheBlank implements FillInTheBlank {
-  const _FillInTheBlank({required this.sentence, required final  List<Blank> blanks}): _blanks = blanks;
+  const _FillInTheBlank({required this.sentence, required  List<Blank> blanks}): _blanks = blanks;
   factory _FillInTheBlank.fromJson(Map<String, dynamic> json) => _$FillInTheBlankFromJson(json);
 
 @override final  String sentence;
@@ -3135,16 +3211,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FillInTheBlank&&(identical(other.sentence, sentence) || other.sentence == sentence)&&const DeepCollectionEquality().equals(other._blanks, _blanks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FillInTheBlank&&(identical(other.sentence, sentence) || other.sentence == sentence)&&const DeepCollectionEquality().equals(other.blanks, _blanks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,sentence,const DeepCollectionEquality().hash(_blanks));
+int get hashCode {
+    return Object.hash(runtimeType,sentence,const DeepCollectionEquality().hash(_blanks));
+}
 
 @override
 String toString() {
-  return 'FillInTheBlank(sentence: $sentence, blanks: $blanks)';
+    return 'FillInTheBlank(sentence: $sentence, blanks: $blanks)';
 }
 
 
@@ -3200,16 +3278,21 @@ $BlankCopyWith<Blank> get copyWith => _$BlankCopyWithImpl<Blank>(this as Blank, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Blank&&(identical(other.answer, answer) || other.answer == answer)&&(identical(other.feedback, feedback) || other.feedback == feedback));
+  final _this = this as Blank;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Blank&&(identical(other.answer, _this.answer) || other.answer == _this.answer)&&(identical(other.feedback, _this.feedback) || other.feedback == _this.feedback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,answer,feedback);
+int get hashCode {
+  final _this = this as Blank;
+  return Object.hash(runtimeType,_this.answer,_this.feedback);
+}
 
 @override
 String toString() {
-  return 'Blank(answer: $answer, feedback: $feedback)';
+  final _this = this as Blank;
+  return 'Blank(answer: ${_this.answer}, feedback: ${_this.feedback})';
 }
 
 
@@ -3238,7 +3321,7 @@ class _$BlankCopyWithImpl<$Res>
 /// Create a copy of Blank
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? answer = null,Object? feedback = null,}) {
-  return _then(_self.copyWith(
+  return _then(Blank(
 answer: null == answer ? _self.answer : answer // ignore: cast_nullable_to_non_nullable
 as String,feedback: null == feedback ? _self.feedback : feedback // ignore: cast_nullable_to_non_nullable
 as String,
@@ -3401,16 +3484,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Blank&&(identical(other.answer, answer) || other.answer == answer)&&(identical(other.feedback, feedback) || other.feedback == feedback));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Blank&&(identical(other.answer, answer) || other.answer == answer)&&(identical(other.feedback, feedback) || other.feedback == feedback));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,answer,feedback);
+int get hashCode {
+    return Object.hash(runtimeType,answer,feedback);
+}
 
 @override
 String toString() {
-  return 'Blank(answer: $answer, feedback: $feedback)';
+    return 'Blank(answer: $answer, feedback: $feedback)';
 }
 
 
@@ -3484,7 +3569,7 @@ mixin _$Nodule {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Nodule);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is Nodule);
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3493,7 +3578,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'Nodule()';
+    return 'Nodule()';
 }
 
 
@@ -3639,7 +3724,7 @@ return interactiveEditor(_that.files);case _:
 @JsonSerializable()
 
 class ParagraphNodule implements Nodule {
-  const ParagraphNodule({@JsonKey(readValue: _readNoduleContents) required this.contents, final  String? $type}): $type = $type ?? 'paragraph';
+  const ParagraphNodule({@JsonKey(readValue: _readNoduleContents) required this.contents,  String? $type}): $type = $type ?? 'paragraph';
   factory ParagraphNodule.fromJson(Map<String, dynamic> json) => _$ParagraphNoduleFromJson(json);
 
 @JsonKey(readValue: _readNoduleContents) final  String contents;
@@ -3661,16 +3746,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParagraphNodule&&(identical(other.contents, contents) || other.contents == contents));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ParagraphNodule&&(identical(other.contents, contents) || other.contents == contents));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,contents);
+int get hashCode {
+    return Object.hash(runtimeType,contents);
+}
 
 @override
 String toString() {
-  return 'Nodule.paragraph(contents: $contents)';
+    return 'Nodule.paragraph(contents: $contents)';
 }
 
 
@@ -3712,7 +3799,7 @@ as String,
 @JsonSerializable()
 
 class InteractiveEditorNodule implements Nodule {
-  const InteractiveEditorNodule({@JsonKey(readValue: _readNoduleContents) required final  List<NoduleFile> files, final  String? $type}): _files = files,$type = $type ?? 'interactiveEditor';
+  const InteractiveEditorNodule({@JsonKey(readValue: _readNoduleContents) required  List<NoduleFile> files,  String? $type}): _files = files,$type = $type ?? 'interactiveEditor';
   factory InteractiveEditorNodule.fromJson(Map<String, dynamic> json) => _$InteractiveEditorNoduleFromJson(json);
 
  final  List<NoduleFile> _files;
@@ -3740,16 +3827,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InteractiveEditorNodule&&const DeepCollectionEquality().equals(other._files, _files));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is InteractiveEditorNodule&&const DeepCollectionEquality().equals(other.files, _files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_files));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_files));
+}
 
 @override
 String toString() {
-  return 'Nodule.interactiveEditor(files: $files)';
+    return 'Nodule.interactiveEditor(files: $files)';
 }
 
 
@@ -3804,16 +3893,21 @@ $NoduleFileCopyWith<NoduleFile> get copyWith => _$NoduleFileCopyWithImpl<NoduleF
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoduleFile&&(identical(other.name, name) || other.name == name)&&(identical(other.ext, ext) || other.ext == ext)&&(identical(other.contents, contents) || other.contents == contents));
+  final _this = this as NoduleFile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoduleFile&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.ext, _this.ext) || other.ext == _this.ext)&&(identical(other.contents, _this.contents) || other.contents == _this.contents));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,ext,contents);
+int get hashCode {
+  final _this = this as NoduleFile;
+  return Object.hash(runtimeType,_this.name,_this.ext,_this.contents);
+}
 
 @override
 String toString() {
-  return 'NoduleFile(name: $name, ext: $ext, contents: $contents)';
+  final _this = this as NoduleFile;
+  return 'NoduleFile(name: ${_this.name}, ext: ${_this.ext}, contents: ${_this.contents})';
 }
 
 
@@ -3842,7 +3936,7 @@ class _$NoduleFileCopyWithImpl<$Res>
 /// Create a copy of NoduleFile
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? ext = null,Object? contents = null,}) {
-  return _then(_self.copyWith(
+  return _then(NoduleFile(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,ext: null == ext ? _self.ext : ext // ignore: cast_nullable_to_non_nullable
 as String,contents: null == contents ? _self.contents : contents // ignore: cast_nullable_to_non_nullable
@@ -4007,16 +4101,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoduleFile&&(identical(other.name, name) || other.name == name)&&(identical(other.ext, ext) || other.ext == ext)&&(identical(other.contents, contents) || other.contents == contents));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoduleFile&&(identical(other.name, name) || other.name == name)&&(identical(other.ext, ext) || other.ext == ext)&&(identical(other.contents, contents) || other.contents == contents));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,ext,contents);
+int get hashCode {
+    return Object.hash(runtimeType,name,ext,contents);
+}
 
 @override
 String toString() {
-  return 'NoduleFile(name: $name, ext: $ext, contents: $contents)';
+    return 'NoduleFile(name: $name, ext: $ext, contents: $contents)';
 }
 
 
@@ -4073,16 +4169,21 @@ $SceneCopyWith<Scene> get copyWith => _$SceneCopyWithImpl<Scene>(this as Scene, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Scene&&(identical(other.setup, setup) || other.setup == setup)&&const DeepCollectionEquality().equals(other.commands, commands));
+  final _this = this as Scene;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Scene&&(identical(other.setup, _this.setup) || other.setup == _this.setup)&&const DeepCollectionEquality().equals(other.commands, _this.commands));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,setup,const DeepCollectionEquality().hash(commands));
+int get hashCode {
+  final _this = this as Scene;
+  return Object.hash(runtimeType,_this.setup,const DeepCollectionEquality().hash(_this.commands));
+}
 
 @override
 String toString() {
-  return 'Scene(setup: $setup, commands: $commands)';
+  final _this = this as Scene;
+  return 'Scene(setup: ${_this.setup}, commands: ${_this.commands})';
 }
 
 
@@ -4111,7 +4212,7 @@ class _$SceneCopyWithImpl<$Res>
 /// Create a copy of Scene
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? setup = null,Object? commands = null,}) {
-  return _then(_self.copyWith(
+  return _then(Scene(
 setup: null == setup ? _self.setup : setup // ignore: cast_nullable_to_non_nullable
 as SceneSetup,commands: null == commands ? _self.commands : commands // ignore: cast_nullable_to_non_nullable
 as List<SceneCommand>,
@@ -4264,7 +4365,7 @@ return $default(_that.setup,_that.commands);case _:
 @JsonSerializable()
 
 class _Scene implements Scene {
-  const _Scene({required this.setup, required final  List<SceneCommand> commands}): _commands = commands;
+  const _Scene({required this.setup, required  List<SceneCommand> commands}): _commands = commands;
   factory _Scene.fromJson(Map<String, dynamic> json) => _$SceneFromJson(json);
 
 @override final  SceneSetup setup;
@@ -4289,16 +4390,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Scene&&(identical(other.setup, setup) || other.setup == setup)&&const DeepCollectionEquality().equals(other._commands, _commands));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Scene&&(identical(other.setup, setup) || other.setup == setup)&&const DeepCollectionEquality().equals(other.commands, _commands));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,setup,const DeepCollectionEquality().hash(_commands));
+int get hashCode {
+    return Object.hash(runtimeType,setup,const DeepCollectionEquality().hash(_commands));
+}
 
 @override
 String toString() {
-  return 'Scene(setup: $setup, commands: $commands)';
+    return 'Scene(setup: $setup, commands: $commands)';
 }
 
 
@@ -4363,16 +4466,21 @@ $SceneSetupCopyWith<SceneSetup> get copyWith => _$SceneSetupCopyWithImpl<SceneSe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneSetup&&(identical(other.background, background) || other.background == background)&&(identical(other.audio, audio) || other.audio == audio)&&const DeepCollectionEquality().equals(other.characters, characters));
+  final _this = this as SceneSetup;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneSetup&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.audio, _this.audio) || other.audio == _this.audio)&&const DeepCollectionEquality().equals(other.characters, _this.characters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,background,audio,const DeepCollectionEquality().hash(characters));
+int get hashCode {
+  final _this = this as SceneSetup;
+  return Object.hash(runtimeType,_this.background,_this.audio,const DeepCollectionEquality().hash(_this.characters));
+}
 
 @override
 String toString() {
-  return 'SceneSetup(background: $background, audio: $audio, characters: $characters)';
+  final _this = this as SceneSetup;
+  return 'SceneSetup(background: ${_this.background}, audio: ${_this.audio}, characters: ${_this.characters})';
 }
 
 
@@ -4401,7 +4509,7 @@ class _$SceneSetupCopyWithImpl<$Res>
 /// Create a copy of SceneSetup
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? audio = null,Object? characters = null,}) {
-  return _then(_self.copyWith(
+  return _then(SceneSetup(
 background: null == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
 as String,audio: null == audio ? _self.audio : audio // ignore: cast_nullable_to_non_nullable
 as AudioClip,characters: null == characters ? _self.characters : characters // ignore: cast_nullable_to_non_nullable
@@ -4555,7 +4663,7 @@ return $default(_that.background,_that.audio,_that.characters);case _:
 @JsonSerializable()
 
 class _SceneSetup implements SceneSetup {
-  const _SceneSetup({required this.background, required this.audio, required final  List<SceneCharacter> characters}): _characters = characters;
+  const _SceneSetup({required this.background, required this.audio, required  List<SceneCharacter> characters}): _characters = characters;
   factory _SceneSetup.fromJson(Map<String, dynamic> json) => _$SceneSetupFromJson(json);
 
 @override final  String background;
@@ -4581,16 +4689,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneSetup&&(identical(other.background, background) || other.background == background)&&(identical(other.audio, audio) || other.audio == audio)&&const DeepCollectionEquality().equals(other._characters, _characters));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneSetup&&(identical(other.background, background) || other.background == background)&&(identical(other.audio, audio) || other.audio == audio)&&const DeepCollectionEquality().equals(other.characters, _characters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,background,audio,const DeepCollectionEquality().hash(_characters));
+int get hashCode {
+    return Object.hash(runtimeType,background,audio,const DeepCollectionEquality().hash(_characters));
+}
 
 @override
 String toString() {
-  return 'SceneSetup(background: $background, audio: $audio, characters: $characters)';
+    return 'SceneSetup(background: $background, audio: $audio, characters: $characters)';
 }
 
 
@@ -4656,16 +4766,21 @@ $SceneCharacterCopyWith<SceneCharacter> get copyWith => _$SceneCharacterCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneCharacter&&(identical(other.character, character) || other.character == character)&&(identical(other.position, position) || other.position == position)&&(identical(other.opacity, opacity) || other.opacity == opacity));
+  final _this = this as SceneCharacter;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneCharacter&&(identical(other.character, _this.character) || other.character == _this.character)&&(identical(other.position, _this.position) || other.position == _this.position)&&(identical(other.opacity, _this.opacity) || other.opacity == _this.opacity));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,character,position,opacity);
+int get hashCode {
+  final _this = this as SceneCharacter;
+  return Object.hash(runtimeType,_this.character,_this.position,_this.opacity);
+}
 
 @override
 String toString() {
-  return 'SceneCharacter(character: $character, position: $position, opacity: $opacity)';
+  final _this = this as SceneCharacter;
+  return 'SceneCharacter(character: ${_this.character}, position: ${_this.position}, opacity: ${_this.opacity})';
 }
 
 
@@ -4694,7 +4809,7 @@ class _$SceneCharacterCopyWithImpl<$Res>
 /// Create a copy of SceneCharacter
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? character = null,Object? position = null,Object? opacity = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SceneCharacter(
 character: null == character ? _self.character : character // ignore: cast_nullable_to_non_nullable
 as String,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
 as ScenePosition,opacity: freezed == opacity ? _self.opacity : opacity // ignore: cast_nullable_to_non_nullable
@@ -4868,16 +4983,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneCharacter&&(identical(other.character, character) || other.character == character)&&(identical(other.position, position) || other.position == position)&&(identical(other.opacity, opacity) || other.opacity == opacity));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneCharacter&&(identical(other.character, character) || other.character == character)&&(identical(other.position, position) || other.position == position)&&(identical(other.opacity, opacity) || other.opacity == opacity));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,character,position,opacity);
+int get hashCode {
+    return Object.hash(runtimeType,character,position,opacity);
+}
 
 @override
 String toString() {
-  return 'SceneCharacter(character: $character, position: $position, opacity: $opacity)';
+    return 'SceneCharacter(character: $character, position: $position, opacity: $opacity)';
 }
 
 
@@ -4943,16 +5060,21 @@ $ScenePositionCopyWith<ScenePosition> get copyWith => _$ScenePositionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenePosition&&(identical(other.x, x) || other.x == x)&&(identical(other.y, y) || other.y == y)&&(identical(other.z, z) || other.z == z));
+  final _this = this as ScenePosition;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenePosition&&(identical(other.x, _this.x) || other.x == _this.x)&&(identical(other.y, _this.y) || other.y == _this.y)&&(identical(other.z, _this.z) || other.z == _this.z));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,x,y,z);
+int get hashCode {
+  final _this = this as ScenePosition;
+  return Object.hash(runtimeType,_this.x,_this.y,_this.z);
+}
 
 @override
 String toString() {
-  return 'ScenePosition(x: $x, y: $y, z: $z)';
+  final _this = this as ScenePosition;
+  return 'ScenePosition(x: ${_this.x}, y: ${_this.y}, z: ${_this.z})';
 }
 
 
@@ -4981,7 +5103,7 @@ class _$ScenePositionCopyWithImpl<$Res>
 /// Create a copy of ScenePosition
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? x = null,Object? y = null,Object? z = null,}) {
-  return _then(_self.copyWith(
+  return _then(ScenePosition(
 x: null == x ? _self.x : x // ignore: cast_nullable_to_non_nullable
 as num,y: null == y ? _self.y : y // ignore: cast_nullable_to_non_nullable
 as num,z: null == z ? _self.z : z // ignore: cast_nullable_to_non_nullable
@@ -5146,16 +5268,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenePosition&&(identical(other.x, x) || other.x == x)&&(identical(other.y, y) || other.y == y)&&(identical(other.z, z) || other.z == z));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenePosition&&(identical(other.x, x) || other.x == x)&&(identical(other.y, y) || other.y == y)&&(identical(other.z, z) || other.z == z));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,x,y,z);
+int get hashCode {
+    return Object.hash(runtimeType,x,y,z);
+}
 
 @override
 String toString() {
-  return 'ScenePosition(x: $x, y: $y, z: $z)';
+    return 'ScenePosition(x: $x, y: $y, z: $z)';
 }
 
 
@@ -5212,16 +5336,21 @@ $SceneCommandCopyWith<SceneCommand> get copyWith => _$SceneCommandCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneCommand&&(identical(other.character, character) || other.character == character)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.finishTime, finishTime) || other.finishTime == finishTime)&&(identical(other.background, background) || other.background == background)&&(identical(other.position, position) || other.position == position)&&(identical(other.opacity, opacity) || other.opacity == opacity)&&(identical(other.dialogue, dialogue) || other.dialogue == dialogue));
+  final _this = this as SceneCommand;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneCommand&&(identical(other.character, _this.character) || other.character == _this.character)&&(identical(other.startTime, _this.startTime) || other.startTime == _this.startTime)&&(identical(other.finishTime, _this.finishTime) || other.finishTime == _this.finishTime)&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.position, _this.position) || other.position == _this.position)&&(identical(other.opacity, _this.opacity) || other.opacity == _this.opacity)&&(identical(other.dialogue, _this.dialogue) || other.dialogue == _this.dialogue));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,character,startTime,finishTime,background,position,opacity,dialogue);
+int get hashCode {
+  final _this = this as SceneCommand;
+  return Object.hash(runtimeType,_this.character,_this.startTime,_this.finishTime,_this.background,_this.position,_this.opacity,_this.dialogue);
+}
 
 @override
 String toString() {
-  return 'SceneCommand(character: $character, startTime: $startTime, finishTime: $finishTime, background: $background, position: $position, opacity: $opacity, dialogue: $dialogue)';
+  final _this = this as SceneCommand;
+  return 'SceneCommand(character: ${_this.character}, startTime: ${_this.startTime}, finishTime: ${_this.finishTime}, background: ${_this.background}, position: ${_this.position}, opacity: ${_this.opacity}, dialogue: ${_this.dialogue})';
 }
 
 
@@ -5250,7 +5379,7 @@ class _$SceneCommandCopyWithImpl<$Res>
 /// Create a copy of SceneCommand
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? character = null,Object? startTime = null,Object? finishTime = freezed,Object? background = freezed,Object? position = freezed,Object? opacity = freezed,Object? dialogue = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SceneCommand(
 character: null == character ? _self.character : character // ignore: cast_nullable_to_non_nullable
 as String,startTime: null == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
 as num,finishTime: freezed == finishTime ? _self.finishTime : finishTime // ignore: cast_nullable_to_non_nullable
@@ -5447,16 +5576,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneCommand&&(identical(other.character, character) || other.character == character)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.finishTime, finishTime) || other.finishTime == finishTime)&&(identical(other.background, background) || other.background == background)&&(identical(other.position, position) || other.position == position)&&(identical(other.opacity, opacity) || other.opacity == opacity)&&(identical(other.dialogue, dialogue) || other.dialogue == dialogue));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneCommand&&(identical(other.character, character) || other.character == character)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.finishTime, finishTime) || other.finishTime == finishTime)&&(identical(other.background, background) || other.background == background)&&(identical(other.position, position) || other.position == position)&&(identical(other.opacity, opacity) || other.opacity == opacity)&&(identical(other.dialogue, dialogue) || other.dialogue == dialogue));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,character,startTime,finishTime,background,position,opacity,dialogue);
+int get hashCode {
+    return Object.hash(runtimeType,character,startTime,finishTime,background,position,opacity,dialogue);
+}
 
 @override
 String toString() {
-  return 'SceneCommand(character: $character, startTime: $startTime, finishTime: $finishTime, background: $background, position: $position, opacity: $opacity, dialogue: $dialogue)';
+    return 'SceneCommand(character: $character, startTime: $startTime, finishTime: $finishTime, background: $background, position: $position, opacity: $opacity, dialogue: $dialogue)';
 }
 
 
@@ -5541,16 +5672,21 @@ $SceneDialogueCopyWith<SceneDialogue> get copyWith => _$SceneDialogueCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneDialogue&&(identical(other.text, text) || other.text == text)&&(identical(other.align, align) || other.align == align));
+  final _this = this as SceneDialogue;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneDialogue&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.align, _this.align) || other.align == _this.align));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,align);
+int get hashCode {
+  final _this = this as SceneDialogue;
+  return Object.hash(runtimeType,_this.text,_this.align);
+}
 
 @override
 String toString() {
-  return 'SceneDialogue(text: $text, align: $align)';
+  final _this = this as SceneDialogue;
+  return 'SceneDialogue(text: ${_this.text}, align: ${_this.align})';
 }
 
 
@@ -5579,7 +5715,7 @@ class _$SceneDialogueCopyWithImpl<$Res>
 /// Create a copy of SceneDialogue
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? text = null,Object? align = null,}) {
-  return _then(_self.copyWith(
+  return _then(SceneDialogue(
 text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,align: null == align ? _self.align : align // ignore: cast_nullable_to_non_nullable
 as String,
@@ -5742,16 +5878,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneDialogue&&(identical(other.text, text) || other.text == text)&&(identical(other.align, align) || other.align == align));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneDialogue&&(identical(other.text, text) || other.text == text)&&(identical(other.align, align) || other.align == align));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text,align);
+int get hashCode {
+    return Object.hash(runtimeType,text,align);
+}
 
 @override
 String toString() {
-  return 'SceneDialogue(text: $text, align: $align)';
+    return 'SceneDialogue(text: $text, align: $align)';
 }
 
 

@@ -18,10 +18,16 @@ class NewsBookmarkFeedView extends ConsumerWidget {
     final bookmarks = ref.watch(newsBookmarksProvider);
     final colors = Theme.of(context).colorScheme;
     return bookmarks.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, _) => ErrorRetry(
-        message: 'Unable to load saved articles.',
-        onRetry: () => ref.invalidate(newsBookmarksProvider),
+      loading: () => const SafeArea(
+        top: false,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, _) => SafeArea(
+        top: false,
+        child: ErrorRetry(
+          message: 'Unable to load saved articles.',
+          onRetry: () => ref.invalidate(newsBookmarksProvider),
+        ),
       ),
       data: (posts) => RefreshIndicator(
         onRefresh: () async {
@@ -30,7 +36,12 @@ class NewsBookmarkFeedView extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            8,
+            20,
+            20 + MediaQuery.paddingOf(context).bottom,
+          ),
           children: [
             if (posts.isEmpty)
               const NewsSavedEmptyState()

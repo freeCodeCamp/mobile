@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'profile_visibility_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'profile_visibility_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ProfileVisibilityStateCopyWith<ProfileVisibilityState> get copyWith => _$Profil
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileVisibilityState&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.saving, saving) || other.saving == saving)&&(identical(other.needsRefresh, needsRefresh) || other.needsRefresh == needsRefresh)&&(identical(other.error, error) || other.error == error));
+  final _this = this as ProfileVisibilityState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileVisibilityState&&(identical(other.original, _this.original) || other.original == _this.original)&&(identical(other.draft, _this.draft) || other.draft == _this.draft)&&(identical(other.saving, _this.saving) || other.saving == _this.saving)&&(identical(other.needsRefresh, _this.needsRefresh) || other.needsRefresh == _this.needsRefresh)&&(identical(other.error, _this.error) || other.error == _this.error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,original,draft,saving,needsRefresh,error);
+int get hashCode {
+  final _this = this as ProfileVisibilityState;
+  return Object.hash(runtimeType,_this.original,_this.draft,_this.saving,_this.needsRefresh,_this.error);
+}
 
 @override
 String toString() {
-  return 'ProfileVisibilityState(original: $original, draft: $draft, saving: $saving, needsRefresh: $needsRefresh, error: $error)';
+  final _this = this as ProfileVisibilityState;
+  return 'ProfileVisibilityState(original: ${_this.original}, draft: ${_this.draft}, saving: ${_this.saving}, needsRefresh: ${_this.needsRefresh}, error: ${_this.error})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ProfileVisibilityStateCopyWithImpl<$Res>
 /// Create a copy of ProfileVisibilityState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? original = null,Object? draft = null,Object? saving = null,Object? needsRefresh = null,Object? error = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ProfileVisibilityState(
 original: null == original ? _self.original : original // ignore: cast_nullable_to_non_nullable
 as FccUserModel,draft: null == draft ? _self.draft : draft // ignore: cast_nullable_to_non_nullable
 as ProfileUI,saving: null == saving ? _self.saving : saving // ignore: cast_nullable_to_non_nullable
@@ -247,16 +253,18 @@ _$ProfileVisibilityStateCopyWith<_ProfileVisibilityState> get copyWith => __$Pro
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileVisibilityState&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.saving, saving) || other.saving == saving)&&(identical(other.needsRefresh, needsRefresh) || other.needsRefresh == needsRefresh)&&(identical(other.error, error) || other.error == error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileVisibilityState&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.saving, saving) || other.saving == saving)&&(identical(other.needsRefresh, needsRefresh) || other.needsRefresh == needsRefresh)&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,original,draft,saving,needsRefresh,error);
+int get hashCode {
+    return Object.hash(runtimeType,original,draft,saving,needsRefresh,error);
+}
 
 @override
 String toString() {
-  return 'ProfileVisibilityState(original: $original, draft: $draft, saving: $saving, needsRefresh: $needsRefresh, error: $error)';
+    return 'ProfileVisibilityState(original: $original, draft: $draft, saving: $saving, needsRefresh: $needsRefresh, error: $error)';
 }
 
 
