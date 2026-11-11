@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'episode_list_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'episode_list_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PodcastEpisodeSourceCopyWith<PodcastEpisodeSource> get copyWith => _$PodcastEpi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastEpisodeSource&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId));
+  final _this = this as PodcastEpisodeSource;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastEpisodeSource&&(identical(other.podcastId, _this.podcastId) || other.podcastId == _this.podcastId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcastId);
+int get hashCode {
+  final _this = this as PodcastEpisodeSource;
+  return Object.hash(runtimeType,_this.podcastId);
+}
 
 @override
 String toString() {
-  return 'PodcastEpisodeSource(podcastId: $podcastId)';
+  final _this = this as PodcastEpisodeSource;
+  return 'PodcastEpisodeSource(podcastId: ${_this.podcastId})';
 }
 
 
@@ -221,16 +227,18 @@ $RemoteEpisodesCopyWith<RemoteEpisodes> get copyWith => _$RemoteEpisodesCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteEpisodes&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is RemoteEpisodes&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcastId);
+int get hashCode {
+    return Object.hash(runtimeType,podcastId);
+}
 
 @override
 String toString() {
-  return 'PodcastEpisodeSource.remote(podcastId: $podcastId)';
+    return 'PodcastEpisodeSource.remote(podcastId: $podcastId)';
 }
 
 
@@ -287,16 +295,18 @@ $DownloadedEpisodesCopyWith<DownloadedEpisodes> get copyWith => _$DownloadedEpis
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DownloadedEpisodes&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is DownloadedEpisodes&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcastId);
+int get hashCode {
+    return Object.hash(runtimeType,podcastId);
+}
 
 @override
 String toString() {
-  return 'PodcastEpisodeSource.downloaded(podcastId: $podcastId)';
+    return 'PodcastEpisodeSource.downloaded(podcastId: $podcastId)';
 }
 
 
@@ -348,16 +358,21 @@ $PodcastEpisodesStateCopyWith<PodcastEpisodesState> get copyWith => _$PodcastEpi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastEpisodesState&&(identical(other.podcast, podcast) || other.podcast == podcast)&&const DeepCollectionEquality().equals(other.episodes, episodes)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
+  final _this = this as PodcastEpisodesState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastEpisodesState&&(identical(other.podcast, _this.podcast) || other.podcast == _this.podcast)&&const DeepCollectionEquality().equals(other.episodes, _this.episodes)&&(identical(other.page, _this.page) || other.page == _this.page)&&(identical(other.hasNextPage, _this.hasNextPage) || other.hasNextPage == _this.hasNextPage)&&(identical(other.isLoadingMore, _this.isLoadingMore) || other.isLoadingMore == _this.isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, _this.loadMoreError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcast,const DeepCollectionEquality().hash(episodes),page,hasNextPage,isLoadingMore,const DeepCollectionEquality().hash(loadMoreError));
+int get hashCode {
+  final _this = this as PodcastEpisodesState;
+  return Object.hash(runtimeType,_this.podcast,const DeepCollectionEquality().hash(_this.episodes),_this.page,_this.hasNextPage,_this.isLoadingMore,const DeepCollectionEquality().hash(_this.loadMoreError));
+}
 
 @override
 String toString() {
-  return 'PodcastEpisodesState(podcast: $podcast, episodes: $episodes, page: $page, hasNextPage: $hasNextPage, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError)';
+  final _this = this as PodcastEpisodesState;
+  return 'PodcastEpisodesState(podcast: ${_this.podcast}, episodes: ${_this.episodes}, page: ${_this.page}, hasNextPage: ${_this.hasNextPage}, isLoadingMore: ${_this.isLoadingMore}, loadMoreError: ${_this.loadMoreError})';
 }
 
 
@@ -386,7 +401,7 @@ class _$PodcastEpisodesStateCopyWithImpl<$Res>
 /// Create a copy of PodcastEpisodesState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? podcast = null,Object? episodes = null,Object? page = null,Object? hasNextPage = null,Object? isLoadingMore = null,Object? loadMoreError = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(PodcastEpisodesState(
 podcast: null == podcast ? _self.podcast : podcast // ignore: cast_nullable_to_non_nullable
 as Podcast,episodes: null == episodes ? _self.episodes : episodes // ignore: cast_nullable_to_non_nullable
 as List<Episode>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
@@ -542,7 +557,7 @@ return $default(_that.podcast,_that.episodes,_that.page,_that.hasNextPage,_that.
 
 
 class _PodcastEpisodesState extends PodcastEpisodesState {
-  const _PodcastEpisodesState({required this.podcast, final  List<Episode> episodes = const [], this.page = 0, this.hasNextPage = false, this.isLoadingMore = false, this.loadMoreError}): _episodes = episodes,super._();
+  const _PodcastEpisodesState({required this.podcast,  List<Episode> episodes = const [], this.page = 0, this.hasNextPage = false, this.isLoadingMore = false, this.loadMoreError}): _episodes = episodes,super._();
   
 
 @override final  Podcast podcast;
@@ -568,16 +583,18 @@ _$PodcastEpisodesStateCopyWith<_PodcastEpisodesState> get copyWith => __$Podcast
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PodcastEpisodesState&&(identical(other.podcast, podcast) || other.podcast == podcast)&&const DeepCollectionEquality().equals(other._episodes, _episodes)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PodcastEpisodesState&&(identical(other.podcast, podcast) || other.podcast == podcast)&&const DeepCollectionEquality().equals(other.episodes, _episodes)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcast,const DeepCollectionEquality().hash(_episodes),page,hasNextPage,isLoadingMore,const DeepCollectionEquality().hash(loadMoreError));
+int get hashCode {
+    return Object.hash(runtimeType,podcast,const DeepCollectionEquality().hash(_episodes),page,hasNextPage,isLoadingMore,const DeepCollectionEquality().hash(loadMoreError));
+}
 
 @override
 String toString() {
-  return 'PodcastEpisodesState(podcast: $podcast, episodes: $episodes, page: $page, hasNextPage: $hasNextPage, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError)';
+    return 'PodcastEpisodesState(podcast: $podcast, episodes: $episodes, page: $page, hasNextPage: $hasNextPage, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError)';
 }
 
 

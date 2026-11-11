@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'profile_edit_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'profile_edit_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ProfileEditPresentationCopyWith<ProfileEditPresentation> get copyWith => _$Prof
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileEditPresentation&&const DeepCollectionEquality().equals(other.fields, fields)&&(identical(other.usernameHint, usernameHint) || other.usernameHint == usernameHint)&&const DeepCollectionEquality().equals(other.experienceDetails, experienceDetails)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  final _this = this as ProfileEditPresentation;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileEditPresentation&&const DeepCollectionEquality().equals(other.fields, _this.fields)&&(identical(other.usernameHint, _this.usernameHint) || other.usernameHint == _this.usernameHint)&&const DeepCollectionEquality().equals(other.experienceDetails, _this.experienceDetails)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(fields),usernameHint,const DeepCollectionEquality().hash(experienceDetails),errorMessage);
+int get hashCode {
+  final _this = this as ProfileEditPresentation;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.fields),_this.usernameHint,const DeepCollectionEquality().hash(_this.experienceDetails),_this.errorMessage);
+}
 
 @override
 String toString() {
-  return 'ProfileEditPresentation(fields: $fields, usernameHint: $usernameHint, experienceDetails: $experienceDetails, errorMessage: $errorMessage)';
+  final _this = this as ProfileEditPresentation;
+  return 'ProfileEditPresentation(fields: ${_this.fields}, usernameHint: ${_this.usernameHint}, experienceDetails: ${_this.experienceDetails}, errorMessage: ${_this.errorMessage})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ProfileEditPresentationCopyWithImpl<$Res>
 /// Create a copy of ProfileEditPresentation
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? fields = null,Object? usernameHint = null,Object? experienceDetails = null,Object? errorMessage = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ProfileEditPresentation(
 fields: null == fields ? _self.fields : fields // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,usernameHint: null == usernameHint ? _self.usernameHint : usernameHint // ignore: cast_nullable_to_non_nullable
 as String,experienceDetails: null == experienceDetails ? _self.experienceDetails : experienceDetails // ignore: cast_nullable_to_non_nullable
@@ -209,7 +215,7 @@ return $default(_that.fields,_that.usernameHint,_that.experienceDetails,_that.er
 
 
 class _ProfileEditPresentation implements ProfileEditPresentation {
-  const _ProfileEditPresentation({required final  Map<String, String> fields, required this.usernameHint, required final  Map<String, String> experienceDetails, this.errorMessage}): _fields = fields,_experienceDetails = experienceDetails;
+  const _ProfileEditPresentation({required  Map<String, String> fields, required this.usernameHint, required  Map<String, String> experienceDetails, this.errorMessage}): _fields = fields,_experienceDetails = experienceDetails;
   
 
  final  Map<String, String> _fields;
@@ -239,16 +245,18 @@ _$ProfileEditPresentationCopyWith<_ProfileEditPresentation> get copyWith => __$P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileEditPresentation&&const DeepCollectionEquality().equals(other._fields, _fields)&&(identical(other.usernameHint, usernameHint) || other.usernameHint == usernameHint)&&const DeepCollectionEquality().equals(other._experienceDetails, _experienceDetails)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileEditPresentation&&const DeepCollectionEquality().equals(other.fields, _fields)&&(identical(other.usernameHint, usernameHint) || other.usernameHint == usernameHint)&&const DeepCollectionEquality().equals(other.experienceDetails, _experienceDetails)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_fields),usernameHint,const DeepCollectionEquality().hash(_experienceDetails),errorMessage);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_fields),usernameHint,const DeepCollectionEquality().hash(_experienceDetails),errorMessage);
+}
 
 @override
 String toString() {
-  return 'ProfileEditPresentation(fields: $fields, usernameHint: $usernameHint, experienceDetails: $experienceDetails, errorMessage: $errorMessage)';
+    return 'ProfileEditPresentation(fields: $fields, usernameHint: $usernameHint, experienceDetails: $experienceDetails, errorMessage: $errorMessage)';
 }
 
 

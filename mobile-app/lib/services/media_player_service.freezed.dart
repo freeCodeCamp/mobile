@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'media_player_service.dart';
@@ -9,12 +9,13 @@ part of 'media_player_service.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MediaPlayerState {
 
- MediaItem? get item; PlaybackState get playback; bool get isRadio; (Podcast, Episode)? get episode; Duration? get duration;
+ MediaItem? get item; PlaybackState get playback; bool get isRadio; (Podcast, Episode,)? get episode; Duration? get duration;
 /// Create a copy of MediaPlayerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $MediaPlayerStateCopyWith<MediaPlayerState> get copyWith => _$MediaPlayerStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaPlayerState&&(identical(other.item, item) || other.item == item)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.isRadio, isRadio) || other.isRadio == isRadio)&&(identical(other.episode, episode) || other.episode == episode)&&(identical(other.duration, duration) || other.duration == duration));
+  final _this = this as MediaPlayerState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaPlayerState&&(identical(other.item, _this.item) || other.item == _this.item)&&(identical(other.playback, _this.playback) || other.playback == _this.playback)&&(identical(other.isRadio, _this.isRadio) || other.isRadio == _this.isRadio)&&(identical(other.episode, _this.episode) || other.episode == _this.episode)&&(identical(other.duration, _this.duration) || other.duration == _this.duration));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,item,playback,isRadio,episode,duration);
+int get hashCode {
+  final _this = this as MediaPlayerState;
+  return Object.hash(runtimeType,_this.item,_this.playback,_this.isRadio,_this.episode,_this.duration);
+}
 
 @override
 String toString() {
-  return 'MediaPlayerState(item: $item, playback: $playback, isRadio: $isRadio, episode: $episode, duration: $duration)';
+  final _this = this as MediaPlayerState;
+  return 'MediaPlayerState(item: ${_this.item}, playback: ${_this.playback}, isRadio: ${_this.isRadio}, episode: ${_this.episode}, duration: ${_this.duration})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $MediaPlayerStateCopyWith<$Res>  {
   factory $MediaPlayerStateCopyWith(MediaPlayerState value, $Res Function(MediaPlayerState) _then) = _$MediaPlayerStateCopyWithImpl;
 @useResult
 $Res call({
- MediaItem? item, PlaybackState playback, bool isRadio, (Podcast, Episode)? episode, Duration? duration
+ MediaItem? item, PlaybackState playback, bool isRadio, (Podcast, Episode,)? episode, Duration? duration
 });
 
 
@@ -63,12 +69,12 @@ class _$MediaPlayerStateCopyWithImpl<$Res>
 /// Create a copy of MediaPlayerState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? item = freezed,Object? playback = null,Object? isRadio = null,Object? episode = freezed,Object? duration = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(MediaPlayerState(
 item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as MediaItem?,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
 as PlaybackState,isRadio: null == isRadio ? _self.isRadio : isRadio // ignore: cast_nullable_to_non_nullable
 as bool,episode: freezed == episode ? _self.episode : episode // ignore: cast_nullable_to_non_nullable
-as (Podcast, Episode)?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as (Podcast, Episode,)?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as Duration?,
   ));
 }
@@ -154,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode)? episode,  Duration? duration)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode,)? episode,  Duration? duration)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MediaPlayerState() when $default != null:
 return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.duration);case _:
@@ -175,7 +181,7 @@ return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.dura
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode)? episode,  Duration? duration)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode,)? episode,  Duration? duration)  $default,) {final _that = this;
 switch (_that) {
 case _MediaPlayerState():
 return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.duration);case _:
@@ -195,7 +201,7 @@ return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.dura
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode)? episode,  Duration? duration)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode,)? episode,  Duration? duration)?  $default,) {final _that = this;
 switch (_that) {
 case _MediaPlayerState() when $default != null:
 return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.duration);case _:
@@ -211,12 +217,12 @@ return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.dura
 
 class _MediaPlayerState extends MediaPlayerState {
   const _MediaPlayerState({this.item, required this.playback, this.isRadio = false, this.episode, this.duration}): super._();
-
+  
 
 @override final  MediaItem? item;
 @override final  PlaybackState playback;
 @override@JsonKey() final  bool isRadio;
-@override final  (Podcast, Episode)? episode;
+@override final  (Podcast, Episode,)? episode;
 @override final  Duration? duration;
 
 /// Create a copy of MediaPlayerState
@@ -229,16 +235,18 @@ _$MediaPlayerStateCopyWith<_MediaPlayerState> get copyWith => __$MediaPlayerStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaPlayerState&&(identical(other.item, item) || other.item == item)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.isRadio, isRadio) || other.isRadio == isRadio)&&(identical(other.episode, episode) || other.episode == episode)&&(identical(other.duration, duration) || other.duration == duration));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaPlayerState&&(identical(other.item, item) || other.item == item)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.isRadio, isRadio) || other.isRadio == isRadio)&&(identical(other.episode, episode) || other.episode == episode)&&(identical(other.duration, duration) || other.duration == duration));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,item,playback,isRadio,episode,duration);
+int get hashCode {
+    return Object.hash(runtimeType,item,playback,isRadio,episode,duration);
+}
 
 @override
 String toString() {
-  return 'MediaPlayerState(item: $item, playback: $playback, isRadio: $isRadio, episode: $episode, duration: $duration)';
+    return 'MediaPlayerState(item: $item, playback: $playback, isRadio: $isRadio, episode: $episode, duration: $duration)';
 }
 
 
@@ -249,7 +257,7 @@ abstract mixin class _$MediaPlayerStateCopyWith<$Res> implements $MediaPlayerSta
   factory _$MediaPlayerStateCopyWith(_MediaPlayerState value, $Res Function(_MediaPlayerState) _then) = __$MediaPlayerStateCopyWithImpl;
 @override @useResult
 $Res call({
- MediaItem? item, PlaybackState playback, bool isRadio, (Podcast, Episode)? episode, Duration? duration
+ MediaItem? item, PlaybackState playback, bool isRadio, (Podcast, Episode,)? episode, Duration? duration
 });
 
 
@@ -272,7 +280,7 @@ item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullab
 as MediaItem?,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
 as PlaybackState,isRadio: null == isRadio ? _self.isRadio : isRadio // ignore: cast_nullable_to_non_nullable
 as bool,episode: freezed == episode ? _self.episode : episode // ignore: cast_nullable_to_non_nullable
-as (Podcast, Episode)?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as (Podcast, Episode,)?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as Duration?,
   ));
 }

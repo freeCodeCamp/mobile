@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'player_controller.dart';
@@ -9,6 +9,7 @@ part of 'player_controller.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PodcastPlayerStateCopyWith<PodcastPlayerState> get copyWith => _$PodcastPlayerS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastPlayerState&&(identical(other.episodeId, episodeId) || other.episodeId == episodeId)&&(identical(other.loadingEpisodeId, loadingEpisodeId) || other.loadingEpisodeId == loadingEpisodeId)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.speed, speed) || other.speed == speed));
+  final _this = this as PodcastPlayerState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastPlayerState&&(identical(other.episodeId, _this.episodeId) || other.episodeId == _this.episodeId)&&(identical(other.loadingEpisodeId, _this.loadingEpisodeId) || other.loadingEpisodeId == _this.loadingEpisodeId)&&(identical(other.isPlaying, _this.isPlaying) || other.isPlaying == _this.isPlaying)&&(identical(other.isBuffering, _this.isBuffering) || other.isBuffering == _this.isBuffering)&&(identical(other.duration, _this.duration) || other.duration == _this.duration)&&(identical(other.speed, _this.speed) || other.speed == _this.speed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,episodeId,loadingEpisodeId,isPlaying,isBuffering,duration,speed);
+int get hashCode {
+  final _this = this as PodcastPlayerState;
+  return Object.hash(runtimeType,_this.episodeId,_this.loadingEpisodeId,_this.isPlaying,_this.isBuffering,_this.duration,_this.speed);
+}
 
 @override
 String toString() {
-  return 'PodcastPlayerState(episodeId: $episodeId, loadingEpisodeId: $loadingEpisodeId, isPlaying: $isPlaying, isBuffering: $isBuffering, duration: $duration, speed: $speed)';
+  final _this = this as PodcastPlayerState;
+  return 'PodcastPlayerState(episodeId: ${_this.episodeId}, loadingEpisodeId: ${_this.loadingEpisodeId}, isPlaying: ${_this.isPlaying}, isBuffering: ${_this.isBuffering}, duration: ${_this.duration}, speed: ${_this.speed})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PodcastPlayerStateCopyWithImpl<$Res>
 /// Create a copy of PodcastPlayerState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? episodeId = freezed,Object? loadingEpisodeId = freezed,Object? isPlaying = null,Object? isBuffering = null,Object? duration = freezed,Object? speed = null,}) {
-  return _then(_self.copyWith(
+  return _then(PodcastPlayerState(
 episodeId: freezed == episodeId ? _self.episodeId : episodeId // ignore: cast_nullable_to_non_nullable
 as String?,loadingEpisodeId: freezed == loadingEpisodeId ? _self.loadingEpisodeId : loadingEpisodeId // ignore: cast_nullable_to_non_nullable
 as String?,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ _$PodcastPlayerStateCopyWith<_PodcastPlayerState> get copyWith => __$PodcastPlay
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PodcastPlayerState&&(identical(other.episodeId, episodeId) || other.episodeId == episodeId)&&(identical(other.loadingEpisodeId, loadingEpisodeId) || other.loadingEpisodeId == loadingEpisodeId)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.speed, speed) || other.speed == speed));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PodcastPlayerState&&(identical(other.episodeId, episodeId) || other.episodeId == episodeId)&&(identical(other.loadingEpisodeId, loadingEpisodeId) || other.loadingEpisodeId == loadingEpisodeId)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.speed, speed) || other.speed == speed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,episodeId,loadingEpisodeId,isPlaying,isBuffering,duration,speed);
+int get hashCode {
+    return Object.hash(runtimeType,episodeId,loadingEpisodeId,isPlaying,isBuffering,duration,speed);
+}
 
 @override
 String toString() {
-  return 'PodcastPlayerState(episodeId: $episodeId, loadingEpisodeId: $loadingEpisodeId, isPlaying: $isPlaying, isBuffering: $isBuffering, duration: $duration, speed: $speed)';
+    return 'PodcastPlayerState(episodeId: $episodeId, loadingEpisodeId: $loadingEpisodeId, isPlaying: $isPlaying, isBuffering: $isBuffering, duration: $duration, speed: $speed)';
 }
 
 

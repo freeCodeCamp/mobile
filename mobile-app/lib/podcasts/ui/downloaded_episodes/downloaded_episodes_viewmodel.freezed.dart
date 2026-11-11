@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'downloaded_episodes_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'downloaded_episodes_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PodcastDownloadedEpisodesStateCopyWith<PodcastDownloadedEpisodesState> get copy
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastDownloadedEpisodesState&&(identical(other.podcast, podcast) || other.podcast == podcast)&&const DeepCollectionEquality().equals(other.episodes, episodes));
+  final _this = this as PodcastDownloadedEpisodesState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PodcastDownloadedEpisodesState&&(identical(other.podcast, _this.podcast) || other.podcast == _this.podcast)&&const DeepCollectionEquality().equals(other.episodes, _this.episodes));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcast,const DeepCollectionEquality().hash(episodes));
+int get hashCode {
+  final _this = this as PodcastDownloadedEpisodesState;
+  return Object.hash(runtimeType,_this.podcast,const DeepCollectionEquality().hash(_this.episodes));
+}
 
 @override
 String toString() {
-  return 'PodcastDownloadedEpisodesState(podcast: $podcast, episodes: $episodes)';
+  final _this = this as PodcastDownloadedEpisodesState;
+  return 'PodcastDownloadedEpisodesState(podcast: ${_this.podcast}, episodes: ${_this.episodes})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PodcastDownloadedEpisodesStateCopyWithImpl<$Res>
 /// Create a copy of PodcastDownloadedEpisodesState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? podcast = freezed,Object? episodes = null,}) {
-  return _then(_self.copyWith(
+  return _then(PodcastDownloadedEpisodesState(
 podcast: freezed == podcast ? _self.podcast : podcast // ignore: cast_nullable_to_non_nullable
 as Podcast?,episodes: null == episodes ? _self.episodes : episodes // ignore: cast_nullable_to_non_nullable
 as List<Episode>,
@@ -219,8 +225,8 @@ return $default(_that.podcast,_that.episodes);case _:
 
 
 class _PodcastDownloadedEpisodesState implements PodcastDownloadedEpisodesState {
-  const _PodcastDownloadedEpisodesState({this.podcast, final  List<Episode> episodes = const []}): _episodes = episodes;
-
+  const _PodcastDownloadedEpisodesState({this.podcast,  List<Episode> episodes = const []}): _episodes = episodes;
+  
 
 @override final  Podcast? podcast;
  final  List<Episode> _episodes;
@@ -241,16 +247,18 @@ _$PodcastDownloadedEpisodesStateCopyWith<_PodcastDownloadedEpisodesState> get co
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PodcastDownloadedEpisodesState&&(identical(other.podcast, podcast) || other.podcast == podcast)&&const DeepCollectionEquality().equals(other._episodes, _episodes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PodcastDownloadedEpisodesState&&(identical(other.podcast, podcast) || other.podcast == podcast)&&const DeepCollectionEquality().equals(other.episodes, _episodes));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,podcast,const DeepCollectionEquality().hash(_episodes));
+int get hashCode {
+    return Object.hash(runtimeType,podcast,const DeepCollectionEquality().hash(_episodes));
+}
 
 @override
 String toString() {
-  return 'PodcastDownloadedEpisodesState(podcast: $podcast, episodes: $episodes)';
+    return 'PodcastDownloadedEpisodesState(podcast: $podcast, episodes: $episodes)';
 }
 
 

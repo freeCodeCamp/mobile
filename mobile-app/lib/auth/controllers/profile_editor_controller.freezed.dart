@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'profile_editor_controller.dart';
@@ -9,6 +9,7 @@ part of 'profile_editor_controller.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ProfileEditorStateCopyWith<ProfileEditorState> get copyWith => _$ProfileEditorS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileEditorState&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.saving, saving) || other.saving == saving)&&const DeepCollectionEquality().equals(other.errors, errors)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.needsRefresh, needsRefresh) || other.needsRefresh == needsRefresh)&&(identical(other.usernameChecking, usernameChecking) || other.usernameChecking == usernameChecking)&&(identical(other.usernameAvailable, usernameAvailable) || other.usernameAvailable == usernameAvailable));
+  final _this = this as ProfileEditorState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileEditorState&&(identical(other.original, _this.original) || other.original == _this.original)&&(identical(other.draft, _this.draft) || other.draft == _this.draft)&&(identical(other.saving, _this.saving) || other.saving == _this.saving)&&const DeepCollectionEquality().equals(other.errors, _this.errors)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage)&&(identical(other.needsRefresh, _this.needsRefresh) || other.needsRefresh == _this.needsRefresh)&&(identical(other.usernameChecking, _this.usernameChecking) || other.usernameChecking == _this.usernameChecking)&&(identical(other.usernameAvailable, _this.usernameAvailable) || other.usernameAvailable == _this.usernameAvailable));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,original,draft,saving,const DeepCollectionEquality().hash(errors),errorMessage,needsRefresh,usernameChecking,usernameAvailable);
+int get hashCode {
+  final _this = this as ProfileEditorState;
+  return Object.hash(runtimeType,_this.original,_this.draft,_this.saving,const DeepCollectionEquality().hash(_this.errors),_this.errorMessage,_this.needsRefresh,_this.usernameChecking,_this.usernameAvailable);
+}
 
 @override
 String toString() {
-  return 'ProfileEditorState(original: $original, draft: $draft, saving: $saving, errors: $errors, errorMessage: $errorMessage, needsRefresh: $needsRefresh, usernameChecking: $usernameChecking, usernameAvailable: $usernameAvailable)';
+  final _this = this as ProfileEditorState;
+  return 'ProfileEditorState(original: ${_this.original}, draft: ${_this.draft}, saving: ${_this.saving}, errors: ${_this.errors}, errorMessage: ${_this.errorMessage}, needsRefresh: ${_this.needsRefresh}, usernameChecking: ${_this.usernameChecking}, usernameAvailable: ${_this.usernameAvailable})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ProfileEditorStateCopyWithImpl<$Res>
 /// Create a copy of ProfileEditorState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? original = null,Object? draft = null,Object? saving = null,Object? errors = null,Object? errorMessage = freezed,Object? needsRefresh = null,Object? usernameChecking = null,Object? usernameAvailable = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ProfileEditorState(
 original: null == original ? _self.original : original // ignore: cast_nullable_to_non_nullable
 as FccUserModel,draft: null == draft ? _self.draft : draft // ignore: cast_nullable_to_non_nullable
 as FccUserModel,saving: null == saving ? _self.saving : saving // ignore: cast_nullable_to_non_nullable
@@ -231,7 +237,7 @@ return $default(_that.original,_that.draft,_that.saving,_that.errors,_that.error
 
 
 class _ProfileEditorState extends ProfileEditorState {
-  const _ProfileEditorState({required this.original, required this.draft, this.saving = false, final  Map<String, String> errors = const {}, this.errorMessage, this.needsRefresh = false, this.usernameChecking = false, this.usernameAvailable}): _errors = errors,super._();
+  const _ProfileEditorState({required this.original, required this.draft, this.saving = false,  Map<String, String> errors = const {}, this.errorMessage, this.needsRefresh = false, this.usernameChecking = false, this.usernameAvailable}): _errors = errors,super._();
   
 
 @override final  FccUserModel original;
@@ -259,16 +265,18 @@ _$ProfileEditorStateCopyWith<_ProfileEditorState> get copyWith => __$ProfileEdit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileEditorState&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.saving, saving) || other.saving == saving)&&const DeepCollectionEquality().equals(other._errors, _errors)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.needsRefresh, needsRefresh) || other.needsRefresh == needsRefresh)&&(identical(other.usernameChecking, usernameChecking) || other.usernameChecking == usernameChecking)&&(identical(other.usernameAvailable, usernameAvailable) || other.usernameAvailable == usernameAvailable));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileEditorState&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.saving, saving) || other.saving == saving)&&const DeepCollectionEquality().equals(other.errors, _errors)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.needsRefresh, needsRefresh) || other.needsRefresh == needsRefresh)&&(identical(other.usernameChecking, usernameChecking) || other.usernameChecking == usernameChecking)&&(identical(other.usernameAvailable, usernameAvailable) || other.usernameAvailable == usernameAvailable));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,original,draft,saving,const DeepCollectionEquality().hash(_errors),errorMessage,needsRefresh,usernameChecking,usernameAvailable);
+int get hashCode {
+    return Object.hash(runtimeType,original,draft,saving,const DeepCollectionEquality().hash(_errors),errorMessage,needsRefresh,usernameChecking,usernameAvailable);
+}
 
 @override
 String toString() {
-  return 'ProfileEditorState(original: $original, draft: $draft, saving: $saving, errors: $errors, errorMessage: $errorMessage, needsRefresh: $needsRefresh, usernameChecking: $usernameChecking, usernameAvailable: $usernameAvailable)';
+    return 'ProfileEditorState(original: $original, draft: $draft, saving: $saving, errors: $errors, errorMessage: $errorMessage, needsRefresh: $needsRefresh, usernameChecking: $usernameChecking, usernameAvailable: $usernameAvailable)';
 }
 
 

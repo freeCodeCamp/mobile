@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'profile_project_viewmodel.dart';
@@ -9,6 +9,7 @@ part of 'profile_project_viewmodel.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ProfileProjectStateCopyWith<ProfileProjectState> get copyWith => _$ProfileProje
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileProjectState&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.isNew, isNew) || other.isNew == isNew)&&(identical(other.available, available) || other.available == available)&&(identical(other.saving, saving) || other.saving == saving)&&(identical(other.navigationDirty, navigationDirty) || other.navigationDirty == navigationDirty)&&const DeepCollectionEquality().equals(other.errors, errors));
+  final _this = this as ProfileProjectState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileProjectState&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.original, _this.original) || other.original == _this.original)&&(identical(other.draft, _this.draft) || other.draft == _this.draft)&&(identical(other.isNew, _this.isNew) || other.isNew == _this.isNew)&&(identical(other.available, _this.available) || other.available == _this.available)&&(identical(other.saving, _this.saving) || other.saving == _this.saving)&&(identical(other.navigationDirty, _this.navigationDirty) || other.navigationDirty == _this.navigationDirty)&&const DeepCollectionEquality().equals(other.errors, _this.errors));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userId,original,draft,isNew,available,saving,navigationDirty,const DeepCollectionEquality().hash(errors));
+int get hashCode {
+  final _this = this as ProfileProjectState;
+  return Object.hash(runtimeType,_this.userId,_this.original,_this.draft,_this.isNew,_this.available,_this.saving,_this.navigationDirty,const DeepCollectionEquality().hash(_this.errors));
+}
 
 @override
 String toString() {
-  return 'ProfileProjectState(userId: $userId, original: $original, draft: $draft, isNew: $isNew, available: $available, saving: $saving, navigationDirty: $navigationDirty, errors: $errors)';
+  final _this = this as ProfileProjectState;
+  return 'ProfileProjectState(userId: ${_this.userId}, original: ${_this.original}, draft: ${_this.draft}, isNew: ${_this.isNew}, available: ${_this.available}, saving: ${_this.saving}, navigationDirty: ${_this.navigationDirty}, errors: ${_this.errors})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ProfileProjectStateCopyWithImpl<$Res>
 /// Create a copy of ProfileProjectState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? original = null,Object? draft = null,Object? isNew = null,Object? available = null,Object? saving = null,Object? navigationDirty = null,Object? errors = null,}) {
-  return _then(_self.copyWith(
+  return _then(ProfileProjectState(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,original: null == original ? _self.original : original // ignore: cast_nullable_to_non_nullable
 as Portfolio,draft: null == draft ? _self.draft : draft // ignore: cast_nullable_to_non_nullable
@@ -231,7 +237,7 @@ return $default(_that.userId,_that.original,_that.draft,_that.isNew,_that.availa
 
 
 class _ProfileProjectState extends ProfileProjectState {
-  const _ProfileProjectState({required this.userId, required this.original, required this.draft, required this.isNew, this.available = true, this.saving = false, this.navigationDirty = false, final  Map<String, String> errors = const {}}): _errors = errors,super._();
+  const _ProfileProjectState({required this.userId, required this.original, required this.draft, required this.isNew, this.available = true, this.saving = false, this.navigationDirty = false,  Map<String, String> errors = const {}}): _errors = errors,super._();
   
 
 @override final  String userId;
@@ -259,16 +265,18 @@ _$ProfileProjectStateCopyWith<_ProfileProjectState> get copyWith => __$ProfilePr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileProjectState&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.isNew, isNew) || other.isNew == isNew)&&(identical(other.available, available) || other.available == available)&&(identical(other.saving, saving) || other.saving == saving)&&(identical(other.navigationDirty, navigationDirty) || other.navigationDirty == navigationDirty)&&const DeepCollectionEquality().equals(other._errors, _errors));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileProjectState&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.original, original) || other.original == original)&&(identical(other.draft, draft) || other.draft == draft)&&(identical(other.isNew, isNew) || other.isNew == isNew)&&(identical(other.available, available) || other.available == available)&&(identical(other.saving, saving) || other.saving == saving)&&(identical(other.navigationDirty, navigationDirty) || other.navigationDirty == navigationDirty)&&const DeepCollectionEquality().equals(other.errors, _errors));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userId,original,draft,isNew,available,saving,navigationDirty,const DeepCollectionEquality().hash(_errors));
+int get hashCode {
+    return Object.hash(runtimeType,userId,original,draft,isNew,available,saving,navigationDirty,const DeepCollectionEquality().hash(_errors));
+}
 
 @override
 String toString() {
-  return 'ProfileProjectState(userId: $userId, original: $original, draft: $draft, isNew: $isNew, available: $available, saving: $saving, navigationDirty: $navigationDirty, errors: $errors)';
+    return 'ProfileProjectState(userId: $userId, original: $original, draft: $draft, isNew: $isNew, available: $available, saving: $saving, navigationDirty: $navigationDirty, errors: $errors)';
 }
 
 

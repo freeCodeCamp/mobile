@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'scene_assets_model.dart';
@@ -9,6 +9,7 @@ part of 'scene_assets_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $SceneAssetsCopyWith<SceneAssets> get copyWith => _$SceneAssetsCopyWithImpl<Scen
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneAssets&&(identical(other.backgrounds, backgrounds) || other.backgrounds == backgrounds)&&const DeepCollectionEquality().equals(other.characterAssets, characterAssets));
+  final _this = this as SceneAssets;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneAssets&&(identical(other.backgrounds, _this.backgrounds) || other.backgrounds == _this.backgrounds)&&const DeepCollectionEquality().equals(other.characterAssets, _this.characterAssets));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,backgrounds,const DeepCollectionEquality().hash(characterAssets));
+int get hashCode {
+  final _this = this as SceneAssets;
+  return Object.hash(runtimeType,_this.backgrounds,const DeepCollectionEquality().hash(_this.characterAssets));
+}
 
 @override
 String toString() {
-  return 'SceneAssets(backgrounds: $backgrounds, characterAssets: $characterAssets)';
+  final _this = this as SceneAssets;
+  return 'SceneAssets(backgrounds: ${_this.backgrounds}, characterAssets: ${_this.characterAssets})';
 }
 
 
@@ -66,7 +72,7 @@ class _$SceneAssetsCopyWithImpl<$Res>
 /// Create a copy of SceneAssets
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? backgrounds = null,Object? characterAssets = null,}) {
-  return _then(_self.copyWith(
+  return _then(SceneAssets(
 backgrounds: null == backgrounds ? _self.backgrounds : backgrounds // ignore: cast_nullable_to_non_nullable
 as String,characterAssets: null == characterAssets ? _self.characterAssets : characterAssets // ignore: cast_nullable_to_non_nullable
 as Map<String, CharacterAssets>,
@@ -210,7 +216,7 @@ return $default(_that.backgrounds,_that.characterAssets);case _:
 @JsonSerializable()
 
 class _SceneAssets implements SceneAssets {
-  const _SceneAssets({required this.backgrounds, required final  Map<String, CharacterAssets> characterAssets}): _characterAssets = characterAssets;
+  const _SceneAssets({required this.backgrounds, required  Map<String, CharacterAssets> characterAssets}): _characterAssets = characterAssets;
   factory _SceneAssets.fromJson(Map<String, dynamic> json) => _$SceneAssetsFromJson(json);
 
 @override final  String backgrounds;
@@ -235,16 +241,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneAssets&&(identical(other.backgrounds, backgrounds) || other.backgrounds == backgrounds)&&const DeepCollectionEquality().equals(other._characterAssets, _characterAssets));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneAssets&&(identical(other.backgrounds, backgrounds) || other.backgrounds == backgrounds)&&const DeepCollectionEquality().equals(other.characterAssets, _characterAssets));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,backgrounds,const DeepCollectionEquality().hash(_characterAssets));
+int get hashCode {
+    return Object.hash(runtimeType,backgrounds,const DeepCollectionEquality().hash(_characterAssets));
+}
 
 @override
 String toString() {
-  return 'SceneAssets(backgrounds: $backgrounds, characterAssets: $characterAssets)';
+    return 'SceneAssets(backgrounds: $backgrounds, characterAssets: $characterAssets)';
 }
 
 
@@ -300,16 +308,21 @@ $CharacterAssetsCopyWith<CharacterAssets> get copyWith => _$CharacterAssetsCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterAssets&&(identical(other.base, base) || other.base == base)&&(identical(other.brows, brows) || other.brows == brows)&&(identical(other.eyesClosed, eyesClosed) || other.eyesClosed == eyesClosed)&&(identical(other.eyesOpen, eyesOpen) || other.eyesOpen == eyesOpen)&&(identical(other.glasses, glasses) || other.glasses == glasses)&&(identical(other.mouthClosed, mouthClosed) || other.mouthClosed == mouthClosed)&&(identical(other.mouthOpen, mouthOpen) || other.mouthOpen == mouthOpen));
+  final _this = this as CharacterAssets;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterAssets&&(identical(other.base, _this.base) || other.base == _this.base)&&(identical(other.brows, _this.brows) || other.brows == _this.brows)&&(identical(other.eyesClosed, _this.eyesClosed) || other.eyesClosed == _this.eyesClosed)&&(identical(other.eyesOpen, _this.eyesOpen) || other.eyesOpen == _this.eyesOpen)&&(identical(other.glasses, _this.glasses) || other.glasses == _this.glasses)&&(identical(other.mouthClosed, _this.mouthClosed) || other.mouthClosed == _this.mouthClosed)&&(identical(other.mouthOpen, _this.mouthOpen) || other.mouthOpen == _this.mouthOpen));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,base,brows,eyesClosed,eyesOpen,glasses,mouthClosed,mouthOpen);
+int get hashCode {
+  final _this = this as CharacterAssets;
+  return Object.hash(runtimeType,_this.base,_this.brows,_this.eyesClosed,_this.eyesOpen,_this.glasses,_this.mouthClosed,_this.mouthOpen);
+}
 
 @override
 String toString() {
-  return 'CharacterAssets(base: $base, brows: $brows, eyesClosed: $eyesClosed, eyesOpen: $eyesOpen, glasses: $glasses, mouthClosed: $mouthClosed, mouthOpen: $mouthOpen)';
+  final _this = this as CharacterAssets;
+  return 'CharacterAssets(base: ${_this.base}, brows: ${_this.brows}, eyesClosed: ${_this.eyesClosed}, eyesOpen: ${_this.eyesOpen}, glasses: ${_this.glasses}, mouthClosed: ${_this.mouthClosed}, mouthOpen: ${_this.mouthOpen})';
 }
 
 
@@ -338,7 +351,7 @@ class _$CharacterAssetsCopyWithImpl<$Res>
 /// Create a copy of CharacterAssets
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? base = null,Object? brows = null,Object? eyesClosed = null,Object? eyesOpen = null,Object? glasses = freezed,Object? mouthClosed = null,Object? mouthOpen = null,}) {
-  return _then(_self.copyWith(
+  return _then(CharacterAssets(
 base: null == base ? _self.base : base // ignore: cast_nullable_to_non_nullable
 as String,brows: null == brows ? _self.brows : brows // ignore: cast_nullable_to_non_nullable
 as String,eyesClosed: null == eyesClosed ? _self.eyesClosed : eyesClosed // ignore: cast_nullable_to_non_nullable
@@ -511,16 +524,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterAssets&&(identical(other.base, base) || other.base == base)&&(identical(other.brows, brows) || other.brows == brows)&&(identical(other.eyesClosed, eyesClosed) || other.eyesClosed == eyesClosed)&&(identical(other.eyesOpen, eyesOpen) || other.eyesOpen == eyesOpen)&&(identical(other.glasses, glasses) || other.glasses == glasses)&&(identical(other.mouthClosed, mouthClosed) || other.mouthClosed == mouthClosed)&&(identical(other.mouthOpen, mouthOpen) || other.mouthOpen == mouthOpen));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterAssets&&(identical(other.base, base) || other.base == base)&&(identical(other.brows, brows) || other.brows == brows)&&(identical(other.eyesClosed, eyesClosed) || other.eyesClosed == eyesClosed)&&(identical(other.eyesOpen, eyesOpen) || other.eyesOpen == eyesOpen)&&(identical(other.glasses, glasses) || other.glasses == glasses)&&(identical(other.mouthClosed, mouthClosed) || other.mouthClosed == mouthClosed)&&(identical(other.mouthOpen, mouthOpen) || other.mouthOpen == mouthOpen));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,base,brows,eyesClosed,eyesOpen,glasses,mouthClosed,mouthOpen);
+int get hashCode {
+    return Object.hash(runtimeType,base,brows,eyesClosed,eyesOpen,glasses,mouthClosed,mouthOpen);
+}
 
 @override
 String toString() {
-  return 'CharacterAssets(base: $base, brows: $brows, eyesClosed: $eyesClosed, eyesOpen: $eyesOpen, glasses: $glasses, mouthClosed: $mouthClosed, mouthOpen: $mouthOpen)';
+    return 'CharacterAssets(base: $base, brows: $brows, eyesClosed: $eyesClosed, eyesOpen: $eyesOpen, glasses: $glasses, mouthClosed: $mouthClosed, mouthOpen: $mouthOpen)';
 }
 
 
