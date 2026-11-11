@@ -18,7 +18,11 @@ const parser = new Parser<
 void (async function () {
   await dbConnect();
   for (const feedUrl of feedUrls) {
-    const feed = await parser.parseURL(feedUrl);
+    const feed = await parser.parseURL(feedUrl).catch((error) => {
+      console.error(`Failed to fetch ${feedUrl}:`, error);
+      return null;
+    });
+    if (!feed) continue;
     console.log('UPDATING PODCAST', feed.title);
     const podcast = await PodcastModel.findOneAndUpdate<Podcast>(
       { feedUrl: feedUrl },
