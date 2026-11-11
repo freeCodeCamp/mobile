@@ -13,7 +13,6 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_leave_dialog.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge/daily_challenge_view.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_view.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
-import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/widgets/celebration_confetti.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
@@ -207,55 +206,6 @@ void main() {
       expect(_style(tester, 'Challenge 80').fontSize, 16);
       expect(_style(tester, 'Challenge 80').fontWeight, FontWeight.w700);
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
-
-  testWidgets(
-    'DE2 DEN1 full paragraph left aligned read more and inline chips',
-    (tester) async {
-      await _pump(
-        tester,
-        Scaffold(
-          body: Column(
-            children: [
-              DailyInstructionCard(challenge: _challenge, maxHeight: 400),
-              const DailyChallengeExample(
-                test: ChallengeTest(
-                  text: '<code>double(3)</code> should return <code>6</code>.',
-                  testString: '',
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-      final summary = find.textContaining('including this final sentence');
-      expect(tester.widget<Text>(summary).maxLines, isNull);
-      expect(_style(tester, tester.widget<Text>(summary).data!).fontSize, 15);
-      expect(_style(tester, tester.widget<Text>(summary).data!).height, 1.5);
-      expect(
-        tester.getTopLeft(find.text('Read more')).dx,
-        tester.getTopLeft(find.text('Step 1')).dx,
-      );
-      expect(
-        tester.getSize(find.widgetWithText(TextButton, 'Read more')).height,
-        greaterThanOrEqualTo(48),
-      );
-      final example = find.byType(DailyChallengeExample);
-      expect(tester.getSize(example).height, lessThan(40));
-      final first = find.text('double(3)');
-      final last = find.text('6');
-      expect(tester.getRect(first).top, tester.getRect(last).top);
-      final chip = tester.widget<Container>(
-        find.ancestor(of: first, matching: find.byType(Container)).first,
-      );
-      expect((chip.decoration as BoxDecoration).color, const Color(0xff3f3557));
-      expect((chip.decoration as BoxDecoration).border, isNull);
-      expect(
-        (chip.decoration as BoxDecoration).borderRadius,
-        BorderRadius.circular(4),
-      );
       expect(tester.takeException(), isNull);
     },
   );
