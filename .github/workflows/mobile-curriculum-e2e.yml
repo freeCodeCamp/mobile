@@ -52,13 +52,13 @@ jobs:
           gradle-version: ${{ matrix.gradle-version }}
 
       - name: Setup Java - ${{ matrix.java-version }}
-        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           distribution: "temurin"
           java-version: ${{ matrix.java-version }}
 
       - name: AVD cache - ${{ matrix.android-api-level }}
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         id: avd-cache
         with:
           path: |
@@ -79,18 +79,18 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Checkout freeCodeCamp main repo
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: freeCodeCamp/freeCodeCamp
           path: freeCodeCamp
 
       - name: Checkout mobile repo
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           path: mobile
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -142,7 +142,7 @@ jobs:
 
       - name: Upload failed tests logs
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: test_runner_results.txt
           path: mobile/mobile-app/integration_test/test_runner/test_runner_results.txt
