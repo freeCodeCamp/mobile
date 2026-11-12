@@ -25,8 +25,8 @@ jobs:
         gradle-version: [8.7]
         java-version: [17]
         android-api-level: [35]
-        node-version: [24]
-        pnpm-version: [10]
+        node-version: [26]
+        pnpm-version: [12]
         flutter-version: ["3.47.x"]
 
     steps:

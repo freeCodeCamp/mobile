@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 24.x ]
+        node-version: [ 26.x ]
         site_tlds: [ dev, org ]
 
     steps:
