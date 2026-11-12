@@ -532,10 +532,12 @@ void main() {
     expect(find.byType(AppNavigationFooter), findsNothing);
   });
 
-  testWidgets('should list About you as Name, Location, About', (tester) async {
+  testWidgets('should list About you as Name, Stated location, About', (
+    tester,
+  ) async {
     await _pumpScreen(tester, const ProfileVisibilityView(), _MemoryAuth());
     final top = [
-      for (final label in ['Name', 'Location', 'About'])
+      for (final label in ['Name', 'Stated location', 'About'])
         tester.getTopLeft(_switch(label)).dy,
     ];
     expect(top, orderedEquals([...top]..sort()));
