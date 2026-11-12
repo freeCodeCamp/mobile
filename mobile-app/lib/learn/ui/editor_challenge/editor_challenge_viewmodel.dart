@@ -7,6 +7,7 @@ import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/services/code_service.dart';
 import 'package:freecodecamp/learn/services/quote_service.dart';
 import 'package:freecodecamp/learn/services/test_runner_service.dart';
+import 'package:freecodecamp/services/analytics_service.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -78,8 +79,17 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     if (_resetting) return;
     _resetting = true;
     _invalidateResults();
+    final analytics = ref.read(analyticsProvider);
     try {
       await ref.read(learnCodeServiceProvider).reset(challenge);
+      unawaited(
+        analytics.codeReset(
+          challengeId: challenge.id,
+          superBlock: challenge.superBlock,
+          block: challenge.block,
+          challengeType: challenge.challengeType,
+        ),
+      );
       if (!ref.mounted) return;
       state = EditorChallengeState(
         file: state.file,
@@ -191,6 +201,18 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
           if (!result.pass)
             _fillPlaceholders(challenge.tests[i].text, result.err),
       ];
+      unawaited(
+        ref
+            .read(analyticsProvider)
+            .challengeTestsRun(
+              challengeId: challenge.id,
+              superBlock: challenge.superBlock,
+              block: challenge.block,
+              challengeType: challenge.challengeType,
+              passed: failures.isEmpty,
+              failedTests: failures.length,
+            ),
+      );
 
       state = state.copyWith(
         testResults: [for (final result in results) result.pass],

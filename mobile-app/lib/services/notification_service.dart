@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' show Random, pow;
@@ -9,8 +10,25 @@ import 'package:timezone/timezone.dart' as tz;
 
 part 'notification_service.g.dart';
 
+// NOTE: The notification payload, so a tap can be attributed. Payload strings are analytics values; don't rename them. learning_reminder is set by LearningReminderService.
+enum NotificationKind {
+  learningReminder('learning_reminder'),
+  podcastDownload('podcast_download');
+
+  const NotificationKind(this.payload);
+
+  final String payload;
+
+  static NotificationKind? fromPayload(String? payload) =>
+      values.where((kind) => kind.payload == payload).firstOrNull;
+}
+
 @Riverpod(keepAlive: true)
-NotificationService notificationService(Ref ref) => NotificationService();
+NotificationService notificationService(Ref ref) {
+  final service = NotificationService();
+  ref.onDispose(service.dispose);
+  return service;
+}
 
 class NotificationService {
   static const _channelId = 'fcc-notif-channel';
@@ -19,6 +37,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
   final Random _random = Random();
+  final _opened = StreamController<NotificationKind?>.broadcast();
 
   Future<void>? _initialisation;
 
@@ -27,7 +46,24 @@ class NotificationService {
       android: AndroidInitializationSettings('notification_icon'),
       iOS: DarwinInitializationSettings(),
     ),
+    onDidReceiveNotificationResponse: (response) =>
+        _opened.add(NotificationKind.fromPayload(response.payload)),
   );
+
+  // NOTE: Taps while the app is running. A tap that launches the app arrives through launchedFrom instead.
+  Stream<NotificationKind?> get opened => _opened.stream;
+
+  // NOTE: Null when the app wasn't launched from a notification.
+  Future<({NotificationKind? kind})?> launchedFrom() async {
+    await _ensureInitialised();
+    final details = await _plugin.getNotificationAppLaunchDetails();
+    if (details == null || !details.didNotificationLaunchApp) return null;
+    return (
+      kind: NotificationKind.fromPayload(details.notificationResponse?.payload),
+    );
+  }
+
+  void dispose() => _opened.close();
 
   Future<bool> requestPermission() async {
     try {
@@ -106,6 +142,8 @@ class NotificationService {
     id: _random.nextInt(pow(2, 31).toInt() - 1),
     title: title,
     body: body,
+    // NOTE: Only podcast downloads post immediate notifications.
+    payload: NotificationKind.podcastDownload.payload,
     notificationDetails: NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,

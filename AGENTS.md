@@ -17,6 +17,7 @@ Run from `mobile-app/`:
 dart run build_runner build        # after touching any @riverpod, @freezed, @JsonSerializable or @TypedGoRoute
 dart analyze
 flutter analyze
+flutter test                       # unit tests in test/, also run by CI
 flutter drive --driver=test_driver/integration_test.dart --target=integration_test/<feature>/<name>_test.dart
 dart integration_test_runner.dart [--curriculum] [--ios]
 ```
@@ -88,6 +89,7 @@ Installed apps already hold this data in the documents directory and SharedPrefe
 | Podcast downloads | `storage/podcast-downloads.json` (version 2, API key names; version 1 is normalised in memory on read), `episodes/`, `images/` |
 | Podcast resume | prefs `{episodeId}_progress`, LRU index `podcast_recent_episodes` (cap 10) |
 | Learn saved code | prefs `<challengeId>.<name>.<ext>` |
+| Last reported notification permission | prefs `analytics_notification_permission` (bool) |
 
 - JSON files live inside the feature's own repository: an atomic write (`.tmp` then `rename`, no delete first), a serialised `Future` queue, and tolerant reads. Don't build a generic store.
 - Podcast completion is signalled by the store row, never by file existence: dio writes the `.mp3` in place while downloading. The orphan sweep reads raw store entries, not parsed models.
@@ -105,12 +107,24 @@ Installed apps already hold this data in the documents directory and SharedPrefe
 - `main()` awaits Remote Config (10s fetch timeout) and audio init before `runApp`. Nothing else goes there: a hang before `runApp` means a black screen.
 - Session restore runs under a deferred first frame (10s timeout). Post-frame work (notification permission, daily reminders, podcast orphan sweep) is registered after `allowFirstFrame`.
 - Crashlytics and Analytics only collect in release builds.
+- Analytics: every event and user property goes through `AnalyticsService` (`lib/services/analytics_service.dart`). The naming and parameter rules, the event catalog and how to add an event are in [docs/ANALYTICS.md](docs/ANALYTICS.md); the unit tests fail when an event breaks the rules or is missing from that file. Automatic screen reporting stays off on both platforms, because its nameless screen view wipes the current screen on every resume.
+
+## Experiments (Firebase A/B Testing)
+
+`lib/services/experiment_service.dart` holds every experiment as an `Experiment` enum value backed by a string Remote Config key. A key that Remote Config doesn't return reads as `control`.
+- `experimentsProvider` reads every arm once, the first time it is used, and never rebuilds. A Remote Config update mid-session can't switch a user's arm; new values apply on the next launch.
+- Read the arm with `ref.read(experimentsProvider.notifier).variant(Experiment.x)`.
+- Call `logExposure(Experiment.x)` where the user first sees the difference. It logs `<key>_exposure` once per app session with a `variant` param; use that event as the experiment's activation event in the console so only exposed users are counted.
+- Keys are at most 31 characters (the exposure event name is capped at 40). The console experiment's parameter name and variant values must match the enum key and the strings the code checks.
+- `exp_aa_test` is an AA test: exposure is logged after the first frame and no arm changes behaviour.
+- Every build prints `Firebase installation ID: …` at startup (`adb logcat | grep "installation ID"`); add it as a test device in the console to force an arm. Analytics only collects in release builds, so verify events with a release build and `adb shell setprop debug.firebase.analytics.app org.freecodecamp` (DebugView).
 
 ## Conventions
 
 - No `///` doc comments. Use plain one-line `//` only where a reader would otherwise change the code and break it.
 - Strings are hardcoded English. There is no localisation.
-- No unit tests yet. The curriculum e2e (`integration_test/test_runner/curriculum_test.dart`, run via `dart integration_test_runner.dart --curriculum`) is the required test. Other e2e tests live in `integration_test/<feature>/`:
+- Unit tests live in `test/`, mirroring `lib/` (`test/services/analytics_service_test.dart` for `lib/services/analytics_service.dart`), and run in CI. Fake providers with `overrideWithValue`/`overrideWith`; `test/helpers/fake_analytics.dart` records analytics. Add tests when you add an analytics event.
+- The curriculum e2e (`integration_test/test_runner/curriculum_test.dart`, run via `dart integration_test_runner.dart --curriculum`) is the required e2e test. Other e2e tests live in `integration_test/<feature>/`:
   - Use type-based finders (`find.byType`, `tester.widget<T>().field`). Widgets used as finders (e.g. `NewsPostHeader`) stay public.
   - Device stdout is lossy on long runs. Return results through `binding.reportData`.
 - Use `ErrorRetry` (`lib/widgets/error_retry.dart`) for async error states.
