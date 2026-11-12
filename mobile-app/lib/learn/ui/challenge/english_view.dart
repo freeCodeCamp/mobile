@@ -149,7 +149,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                                 html: challenge.transcript,
                                 collapsible: true,
                               )
-                            else if (dialogue && challenge.scene != null)
+                            else if (challenge.scene != null)
                               SceneTranscript(
                                 scene: challenge.scene!,
                                 title: challenge.title,
