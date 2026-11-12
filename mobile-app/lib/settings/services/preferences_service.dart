@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/settings/models/app_preferences_model.dart';
-import 'package:freecodecamp/settings/repositories/settings_repository.dart';
+import 'package:freecodecamp/settings/repositories/preferences_repository.dart';
 import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
 import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'settings_service.g.dart';
+part 'preferences_service.g.dart';
 
 @Riverpod(keepAlive: true, retry: noRetry)
-Future<SettingsService> settingsService(Ref ref) async {
-  return SettingsService(
-    await ref.watch(settingsRepositoryProvider.future),
+Future<SettingsPreferencesService> settingsPreferencesService(Ref ref) async {
+  return SettingsPreferencesService(
+    await ref.watch(settingsPreferencesRepositoryProvider.future),
     ref.watch(learningReminderServiceProvider),
   );
 }
 
-class SettingsService {
-  SettingsService(this._repo, this._reminders);
+class SettingsPreferencesService {
+  SettingsPreferencesService(this._repo, this._reminders);
 
-  final SettingsRepository _repo;
+  final SettingsPreferencesRepository _repo;
   final LearningReminderService _reminders;
 
   AppPreferences load() {

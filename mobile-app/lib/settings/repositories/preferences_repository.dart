@@ -2,15 +2,17 @@ import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-part 'settings_repository.g.dart';
+part 'preferences_repository.g.dart';
 
 @Riverpod(keepAlive: true, retry: noRetry)
-Future<SettingsRepository> settingsRepository(Ref ref) async {
-  return SettingsRepository(await SharedPreferences.getInstance());
+Future<SettingsPreferencesRepository> settingsPreferencesRepository(
+  Ref ref,
+) async {
+  return SettingsPreferencesRepository(await SharedPreferences.getInstance());
 }
 
-class SettingsRepository {
-  SettingsRepository(this._prefs);
+class SettingsPreferencesRepository {
+  SettingsPreferencesRepository(this._prefs);
 
   static const _themeKey = 'app_theme_mode';
   static const _reminderKey = 'daily_learning_reminder_enabled';

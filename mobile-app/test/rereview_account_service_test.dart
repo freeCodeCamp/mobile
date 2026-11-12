@@ -9,7 +9,7 @@ import 'package:freecodecamp/auth/repositories/session_repository.dart';
 import 'package:freecodecamp/auth/services/profile_service.dart';
 import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/settings/models/app_preferences_model.dart';
-import 'package:freecodecamp/settings/repositories/settings_repository.dart';
+import 'package:freecodecamp/settings/repositories/preferences_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final _user = FccUserModel(
@@ -175,8 +175,8 @@ void main() {
         final prefs = await SharedPreferences.getInstance();
         final container = ProviderContainer(
           overrides: [
-            settingsRepositoryProvider.overrideWith(
-              (_) async => SettingsRepository(prefs),
+            settingsPreferencesRepositoryProvider.overrideWith(
+              (_) async => SettingsPreferencesRepository(prefs),
             ),
           ],
         );

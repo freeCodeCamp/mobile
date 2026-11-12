@@ -10,7 +10,7 @@ import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/services/app_info_service.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/settings/services/reset_service.dart';
-import 'package:freecodecamp/settings/services/settings_service.dart';
+import 'package:freecodecamp/settings/services/preferences_service.dart';
 import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -26,11 +26,11 @@ Future<PackageInfo> appVersion(Ref ref) {
 Future<int> downloadedStorageBytes(Ref ref) {
   // Refresh the size after downloads and removals update the library.
   ref.watch(podcastLibraryProvider);
-  return ref.watch(localDataServiceProvider).downloadedBytes();
+  return ref.watch(settingsLocalDataServiceProvider).downloadedBytes();
 }
 
 @riverpod
-class LocalDataResetNotifier extends _$LocalDataResetNotifier {
+class SettingsLocalDataResetNotifier extends _$SettingsLocalDataResetNotifier {
   @override
   void build() {
     ref.watch(settingsResetServiceProvider);
@@ -57,14 +57,16 @@ class LocalDataResetNotifier extends _$LocalDataResetNotifier {
                 ref.read(newsBookmarkServiceProvider).clearForReset(),
             clearDownloads: () async {
               await ref.read(podcastLibraryServiceProvider).clearForReset();
-              await ref.read(localDataServiceProvider).clearDownloads();
+              await ref.read(settingsLocalDataServiceProvider).clearDownloads();
             },
             cancelReminder: () => ref
                 .read(appPreferencesProvider.notifier)
                 .setDailyReminder(false),
             signOut: () => ref.read(authProvider.notifier).signOut(),
             clearPreferences: () async {
-              await (await ref.read(settingsServiceProvider.future)).clear();
+              await (await ref.read(
+                settingsPreferencesServiceProvider.future,
+              )).clear();
             },
             refreshState: () {
               if (!ref.mounted) return;

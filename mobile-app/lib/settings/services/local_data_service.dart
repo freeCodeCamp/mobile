@@ -4,14 +4,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'local_data_service.g.dart';
 
 @riverpod
-LocalDataService localDataService(Ref ref) {
-  return LocalDataService(ref.watch(localFilesRepositoryProvider));
+SettingsLocalDataService settingsLocalDataService(Ref ref) {
+  return SettingsLocalDataService(
+    ref.watch(settingsLocalFilesRepositoryProvider),
+  );
 }
 
-class LocalDataService {
-  LocalDataService(this._files);
+class SettingsLocalDataService {
+  SettingsLocalDataService(this._files);
 
-  final LocalFilesRepository _files;
+  final SettingsLocalFilesRepository _files;
 
   Future<int> downloadedBytes() => _files.downloadedBytes();
 

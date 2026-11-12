@@ -7,11 +7,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'local_files_repository.g.dart';
 
 @riverpod
-LocalFilesRepository localFilesRepository(Ref ref) => LocalFilesRepository();
+SettingsLocalFilesRepository settingsLocalFilesRepository(Ref ref) =>
+    SettingsLocalFilesRepository();
 
 // Only the app-owned podcast folders are touched. Do not recursively delete
 // the documents directory: a future editor may keep user-created work there.
-class LocalFilesRepository {
+class SettingsLocalFilesRepository {
   Future<List<Directory>> _downloadFolders() async {
     final documents = await getApplicationDocumentsDirectory();
     return [

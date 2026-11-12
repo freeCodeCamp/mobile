@@ -72,7 +72,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     if (!confirmed || !mounted || _busy) return;
     setState(() => _busy = true);
     try {
-      await ref.read(localDataResetProvider.notifier).reset();
+      await ref.read(settingsLocalDataResetProvider.notifier).reset();
       _message('Local app data cleared. Your online progress is safe.');
     } on DownloadsInProgress {
       _message('Finish or cancel your episode downloads before resetting.');

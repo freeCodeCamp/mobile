@@ -2,14 +2,14 @@ import 'dart:developer';
 
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
-import 'package:freecodecamp/settings/services/settings_service.dart';
+import 'package:freecodecamp/settings/services/preferences_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'daily_challenge_reminder_service.g.dart';
 
 @riverpod
 LearnDailyChallengeReminderService learnDailyChallengeReminderService(Ref ref) {
-  final settings = ref.watch(settingsServiceProvider.future);
+  final settings = ref.watch(settingsPreferencesServiceProvider.future);
   return LearnDailyChallengeReminderService(
     ref.watch(learningReminderServiceProvider),
     () async => (await settings).readDailyReminder(),

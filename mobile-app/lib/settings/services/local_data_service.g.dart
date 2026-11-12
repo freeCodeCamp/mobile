@@ -9,48 +9,50 @@ part of 'local_data_service.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(localDataService)
-final localDataServiceProvider = LocalDataServiceProvider._();
+@ProviderFor(settingsLocalDataService)
+final settingsLocalDataServiceProvider = SettingsLocalDataServiceProvider._();
 
-final class LocalDataServiceProvider
+final class SettingsLocalDataServiceProvider
     extends
         $FunctionalProvider<
-          LocalDataService,
-          LocalDataService,
-          LocalDataService
+          SettingsLocalDataService,
+          SettingsLocalDataService,
+          SettingsLocalDataService
         >
-    with $Provider<LocalDataService> {
-  LocalDataServiceProvider._()
+    with $Provider<SettingsLocalDataService> {
+  SettingsLocalDataServiceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'localDataServiceProvider',
+        name: r'settingsLocalDataServiceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$localDataServiceHash();
+  String debugGetCreateSourceHash() => _$settingsLocalDataServiceHash();
 
   @$internal
   @override
-  $ProviderElement<LocalDataService> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<SettingsLocalDataService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  LocalDataService create(Ref ref) {
-    return localDataService(ref);
+  SettingsLocalDataService create(Ref ref) {
+    return settingsLocalDataService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(LocalDataService value) {
+  Override overrideWithValue(SettingsLocalDataService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<LocalDataService>(value),
+      providerOverride: $SyncValueProvider<SettingsLocalDataService>(value),
     );
   }
 }
 
-String _$localDataServiceHash() => r'1fbf05b9e863279c68a0a780e96565b565f22870';
+String _$settingsLocalDataServiceHash() =>
+    r'e45665994d216122a84fb2fe13d159d52600c3c6';

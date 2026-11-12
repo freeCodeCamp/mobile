@@ -80,30 +80,31 @@ final class DownloadedStorageBytesProvider
 }
 
 String _$downloadedStorageBytesHash() =>
-    r'3502d7d6df7b1d98ed8961c3cee54771c394762a';
+    r'9db6caca26447f8ae5e901cc37f174a9587b0153';
 
-@ProviderFor(LocalDataResetNotifier)
-final localDataResetProvider = LocalDataResetNotifierProvider._();
+@ProviderFor(SettingsLocalDataResetNotifier)
+final settingsLocalDataResetProvider =
+    SettingsLocalDataResetNotifierProvider._();
 
-final class LocalDataResetNotifierProvider
-    extends $NotifierProvider<LocalDataResetNotifier, void> {
-  LocalDataResetNotifierProvider._()
+final class SettingsLocalDataResetNotifierProvider
+    extends $NotifierProvider<SettingsLocalDataResetNotifier, void> {
+  SettingsLocalDataResetNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'localDataResetProvider',
+        name: r'settingsLocalDataResetProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$localDataResetNotifierHash();
+  String debugGetCreateSourceHash() => _$settingsLocalDataResetNotifierHash();
 
   @$internal
   @override
-  LocalDataResetNotifier create() => LocalDataResetNotifier();
+  SettingsLocalDataResetNotifier create() => SettingsLocalDataResetNotifier();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(void value) {
@@ -114,10 +115,10 @@ final class LocalDataResetNotifierProvider
   }
 }
 
-String _$localDataResetNotifierHash() =>
-    r'8d6efc08637c3ede2da9351e995c22c31f914be0';
+String _$settingsLocalDataResetNotifierHash() =>
+    r'a4cb117cf75b6c3e6de6ec2c4f8b573e7ffd7bd1';
 
-abstract class _$LocalDataResetNotifier extends $Notifier<void> {
+abstract class _$SettingsLocalDataResetNotifier extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override

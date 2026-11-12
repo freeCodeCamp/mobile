@@ -9,50 +9,51 @@ part of 'local_files_repository.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(localFilesRepository)
-final localFilesRepositoryProvider = LocalFilesRepositoryProvider._();
+@ProviderFor(settingsLocalFilesRepository)
+final settingsLocalFilesRepositoryProvider =
+    SettingsLocalFilesRepositoryProvider._();
 
-final class LocalFilesRepositoryProvider
+final class SettingsLocalFilesRepositoryProvider
     extends
         $FunctionalProvider<
-          LocalFilesRepository,
-          LocalFilesRepository,
-          LocalFilesRepository
+          SettingsLocalFilesRepository,
+          SettingsLocalFilesRepository,
+          SettingsLocalFilesRepository
         >
-    with $Provider<LocalFilesRepository> {
-  LocalFilesRepositoryProvider._()
+    with $Provider<SettingsLocalFilesRepository> {
+  SettingsLocalFilesRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'localFilesRepositoryProvider',
+        name: r'settingsLocalFilesRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$localFilesRepositoryHash();
+  String debugGetCreateSourceHash() => _$settingsLocalFilesRepositoryHash();
 
   @$internal
   @override
-  $ProviderElement<LocalFilesRepository> $createElement(
+  $ProviderElement<SettingsLocalFilesRepository> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  LocalFilesRepository create(Ref ref) {
-    return localFilesRepository(ref);
+  SettingsLocalFilesRepository create(Ref ref) {
+    return settingsLocalFilesRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(LocalFilesRepository value) {
+  Override overrideWithValue(SettingsLocalFilesRepository value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<LocalFilesRepository>(value),
+      providerOverride: $SyncValueProvider<SettingsLocalFilesRepository>(value),
     );
   }
 }
 
-String _$localFilesRepositoryHash() =>
-    r'ddcd0ffd8cfff527d52c0dcab9ced62c47f8cbf1';
+String _$settingsLocalFilesRepositoryHash() =>
+    r'59041d705670463a1ad9fba30a4c0a1decff2146';
