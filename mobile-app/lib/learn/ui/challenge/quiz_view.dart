@@ -376,10 +376,18 @@ class _QuizViewState extends State<QuizView> {
                           _resultHtml(q.text),
                           if (_selected[i] != q.solution) ...[
                             const SizedBox(height: 8),
+                            Text(
+                              'Your answer:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                height: 1.4,
+                                color: colors.error,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
                             _resultHtml(
-                              '<span>Your answer: </span>${q.answers[_selected[i]!].answer}',
+                              q.answers[_selected[i]!].answer,
                               color: colors.error,
-                              inline: true,
                             ),
                           ],
                         ],
@@ -444,29 +452,19 @@ class _QuizViewState extends State<QuizView> {
     },
   );
 
-  Widget _resultHtml(
-    String html, {
-    Color? color,
-    FontWeight? weight,
-    bool inline = false,
-  }) => ParsedHtml(
-    html,
-    plainCodeBlocks: true,
-    customStyles: {
-      '*': Style(
-        color: color,
-        fontSize: FontSize(16),
-        fontWeight: weight,
-        lineHeight: const LineHeight(1.4),
-      ),
-      'p': Style(
-        margin: Margins.zero,
-        display: inline ? Display.inline : Display.block,
-      ),
-      'div': Style(
-        margin: Margins.zero,
-        display: inline ? Display.inline : Display.block,
-      ),
-    },
-  );
+  Widget _resultHtml(String html, {Color? color, FontWeight? weight}) =>
+      ParsedHtml(
+        html,
+        plainCodeBlocks: true,
+        customStyles: {
+          '*': Style(
+            color: color,
+            fontSize: FontSize(16),
+            fontWeight: weight,
+            lineHeight: const LineHeight(1.4),
+          ),
+          'p': Style(margin: Margins.zero),
+          'div': Style(margin: Margins.zero),
+        },
+      );
 }
