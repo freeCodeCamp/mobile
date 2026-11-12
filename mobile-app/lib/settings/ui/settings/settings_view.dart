@@ -7,6 +7,7 @@ import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/services/learning_reminder_service.dart';
+import 'package:freecodecamp/settings/services/reset_service.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
@@ -71,7 +72,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     if (!confirmed || !mounted || _busy) return;
     setState(() => _busy = true);
     try {
-      await ref.read(localDataResetProvider).reset();
+      await ref.read(localDataResetProvider.notifier).reset();
       _message('Local app data cleared. Your online progress is safe.');
     } on DownloadsInProgress {
       _message('Finish or cancel your episode downloads before resetting.');

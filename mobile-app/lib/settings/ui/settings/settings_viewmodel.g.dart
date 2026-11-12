@@ -82,13 +82,12 @@ final class DownloadedStorageBytesProvider
 String _$downloadedStorageBytesHash() =>
     r'3502d7d6df7b1d98ed8961c3cee54771c394762a';
 
-@ProviderFor(localDataReset)
-final localDataResetProvider = LocalDataResetProvider._();
+@ProviderFor(LocalDataResetNotifier)
+final localDataResetProvider = LocalDataResetNotifierProvider._();
 
-final class LocalDataResetProvider
-    extends $FunctionalProvider<LocalDataReset, LocalDataReset, LocalDataReset>
-    with $Provider<LocalDataReset> {
-  LocalDataResetProvider._()
+final class LocalDataResetNotifierProvider
+    extends $NotifierProvider<LocalDataResetNotifier, void> {
+  LocalDataResetNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -100,25 +99,38 @@ final class LocalDataResetProvider
       );
 
   @override
-  String debugGetCreateSourceHash() => _$localDataResetHash();
+  String debugGetCreateSourceHash() => _$localDataResetNotifierHash();
 
   @$internal
   @override
-  $ProviderElement<LocalDataReset> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  LocalDataReset create(Ref ref) {
-    return localDataReset(ref);
-  }
+  LocalDataResetNotifier create() => LocalDataResetNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(LocalDataReset value) {
+  Override overrideWithValue(void value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<LocalDataReset>(value),
+      providerOverride: $SyncValueProvider<void>(value),
     );
   }
 }
 
-String _$localDataResetHash() => r'9ae3d5b18feb488af8b492f50468bd72a0bf4aa2';
+String _$localDataResetNotifierHash() =>
+    r'8d6efc08637c3ede2da9351e995c22c31f914be0';
+
+abstract class _$LocalDataResetNotifier extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
