@@ -142,8 +142,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                   ErrorRetry(
                                     message: 'Could not load settings.',
                                     margin: EdgeInsets.zero,
-                                    onRetry: () =>
-                                        ref.invalidate(appPreferencesProvider),
+                                    onRetry: () => ref
+                                        .read(appPreferencesProvider.notifier)
+                                        .retry(),
                                   )
                                 else
                                   SegmentedTabs<ThemeMode>(

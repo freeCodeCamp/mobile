@@ -116,7 +116,7 @@ final class SettingsLocalDataResetNotifierProvider
 }
 
 String _$settingsLocalDataResetNotifierHash() =>
-    r'a4cb117cf75b6c3e6de6ec2c4f8b573e7ffd7bd1';
+    r'89fa6bf2d573574a77e73baacd52cbb93ba46cdd';
 
 abstract class _$SettingsLocalDataResetNotifier extends $Notifier<void> {
   void build();

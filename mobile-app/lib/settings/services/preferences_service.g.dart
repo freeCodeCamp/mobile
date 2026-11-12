@@ -16,13 +16,11 @@ final settingsPreferencesServiceProvider =
 final class SettingsPreferencesServiceProvider
     extends
         $FunctionalProvider<
-          AsyncValue<SettingsPreferencesService>,
           SettingsPreferencesService,
-          FutureOr<SettingsPreferencesService>
+          SettingsPreferencesService,
+          SettingsPreferencesService
         >
-    with
-        $FutureModifier<SettingsPreferencesService>,
-        $FutureProvider<SettingsPreferencesService> {
+    with $Provider<SettingsPreferencesService> {
   SettingsPreferencesServiceProvider._()
     : super(
         from: null,
@@ -39,15 +37,23 @@ final class SettingsPreferencesServiceProvider
 
   @$internal
   @override
-  $FutureProviderElement<SettingsPreferencesService> $createElement(
+  $ProviderElement<SettingsPreferencesService> $createElement(
     $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  ) => $ProviderElement(pointer);
 
   @override
-  FutureOr<SettingsPreferencesService> create(Ref ref) {
+  SettingsPreferencesService create(Ref ref) {
     return settingsPreferencesService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SettingsPreferencesService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SettingsPreferencesService>(value),
+    );
   }
 }
 
 String _$settingsPreferencesServiceHash() =>
-    r'31092d3da9651023edf9801b7518acb0b8000f14';
+    r'c04348232a295611bc5850656d9881fc652419b6';

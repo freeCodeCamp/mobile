@@ -8,37 +8,47 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'preferences_service.g.dart';
 
 @Riverpod(keepAlive: true, retry: noRetry)
-Future<SettingsPreferencesService> settingsPreferencesService(Ref ref) async {
+SettingsPreferencesService settingsPreferencesService(Ref ref) {
   return SettingsPreferencesService(
-    await ref.watch(settingsPreferencesRepositoryProvider.future),
+    ref.watch(settingsPreferencesRepositoryProvider.future),
     ref.watch(learningReminderServiceProvider),
+    reload: () => ref.invalidate(settingsPreferencesRepositoryProvider),
   );
 }
 
 class SettingsPreferencesService {
-  SettingsPreferencesService(this._repo, this._reminders);
+  SettingsPreferencesService(
+    this._repo,
+    this._reminders, {
+    required this.reload,
+  });
 
-  final SettingsPreferencesRepository _repo;
+  final Future<SettingsPreferencesRepository> _repo;
   final LearningReminderService _reminders;
+  final void Function() reload;
 
-  AppPreferences load() {
+  Future<AppPreferences> load() async {
+    final repo = await _repo;
     return AppPreferences(
       themeMode: ThemeMode.values.firstWhere(
-        (mode) => mode.name == _repo.readTheme(),
+        (mode) => mode.name == repo.readTheme(),
         orElse: () => ThemeMode.dark,
       ),
-      dailyReminder: _repo.readReminder() ?? false,
+      dailyReminder: repo.readReminder() ?? false,
     );
   }
 
-  bool readDailyReminder() => _repo.readReminder() ?? false;
+  Future<bool> readDailyReminder() async =>
+      (await _repo).readReminder() ?? false;
 
-  Future<void> saveTheme(ThemeMode mode) => _repo.writeTheme(mode.name);
+  Future<void> saveTheme(ThemeMode mode) async =>
+      (await _repo).writeTheme(mode.name);
 
   Future<void> saveDailyReminder(bool enabled, {required bool previous}) async {
+    final repo = await _repo;
     await _applySchedule(enabled);
     try {
-      await _repo.writeReminder(enabled);
+      await repo.writeReminder(enabled);
     } catch (_) {
       // Restore the OS schedule to match the last successfully saved value.
       await _applySchedule(previous);
@@ -46,7 +56,7 @@ class SettingsPreferencesService {
     }
   }
 
-  Future<void> clear() => _repo.clear();
+  Future<void> clear() async => (await _repo).clear();
 
   Future<void> _applySchedule(bool enabled) {
     return enabled ? _reminders.enable() : _reminders.cancel();

@@ -9,8 +9,8 @@ import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/services/app_info_service.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
-import 'package:freecodecamp/settings/services/reset_service.dart';
 import 'package:freecodecamp/settings/services/preferences_service.dart';
+import 'package:freecodecamp/settings/services/reset_service.dart';
 import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -63,11 +63,8 @@ class SettingsLocalDataResetNotifier extends _$SettingsLocalDataResetNotifier {
                 .read(appPreferencesProvider.notifier)
                 .setDailyReminder(false),
             signOut: () => ref.read(authProvider.notifier).signOut(),
-            clearPreferences: () async {
-              await (await ref.read(
-                settingsPreferencesServiceProvider.future,
-              )).clear();
-            },
+            clearPreferences: () =>
+                ref.read(settingsPreferencesServiceProvider).clear(),
             refreshState: () {
               if (!ref.mounted) return;
               ref.invalidate(podcastLibraryProvider);

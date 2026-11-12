@@ -9,10 +9,10 @@ part 'daily_challenge_reminder_service.g.dart';
 
 @riverpod
 LearnDailyChallengeReminderService learnDailyChallengeReminderService(Ref ref) {
-  final settings = ref.watch(settingsPreferencesServiceProvider.future);
+  final settings = ref.watch(settingsPreferencesServiceProvider);
   return LearnDailyChallengeReminderService(
     ref.watch(learningReminderServiceProvider),
-    () async => (await settings).readDailyReminder(),
+    settings.readDailyReminder,
   );
 }
 
