@@ -36,11 +36,15 @@ class SettingsNotifier extends _$SettingsNotifier {
   @override
   SettingsState build() => const SettingsState();
 
-  Future<String?> setTheme(ThemeMode mode) {
-    return _runBusy(
-      () => ref.read(appPreferencesProvider.notifier).setTheme(mode),
-      failure: _saveFailed,
-    );
+  // A local write, so it skips the busy lock like the daily reminder.
+  Future<String?> setTheme(ThemeMode mode) async {
+    if (state.busy) return null;
+    try {
+      await ref.read(appPreferencesProvider.notifier).setTheme(mode);
+      return null;
+    } catch (_) {
+      return _saveFailed;
+    }
   }
 
   Future<String?> signOut() {
