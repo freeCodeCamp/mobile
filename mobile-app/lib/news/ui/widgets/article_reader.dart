@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:freecodecamp/news/ui/widgets/back_button.dart';
 import 'package:freecodecamp/news/ui/widgets/back_to_top_button.dart';
 import 'package:freecodecamp/widgets/html_handler/html_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
-// The same reading controls are available for live and offline articles.
-class ArticleReader extends StatefulWidget {
-  const ArticleReader({
+class NewsArticleReader extends StatefulWidget {
+  const NewsArticleReader({
     super.key,
     required this.html,
     required this.header,
@@ -22,13 +22,14 @@ class ArticleReader extends StatefulWidget {
   final Widget? footer;
 
   @override
-  State<ArticleReader> createState() => _ArticleReaderState();
+  State<NewsArticleReader> createState() => _NewsArticleReaderState();
 }
 
-class _ArticleReaderState extends State<ArticleReader> {
+class _NewsArticleReaderState extends State<NewsArticleReader> {
   final _scrollController = ScrollController();
   final _progress = ValueNotifier<double>(0);
   final _shareButtonKey = GlobalKey();
+  bool _progressUpdatePending = false;
   double _fontSize = 17;
   List<Widget>? _htmlWidgets;
 
@@ -45,16 +46,23 @@ class _ArticleReaderState extends State<ArticleReader> {
   }
 
   @override
-  void didUpdateWidget(covariant ArticleReader oldWidget) {
+  void didUpdateWidget(covariant NewsArticleReader oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.html != widget.html) _htmlWidgets = null;
   }
 
   void _updateProgress() {
-    final extent = _scrollController.position.maxScrollExtent;
-    _progress.value = extent <= 0
-        ? 1
-        : (_scrollController.offset / extent).clamp(0, 1);
+    if (_progressUpdatePending) return;
+    _progressUpdatePending = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _progressUpdatePending = false;
+      if (!mounted || !_scrollController.hasClients) return;
+      final position = _scrollController.position;
+      _progress.value = position.maxScrollExtent <= 0
+          ? 1
+          : (position.pixels / position.maxScrollExtent).clamp(0, 1);
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
@@ -108,6 +116,7 @@ class _ArticleReaderState extends State<ArticleReader> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const NewsBackButton(),
         actions: [
           PopupMenuButton<double>(
             tooltip: 'Text size',
@@ -156,26 +165,44 @@ class _ArticleReaderState extends State<ArticleReader> {
           ),
         ),
       ),
-      floatingActionButton: BackToTopButton(
+      floatingActionButton: NewsBackToTopButton(
         controller: _scrollController,
         showAfter: 600,
       ),
       body: SafeArea(
         top: false,
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverToBoxAdapter(child: widget.header),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverList.builder(
-                itemCount: elements.length,
-                itemBuilder: (_, index) => elements[index],
+        child: NotificationListener<ScrollMetricsNotification>(
+          onNotification: (notification) {
+            if (notification.depth == 0 &&
+                notification.metrics.axis == Axis.vertical) {
+              _updateProgress();
+            }
+            return false;
+          },
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverToBoxAdapter(child: widget.header),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                // Lay out article sections once so scrolling does not parse HTML
+                // or change the estimated page height as new sections appear.
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final element in elements)
+                        RepaintBoundary(child: element),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            if (widget.footer != null) SliverToBoxAdapter(child: widget.footer),
-            const SliverToBoxAdapter(child: SizedBox(height: 48)),
-          ],
+              if (widget.footer != null)
+                SliverToBoxAdapter(child: widget.footer),
+              const SliverToBoxAdapter(child: SizedBox(height: 48)),
+            ],
+          ),
         ),
       ),
     );

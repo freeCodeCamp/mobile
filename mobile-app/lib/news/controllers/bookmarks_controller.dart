@@ -1,10 +1,13 @@
 import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
+import 'package:freecodecamp/news/models/post_model.dart';
+import 'package:freecodecamp/news/services/api_service.dart';
 import 'package:freecodecamp/news/services/bookmark_service.dart';
+import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bookmarks_controller.g.dart';
 
-@riverpod
+@Riverpod(retry: noRetry)
 class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {
   @override
   Future<List<BookmarkedPost>> build() {
@@ -12,30 +15,35 @@ class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {
   }
 
   Future<void> toggle(BookmarkedPost post) =>
-      toggleById(post.id, () async => post);
+      _toggle((service) => service.toggle(post));
 
-  // Retain the service while loading a summary's HTML so scrolling its tile
-  // offscreen cannot cancel an in-flight save.
+  Future<void> togglePost(Post post) =>
+      _toggle((service) => service.togglePost(post));
+
+  Future<void> toggleSummary(String id, String slug) {
+    final api = ref.read(newsApiServiceProvider);
+    return _toggle(
+      (service) => service.toggleSummary(id, slug, api.getPostBySlug),
+    );
+  }
+
   Future<void> toggleById(
     String id,
     Future<BookmarkedPost> Function() loadPost,
+  ) => _toggle((service) => service.toggleById(id, loadPost));
+
+  // Retain the service while loading a summary's HTML so scrolling its tile
+  // offscreen cannot cancel an in-flight save.
+  Future<void> _toggle(
+    Future<List<BookmarkedPost>?> Function(NewsBookmarkService) toggle,
   ) async {
     final service = ref.read(newsBookmarkServiceProvider);
-    final generation = service.resetGeneration;
     final pendingSave = ref.keepAlive();
     try {
-      final saved = await service.isBookmarked(id);
-      if (generation != service.resetGeneration) return;
-      if (saved) {
-        await service.removeBookmark(id);
-      } else {
-        final post = await loadPost();
-        if (generation != service.resetGeneration) return;
-        await service.addBookmark(post);
+      final bookmarks = await toggle(service);
+      if (bookmarks != null && ref.mounted) {
+        state = AsyncData(bookmarks);
       }
-
-      final bookmarks = await service.getBookmarks();
-      if (ref.mounted) state = AsyncData(bookmarks);
     } finally {
       pendingSave.close();
     }

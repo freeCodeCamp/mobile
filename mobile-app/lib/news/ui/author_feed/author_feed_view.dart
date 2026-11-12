@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
 import 'package:freecodecamp/news/models/author_model.dart';
 import 'package:freecodecamp/news/ui/author_feed/author_feed_viewmodel.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_list.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/mini_player.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsAuthorFeedView extends ConsumerWidget {
@@ -22,17 +21,24 @@ class NewsAuthorFeedView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final author = this.author;
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(title: const Text('Author')),
       body: author != null
           ? _buildFeed(author)
           : ref
                 .watch(newsAuthorProvider(username))
                 .when(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (_, _) => ErrorRetry(
-                    message: 'Unable to load author.',
-                    onRetry: () => ref.invalidate(newsAuthorProvider(username)),
+                  loading: () => const SafeArea(
+                    top: false,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (_, _) => SafeArea(
+                    top: false,
+                    child: ErrorRetry(
+                      message: 'Unable to load author.',
+                      onRetry: () =>
+                          ref.invalidate(newsAuthorProvider(username)),
+                    ),
                   ),
                   data: _buildFeed,
                 ),
@@ -46,7 +52,7 @@ class NewsAuthorFeedView extends ConsumerWidget {
     );
   }
 
-  Widget _buildFeed(Author author) => PostFeedList(
+  Widget _buildFeed(Author author) => NewsPostFeedList(
     source: NewsFeedSource.author(author.id),
     header: _AuthorDetails(author: author),
     compact: true,
@@ -55,7 +61,7 @@ class NewsAuthorFeedView extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 24),
         child: Center(
           child: TextButton(
-            onPressed: () => context.go(newsFeedPath),
+            onPressed: () => const NewsFeedRoute().go(context),
             child: const Text('See all articles'),
           ),
         ),

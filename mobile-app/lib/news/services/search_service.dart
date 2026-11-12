@@ -4,11 +4,14 @@ import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
 import 'package:freecodecamp/news/constants.dart';
 import 'package:freecodecamp/news/models/search_post_model.dart';
 import 'package:freecodecamp/news/repositories/search_repository.dart';
+import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_service.g.dart';
 
-@riverpod
+typedef NewsSearchResults = ({String term, List<SearchPost> posts});
+
+@Riverpod(retry: noRetry)
 NewsSearchService newsSearchService(Ref ref) {
   final repo = ref.watch(newsSearchRepositoryProvider);
   return NewsSearchService(repo);
@@ -19,7 +22,9 @@ class NewsSearchService {
 
   NewsSearchService(this._repository);
 
-  Stream<List<SearchPost>> get results => _repository.responses.map(_toPosts);
+  Stream<NewsSearchResults> get results => _repository.responses.map(
+    (response) => (term: response.query, posts: _toPosts(response)),
+  );
 
   void query(String term) => _repository.query(term);
 

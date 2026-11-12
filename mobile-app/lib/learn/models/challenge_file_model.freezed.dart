@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'challenge_file_model.dart';
@@ -9,6 +9,7 @@ part of 'challenge_file_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ChallengeFileCopyWith<ChallengeFile> get copyWith => _$ChallengeFileCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChallengeFile&&(identical(other.ext, ext) || other.ext == ext)&&(identical(other.name, name) || other.name == name)&&(identical(other.head, head) || other.head == head)&&(identical(other.tail, tail) || other.tail == tail)&&(identical(other.contents, contents) || other.contents == contents)&&const DeepCollectionEquality().equals(other.history, history)&&const DeepCollectionEquality().equals(other.editableRegionBoundaries, editableRegionBoundaries)&&(identical(other.fileKey, fileKey) || other.fileKey == fileKey));
+  final _this = this as ChallengeFile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChallengeFile&&(identical(other.ext, _this.ext) || other.ext == _this.ext)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.head, _this.head) || other.head == _this.head)&&(identical(other.tail, _this.tail) || other.tail == _this.tail)&&(identical(other.contents, _this.contents) || other.contents == _this.contents)&&const DeepCollectionEquality().equals(other.history, _this.history)&&const DeepCollectionEquality().equals(other.editableRegionBoundaries, _this.editableRegionBoundaries)&&(identical(other.fileKey, _this.fileKey) || other.fileKey == _this.fileKey));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,ext,name,head,tail,contents,const DeepCollectionEquality().hash(history),const DeepCollectionEquality().hash(editableRegionBoundaries),fileKey);
+int get hashCode {
+  final _this = this as ChallengeFile;
+  return Object.hash(runtimeType,_this.ext,_this.name,_this.head,_this.tail,_this.contents,const DeepCollectionEquality().hash(_this.history),const DeepCollectionEquality().hash(_this.editableRegionBoundaries),_this.fileKey);
+}
 
 @override
 String toString() {
-  return 'ChallengeFile(ext: $ext, name: $name, head: $head, tail: $tail, contents: $contents, history: $history, editableRegionBoundaries: $editableRegionBoundaries, fileKey: $fileKey)';
+  final _this = this as ChallengeFile;
+  return 'ChallengeFile(ext: ${_this.ext}, name: ${_this.name}, head: ${_this.head}, tail: ${_this.tail}, contents: ${_this.contents}, history: ${_this.history}, editableRegionBoundaries: ${_this.editableRegionBoundaries}, fileKey: ${_this.fileKey})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ChallengeFileCopyWithImpl<$Res>
 /// Create a copy of ChallengeFile
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? ext = null,Object? name = null,Object? head = freezed,Object? tail = freezed,Object? contents = null,Object? history = null,Object? editableRegionBoundaries = null,Object? fileKey = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChallengeFile(
 ext: null == ext ? _self.ext : ext // ignore: cast_nullable_to_non_nullable
 as Ext,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,head: freezed == head ? _self.head : head // ignore: cast_nullable_to_non_nullable
@@ -216,7 +222,7 @@ return $default(_that.ext,_that.name,_that.head,_that.tail,_that.contents,_that.
 @JsonSerializable()
 
 class _ChallengeFile extends ChallengeFile {
-  const _ChallengeFile({@JsonKey(unknownEnumValue: Ext.html) required this.ext, required this.name, this.head, this.tail, required this.contents, final  List<String> history = const [], final  List<int> editableRegionBoundaries = const [], @JsonKey(readValue: _readFileKey) required this.fileKey}): _history = history,_editableRegionBoundaries = editableRegionBoundaries,super._();
+  const _ChallengeFile({@JsonKey(unknownEnumValue: Ext.html) required this.ext, required this.name, this.head, this.tail, required this.contents,  List<String> history = const [],  List<int> editableRegionBoundaries = const [], @JsonKey(readValue: _readFileKey) required this.fileKey}): _history = history,_editableRegionBoundaries = editableRegionBoundaries,super._();
   factory _ChallengeFile.fromJson(Map<String, dynamic> json) => _$ChallengeFileFromJson(json);
 
 @override@JsonKey(unknownEnumValue: Ext.html) final  Ext ext;
@@ -253,16 +259,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChallengeFile&&(identical(other.ext, ext) || other.ext == ext)&&(identical(other.name, name) || other.name == name)&&(identical(other.head, head) || other.head == head)&&(identical(other.tail, tail) || other.tail == tail)&&(identical(other.contents, contents) || other.contents == contents)&&const DeepCollectionEquality().equals(other._history, _history)&&const DeepCollectionEquality().equals(other._editableRegionBoundaries, _editableRegionBoundaries)&&(identical(other.fileKey, fileKey) || other.fileKey == fileKey));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChallengeFile&&(identical(other.ext, ext) || other.ext == ext)&&(identical(other.name, name) || other.name == name)&&(identical(other.head, head) || other.head == head)&&(identical(other.tail, tail) || other.tail == tail)&&(identical(other.contents, contents) || other.contents == contents)&&const DeepCollectionEquality().equals(other.history, _history)&&const DeepCollectionEquality().equals(other.editableRegionBoundaries, _editableRegionBoundaries)&&(identical(other.fileKey, fileKey) || other.fileKey == fileKey));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,ext,name,head,tail,contents,const DeepCollectionEquality().hash(_history),const DeepCollectionEquality().hash(_editableRegionBoundaries),fileKey);
+int get hashCode {
+    return Object.hash(runtimeType,ext,name,head,tail,contents,const DeepCollectionEquality().hash(_history),const DeepCollectionEquality().hash(_editableRegionBoundaries),fileKey);
+}
 
 @override
 String toString() {
-  return 'ChallengeFile(ext: $ext, name: $name, head: $head, tail: $tail, contents: $contents, history: $history, editableRegionBoundaries: $editableRegionBoundaries, fileKey: $fileKey)';
+    return 'ChallengeFile(ext: $ext, name: $name, head: $head, tail: $tail, contents: $contents, history: $history, editableRegionBoundaries: $editableRegionBoundaries, fileKey: $fileKey)';
 }
 
 

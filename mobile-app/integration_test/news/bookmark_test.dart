@@ -40,24 +40,23 @@ void main() {
     await app.main();
 
     final articlesDestination = find.byWidgetPredicate(
-      (widget) =>
-          widget is NavigationDestination && widget.label == 'Articles',
+      (widget) => widget is NavigationDestination && widget.label == 'Articles',
     );
     await pumpUntilFound(tester, articlesDestination.hitTestable());
-    await binding
-        .convertFlutterSurfaceToImage()
-        .timeout(const Duration(seconds: 10));
+    await binding.convertFlutterSurfaceToImage().timeout(
+      const Duration(seconds: 10),
+    );
     await tester.pump().timeout(const Duration(seconds: 10));
     await tester.tap(articlesDestination);
 
     // News Feed
-    await pumpUntilFound(tester, find.byType(PostTile));
+    await pumpUntilFound(tester, find.byType(NewsPostTile));
     await binding.takeScreenshot('news/news-feed');
 
-    final firstTile = find.byType(PostTile).first;
+    final firstTile = find.byType(NewsPostTile).first;
     expect(firstTile, findsOneWidget);
 
-    final postId = tester.widget<PostTile>(firstTile).post.id;
+    final postId = tester.widget<NewsPostTile>(firstTile).post.id;
 
     await tester.tap(firstTile);
 
@@ -73,7 +72,7 @@ void main() {
     final author = post.author.name;
 
     // Bookmark the post
-    final bookmarkButton = find.byType(BookmarkButton);
+    final bookmarkButton = find.byType(NewsBookmarkButton);
     expect(bookmarkButton, findsOneWidget);
     await pumpUntilFound(tester, bookmarkButton.hitTestable());
     await tester.tap(bookmarkButton);
@@ -147,5 +146,8 @@ void main() {
     expect(stored['articleTitle'], title);
     expect(stored['authorName'], author);
     expect(stored['articleText'], isNotEmpty);
+    binding.reportData = {
+      'news': {'bookmarkSaved': true, 'articleId': postId},
+    };
   });
 }

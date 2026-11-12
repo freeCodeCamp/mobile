@@ -200,6 +200,12 @@ class _ProfileProjectViewState extends ConsumerState<ProfileProjectView> {
               ),
             ],
           ],
+          const SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: SizedBox.shrink(),
+          ),
         ],
       ),
     );

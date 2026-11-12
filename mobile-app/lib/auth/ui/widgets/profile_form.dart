@@ -112,6 +112,7 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
       if (!didPop) _cancel();
     },
     child: Scaffold(
+      extendBody: true,
       appBar: AppBar(
         leadingWidth: 84,
         leading: TextButton(
@@ -164,6 +165,7 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
           : null,
       body: SafeArea(
         top: false,
+        bottom: false,
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(

@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/offline_banner.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 
 class NewsBookmarkFeedView extends ConsumerWidget {
@@ -18,10 +17,16 @@ class NewsBookmarkFeedView extends ConsumerWidget {
     final bookmarks = ref.watch(newsBookmarksProvider);
     final colors = Theme.of(context).colorScheme;
     return bookmarks.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, _) => ErrorRetry(
-        message: 'Unable to load saved articles.',
-        onRetry: () => ref.invalidate(newsBookmarksProvider),
+      loading: () => const SafeArea(
+        top: false,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, _) => SafeArea(
+        top: false,
+        child: ErrorRetry(
+          message: 'Unable to load saved articles.',
+          onRetry: () => ref.invalidate(newsBookmarksProvider),
+        ),
       ),
       data: (posts) => RefreshIndicator(
         onRefresh: () async {
@@ -30,12 +35,17 @@ class NewsBookmarkFeedView extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            8,
+            20,
+            20 + MediaQuery.paddingOf(context).bottom,
+          ),
           children: [
             if (posts.isEmpty)
               const NewsSavedEmptyState()
             else ...[
-              const OfflineBanner(),
+              const NewsOfflineBanner(),
               const SizedBox(height: 16),
               Container(
                 clipBehavior: Clip.antiAlias,
@@ -210,7 +220,7 @@ class NewsSavedEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             FilledButton(
-              onPressed: () => context.go(newsFeedPath),
+              onPressed: () => const NewsFeedRoute().go(context),
               child: const Text('Browse articles'),
             ),
           ],

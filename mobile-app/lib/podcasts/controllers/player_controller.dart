@@ -40,6 +40,18 @@ Stream<Duration> podcastPlaybackPosition(Ref ref) =>
     ref.watch(audioHandlerProvider).positionStream;
 
 @riverpod
+Duration? podcastSavedPosition(Ref ref, String episodeId) {
+  final service = ref.watch(podcastPlaybackServiceProvider);
+
+  final subscription = service.positionChanges
+      .where((id) => id == episodeId)
+      .listen((_) => ref.invalidateSelf());
+  ref.onDispose(subscription.cancel);
+
+  return service.savedPosition(episodeId);
+}
+
+@riverpod
 class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
   // NOTE: Pinned while an episode is loaded, released once the handler holds
   // none at all.
@@ -113,24 +125,22 @@ class PodcastPlayerNotifier extends _$PodcastPlayerNotifier {
     _syncKeepAlive();
 
     try {
-      final uris = await ref
-          .read(podcastPlaybackServiceProvider)
-          .playbackUris(podcast, episode);
+      final service = ref.read(podcastPlaybackServiceProvider);
+      final uris = await service.playbackUris(podcast, episode);
 
       final loaded = await handler.loadEpisode(
         episode,
         podcast,
         source: uris.audio,
         artUri: uris.artwork,
-        startAt: await ref
-            .read(podcastPlaybackServiceProvider)
-            .readPosition(episode.id),
+        startAt: await service.readPosition(episode.id),
       );
 
       if (loaded) await handler.play();
     } finally {
       if (ref.mounted && state.loadingEpisodeId == episode.id) {
-        state = state.copyWith(loadingEpisodeId: null);
+        // The load can finish before its playback-state event reaches us.
+        state = _fromPlayback(handler, handler.playbackState.value);
         _syncKeepAlive();
       }
     }

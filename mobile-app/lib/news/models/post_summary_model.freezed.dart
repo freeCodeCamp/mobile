@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'post_summary_model.dart';
@@ -9,6 +9,7 @@ part of 'post_summary_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $PostSummaryCopyWith<PostSummary> get copyWith => _$PostSummaryCopyWithImpl<Post
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PostSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&(identical(other.readTimeInMinutes, readTimeInMinutes) || other.readTimeInMinutes == readTimeInMinutes)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
+  final _this = this as PostSummary;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PostSummary&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.author, _this.author) || other.author == _this.author)&&const DeepCollectionEquality().equals(other.tags, _this.tags)&&(identical(other.coverImage, _this.coverImage) || other.coverImage == _this.coverImage)&&(identical(other.readTimeInMinutes, _this.readTimeInMinutes) || other.readTimeInMinutes == _this.readTimeInMinutes)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,title,author,const DeepCollectionEquality().hash(tags),coverImage,readTimeInMinutes,publishedAt);
+int get hashCode {
+  final _this = this as PostSummary;
+  return Object.hash(runtimeType,_this.id,_this.slug,_this.title,_this.author,const DeepCollectionEquality().hash(_this.tags),_this.coverImage,_this.readTimeInMinutes,_this.publishedAt);
+}
 
 @override
 String toString() {
-  return 'PostSummary(id: $id, slug: $slug, title: $title, author: $author, tags: $tags, coverImage: $coverImage, readTimeInMinutes: $readTimeInMinutes, publishedAt: $publishedAt)';
+  final _this = this as PostSummary;
+  return 'PostSummary(id: ${_this.id}, slug: ${_this.slug}, title: ${_this.title}, author: ${_this.author}, tags: ${_this.tags}, coverImage: ${_this.coverImage}, readTimeInMinutes: ${_this.readTimeInMinutes}, publishedAt: ${_this.publishedAt})';
 }
 
 
@@ -66,7 +72,7 @@ class _$PostSummaryCopyWithImpl<$Res>
 /// Create a copy of PostSummary
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? slug = null,Object? title = null,Object? author = null,Object? tags = null,Object? coverImage = freezed,Object? readTimeInMinutes = null,Object? publishedAt = null,}) {
-  return _then(_self.copyWith(
+  return _then(PostSummary(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,slug: null == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -237,7 +243,7 @@ return $default(_that.id,_that.slug,_that.title,_that.author,_that.tags,_that.co
 @JsonSerializable()
 
 class _PostSummary implements PostSummary {
-  const _PostSummary({required this.id, required this.slug, required this.title, required this.author, final  List<Tag> tags = const [], this.coverImage, required this.readTimeInMinutes, required this.publishedAt}): _tags = tags;
+  const _PostSummary({required this.id, required this.slug, required this.title, required this.author,  List<Tag> tags = const [], this.coverImage, required this.readTimeInMinutes, required this.publishedAt}): _tags = tags;
   factory _PostSummary.fromJson(Map<String, dynamic> json) => _$PostSummaryFromJson(json);
 
 @override final  String id;
@@ -268,16 +274,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PostSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&(identical(other.readTimeInMinutes, readTimeInMinutes) || other.readTimeInMinutes == readTimeInMinutes)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PostSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.title, title) || other.title == title)&&(identical(other.author, author) || other.author == author)&&const DeepCollectionEquality().equals(other.tags, _tags)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&(identical(other.readTimeInMinutes, readTimeInMinutes) || other.readTimeInMinutes == readTimeInMinutes)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,slug,title,author,const DeepCollectionEquality().hash(_tags),coverImage,readTimeInMinutes,publishedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,slug,title,author,const DeepCollectionEquality().hash(_tags),coverImage,readTimeInMinutes,publishedAt);
+}
 
 @override
 String toString() {
-  return 'PostSummary(id: $id, slug: $slug, title: $title, author: $author, tags: $tags, coverImage: $coverImage, readTimeInMinutes: $readTimeInMinutes, publishedAt: $publishedAt)';
+    return 'PostSummary(id: $id, slug: $slug, title: $title, author: $author, tags: $tags, coverImage: $coverImage, readTimeInMinutes: $readTimeInMinutes, publishedAt: $publishedAt)';
 }
 
 

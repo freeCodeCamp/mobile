@@ -14,14 +14,6 @@ Future<void> togglePodcastEpisode(
 ) async {
   try {
     await ref.read(podcastPlayerProvider.notifier).toggle(podcast, episode);
-    if (!context.mounted) return;
-    if (!ref.read(podcastPlayerProvider).isCurrent(episode.id)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to play this episode. Please try again.'),
-        ),
-      );
-    }
   } catch (_) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,12 +73,13 @@ class EpisodePlayButton extends ConsumerWidget {
     if (compact) {
       final position = current
           ? ref.watch(podcastPlaybackPositionProvider).value ?? Duration.zero
-          : Duration.zero;
+          : ref.watch(podcastSavedPositionProvider(episode.id)) ??
+                Duration.zero;
       final duration = current
           ? player.duration ?? episode.duration
           : episode.duration;
       final remaining = duration == null ? null : duration - position;
-      final label = current && position > Duration.zero && remaining != null
+      final label = position > Duration.zero && remaining != null
           ? '${podcastDuration(remaining.isNegative ? Duration.zero : remaining)} left'
           : podcastDuration(duration);
       return Tooltip(

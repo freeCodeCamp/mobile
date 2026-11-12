@@ -6,8 +6,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/code_radio/controllers/player_controller.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_view.dart';
-import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
@@ -18,15 +18,15 @@ import 'package:freecodecamp/news/models/post_summary_model.dart';
 import 'package:freecodecamp/news/models/search_post_model.dart';
 import 'package:freecodecamp/news/ui/bookmark_feed/bookmark_feed_view.dart';
 import 'package:freecodecamp/news/ui/feed/feed_view.dart';
+import 'package:freecodecamp/news/ui/feed/feed_viewmodel.dart';
 import 'package:freecodecamp/news/ui/post/post_view.dart';
-import 'package:freecodecamp/news/ui/search/search_view.dart';
-import 'package:freecodecamp/news/ui/search/search_viewmodel.dart';
 import 'package:freecodecamp/news/ui/widgets/article_reader.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/offline_banner.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_skeleton.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
 import 'package:freecodecamp/news/ui/widgets/search_result_tile.dart';
+import 'package:freecodecamp/news/ui/widgets/search_results.dart';
 import 'package:freecodecamp/news/ui/widgets/tag_button.dart';
 import 'package:freecodecamp/podcasts/controllers/downloads_controller.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
@@ -89,7 +89,8 @@ final _episode = Episode(
 );
 
 class _Search extends NewsSearchNotifier {
-  final terms = <String>[];
+  _Search(this.terms);
+  final List<String> terms;
   @override
   AsyncValue<List<SearchPost>> build() => const AsyncData([]);
   @override
@@ -225,12 +226,17 @@ void main() {
     testWidgets(
       'search suggestions replace query and suppress zero count ($brightness)',
       (tester) async {
-        final search = _Search();
+        final terms = <String>[];
         await _pump(
           tester,
           ProviderScope(
-            overrides: [newsSearchProvider.overrideWith(() => search)],
-            child: const Scaffold(body: NewsSearchView()),
+            overrides: [
+              newsSearchProvider.overrideWith(() => _Search(terms)),
+              newsFeedProvider(
+                const NewsFeedSource.all(),
+              ).overrideWith(_Feed.new),
+            ],
+            child: const Scaffold(body: NewsFeedView()),
           ),
           brightness,
         );
@@ -246,7 +252,7 @@ void main() {
         await tester.ensureVisible(find.widgetWithText(ActionChip, 'Python'));
         await tester.tap(find.widgetWithText(ActionChip, 'Python'));
         await tester.pumpAndSettle();
-        expect(search.terms.last, 'Python');
+        expect(terms.last, 'Python');
         expect(
           tester.widget<TextField>(find.byType(TextField)).controller!.text,
           'Python',
@@ -256,7 +262,12 @@ void main() {
             .decoration!;
         final focused = decoration.focusedBorder! as OutlineInputBorder;
         expect(focused.borderRadius, BorderRadius.circular(12));
-        expect(focused.borderSide.width, 2);
+        expect(focused.borderSide.width, 1.5);
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pumpAndSettle();
+        expect(find.byType(NewsSearchEmptyState), findsNothing);
+        expect(find.byType(NewsPostTile), findsOneWidget);
+        expect(find.widgetWithText(ChoiceChip, 'Latest'), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
@@ -293,7 +304,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byType(OfflineBanner), findsNothing);
+        expect(find.byType(NewsOfflineBanner), findsNothing);
         expect(
           find.text('Tap the bookmark on an article to save it.'),
           findsOneWidget,
@@ -311,18 +322,18 @@ void main() {
           ),
           brightness,
         );
-        expect(find.byType(OfflineBanner), findsOneWidget);
+        expect(find.byType(NewsOfflineBanner), findsOneWidget);
         expect(_textStyle(tester, 'A saved article').fontSize, 15);
         final image = tester.widget<NewsImage>(find.byType(NewsImage));
         expect((image.width, image.height, image.radius), (64, 64, 10));
         final banner = tester.widget<Container>(
           find.descendant(
-            of: find.byType(OfflineBanner),
+            of: find.byType(NewsOfflineBanner),
             matching: find.byType(Container),
           ),
         );
         final colors = FccDesignColors.of(
-          tester.element(find.byType(OfflineBanner)),
+          tester.element(find.byType(NewsOfflineBanner)),
         );
         expect(
           (banner.decoration! as BoxDecoration).color,
@@ -347,7 +358,7 @@ void main() {
           ),
           brightness,
         );
-        expect(find.byType(PostFeedSkeleton), findsOneWidget);
+        expect(find.byType(NewsPostFeedSkeleton), findsOneWidget);
         expect(find.text('Search articles'), findsOneWidget);
         expect(find.byType(CircularProgressIndicator), findsNothing);
         await _pump(
@@ -356,18 +367,18 @@ void main() {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  TagButton(
+                  NewsTagButton(
                     tagName: 'List',
                     tagSlug: 'list',
-                    variant: TagButtonVariant.listEyebrow,
+                    variant: NewsTagButtonVariant.listEyebrow,
                   ),
-                  TagButton(
+                  NewsTagButton(
                     tagName: 'Header',
                     tagSlug: 'header',
-                    variant: TagButtonVariant.articleEyebrow,
+                    variant: NewsTagButtonVariant.articleEyebrow,
                   ),
-                  TagButton(tagName: 'Footer', tagSlug: 'footer'),
-                  PostTile(post: _summary),
+                  NewsTagButton(tagName: 'Footer', tagSlug: 'footer'),
+                  NewsPostTile(post: _summary),
                 ],
               ),
             ),
@@ -398,7 +409,7 @@ void main() {
             child: Column(
               children: [
                 NewsPostHeader(post: _post),
-                SearchResultTile(
+                NewsSearchResultTile(
                   post: SearchPost(
                     objectID: 'result',
                     title: 'Search result',
@@ -423,7 +434,7 @@ void main() {
       expect(_textStyle(tester, 'Search result').fontSize, 15);
       await _pump(
         tester,
-        const ArticleReader(
+        const NewsArticleReader(
           html: '<h2>Section title</h2><p>Body text.</p>',
           header: SizedBox.shrink(),
           bookmarkButton: SizedBox.shrink(),
@@ -459,6 +470,9 @@ void main() {
               podcastDownloadsProvider.overrideWith(_Downloads.new),
               podcastPlaybackPositionProvider.overrideWith(
                 (ref) => Stream.value(Duration.zero),
+              ),
+              podcastSavedPositionProvider.overrideWith(
+                (ref, episodeId) => null,
               ),
             ],
             child: Scaffold(
@@ -501,57 +515,48 @@ void main() {
       },
     );
 
-    testWidgets(
-      'download metadata and actions use library completion ($brightness)',
-      (tester) async {
-        final library = _Library();
-        final downloads = _Downloads();
-        await _pump(
-          tester,
-          ProviderScope(
-            overrides: [
-              podcastLibraryProvider.overrideWith(() => library),
-              podcastDownloadedSizeProvider(
-                _episode.podcastId,
-                _episode.id,
-              ).overrideWith((ref) async => null),
-              podcastDownloadsProvider.overrideWith(() => downloads),
-            ],
-            child: Scaffold(
-              body: Column(
-                children: [
-                  PodcastEpisodeMetadata(episode: _episode),
-                  PodcastDownloadButton(
-                    podcast: _podcast,
-                    episode: _episode,
-                    outlined: true,
-                  ),
-                ],
-              ),
+    testWidgets('download actions use library completion ($brightness)', (
+      tester,
+    ) async {
+      final library = _Library();
+      final downloads = _Downloads();
+      await _pump(
+        tester,
+        ProviderScope(
+          overrides: [
+            podcastLibraryProvider.overrideWith(() => library),
+            podcastDownloadsProvider.overrideWith(() => downloads),
+          ],
+          child: Scaffold(
+            body: Column(
+              children: [
+                PodcastDownloadButton(
+                  podcast: _podcast,
+                  episode: _episode,
+                  outlined: true,
+                ),
+              ],
             ),
           ),
-          brightness,
-        );
-        expect(find.text('May 19, 2026 · 1 hr 19 min'), findsOneWidget);
-        await tester.tap(find.byTooltip('Download episode'));
-        await tester.pump();
-        expect(downloads._starts, 1);
-        expect(find.textContaining('Downloaded'), findsNothing);
-        await tester.tap(find.byTooltip('Cancel download'));
-        await tester.pumpAndSettle();
-        expect(downloads._cancels, 1);
-        library.save(true);
-        await tester.pumpAndSettle();
-        expect(
-          find.text('May 19, 2026 · 1 hr 19 min · Downloaded'),
-          findsOneWidget,
-        );
-        await tester.tap(find.byTooltip('Remove download'));
-        await tester.pumpAndSettle();
-        expect(library._removeCalls, 1);
-        expect(find.textContaining('Downloaded'), findsNothing);
-      },
-    );
+        ),
+        brightness,
+      );
+      expect(find.byTooltip('Download episode'), findsOneWidget);
+      await tester.tap(find.byTooltip('Download episode'));
+      await tester.pump();
+      expect(downloads._starts, 1);
+      expect(find.byTooltip('Remove download'), findsNothing);
+      await tester.tap(find.byTooltip('Cancel download'));
+      await tester.pumpAndSettle();
+      expect(downloads._cancels, 1);
+      library.save(true);
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Remove download'), findsOneWidget);
+      await tester.tap(find.byTooltip('Remove download'));
+      await tester.pumpAndSettle();
+      expect(library._removeCalls, 1);
+      expect(find.byTooltip('Remove download'), findsNothing);
+    });
 
     testWidgets(
       'skip controls and radio timestamps are accessible ($brightness)',

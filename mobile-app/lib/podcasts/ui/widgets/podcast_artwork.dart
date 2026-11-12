@@ -44,29 +44,37 @@ class PodcastArtwork extends ConsumerWidget {
       ),
     );
 
-    return Container(
+    return SizedBox(
       width: size,
-      height: size,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: colors.surfaceContainer,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: borderColor ?? colors.outlineVariant),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: colors.surfaceContainer,
+            borderRadius: BorderRadius.circular(radius),
+            border: Border.all(color: borderColor ?? colors.outlineVariant),
+          ),
+          child: local != null
+              ? Image.file(
+                  local,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => fallback,
+                )
+              : podcast.imageLink.isEmpty
+              ? fallback
+              : CachedNetworkImage(
+                  imageUrl: podcast.imageLink,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.contain,
+                  placeholder: (_, _) => fallback,
+                  errorWidget: (_, _, _) => fallback,
+                ),
+        ),
       ),
-      child: local != null
-          ? Image.file(
-              local,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => fallback,
-            )
-          : podcast.imageLink.isEmpty
-          ? fallback
-          : CachedNetworkImage(
-              imageUrl: podcast.imageLink,
-              fit: BoxFit.cover,
-              placeholder: (_, _) => fallback,
-              errorWidget: (_, _, _) => fallback,
-            ),
     );
   }
 }

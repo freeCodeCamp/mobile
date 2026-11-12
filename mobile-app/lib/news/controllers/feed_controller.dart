@@ -1,5 +1,6 @@
 import 'package:freecodecamp/news/models/post_summary_model.dart';
 import 'package:freecodecamp/news/services/api_service.dart';
+import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -26,7 +27,7 @@ abstract class NewsFeedState with _$NewsFeedState {
   }) = _NewsFeedState;
 }
 
-@riverpod
+@Riverpod(retry: noRetry)
 class NewsFeedNotifier extends _$NewsFeedNotifier {
   // NOTE: A refresh keeps this notifier mounted, so a page fetched before it is told apart by this.
   int _generation = 0;
@@ -34,6 +35,7 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
   @override
   FutureOr<NewsFeedState> build(NewsFeedSource source) async {
     _generation++;
+    ref.onDispose(() => _generation++);
     final page = await _fetch(ref.watch(newsApiServiceProvider), '');
 
     return NewsFeedState(
@@ -54,7 +56,11 @@ class NewsFeedNotifier extends _$NewsFeedNotifier {
 
   Future<void> fetchNextPage({bool isRetry = false}) async {
     final current = state.value;
-    if (current == null || !current.hasNextPage || current.isLoadingMore) {
+    if (state.isLoading ||
+        state.hasError ||
+        current == null ||
+        !current.hasNextPage ||
+        current.isLoadingMore) {
       return;
     }
 

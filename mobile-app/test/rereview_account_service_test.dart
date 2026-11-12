@@ -7,7 +7,9 @@ import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/repositories/profile_repository.dart';
 import 'package:freecodecamp/auth/repositories/session_repository.dart';
 import 'package:freecodecamp/auth/services/profile_service.dart';
-import 'package:freecodecamp/settings/services/app_preferences.dart';
+import 'package:freecodecamp/services/app_preferences_service.dart';
+import 'package:freecodecamp/settings/models/app_preferences_model.dart';
+import 'package:freecodecamp/settings/repositories/preferences_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final _user = FccUserModel(
@@ -169,13 +171,13 @@ void main() {
     () async {
       expect(const AppPreferences().themeMode, ThemeMode.dark);
       for (final stored in [null, 'unknown', 'system', 'light', 'dark']) {
-        SharedPreferences.setMockInitialValues({
-          AppPreferencesNotifier.themeKey: ?stored,
-        });
+        SharedPreferences.setMockInitialValues({'app_theme_mode': ?stored});
         final prefs = await SharedPreferences.getInstance();
         final container = ProviderContainer(
           overrides: [
-            settingsPreferencesStoreProvider.overrideWith((_) async => prefs),
+            settingsPreferencesRepositoryProvider.overrideWith(
+              (_) async => SettingsPreferencesRepository(prefs),
+            ),
           ],
         );
         final value = await container.read(appPreferencesProvider.future);
@@ -187,7 +189,7 @@ void main() {
         await container
             .read(appPreferencesProvider.notifier)
             .setTheme(ThemeMode.system);
-        expect(prefs.getString(AppPreferencesNotifier.themeKey), 'system');
+        expect(prefs.getString('app_theme_mode'), 'system');
         container.dispose();
       }
     },

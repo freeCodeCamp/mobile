@@ -4,12 +4,12 @@ import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
+import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:freecodecamp/settings/services/app_preferences.dart';
-import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
@@ -184,9 +184,9 @@ class SettingsView extends ConsumerWidget {
                               ?.copyWith(color: colors.onSurfaceVariant),
                         ),
                         loading: () => const SizedBox.shrink(),
-                        error: (_, _) => TextButton(
-                          onPressed: () => ref.invalidate(appVersionProvider),
-                          child: const Text('Retry version information'),
+                        error: (_, _) => ErrorRetry(
+                          message: 'Could not load version information.',
+                          onRetry: () => ref.invalidate(appVersionProvider),
                         ),
                       ),
                     ],
@@ -242,11 +242,11 @@ class _ThemeGroup extends ConsumerWidget {
               if (preferences.isLoading)
                 const LinearProgressIndicator()
               else if (preferences.hasError)
-                TextButton.icon(
-                  onPressed: () =>
-                      ref.invalidate(settingsPreferencesStoreProvider),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Could not load settings. Retry'),
+                ErrorRetry(
+                  message: 'Could not load settings.',
+                  margin: EdgeInsets.zero,
+                  onRetry: () =>
+                      ref.read(appPreferencesProvider.notifier).retry(),
                 )
               else
                 SegmentedTabs<ThemeMode>(

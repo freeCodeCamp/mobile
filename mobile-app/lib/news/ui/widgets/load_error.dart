@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/routing/news.dart';
-import 'package:go_router/go_router.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// Articles saved on this device remain reachable when the feed is unavailable.
 class NewsLoadError extends StatelessWidget {
   const NewsLoadError({super.key, required this.onRetry});
 
@@ -12,38 +11,39 @@ class NewsLoadError extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) => SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        24 + MediaQuery.paddingOf(context).bottom,
+      ),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: (constraints.maxHeight - 48).clamp(0, double.infinity),
+          minHeight:
+              (constraints.maxHeight -
+                      48 -
+                      MediaQuery.paddingOf(context).bottom)
+                  .clamp(0, double.infinity),
         ),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'There was an error loading articles',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+              ErrorRetry(
+                message: 'There was an error loading articles',
+                detail:
+                    'Check your connection and try again. Your saved articles still work offline.',
+                onRetry: onRetry,
+                margin: EdgeInsets.zero,
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Check your connection and try again. Your saved articles still work offline.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 24),
-              FilledButton(onPressed: onRetry, child: const Text('Try again')),
               const SizedBox(height: 12),
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 12,
                 children: [
                   TextButton(
-                    onPressed: () => context.push(newsBookmarksPath),
+                    onPressed: () =>
+                        const NewsBookmarksRoute().push<void>(context),
                     child: const Text('Saved articles'),
                   ),
                   TextButton(

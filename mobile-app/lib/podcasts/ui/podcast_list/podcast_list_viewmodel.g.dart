@@ -24,7 +24,7 @@ final class PodcastListProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'podcastListProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -46,4 +46,4 @@ final class PodcastListProvider
   }
 }
 
-String _$podcastListHash() => r'050470de646ff921b6da31c2026f07ca7a8405df';
+String _$podcastListHash() => r'5e7572080296d84ddcb619e9bbdd4ce84990b15b';

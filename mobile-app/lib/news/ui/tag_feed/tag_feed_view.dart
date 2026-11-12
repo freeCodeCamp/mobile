@@ -12,8 +12,9 @@ class NewsTagFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    extendBody: true,
     appBar: AppBar(title: Text('#${tagName ?? tagSlug}')),
-    body: PostFeedList(source: NewsFeedSource.tag(tagSlug), featured: true),
+    body: NewsPostFeedList(source: NewsFeedSource.tag(tagSlug), featured: true),
     bottomNavigationBar: const Column(
       mainAxisSize: MainAxisSize.min,
       children: [

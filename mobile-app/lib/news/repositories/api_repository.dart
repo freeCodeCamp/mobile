@@ -11,6 +11,7 @@ typedef RawPaginatedResponse = ({
 });
 
 const _apiUrl = 'https://gql-beta.hashnode.com';
+const _requestTimeout = Duration(seconds: 5);
 
 const postsPerPage = 20;
 
@@ -157,8 +158,13 @@ NewsApiRepository newsApiRepository(Ref ref) => NewsApiRepository();
 
 class NewsApiRepository {
   final GraphQLClient _client = GraphQLClient(
-    link: HttpLink(_apiUrl),
+    link: Link.function(
+      (request, [forward]) =>
+          forward!(request).first.timeout(_requestTimeout).asStream(),
+    ).concat(HttpLink(_apiUrl)),
     cache: GraphQLCache(),
+    // GraphQL 5.2.4's own timeout lets late responses complete a query twice.
+    queryRequestTimeout: null,
   );
   final String _publicationId = dotenv.get('HASHNODE_PUBLICATION_ID');
 

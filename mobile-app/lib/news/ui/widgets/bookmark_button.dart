@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
-import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
 import 'package:freecodecamp/news/models/post_model.dart';
-import 'package:freecodecamp/news/services/api_service.dart';
 
-// Saves the full article, including HTML, so list bookmarks work offline too.
-class BookmarkButton extends ConsumerStatefulWidget {
-  BookmarkButton({super.key, required Post post})
+class NewsBookmarkButton extends ConsumerStatefulWidget {
+  NewsBookmarkButton({super.key, required Post post})
     : post = post,
       id = post.id,
       slug = post.slug;
 
-  const BookmarkButton.forSummary({
+  const NewsBookmarkButton.forSummary({
     super.key,
     required this.id,
     required this.slug,
@@ -23,10 +20,10 @@ class BookmarkButton extends ConsumerStatefulWidget {
   final String slug;
 
   @override
-  ConsumerState<BookmarkButton> createState() => _BookmarkButtonState();
+  ConsumerState<NewsBookmarkButton> createState() => _NewsBookmarkButtonState();
 }
 
-class _BookmarkButtonState extends ConsumerState<BookmarkButton> {
+class _NewsBookmarkButtonState extends ConsumerState<NewsBookmarkButton> {
   bool _saving = false;
 
   Future<void> _toggle() async {
@@ -35,14 +32,9 @@ class _BookmarkButtonState extends ConsumerState<BookmarkButton> {
       final notifier = ref.read(newsBookmarksProvider.notifier);
       final post = widget.post;
       if (post != null) {
-        await notifier.toggle(BookmarkedPost.fromPost(post));
+        await notifier.togglePost(post);
       } else {
-        final api = ref.read(newsApiServiceProvider);
-        final slug = widget.slug;
-        await notifier.toggleById(
-          widget.id,
-          () async => BookmarkedPost.fromPost(await api.getPostBySlug(slug)),
-        );
+        await notifier.toggleSummary(widget.id, widget.slug);
       }
     } catch (_) {
       if (mounted) {
