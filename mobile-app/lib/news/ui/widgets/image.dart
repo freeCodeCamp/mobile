@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-// Shared image treatment for article covers and author portraits.
 class NewsImage extends StatelessWidget {
   const NewsImage({
     super.key,
@@ -37,14 +36,19 @@ class NewsImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(isAvatar ? 100 : radius),
         border: Border.all(color: colors.outlineVariant),
       ),
-      child: url == null || url!.isEmpty
-          ? fallback
-          : CachedNetworkImage(
-              imageUrl: url!,
-              fit: BoxFit.cover,
-              placeholder: (_, _) => ColoredBox(color: colors.surfaceContainer),
-              errorWidget: (_, _, _) => fallback,
-            ),
+      child: LayoutBuilder(
+        builder: (context, constraints) => url == null || url!.isEmpty
+            ? fallback
+            : CachedNetworkImage(
+                imageUrl: url!,
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                fit: BoxFit.cover,
+                placeholder: (_, _) =>
+                    ColoredBox(color: colors.surfaceContainer),
+                errorWidget: (_, _, _) => fallback,
+              ),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PostFeedSkeleton extends StatelessWidget {
-  const PostFeedSkeleton({super.key, this.header, this.featured = false});
+class NewsPostFeedSkeleton extends StatelessWidget {
+  const NewsPostFeedSkeleton({super.key, this.header, this.featured = false});
   final Widget? header;
   final bool featured;
 

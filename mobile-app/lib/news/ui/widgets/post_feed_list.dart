@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
 import 'package:freecodecamp/news/ui/widgets/author_post_tile.dart';
-import 'package:freecodecamp/news/ui/widgets/news_load_error.dart';
+import 'package:freecodecamp/news/ui/widgets/load_error.dart';
 import 'package:freecodecamp/news/ui/widgets/post_feed_skeleton.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 
-class PostFeedList extends ConsumerStatefulWidget {
-  const PostFeedList({
+class NewsPostFeedList extends ConsumerStatefulWidget {
+  const NewsPostFeedList({
     super.key,
     required this.source,
     this.header,
@@ -22,15 +22,13 @@ class PostFeedList extends ConsumerStatefulWidget {
   final bool compact;
   final Widget? footer;
 
-  // NOTE: The header is optional and can be used to display a widget above the
-  // list of posts, such as author details or tag information.
   final Widget? header;
 
   @override
-  ConsumerState<PostFeedList> createState() => _PostFeedListState();
+  ConsumerState<NewsPostFeedList> createState() => _NewsPostFeedListState();
 }
 
-class _PostFeedListState extends ConsumerState<PostFeedList> {
+class _NewsPostFeedListState extends ConsumerState<NewsPostFeedList> {
   final _scrollController = ScrollController();
 
   NewsFeedNotifierProvider get _provider => newsFeedProvider(widget.source);
@@ -61,8 +59,10 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
     return ColoredBox(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: feedAsync.when(
-        loading: () =>
-            PostFeedSkeleton(header: widget.header, featured: widget.featured),
+        loading: () => NewsPostFeedSkeleton(
+          header: widget.header,
+          featured: widget.featured,
+        ),
         error: (error, stack) =>
             NewsLoadError(onRetry: () => ref.invalidate(_provider)),
         data: (feed) => RefreshIndicator(
@@ -126,11 +126,11 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
       itemBuilder: (context, index) => index == feed.posts.length
           ? footer
           : widget.compact
-          ? AuthorPostTile(
+          ? NewsAuthorPostTile(
               key: ValueKey(feed.posts[index].id),
               post: feed.posts[index],
             )
-          : PostTile(
+          : NewsPostTile(
               key: ValueKey(feed.posts[index].id),
               post: feed.posts[index],
               featured: widget.featured && index == 0,
@@ -142,7 +142,6 @@ class _PostFeedListState extends ConsumerState<PostFeedList> {
     );
   }
 
-  // Null when there is nothing to append: idle, or every page is loaded.
   Widget? _buildFooter(NewsFeedState feed) {
     if (feed.loadMoreError != null) {
       return Padding(

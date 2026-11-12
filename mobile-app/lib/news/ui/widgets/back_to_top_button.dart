@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BackToTopButton extends StatefulWidget {
-  const BackToTopButton({
+class NewsBackToTopButton extends StatefulWidget {
+  const NewsBackToTopButton({
     super.key,
     required this.controller,
     this.showAfter = 100,
@@ -11,10 +11,10 @@ class BackToTopButton extends StatefulWidget {
   final double showAfter;
 
   @override
-  State<BackToTopButton> createState() => _BackToTopButtonState();
+  State<NewsBackToTopButton> createState() => _NewsBackToTopButtonState();
 }
 
-class _BackToTopButtonState extends State<BackToTopButton> {
+class _NewsBackToTopButtonState extends State<NewsBackToTopButton> {
   bool _visible = false;
 
   @override
@@ -47,15 +47,24 @@ class _BackToTopButtonState extends State<BackToTopButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return AnimatedScale(
       scale: _visible ? 1 : 0,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: IconButton(
+        child: IconButton.filled(
           onPressed: _goToTop,
           tooltip: 'Back to top',
+          style: IconButton.styleFrom(
+            backgroundColor: colors.surfaceContainer,
+            foregroundColor: colors.onSurface,
+            minimumSize: const Size.square(48),
+            elevation: 3,
+            shadowColor: colors.shadow,
+            side: BorderSide(color: colors.outlineVariant),
+          ),
           icon: const Icon(Icons.keyboard_arrow_up, size: 32),
         ),
       ),

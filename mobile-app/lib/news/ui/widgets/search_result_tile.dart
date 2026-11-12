@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/news/models/search_post_model.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/utils/date_utils.dart';
 
-class SearchResultTile extends StatelessWidget {
-  const SearchResultTile({super.key, required this.post});
+class NewsSearchResultTile extends StatelessWidget {
+  const NewsSearchResultTile({super.key, required this.post});
 
   final SearchPost post;
 

@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
-import 'package:freecodecamp/news/ui/widgets/news_image.dart';
+import 'package:freecodecamp/news/ui/widgets/image.dart';
 import 'package:freecodecamp/news/ui/widgets/offline_banner.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 
 class NewsBookmarkFeedView extends ConsumerWidget {
@@ -46,7 +45,7 @@ class NewsBookmarkFeedView extends ConsumerWidget {
             if (posts.isEmpty)
               const NewsSavedEmptyState()
             else ...[
-              const OfflineBanner(),
+              const NewsOfflineBanner(),
               const SizedBox(height: 16),
               Container(
                 clipBehavior: Clip.antiAlias,
@@ -221,7 +220,7 @@ class NewsSavedEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             FilledButton(
-              onPressed: () => context.go(newsFeedPath),
+              onPressed: () => const NewsFeedRoute().go(context),
               child: const Text('Browse articles'),
             ),
           ],
