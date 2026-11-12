@@ -16,7 +16,11 @@ async function getPodcasts(req: Request, res: Response) {
   if (feedUrls.length !== podcasts.length) {
     console.log('Fetching missing podcasts');
     for (const url of feedUrls) {
-      const feed = await parser.parseURL(url);
+      const feed = await parser.parseURL(url).catch((error) => {
+        console.error(`Failed to fetch ${url}:`, error);
+        return null;
+      });
+      if (!feed) continue;
 
       if (feed.title) {
         console.log(`${feed.title} ${feed.items.length}`);
@@ -35,7 +39,7 @@ async function getPodcasts(req: Request, res: Response) {
           numOfEps: feed.items.length,
         },
         {
-          new: true,
+          returnDocument: 'after',
           upsert: true,
         },
       );

@@ -20,12 +20,13 @@ import 'package:freecodecamp/auth/ui/widgets/profile_photo_options.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/settings.dart' as settings_routes;
+import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:freecodecamp/settings/services/app_preferences.dart';
-import 'package:freecodecamp/settings/services/local_data_service.dart';
+import 'package:freecodecamp/settings/models/app_preferences_model.dart';
 import 'package:freecodecamp/settings/ui/settings/delete_account/delete_account_view.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_view.dart';
+import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
@@ -547,27 +548,26 @@ void main() {
     expect(find.text('Saved'), findsOneWidget);
   });
 
-  testWidgets(
-    'should omit Socrates and Campfire and open Profile visibility',
-    (tester) async {
-      final auth = _MemoryAuth();
-      await _pumpScreen(tester, const SettingsView(), auth);
-      expect(find.text('Socrates'), findsNothing);
-      expect(find.text('Campfire mode'), findsNothing);
-      await tester.scrollUntilVisible(
-        find.text('Profile visibility'),
-        180,
-        scrollable: find.byType(Scrollable).first,
-      );
-      expect(find.text('Private'), findsOneWidget);
-      await tester.ensureVisible(find.text('Profile visibility'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Profile visibility'));
-      await tester.pumpAndSettle();
-      expect(find.byType(ProfileVisibilityView), findsOneWidget);
-      expect(auth._saves, 0);
-    },
-  );
+  testWidgets('should omit Socrates and Campfire and open Profile visibility', (
+    tester,
+  ) async {
+    final auth = _MemoryAuth();
+    await _pumpScreen(tester, const SettingsView(), auth);
+    expect(find.text('Socrates'), findsNothing);
+    expect(find.text('Campfire mode'), findsNothing);
+    await tester.scrollUntilVisible(
+      find.text('Profile visibility'),
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Private'), findsOneWidget);
+    await tester.ensureVisible(find.text('Profile visibility'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile visibility'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ProfileVisibilityView), findsOneWidget);
+    expect(auth._saves, 0);
+  });
 
   for (final brightness in Brightness.values) {
     testWidgets(

@@ -13,11 +13,11 @@ import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dar
 import 'package:freecodecamp/podcasts/services/library_service.dart';
 import 'package:freecodecamp/routing/router.dart';
 import 'package:freecodecamp/services/analytics_service.dart';
+import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/services/notification_service.dart';
 import 'package:freecodecamp/services/remote_config_service.dart';
-import 'package:freecodecamp/settings/services/app_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:upgrader/upgrader.dart';
 

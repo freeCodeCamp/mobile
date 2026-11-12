@@ -40,6 +40,7 @@ class ModuleView extends ConsumerWidget {
       _ => null,
     };
     return Scaffold(
+      extendBody: true,
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -75,46 +76,68 @@ class ModuleView extends ConsumerWidget {
           ),
         ),
       ),
-      body: curriculum.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => ErrorRetry(
-          message: 'Something went wrong!',
-          onRetry: () => ref.invalidate(provider),
-        ),
-        data: (curriculum) {
-          final chapter = switch (curriculum) {
-            ChapterSuperBlock(:final chapters) => chapters.firstWhereOrNull(
-              (c) => c.modules.any((m) => m.dashedName == module),
+      body: Builder(
+        builder: (context) => curriculum.when(
+          loading: () => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
             ),
-            BlockSuperBlock() => null,
-          };
-          final found = chapter?.modules.firstWhereOrNull(
-            (m) => m.dashedName == module,
-          );
-          if (found == null) {
-            return const ErrorRetry(message: 'No blocks available right now.');
-          }
-          return BlockList(
-            blocks: found.blocks,
-            showActions: false,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            header: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    found.name,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      height: 1.2,
-                    ),
-                  ),
-                ],
+            child: const Center(child: CircularProgressIndicator()),
+          ),
+          error: (error, stack) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
+            child: ErrorRetry(
+              message: 'Something went wrong!',
+              onRetry: () => ref.invalidate(provider),
+            ),
+          ),
+          data: (curriculum) {
+            final chapter = switch (curriculum) {
+              ChapterSuperBlock(:final chapters) => chapters.firstWhereOrNull(
+                (c) => c.modules.any((m) => m.dashedName == module),
               ),
-            ),
-          );
-        },
+              BlockSuperBlock() => null,
+            };
+            final found = chapter?.modules.firstWhereOrNull(
+              (m) => m.dashedName == module,
+            );
+            if (found == null) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.paddingOf(context).bottom,
+                ),
+                child: const ErrorRetry(
+                  message: 'No blocks available right now.',
+                ),
+              );
+            }
+            return BlockList(
+              blocks: found.blocks,
+              showActions: false,
+              padding: EdgeInsets.fromLTRB(
+                16,
+                8,
+                16,
+                32 + MediaQuery.paddingOf(context).bottom,
+              ),
+              header: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      found.name,
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.w900, height: 1.2),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

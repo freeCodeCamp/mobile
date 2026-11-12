@@ -43,73 +43,93 @@ class _DailyChallengeArchiveViewState
       ),
     );
     return Scaffold(
+      extendBody: true,
       bottomNavigationBar: const AppNavigationFooter(
         selected: AppDestination.learn,
       ),
       appBar: AppBar(title: const Text('Daily coding challenges')),
-      body: archive.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => ErrorRetry(
-          message: 'No challenges available at the moment.',
-          onRetry: () => ref.invalidate(dailyChallengeArchiveProvider),
-        ),
-        data: (months) {
-          bool matches(DailyChallengeOverview challenge) => switch (_filter) {
-            _Filter.all => true,
-            _Filter.pending => !completed.contains(challenge.id),
-            _Filter.complete => completed.contains(challenge.id),
-          };
-          final shown = months.where((m) => m.challenges.any(matches)).toList();
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-            children: [
-              const DailyChallengeCard(
-                variant: DailyChallengeCardVariant.archive,
+      body: Builder(
+        builder: (context) => archive.when(
+          loading: () => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          ),
+          error: (error, stack) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
+            child: ErrorRetry(
+              message: 'No challenges available at the moment.',
+              onRetry: () => ref.invalidate(dailyChallengeArchiveProvider),
+            ),
+          ),
+          data: (months) {
+            bool matches(DailyChallengeOverview challenge) => switch (_filter) {
+              _Filter.all => true,
+              _Filter.pending => !completed.contains(challenge.id),
+              _Filter.complete => completed.contains(challenge.id),
+            };
+            final shown = months
+                .where((m) => m.challenges.any(matches))
+                .toList();
+            return ListView(
+              padding: EdgeInsets.fromLTRB(
+                16,
+                0,
+                16,
+                32 + MediaQuery.paddingOf(context).bottom,
               ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final filter in _Filter.values)
-                    ChipSurface(
-                      child: ChoiceChip(
-                        label: Text(filter.label),
-                        selected: _filter == filter,
-                        onSelected: (_) => setState(() => _filter = filter),
+              children: [
+                const DailyChallengeCard(
+                  variant: DailyChallengeCardVariant.archive,
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final filter in _Filter.values)
+                      ChipSurface(
+                        child: ChoiceChip(
+                          label: Text(filter.label),
+                          selected: _filter == filter,
+                          onSelected: (_) => setState(() => _filter = filter),
+                        ),
                       ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                if (shown.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Text(
+                      _filter == _Filter.complete
+                          ? 'No completed challenges yet.'
+                          : _filter == _Filter.pending
+                          ? 'You have completed every challenge in the archive.'
+                          : 'No challenges available at the moment.',
+                      textAlign: TextAlign.center,
                     ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              if (shown.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32),
-                  child: Text(
-                    _filter == _Filter.complete
-                        ? 'No completed challenges yet.'
-                        : _filter == _Filter.pending
-                        ? 'You have completed every challenge in the archive.'
-                        : 'No challenges available at the moment.',
-                    textAlign: TextAlign.center,
                   ),
-                ),
-              for (final (index, month) in shown.indexed)
-                _MonthCard(
-                  key: ValueKey(month.month),
-                  month: month,
-                  visible: month.challenges.where(matches).toList(),
-                  completed: completed,
-                  isOpen: (index == 0) != _toggled.contains(month.month),
-                  onToggle: () => setState(() {
-                    if (!_toggled.remove(month.month)) {
-                      _toggled.add(month.month);
-                    }
-                  }),
-                ),
-            ],
-          );
-        },
+                for (final (index, month) in shown.indexed)
+                  _MonthCard(
+                    key: ValueKey(month.month),
+                    month: month,
+                    visible: month.challenges.where(matches).toList(),
+                    completed: completed,
+                    isOpen: (index == 0) != _toggled.contains(month.month),
+                    onToggle: () => setState(() {
+                      if (!_toggled.remove(month.month)) {
+                        _toggled.add(month.month);
+                      }
+                    }),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

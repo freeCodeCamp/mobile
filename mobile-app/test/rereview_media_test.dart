@@ -6,9 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/code_radio/controllers/player_controller.dart';
 import 'package:freecodecamp/code_radio/models/code_radio_model.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_view.dart';
-import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
@@ -240,6 +240,7 @@ Future<GoRouter> _pumpRoutes(
         podcastPlaybackPositionProvider.overrideWith(
           (ref) => Stream.value(Duration.zero),
         ),
+        podcastSavedPositionProvider.overrideWith((ref, episodeId) => null),
         codeRadioNowPlayingProvider.overrideWith((ref) => Stream.value(_radio)),
         codeRadioElapsedProvider.overrideWith((ref) => Stream.value(30)),
       ],
@@ -392,11 +393,16 @@ void main() {
     );
   }
   testWidgets(
-    'LIST-N1 same rendered header bounds on both actual Listen routes',
+    'LIST-N1 Listen routes switch without transitions and keep header bounds',
     (tester) async {
       await _pumpRoutes(tester, path: '/podcasts');
       expect(find.text('1,051 episodes'), findsOneWidget);
       final before = tester.getRect(find.byType(ListenTabs));
+      final podcastsRoute = ModalRoute.of(
+        tester.element(find.byType(ListenTabs)),
+      )!;
+      expect(podcastsRoute.transitionDuration, Duration.zero);
+      expect(podcastsRoute.reverseTransitionDuration, Duration.zero);
       final titleBefore = tester.getRect(find.text('Listen').first);
       expect(before.left, 16);
       expect(before.width, 358);
@@ -404,6 +410,11 @@ void main() {
       await tester.tap(find.text('Code Radio'));
       await tester.pumpAndSettle();
       expect(find.byType(CodeRadioPlayerView), findsOneWidget);
+      final radioRoute = ModalRoute.of(
+        tester.element(find.byType(ListenTabs)),
+      )!;
+      expect(radioRoute.transitionDuration, Duration.zero);
+      expect(radioRoute.reverseTransitionDuration, Duration.zero);
       expect(tester.getRect(find.byType(ListenTabs)), before);
       expect(tester.getRect(find.text('Listen').first), titleBefore);
       expect(_rendered(tester, 'Code Radio').fontFamily, 'Lato');
@@ -419,35 +430,36 @@ void main() {
       );
       expect(
         tester.getSize(find.byType(CodeRadioAlbumArt)),
-        const Size(220, 220),
+        const Size(340, 340),
       );
       final decoration = art.decoration! as BoxDecoration;
       expect(decoration.borderRadius, BorderRadius.circular(20));
-      expect((decoration.border! as Border).top.color, const Color(0xff3e329c));
+      expect(decoration.boxShadow, isNotEmpty);
       expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Podcasts'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CodeRadioPlayerView), findsNothing);
+      expect(tester.getRect(find.byType(ListenTabs)), before);
     },
   );
-  testWidgets('P1 P2 PODC-N1 PODC-N2 real podcast labels and share sizing', (
-    tester,
-  ) async {
-    await _pumpRoutes(tester, path: '/podcasts/podcast');
-    expect(find.byType(PodcastEpisodeListView), findsOneWidget);
-    for (final label in ['Play latest', '1 hr 19 min']) {
-      expect(_rendered(tester, label).fontFamily, 'Lato');
-      expect(_rendered(tester, label).letterSpacing, 0);
-    }
-    expect(_rendered(tester, '1 hr 19 min').fontSize, 14);
-    expect(_rendered(tester, 'Play latest').fontWeight, FontWeight.w900);
-    expect(_rendered(tester, 'Episodes').fontSize, 20);
-    expect(_rendered(tester, 'Episodes').fontWeight, FontWeight.w900);
-    expect(_rendered(tester, 'Newest first').fontSize, 14);
-    final share = find.widgetWithIcon(IconButton, Icons.ios_share_rounded);
-    expect(tester.getSize(share), const Size(48, 48));
-    expect(
-      tester.widget<Material>(_materialInside(share)).color,
-      Colors.transparent,
-    );
-  });
+  testWidgets(
+    'Podcast episode list keeps labels and omits sort and share controls',
+    (tester) async {
+      await _pumpRoutes(tester, path: '/podcasts/podcast');
+      expect(find.byType(PodcastEpisodeListView), findsOneWidget);
+      for (final label in ['Play latest', '1 hr 19 min']) {
+        expect(_rendered(tester, label).fontFamily, 'Lato');
+        expect(_rendered(tester, label).letterSpacing, 0);
+      }
+      expect(_rendered(tester, '1 hr 19 min').fontSize, 14);
+      expect(_rendered(tester, 'Play latest').fontWeight, FontWeight.w900);
+      expect(_rendered(tester, 'Episodes').fontSize, 20);
+      expect(_rendered(tester, 'Episodes').fontWeight, FontWeight.w900);
+      expect(find.text('Newest first'), findsNothing);
+      expect(find.text('Oldest first'), findsNothing);
+      expect(find.byTooltip('Share podcast'), findsNothing);
+    },
+  );
   testWidgets('A2 G15 rendered search edge and filter chip height', (
     tester,
   ) async {
@@ -749,24 +761,29 @@ void main() {
       );
     }
   }
-  testWidgets('EP3 downloaded metadata shows actual size and completion', (
-    tester,
-  ) async {
-    final router = await _pumpRoutes(
+  for (final brightness in Brightness.values) {
+    testWidgets('EP3 episode player omits the metadata row ($brightness)', (
       tester,
-      path: '/podcasts',
-      downloaded: true,
-      downloadedBytes: 54000000,
-    );
-    unawaited(
-      router.push('/podcasts/podcast/episode', extra: (_podcast, _episode)),
-    );
-    await tester.pumpAndSettle();
-    expect(
-      find.text('May 19, 2026 · 1 hr 19 min · 54 MB · Downloaded'),
-      findsOneWidget,
-    );
-  });
+    ) async {
+      final router = await _pumpRoutes(
+        tester,
+        path: '/podcasts',
+        downloaded: true,
+        downloadedBytes: 54000000,
+        brightness: brightness,
+      );
+      unawaited(
+        router.push('/podcasts/podcast/episode', extra: (_podcast, _episode)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(_episode.title), findsOneWidget);
+      expect(find.textContaining('May 19, 2026'), findsNothing);
+      expect(find.textContaining('1 hr 19 min'), findsNothing);
+      expect(find.textContaining('54 MB'), findsNothing);
+      expect(find.textContaining('Downloaded'), findsNothing);
+      expect(find.byTooltip('Remove download'), findsOneWidget);
+    });
+  }
   testWidgets(
     'USER-player dismiss stops and clears persistent player across tabs; explicit playback can reopen',
     (tester) async {
@@ -800,6 +817,35 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'persistent player should stay mounted while an episode switch loads',
+    (tester) async {
+      final audio = _PlaybackAudio()..start();
+      await _pumpRoutes(tester, audio: audio, scale: 1.0);
+      final before = tester.element(find.byType(MiniPlayer));
+
+      audio.switching = true;
+      audio.playbackState.add(
+        PlaybackState(
+          playing: false,
+          processingState: AudioProcessingState.loading,
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byType(MiniPlayer), findsOneWidget);
+      expect(find.byTooltip('Dismiss player'), findsOneWidget);
+      expect(find.text(_episode.title), findsWidgets);
+      expect(tester.element(find.byType(MiniPlayer)), same(before));
+
+      audio.switching = false;
+      audio.start();
+      await tester.pump();
+
+      expect(find.byTooltip('Pause audio'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
   test('EP3 size labels use locale, one decimal under10MB', () {
     expect(podcastFileSize(54000000, 'en_US'), '54 MB');
     expect(podcastFileSize(1500000, 'en_US'), '1.5 MB');
@@ -826,18 +872,19 @@ class _LocalDownloads extends PodcastDownloadRepository {
 
 class _PlaybackAudio extends _Audio {
   bool loaded = false;
+  bool switching = false;
   int stops = 0;
   int plays = 0;
   @override
-  String? get episodeId => loaded ? _episode.id : null;
+  String? get episodeId => loaded && !switching ? _episode.id : null;
   @override
   Duration? get duration => _episode.duration;
   @override
   Stream<Duration> get positionStream =>
       Stream.value(const Duration(minutes: 2));
   @override
-  (Podcast, Episode)? get currentPodcastEpisode =>
-      loaded ? (_podcast, _episode) : null;
+  PublishedSource? get published =>
+      loaded ? PublishedPodcast(_podcast, _episode) : null;
   void start({bool playing = true}) {
     loaded = true;
     mediaItem.add(

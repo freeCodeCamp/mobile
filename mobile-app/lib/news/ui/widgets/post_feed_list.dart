@@ -103,6 +103,9 @@ class _NewsPostFeedListState extends ConsumerState<NewsPostFeedList> {
                 ),
               if (widget.footer case final footer?)
                 SliverToBoxAdapter(child: footer),
+              SliverToBoxAdapter(
+                child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+              ),
             ],
           ),
         ),

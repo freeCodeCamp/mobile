@@ -63,6 +63,7 @@ class NewsShell extends StatelessWidget {
     );
 
     final scaffold = Scaffold(
+      extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: isSaved

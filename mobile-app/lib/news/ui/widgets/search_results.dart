@@ -62,6 +62,9 @@ class NewsSearchResults extends StatelessWidget {
                   NewsSearchResultTile(post: posts[index]),
             ),
           ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+        ),
       ],
     ),
   );

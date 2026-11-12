@@ -27,6 +27,8 @@ class NewsBookmarkService {
   NewsBookmarkService(this._repo);
   int get resetGeneration => _repo.resetGeneration;
 
+  Future<void> clearForReset() => _repo.clearForReset();
+
   Future<List<BookmarkedPost>> getBookmarks() async {
     final raw = await _repo.readBookmarks();
     return [for (final entry in raw.reversed) ?_fromEntry(entry)];

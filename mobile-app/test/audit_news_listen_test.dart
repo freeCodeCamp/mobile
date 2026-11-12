@@ -6,8 +6,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:freecodecamp/code_radio/controllers/player_controller.dart';
 import 'package:freecodecamp/code_radio/ui/player/player_view.dart';
-import 'package:freecodecamp/code_radio/ui/player/player_viewmodel.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/news/controllers/bookmarks_controller.dart';
 import 'package:freecodecamp/news/controllers/feed_controller.dart';
@@ -471,6 +471,9 @@ void main() {
               podcastPlaybackPositionProvider.overrideWith(
                 (ref) => Stream.value(Duration.zero),
               ),
+              podcastSavedPositionProvider.overrideWith(
+                (ref, episodeId) => null,
+              ),
             ],
             child: Scaffold(
               body: SingleChildScrollView(
@@ -512,57 +515,48 @@ void main() {
       },
     );
 
-    testWidgets(
-      'download metadata and actions use library completion ($brightness)',
-      (tester) async {
-        final library = _Library();
-        final downloads = _Downloads();
-        await _pump(
-          tester,
-          ProviderScope(
-            overrides: [
-              podcastLibraryProvider.overrideWith(() => library),
-              podcastDownloadedSizeProvider(
-                _episode.podcastId,
-                _episode.id,
-              ).overrideWith((ref) async => null),
-              podcastDownloadsProvider.overrideWith(() => downloads),
-            ],
-            child: Scaffold(
-              body: Column(
-                children: [
-                  PodcastEpisodeMetadata(episode: _episode),
-                  PodcastDownloadButton(
-                    podcast: _podcast,
-                    episode: _episode,
-                    outlined: true,
-                  ),
-                ],
-              ),
+    testWidgets('download actions use library completion ($brightness)', (
+      tester,
+    ) async {
+      final library = _Library();
+      final downloads = _Downloads();
+      await _pump(
+        tester,
+        ProviderScope(
+          overrides: [
+            podcastLibraryProvider.overrideWith(() => library),
+            podcastDownloadsProvider.overrideWith(() => downloads),
+          ],
+          child: Scaffold(
+            body: Column(
+              children: [
+                PodcastDownloadButton(
+                  podcast: _podcast,
+                  episode: _episode,
+                  outlined: true,
+                ),
+              ],
             ),
           ),
-          brightness,
-        );
-        expect(find.text('May 19, 2026 · 1 hr 19 min'), findsOneWidget);
-        await tester.tap(find.byTooltip('Download episode'));
-        await tester.pump();
-        expect(downloads._starts, 1);
-        expect(find.textContaining('Downloaded'), findsNothing);
-        await tester.tap(find.byTooltip('Cancel download'));
-        await tester.pumpAndSettle();
-        expect(downloads._cancels, 1);
-        library.save(true);
-        await tester.pumpAndSettle();
-        expect(
-          find.text('May 19, 2026 · 1 hr 19 min · Downloaded'),
-          findsOneWidget,
-        );
-        await tester.tap(find.byTooltip('Remove download'));
-        await tester.pumpAndSettle();
-        expect(library._removeCalls, 1);
-        expect(find.textContaining('Downloaded'), findsNothing);
-      },
-    );
+        ),
+        brightness,
+      );
+      expect(find.byTooltip('Download episode'), findsOneWidget);
+      await tester.tap(find.byTooltip('Download episode'));
+      await tester.pump();
+      expect(downloads._starts, 1);
+      expect(find.byTooltip('Remove download'), findsNothing);
+      await tester.tap(find.byTooltip('Cancel download'));
+      await tester.pumpAndSettle();
+      expect(downloads._cancels, 1);
+      library.save(true);
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Remove download'), findsOneWidget);
+      await tester.tap(find.byTooltip('Remove download'));
+      await tester.pumpAndSettle();
+      expect(library._removeCalls, 1);
+      expect(find.byTooltip('Remove download'), findsNothing);
+    });
 
     testWidgets(
       'skip controls and radio timestamps are accessible ($brightness)',

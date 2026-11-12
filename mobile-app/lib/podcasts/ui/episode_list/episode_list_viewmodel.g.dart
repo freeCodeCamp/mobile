@@ -19,7 +19,7 @@ final class PodcastEpisodesNotifierProvider
     required PodcastEpisodesNotifierFamily super.from,
     required PodcastEpisodeSource super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'podcastEpisodesProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -53,7 +53,7 @@ final class PodcastEpisodesNotifierProvider
 }
 
 String _$podcastEpisodesNotifierHash() =>
-    r'a999c9ff9cfd9f4f0dd710fd8be658f4bdb1f775';
+    r'9c8e1520c1ace395b54a098e682cd455b490f5a0';
 
 final class PodcastEpisodesNotifierFamily extends $Family
     with
@@ -66,7 +66,7 @@ final class PodcastEpisodesNotifierFamily extends $Family
         > {
   PodcastEpisodesNotifierFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'podcastEpisodesProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

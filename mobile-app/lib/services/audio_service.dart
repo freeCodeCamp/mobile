@@ -37,6 +37,23 @@ class CurriculumAudioConfig extends AudioTypeConfig {
   final String clipId;
 }
 
+// What mediaItem currently holds. Unlike AudioTypeConfig, which switches as a
+// load starts, this changes only when the new source is published.
+sealed class PublishedSource {
+  const PublishedSource();
+}
+
+class PublishedCodeRadio extends PublishedSource {
+  const PublishedCodeRadio();
+}
+
+class PublishedPodcast extends PublishedSource {
+  const PublishedPodcast(this.podcast, this.episode);
+
+  final Podcast podcast;
+  final Episode episode;
+}
+
 // NOTE: The handler is created before runApp and injected, so reading
 // this without that override is a wiring mistake rather than a lazy init.
 @Riverpod(keepAlive: true)
@@ -70,13 +87,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   AudioTypeConfig? _audioConfig;
 
-  (Podcast, Episode)? _currentPodcastEpisode;
+  // NOTE: Set together with mediaItem in _publish and cleared in stop, so the
+  // persistent player never sees a half-swapped source while a load runs.
+  PublishedSource? _published;
 
-  // The loaded models let the persistent player reopen the episode screen.
-  (Podcast, Episode)? get currentPodcastEpisode =>
-      episodeId == _currentPodcastEpisode?.$2.id
-      ? _currentPodcastEpisode
-      : null;
+  PublishedSource? get published => _published;
 
   Uri? _codeRadioUrl;
 
@@ -138,7 +153,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
     final load = ++_loadId;
     _loading = false;
     _audioConfig = null;
-    _currentPodcastEpisode = null;
+    _published = null;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
 
@@ -174,7 +189,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> rewind() => _seekBy(-_skipBackward);
 
   @override
-  Future<void> setSpeed(double speed) => _audioPlayer.setSpeed(speed);
+  Future<void> setSpeed(double speed) async {
+    await _audioPlayer.setSpeed(speed);
+    // just_audio emits no playback event for a speed change alone.
+    playbackState.add(playbackState.value.copyWith(speed: _audioPlayer.speed));
+  }
 
   @override
   Future<void> onTaskRemoved() async {
@@ -209,8 +228,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       await _audioPlayer.setAudioSource(AudioSource.uri(url));
       if (load != _loadId) return;
 
-      _currentPodcastEpisode = null;
-      _publish(song);
+      _publish(song, const PublishedCodeRadio());
     } catch (e) {
       if (load != _loadId) return;
 
@@ -222,7 +240,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
     }
   }
 
-  void updateCodeRadioSong(Song song) => _publish(_toMediaItem(song));
+  void updateCodeRadioSong(Song song) =>
+      _publish(_toMediaItem(song), const PublishedCodeRadio());
 
   Future<void> _rejoinCodeRadioLiveEdge() async {
     final url = _codeRadioUrl;
@@ -265,15 +284,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
       }
       if (load != _loadId) return false;
 
-      _currentPodcastEpisode = (podcast, episode);
-      _publish(item);
+      _publish(item, PublishedPodcast(podcast, episode));
       return true;
     } catch (e) {
       if (load != _loadId) return false;
 
       log('loadEpisode: Cannot play audio: $e');
       await stop();
-      return false;
+      rethrow;
     } finally {
       if (load == _loadId) _loading = false;
     }
@@ -305,7 +323,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       );
       if (load != _loadId) return false;
 
-      _publish(item);
+      _publish(item, null);
       return true;
     } catch (e) {
       if (load != _loadId) return false;
@@ -326,7 +344,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
     artUri: Uri.parse(song.art),
   );
 
-  void _publish(MediaItem song) {
+  void _publish(MediaItem song, PublishedSource? source) {
+    _published = source;
     queue.add([song]);
     mediaItem.add(song);
   }

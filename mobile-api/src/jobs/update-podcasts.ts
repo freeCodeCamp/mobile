@@ -18,7 +18,11 @@ const parser = new Parser<
 void (async function () {
   await dbConnect();
   for (const feedUrl of feedUrls) {
-    const feed = await parser.parseURL(feedUrl);
+    const feed = await parser.parseURL(feedUrl).catch((error) => {
+      console.error(`Failed to fetch ${feedUrl}:`, error);
+      return null;
+    });
+    if (!feed) continue;
     console.log('UPDATING PODCAST', feed.title);
     const podcast = await PodcastModel.findOneAndUpdate<Podcast>(
       { feedUrl: feedUrl },
@@ -28,11 +32,11 @@ void (async function () {
         feedUrl: feedUrl,
         podcastLink: feed.link,
         imageLink: feed.image?.url || feed.itunes?.image,
-        copyright: feed.copyright as string,
+        copyright: feed.copyright,
         numOfEps: feed.items.length,
       },
       {
-        new: true,
+        returnDocument: 'after',
         upsert: true,
       },
     );
@@ -54,7 +58,7 @@ void (async function () {
           duration: episode.itunes?.duration,
         },
         {
-          new: true,
+          returnDocument: 'after',
           upsert: true,
         },
       );
