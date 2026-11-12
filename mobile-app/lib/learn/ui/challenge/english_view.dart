@@ -99,10 +99,13 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
         actions: [
           if (completed)
             const Padding(
-              padding: EdgeInsets.only(right: 16),
+              padding: EdgeInsets.all(12),
               child: Tooltip(
                 message: 'Step completed',
-                child: LearnStatus(complete: true),
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: FittedBox(child: LearnStatus(complete: true)),
+                ),
               ),
             ),
         ],

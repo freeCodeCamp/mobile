@@ -514,10 +514,13 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         else ...[
           if (completed)
             const Padding(
-              padding: EdgeInsets.only(right: 4),
+              padding: EdgeInsets.all(12),
               child: Tooltip(
                 message: 'Step completed',
-                child: LearnStatus(complete: true),
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: FittedBox(child: LearnStatus(complete: true)),
+                ),
               ),
             ),
           IconButton(

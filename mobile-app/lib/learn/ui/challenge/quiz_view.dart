@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
@@ -12,6 +13,8 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/questions.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_leave_dialog.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_result_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/services/auth_service.dart';
 
 // NOTE: The quiz picks one of its question sets at random and shuffles each question's answers.
 List<QuestionItem> _pickQuestions(List<Quiz> quizzes) {
@@ -37,17 +40,17 @@ List<QuestionItem> _pickQuestions(List<Quiz> quizzes) {
   ];
 }
 
-class QuizView extends StatefulWidget {
+class QuizView extends ConsumerStatefulWidget {
   const QuizView({super.key, required this.challenge, required this.block});
 
   final Challenge challenge;
   final Block block;
 
   @override
-  State<QuizView> createState() => _QuizViewState();
+  ConsumerState<QuizView> createState() => _QuizViewState();
 }
 
-class _QuizViewState extends State<QuizView> {
+class _QuizViewState extends ConsumerState<QuizView> {
   static const _passRate = .9;
   late final _questions = _pickQuestions(widget.challenge.quizzes);
   late List<int?> _selected = List.filled(_questions.length, null);
@@ -187,6 +190,13 @@ class _QuizViewState extends State<QuizView> {
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
     final colors = Theme.of(context).colorScheme;
+    final completed = ref.watch(
+      authProvider.select(
+        (auth) =>
+            auth.value?.completedChallenges.any((c) => c.id == challenge.id) ??
+            false,
+      ),
+    );
     return PopScope(
       canPop: _allowLeave,
       onPopInvokedWithResult: (didPop, _) {
@@ -207,6 +217,17 @@ class _QuizViewState extends State<QuizView> {
             onPressed: _leave,
           ),
           actions: [
+            if (completed)
+              const Padding(
+                padding: EdgeInsets.all(12),
+                child: Tooltip(
+                  message: 'Quiz completed',
+                  child: SizedBox.square(
+                    dimension: 20,
+                    child: FittedBox(child: LearnStatus(complete: true)),
+                  ),
+                ),
+              ),
             if (!_validated && _questions.isNotEmpty)
               IconButton(
                 tooltip: 'All questions',
