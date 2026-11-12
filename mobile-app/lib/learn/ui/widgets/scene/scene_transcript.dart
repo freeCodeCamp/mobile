@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/controllers/scene_controller.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
-
-final _lineStyles = {
-  '*': Style(fontSize: FontSize(14), lineHeight: const LineHeight(1.4)),
-};
 
 class SceneTranscript extends ConsumerWidget {
   const SceneTranscript({super.key, required this.scene, required this.title});
@@ -63,7 +57,8 @@ class SceneTranscript extends ConsumerWidget {
                           : Colors.transparent,
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
                       children: [
                         SizedBox(
                           width: 46,
@@ -79,9 +74,13 @@ class SceneTranscript extends ConsumerWidget {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: ParsedHtml(
-                            line.text,
-                            customStyles: _lineStyles,
+                          child: Text(
+                            line.text.replaceAll(RegExp('<[^>]*>'), ''),
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.4,
+                              color: colors.onSurface,
+                            ),
                           ),
                         ),
                       ],
