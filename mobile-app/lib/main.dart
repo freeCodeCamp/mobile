@@ -9,7 +9,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/firebase_options.dart';
-import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dart';
 import 'package:freecodecamp/podcasts/services/library_service.dart';
 import 'package:freecodecamp/routing/router.dart';
 import 'package:freecodecamp/services/analytics_service.dart';
@@ -18,6 +17,7 @@ import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/services/notification_service.dart';
 import 'package:freecodecamp/services/remote_config_service.dart';
+import 'package:freecodecamp/settings/services/preferences_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:upgrader/upgrader.dart';
 
@@ -59,10 +59,18 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final _upgrader = Upgrader();
+  late final AppLifecycleListener _lifecycle;
 
   @override
   void initState() {
     super.initState();
+
+    // NOTE: Rebuilds the reminder window from tomorrow, so a day spent in the app has no reminder.
+    _lifecycle = AppLifecycleListener(
+      onResume: () => unawaited(
+        ref.read(settingsPreferencesServiceProvider).restoreDailyReminder(),
+      ),
+    );
 
     router.routerDelegate.addListener(_logScreenView);
     ref.listenManual(remoteConfigProvider, (_, next) {
@@ -97,9 +105,10 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Future<void> _scheduleReminders() async {
+    // NOTE: Migrate before the permission request, so an existing grant marks an upgrade.
+    await ref.read(appPreferencesProvider.notifier).migrateDailyReminder();
     await ref.read(notificationServiceProvider).requestPermission();
-    final user = await ref.read(authProvider.future).catchError((_) => null);
-    await ref.read(learnDailyChallengeReminderServiceProvider).reschedule(user);
+    await ref.read(settingsPreferencesServiceProvider).restoreDailyReminder();
   }
 
   void _logScreenView() {
@@ -112,6 +121,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     router.routerDelegate.removeListener(_logScreenView);
     super.dispose();
   }

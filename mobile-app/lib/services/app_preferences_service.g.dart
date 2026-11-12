@@ -34,7 +34,7 @@ final class AppPreferencesNotifierProvider
 }
 
 String _$appPreferencesNotifierHash() =>
-    r'87ec724ec45e9490e829a18dc514024d31d41cf4';
+    r'1ac0cf6e11f468796dabd3f01e52b8bc5b688c57';
 
 abstract class _$AppPreferencesNotifier extends $AsyncNotifier<AppPreferences> {
   FutureOr<AppPreferences> build();

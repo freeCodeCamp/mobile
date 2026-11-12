@@ -60,6 +60,15 @@ class NotificationService {
 
   Future<bool> enabled() async {
     await _ensureInitialised();
+    if (Platform.isIOS) {
+      // Undetermined must read as off, so a new install is not taken for an upgrade.
+      final options = await _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.checkPermissions();
+      return options?.isEnabled ?? false;
+    }
     if (!Platform.isAndroid) return true;
 
     return await _plugin

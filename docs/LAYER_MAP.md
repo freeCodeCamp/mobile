@@ -258,7 +258,7 @@ flowchart LR
   classDef ext fill:transparent,stroke:#585870,stroke-width:1px,stroke-dasharray:3 3,color:#9A9AA8
 ```
 
-### Daily challenge, reminders and the landing page
+### Daily challenge and the landing page
 
 ```mermaid
 flowchart LR
@@ -266,10 +266,8 @@ flowchart LR
   DVM["daily_challenge_viewmodel"]:::vm
   AVM["daily_challenge_archive_viewmodel"]:::vm
   CVM2["challenge_viewmodel"]:::vm
-  ROOT(["main.dart"]):::root
 
   DCS["daily_challenge_service"]:::svc
-  REM["daily_challenge_reminder_service"]:::svc
   QS2["quote_service"]:::svc
 
   DCR["daily_challenge_repository"]:::repo
@@ -277,7 +275,6 @@ flowchart LR
   QR["quote_repository"]:::repo
   SESS2["auth/session_repository"]:::repo
 
-  NOTIF["notification_service"]:::plat
   DIO2["dioProvider"]:::plat
 
   SRC4(["freeCodeCamp API<br/>/daily-coding-challenge"]):::ext
@@ -289,8 +286,6 @@ flowchart LR
   DVM --> DCS
   AVM --> DCS
   CVM2 -->|read| DCS
-  CVM2 -->|read| REM
-  REM --> DCS
 
   DCS --> DCR
   DCS --> PR2
@@ -300,8 +295,6 @@ flowchart LR
   PR2 -.-> SRC5
   QR -.-> SRC6
 
-  REM -.-> NOTIF
-  ROOT -.->|read| REM
   DCR -.-> SESS2
   DCR -.-> DIO2
 
@@ -319,7 +312,6 @@ The curriculum side and the daily-challenge side share no service. `challenge_vi
 
 - **`curriculum_controller` is the shared one.** The landing, superblock and module screens all watch it, and `challenge_viewmodel` watches its `superBlockProvider`.
 - **Both API repositories use auth's `session_repository`**, which supplies `apiUrl` and wraps signed-in requests. Any 401 signs the user out everywhere.
-- **The only service-to-service edge in any feature:** `daily_challenge_reminder_service` asks `daily_challenge_service` for today's challenge, then checks the user's completed list before rescheduling. `main.dart` calls it at startup.
 - **`test_runner_service` is the only `keepAlive` in Learn.** It owns an `InAppLocalhostServer` on port 8080 plus headless web views (Babel and the test evaluator), so the next challenge never fights the previous one for the port.
 - **Some views skip their view-model:** `editor_challenge_view` reads `code_service` and the test-runner server, `daily_challenge_view` watches `daily_challenge_service`, and `quiz_audio_player` and `scene_controls` use the audio handler.
 

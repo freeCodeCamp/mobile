@@ -286,8 +286,8 @@ class _ReminderRow extends ConsumerWidget {
     );
     final busy = ref.watch(settingsProvider.select((s) => s.busy));
     return _SettingsSwitchRow(
-      title: 'Daily challenge reminder',
-      subtitle: 'A nudge when a new challenge is out',
+      title: 'Daily learning reminder',
+      subtitle: 'A nudge to keep learning every day',
       value: pending ?? saved ?? false,
       onChanged: saved == null || busy
           ? null

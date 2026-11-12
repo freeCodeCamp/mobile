@@ -14,42 +14,42 @@ LearningReminderService learningReminderService(Ref ref) {
 
 class ReminderPermissionDenied implements Exception {}
 
-// A daily learning reminder, separate from podcast download notifications.
-// The OS owns recurrence, so reminders continue while the app is closed.
+// One-time reminders from tomorrow, rebuilt on every open, so a day spent in the app is skipped.
 class LearningReminderService {
   LearningReminderService(this._notifications);
 
-  static const notificationId = 1843001;
+  static const firstId = 1843001;
+  static const windowDays = 7;
   final NotificationService _notifications;
   final _plugin = FlutterLocalNotificationsPlugin();
   Future<void> _pending = Future.value();
-  bool _changedInSettings = false;
+  // A late startup or resume restore must not reverse a choice not yet saved.
+  bool? _chosenInSettings;
+  bool _fullTimezonesLoaded = false;
+
+  Future<bool> osAllowsNotifications() => _notifications.enabled();
 
   Future<void> enable() {
-    _changedInSettings = true;
-    return _enqueue(_enable);
+    return _enqueue(() async {
+      await _schedule(askPermission: true);
+      _chosenInSettings = true;
+    });
   }
 
   Future<void> cancel() {
-    _changedInSettings = true;
-    return _enqueue(_cancel);
+    return _enqueue(() async {
+      await _cancel();
+      _chosenInSettings = false;
+    });
   }
 
   Future<void> restore({required Future<bool> Function() readEnabled}) {
     return _enqueue(() async {
-      // Settings already applied the recurring schedule for this session.
-      // A delayed startup/completion callback must not reverse that choice.
-      if (_changedInSettings) {
-        return;
-      }
-      final enabled = await readEnabled();
-      if (_changedInSettings) {
-        return;
-      }
-      if (enabled) {
-        await _enable();
-      } else {
+      final enabled = _chosenInSettings ?? await readEnabled();
+      if (!enabled) {
         await _cancel();
+      } else if (await _notifications.enabled()) {
+        await _schedule(askPermission: false);
       }
     });
   }
@@ -60,53 +60,56 @@ class LearningReminderService {
     return result;
   }
 
-  Future<void> _cancelMigratedReminders() async {
+  Future<void> _cancel() async {
+    for (var id = firstId; id < firstId + windowDays; id++) {
+      await _notifications.cancel(id);
+    }
+    // v8 reminder ids.
     for (var id = 9000; id < 9007; id++) {
       await _notifications.cancel(id);
     }
   }
 
-  Future<void> _enable() async {
-    await _cancelMigratedReminders();
-    if (!await _notifications.requestPermission()) {
+  Future<void> _schedule({required bool askPermission}) async {
+    await _cancel();
+    if (askPermission && !await _notifications.requestPermission()) {
       throw ReminderPermissionDenied();
     }
     final zone = await FlutterTimezone.getLocalTimezone();
     // Devices can return IANA aliases (for example Europe/Amsterdam), which
     // the trimmed timezone database omits.
-    tz_data.initializeTimeZones();
+    if (!_fullTimezonesLoaded) {
+      tz_data.initializeTimeZones();
+      _fullTimezonesLoaded = true;
+    }
     final location = tz.getLocation(zone.identifier);
-    final now = tz.TZDateTime.now(location);
-    await _plugin.zonedSchedule(
-      id: notificationId,
-      title: 'Make time to learn',
-      body: 'Keep building your skills with freeCodeCamp today.',
-      scheduledDate: nextReminderTime(now),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily-learning-reminder',
-          'Daily learning reminder',
-          channelDescription: 'Your daily reminder to keep learning',
-          importance: Importance.defaultImportance,
+    final times = reminderTimes(tz.TZDateTime.now(location));
+    for (var i = 0; i < times.length; i++) {
+      await _plugin.zonedSchedule(
+        id: firstId + i,
+        title: 'Make time to learn',
+        body: 'Keep building your skills with freeCodeCamp today.',
+        scheduledDate: times[i],
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily-learning-reminder',
+            'Daily learning reminder',
+            channelDescription: 'A nudge to keep learning every day',
+            importance: Importance.defaultImportance,
+          ),
+          iOS: DarwinNotificationDetails(),
         ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
-      payload: 'learning_reminder',
-    );
-  }
-
-  Future<void> _cancel() async {
-    await _notifications.cancel(notificationId);
-    await _cancelMigratedReminders();
+        androidScheduleMode: AndroidScheduleMode.inexact,
+        payload: 'learning_reminder',
+      );
+    }
   }
 }
 
 // Construct calendar dates instead of adding 24 hours across DST changes.
-tz.TZDateTime nextReminderTime(tz.TZDateTime now) {
-  final today = tz.TZDateTime(now.location, now.year, now.month, now.day, 9);
-  return today.isAfter(now)
-      ? today
-      : tz.TZDateTime(now.location, now.year, now.month, now.day + 1, 9);
+List<tz.TZDateTime> reminderTimes(tz.TZDateTime now) {
+  return [
+    for (var i = 1; i <= LearningReminderService.windowDays; i++)
+      tz.TZDateTime(now.location, now.year, now.month, now.day + i, 9),
+  ];
 }

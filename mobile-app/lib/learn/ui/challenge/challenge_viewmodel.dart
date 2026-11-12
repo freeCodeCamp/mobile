@@ -7,7 +7,6 @@ import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/services/code_service.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
-import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -72,13 +71,6 @@ class ChallengeSubmitNotifier extends _$ChallengeSubmitNotifier {
           .read(authProvider.notifier)
           .refresh()
           .catchError((Object e) => log('submit: profile refresh failed: $e'));
-      if (isDaily) {
-        unawaited(
-          ref
-              .read(learnDailyChallengeReminderServiceProvider)
-              .reschedule(ref.read(authProvider).value),
-        );
-      }
       if (ref.mounted) state = const AsyncData(null);
       return true;
     } catch (e, stack) {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/settings/models/app_preferences_model.dart';
 import 'package:freecodecamp/settings/services/preferences_service.dart';
@@ -15,6 +17,20 @@ class AppPreferencesNotifier extends _$AppPreferencesNotifier {
 
   void retry() {
     ref.read(settingsPreferencesServiceProvider).reload();
+  }
+
+  Future<void> migrateDailyReminder() async {
+    final service = ref.read(settingsPreferencesServiceProvider);
+    try {
+      final current = await future;
+      final enabled = await service.migrateDailyReminder();
+      if (ref.mounted) {
+        final latest = state.value ?? current;
+        state = AsyncData(latest.copyWith(dailyReminder: enabled));
+      }
+    } catch (error) {
+      log('Daily learning reminder: could not migrate ($error)');
+    }
   }
 
   Future<void> setTheme(ThemeMode mode) async {
