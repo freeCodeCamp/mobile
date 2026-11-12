@@ -7,6 +7,7 @@ import 'package:freecodecamp/podcasts/services/playback_service.dart';
 import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/settings/services/app_info_service.dart';
 import 'package:freecodecamp/settings/services/local_data_service.dart';
 import 'package:freecodecamp/settings/services/reset_service.dart';
 import 'package:freecodecamp/settings/services/settings_service.dart';
@@ -17,7 +18,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'settings_viewmodel.g.dart';
 
 @Riverpod(retry: noRetry)
-Future<PackageInfo> appVersion(Ref ref) => PackageInfo.fromPlatform();
+Future<PackageInfo> appVersion(Ref ref) {
+  return ref.watch(settingsAppInfoServiceProvider).getAppInfo();
+}
 
 @riverpod
 Future<int> downloadedStorageBytes(Ref ref) {

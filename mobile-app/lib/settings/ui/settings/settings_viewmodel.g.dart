@@ -46,7 +46,7 @@ final class AppVersionProvider
   }
 }
 
-String _$appVersionHash() => r'd09088f5a5379239d66c6e3222456b2a89289643';
+String _$appVersionHash() => r'd5b98cdd0df3f88e1fcc1d9b0b477c9d82ef7e9d';
 
 @ProviderFor(downloadedStorageBytes)
 final downloadedStorageBytesProvider = DownloadedStorageBytesProvider._();
