@@ -11,6 +11,7 @@ import 'package:freecodecamp/settings/services/reset_service.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
 import 'package:go_router/go_router.dart';
@@ -138,13 +139,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                 if (preferences.isLoading)
                                   const LinearProgressIndicator()
                                 else if (preferences.hasError)
-                                  TextButton.icon(
-                                    onPressed: () =>
+                                  ErrorRetry(
+                                    message: 'Could not load settings.',
+                                    margin: EdgeInsets.zero,
+                                    onRetry: () =>
                                         ref.invalidate(appPreferencesProvider),
-                                    icon: const Icon(Icons.refresh),
-                                    label: const Text(
-                                      'Could not load settings. Retry',
-                                    ),
                                   )
                                 else
                                   SegmentedTabs<ThemeMode>(
@@ -306,9 +305,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                               ?.copyWith(color: colors.onSurfaceVariant),
                         ),
                         loading: () => const SizedBox.shrink(),
-                        error: (_, _) => TextButton(
-                          onPressed: () => ref.invalidate(appVersionProvider),
-                          child: const Text('Retry version information'),
+                        error: (_, _) => ErrorRetry(
+                          message: 'Could not load version information.',
+                          onRetry: () => ref.invalidate(appVersionProvider),
                         ),
                       ),
                     ],
