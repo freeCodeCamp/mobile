@@ -254,6 +254,7 @@ class _ResizablePanelState extends State<ResizablePanel> {
               child: expanded
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         ConstrainedBox(
                           key: _bodyKey,

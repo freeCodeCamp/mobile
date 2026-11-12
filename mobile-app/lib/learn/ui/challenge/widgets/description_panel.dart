@@ -21,7 +21,7 @@ class DescriptionPanel extends StatelessWidget {
           ? Duration.zero
           : const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
-      alignment: Alignment.topCenter,
+      alignment: Alignment.topLeft,
       heightFactor: visible ? 1 : 0,
       child: ExcludeSemantics(
         excluding: !visible,
