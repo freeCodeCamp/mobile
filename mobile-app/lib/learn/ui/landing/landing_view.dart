@@ -4,10 +4,11 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/models/resume_model.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
 import 'package:freecodecamp/learn/ui/landing/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
-import 'package:freecodecamp/learn/ui/landing/learning_resume.dart';
+import 'package:freecodecamp/learn/ui/landing/resume_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/landing/superblock_button.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
@@ -163,7 +164,7 @@ class _ResumeCard extends ConsumerWidget {
     final guest = !auth.isLoggedIn;
     if (!returning) {
       return FirstVisitHero(
-        course: course,
+        course: next?.course ?? course,
         next: next,
         loading: resume.isLoading,
         onStart: next == null
@@ -264,7 +265,7 @@ class _ResumeCard extends ConsumerWidget {
                       challengeId: next.challenge.id,
                     ).push<void>(context)
                   : resume.hasError
-                  ? () => retryLearningResume(ref)
+                  ? () => ref.read(learningResumeProvider.notifier).retry()
                   : () => LearnSuperBlockRoute(
                       superBlock: course.dashedName,
                     ).push<void>(context),
