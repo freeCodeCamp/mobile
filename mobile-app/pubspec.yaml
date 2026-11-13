@@ -63,7 +63,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   json_serializable: 6.15.2
-  riverpod_generator: 4.0.9
+  riverpod_generator: 4.0.10
 
 flutter:
   fonts:
