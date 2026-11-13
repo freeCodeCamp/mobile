@@ -108,7 +108,7 @@ flowchart LR
 
 There are two graphs because the code is split the same way: audio on one side, podcast data on the other. `storage_repository` and `download_repository` appear in both because both services own them. `library_controller` appears in the second only because it stops playback before an episode is deleted.
 
-**Screens:** `podcast_list_view`, `episode_list_view`, `episode_view`, `downloads_view`, plus the `episode_tile`, `download_button` and `podcast_grid_tile` widgets.
+**Screens:** `podcast_list_view`, `episode_list_view`, `episode_view`, `podcast_downloads_tab`, plus the `episode_tile`, `download_button` and `podcast_grid_tile` widgets.
 
 - **Two controllers, deliberately separate.** `library_controller` answers "is this on disk?". `downloads_controller` tracks transfers in progress. The library holds data that changes rarely and many widgets watch; downloads writes progress several times a second.
 - **`downloads_controller` only reads.** It calls `library_controller.refresh()` after a download, because only the notifier can push new state to what the grid and tiles watch. `refresh()` assigns `AsyncData` directly, where `ref.invalidate` would flash a spinner.
@@ -163,7 +163,7 @@ flowchart TD
   classDef ext fill:transparent,stroke:#585870,stroke-width:1px,stroke-dasharray:3 3,color:#9A9AA8
 ```
 
-**Screens:** `feed_view`, `tag_feed_view`, `author_feed_view`, `post_view`, `search_view`, `bookmark_feed_view`, `bookmark_post_view`, `image_view`, plus the `post_feed_list` and `bookmark_button` widgets.
+**Screens:** `feed_view`, `tag_feed_view`, `author_feed_view`, `post_view`, `search_view`, `bookmark_feed_view`, `bookmark_post_view`, `image_view`, plus the `post_feed_list`, `bookmark_button` and `news_downloads_tab` widgets. `news_downloads_tab` watches `bookmarks_controller` and renders inside the Settings `downloads_view`.
 
 - **Three data stacks.** Each service owns one repository. The bookmarks controller supplies an article loader from `api_service` when saving a summary; `bookmark_service` owns the save/remove decision, model mapping and reset checks.
 - **`feed_controller` is a family** keyed by the sealed `NewsFeedSource` (all / tag / author), so the main, tag and author feeds share one implementation.
@@ -362,7 +362,7 @@ flowchart TD
   classDef root fill:#15152a,stroke:#8E8EA8,stroke-width:1.5px,color:#DFDFE2
 ```
 
-**Screens:** `login_view`, `profile_view`, `settings_view`, `delete_account_view` and the app drawer. All of them also watch `authProvider` directly for the current user.
+**Screens:** `login_view`, `profile_view`, `settings_view`, `downloads_view` (hosting the podcast and news downloads tabs), `delete_account_view` and the app drawer. All of them also watch `authProvider` directly for the current user.
 
 - **`AuthNotifier` is the only place auth state changes.** View-models read the notifier and call its methods; only login goes below it, to start a sign-in flow.
 - **The session layer is `keepAlive`** and lives for the app's lifetime. Learn's two API repositories depend on it too.

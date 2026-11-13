@@ -35,7 +35,7 @@ final class NewsBookmarksNotifierProvider
 }
 
 String _$newsBookmarksNotifierHash() =>
-    r'94e2dd1a308e22870f1f7ca9265247f896335cb6';
+    r'815f618b49774b0a403f4e467164876c1c191f04';
 
 abstract class _$NewsBookmarksNotifier
     extends $AsyncNotifier<List<BookmarkedPost>> {

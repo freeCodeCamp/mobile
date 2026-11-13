@@ -17,6 +17,19 @@ class NewsBookmarksNotifier extends _$NewsBookmarksNotifier {
   Future<void> toggle(BookmarkedPost post) =>
       _toggle((service) => service.toggle(post));
 
+  Future<void> removeBookmarks(Set<String> ids) async {
+    final service = ref.read(newsBookmarkServiceProvider);
+    final pendingRemoval = ref.keepAlive();
+    try {
+      final bookmarks = await service.removeBookmarks(ids);
+      if (ref.mounted) {
+        state = AsyncData(bookmarks);
+      }
+    } finally {
+      pendingRemoval.close();
+    }
+  }
+
   Future<void> togglePost(Post post) =>
       _toggle((service) => service.togglePost(post));
 

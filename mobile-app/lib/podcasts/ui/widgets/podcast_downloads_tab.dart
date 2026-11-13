@@ -2,68 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
-import 'package:freecodecamp/podcasts/ui/widgets/downloads_management_list.dart';
+import 'package:freecodecamp/podcasts/ui/widgets/downloads_empty_state.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_format.dart';
-import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
-import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/download_management_list.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class PodcastDownloadsView extends ConsumerWidget {
-  const PodcastDownloadsView({super.key});
-
-  void _back(BuildContext context) {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      const AccountRoute().go(context);
-    }
-  }
+class PodcastDownloadsTab extends ConsumerWidget {
+  const PodcastDownloadsTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final podcasts = ref.watch(podcastDownloadedPodcastsProvider);
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _back(context);
-      },
-      child: Scaffold(
-        extendBody: true,
-        appBar: AppBar(
-          title: const Text('Downloads'),
-          leading: IconButton(
-            tooltip: 'Back',
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => _back(context),
-          ),
-        ),
-        bottomNavigationBar: const AppNavigationFooter(
-          selected: AppDestination.account,
-        ),
-        body: podcasts.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => ErrorRetry(
-            message: 'Unable to load downloads.',
-            onRetry: () => ref.invalidate(podcastLibraryProvider),
-          ),
-          data: (podcasts) => DownloadManagementList(
-            items: podcasts.map((podcast) => podcast.id).toList(),
-            onRemove: (ids) =>
-                ref.read(podcastLibraryProvider.notifier).removePodcasts(ids),
-            emptyState: const DownloadsEmptyState(),
-            itemBuilder: (context, index, managing, selected, onSelect) =>
-                PodcastDownloadGroupTile(
-                  podcast: podcasts[index],
-                  managing: managing,
-                  selected: selected,
-                  onSelect: onSelect,
-                ),
-          ),
-        ),
+    return podcasts.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => ErrorRetry(
+        message: 'Unable to load downloads.',
+        onRetry: () => ref.invalidate(podcastLibraryProvider),
+      ),
+      data: (podcasts) => DownloadManagementList(
+        items: podcasts.map((podcast) => podcast.id).toList(),
+        onRemove: (ids) =>
+            ref.read(podcastLibraryProvider.notifier).removePodcasts(ids),
+        emptyState: const DownloadsEmptyState(),
+        itemBuilder: (context, index, managing, selected, onSelect) =>
+            PodcastDownloadGroupTile(
+              podcast: podcasts[index],
+              managing: managing,
+              selected: selected,
+              onSelect: onSelect,
+            ),
       ),
     );
   }

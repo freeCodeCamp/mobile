@@ -4,12 +4,14 @@ import 'package:freecodecamp/podcasts/controllers/library_controller.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 import 'package:freecodecamp/podcasts/ui/downloaded_episodes/downloaded_episodes_viewmodel.dart';
-import 'package:freecodecamp/podcasts/ui/widgets/downloads_management_list.dart';
+import 'package:freecodecamp/podcasts/ui/widgets/downloads_empty_state.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/episode_play_button.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_artwork.dart';
 import 'package:freecodecamp/podcasts/ui/widgets/podcast_format.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
+import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
+import 'package:freecodecamp/widgets/download_management_list.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,7 +34,7 @@ class PodcastDownloadedEpisodesView extends ConsumerWidget {
             if (context.canPop()) {
               context.pop();
             } else {
-              const PodcastDownloadsRoute().go(context);
+              const DownloadsRoute().go(context);
             }
           },
         ),

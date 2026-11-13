@@ -502,9 +502,7 @@ void main() {
       expect(tag.height, lessThan(24));
     },
   );
-  testWidgets('FEED-N1 eyebrow accepts tap48target outside painted text', (
-    tester,
-  ) async {
+  testWidgets('FEED-N1 eyebrow target stays above the title', (tester) async {
     final semantics = tester.ensureSemantics();
     final router = GoRouter(
       initialLocation: '/news',
@@ -528,12 +526,15 @@ void main() {
       MaterialApp.router(theme: FccTheme.themeDark, routerConfig: router),
     );
     await tester.pumpAndSettle();
-    final node = tester.getSemantics(find.byType(NewsTagButton));
-    expect(node.rect.height, greaterThanOrEqualTo(48));
     final tag = tester.getRect(find.byType(NewsTagButton));
-    await tester.tapAt(Offset(tag.left + 8, tag.top + 40));
+    final title = tester.getRect(find.text(_summary.title));
+    final node = tester.getSemantics(find.byType(NewsTagButton));
+    expect(node.rect.height, closeTo(tag.height + 4, .001));
+    expect(tag.top + node.rect.height, lessThanOrEqualTo(title.top));
+    await tester.tapAt(Offset(tag.left + 8, title.top + 4));
     await tester.pumpAndSettle();
-    expect(find.text('Selected tag'), findsOneWidget);
+    expect(find.text('Selected article'), findsOneWidget);
+    expect(find.text('Selected tag'), findsNothing);
     semantics.dispose();
   });
   testWidgets('USER-news-tags shortandlong eyebrows start at the title edge', (
