@@ -23,10 +23,15 @@ Future<PackageInfo> appVersion(Ref ref) {
 }
 
 @riverpod
-Future<int> downloadedStorageBytes(Ref ref) {
+Future<int> downloadedStorageBytes(Ref ref) async {
   // Refresh the size after downloads and removals update the library.
   ref.watch(podcastLibraryProvider);
-  return ref.watch(settingsLocalDataServiceProvider).downloadedBytes();
+  ref.watch(newsBookmarksProvider);
+  final episodes = await ref
+      .watch(settingsLocalDataServiceProvider)
+      .downloadedBytes();
+  final articles = await ref.watch(newsBookmarkServiceProvider).storedBytes();
+  return episodes + articles;
 }
 
 @riverpod

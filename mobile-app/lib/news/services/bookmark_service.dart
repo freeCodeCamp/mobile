@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:freecodecamp/news/models/bookmarked_post_model.dart';
@@ -79,6 +80,17 @@ class NewsBookmarkService {
     );
   }
 
+  Future<List<BookmarkedPost>> removeBookmarks(Set<String> ids) async {
+    await _repo.updateBookmarks(
+      (current) =>
+          List<BookmarkEntry>.from(current)
+            ..removeWhere((entry) => ids.contains(entry[_idKey])),
+    );
+    return getBookmarks();
+  }
+
+  Future<int> storedBytes() => _repo.storedBytes();
+
   Future<void> removeBookmark(String id) {
     return _repo.updateBookmarks(
       (current) =>
@@ -117,6 +129,7 @@ class NewsBookmarkService {
           final String savedAt => DateTime.tryParse(savedAt),
           _ => null,
         },
+        sizeBytes: utf8.encode(jsonEncode(entry)).length,
       ),
     _ => _skipMalformedEntry(),
   };

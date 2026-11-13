@@ -6,7 +6,6 @@ import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
-import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
@@ -303,7 +302,7 @@ class _AccountLinks extends StatelessWidget {
           leading: const Icon(Icons.download_outlined, size: 20),
           title: const Text('Downloads'),
           trailing: const Icon(Icons.chevron_right, size: 20),
-          onTap: () => const PodcastDownloadsRoute().push<void>(context),
+          onTap: () => const DownloadsRoute().push<void>(context),
         ),
         const Divider(),
         ListTile(

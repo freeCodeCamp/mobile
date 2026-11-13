@@ -37,6 +37,11 @@ class NewsBookmarkRepository {
 
   Future<List<BookmarkEntry>> readBookmarks() => _serialized(_read);
 
+  Future<int> storedBytes() => _serialized(() async {
+    final file = await _resolveFile();
+    return await file.exists() ? await file.length() : 0;
+  });
+
   Future<void> updateBookmarks(
     List<BookmarkEntry> Function(List<BookmarkEntry> current) updater,
   ) {

@@ -80,7 +80,7 @@ final class DownloadedStorageBytesProvider
 }
 
 String _$downloadedStorageBytesHash() =>
-    r'9db6caca26447f8ae5e901cc37f174a9587b0153';
+    r'8fb91c85b12ac920fbdb8ef098718671c658142e';
 
 @ProviderFor(SettingsLocalDataResetNotifier)
 final settingsLocalDataResetProvider =
