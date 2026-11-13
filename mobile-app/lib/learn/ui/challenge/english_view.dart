@@ -9,10 +9,9 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/description_panel.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/transcript_sheet.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
-import 'package:freecodecamp/learn/ui/widgets/scene/scene_transcript.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart';
@@ -40,6 +39,9 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
   );
   List<bool>? _results;
   bool _exercise = false;
+  bool _transcript = false;
+
+  void _toggleTranscript() => setState(() => _transcript = !_transcript);
 
   bool get _allCorrect => _results?.every((r) => r) ?? false;
   bool get _split =>
@@ -113,89 +115,95 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
-          builder: (context, constraints) => Column(
+          builder: (context, constraints) => Stack(
             children: [
-              if (challenge.description.isNotEmpty)
-                DescriptionPanel(
-                  key: ValueKey(challenge.id),
-                  html: challenge.description,
-                  availableHeight: constraints.maxHeight,
-                  visible: !exercise,
-                ),
-              Expanded(
-                child: ListView(
-                  key: ValueKey(exercise),
-                  padding: EdgeInsets.zero,
-                  children: [
-                    if (showLesson && challenge.scene != null)
-                      SceneView(
-                        scene: challenge.scene!,
-                        title: challenge.title,
-                        edgeToEdge: true,
-                      ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        showLesson && challenge.scene != null ? 0 : 16,
-                        16,
-                        16,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (showLesson) ...[
-                            if (challenge.instructions.isNotEmpty)
-                              ParsedHtml(challenge.instructions),
-                            if (challenge.transcript.isNotEmpty)
-                              HtmlCard(
-                                title: 'Transcript',
-                                html: challenge.transcript,
-                                collapsible: true,
-                              )
-                            else if (challenge.scene != null)
-                              SceneTranscript(
-                                scene: challenge.scene!,
-                                title: challenge.title,
-                              ),
-                            if (shortViewport) ...confirmations,
-                          ],
-                          if (showFill)
-                            if (challenge.fillInTheBlank case final fill?) ...[
-                              if (showLesson &&
-                                  challenge.instructions.isNotEmpty)
-                                const SizedBox(height: 12),
-                              if (!exercise)
-                                Text(
-                                  'Fill in the blank',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: FccDesignColors.of(
-                                      context,
-                                    ).accentText,
-                                  ),
-                                ),
-                              ..._sentences(fill.sentence),
-                              const SizedBox(height: 24),
-                            ],
-                          if (_results != null)
-                            AnswerFeedback(
-                              correct: _allCorrect,
-                              html: [
-                                _allCorrect ? challenge.explanation : feedback,
-                              ],
-                              fallback: _allCorrect
-                                  ? null
-                                  : 'Check the highlighted words and try again.',
-                              outlinedInlineCode: true,
-                            ),
-                        ],
-                      ),
+              Column(
+                children: [
+                  if (challenge.description.isNotEmpty)
+                    DescriptionPanel(
+                      key: ValueKey(challenge.id),
+                      html: challenge.description,
+                      availableHeight: constraints.maxHeight,
+                      visible: !exercise,
                     ),
-                  ],
-                ),
+                  Expanded(
+                    child: ListView(
+                      key: ValueKey(exercise),
+                      padding: EdgeInsets.zero,
+                      children: [
+                        if (showLesson && challenge.scene != null)
+                          SceneView(
+                            scene: challenge.scene!,
+                            title: challenge.title,
+                            edgeToEdge: true,
+                          ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            showLesson && challenge.scene != null ? 0 : 16,
+                            16,
+                            16,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (showLesson) ...[
+                                if (challenge.instructions.isNotEmpty)
+                                  ParsedHtml(challenge.instructions),
+                                if (shortViewport) ...confirmations,
+                              ],
+                              if (showFill)
+                                if (challenge.fillInTheBlank
+                                    case final fill?) ...[
+                                  if (showLesson &&
+                                      challenge.instructions.isNotEmpty)
+                                    const SizedBox(height: 12),
+                                  if (!exercise)
+                                    Text(
+                                      'Fill in the blank',
+                                      style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: FccDesignColors.of(
+                                          context,
+                                        ).accentText,
+                                      ),
+                                    ),
+                                  ..._sentences(fill.sentence),
+                                  const SizedBox(height: 24),
+                                ],
+                              if (_results != null)
+                                AnswerFeedback(
+                                  correct: _allCorrect,
+                                  html: [
+                                    _allCorrect
+                                        ? challenge.explanation
+                                        : feedback,
+                                  ],
+                                  fallback: _allCorrect
+                                      ? null
+                                      : 'Check the highlighted words and try again.',
+                                  outlinedInlineCode: true,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
+              if (hasTranscript(challenge) && showLesson)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: TranscriptPanel(
+                    challenge: challenge,
+                    availableHeight: constraints.maxHeight,
+                    visible: _transcript,
+                    onClose: _toggleTranscript,
+                  ),
+                ),
             ],
           ),
         ),
@@ -208,12 +216,17 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
           children: [
             if (!shortViewport) ...confirmations,
             if (_split && !exercise)
-              ChallengeButton(
-                label: 'Continue to exercise',
-                style: _buttonStyle,
-                onPressed: _assignments.every((done) => done)
-                    ? () => _showExercise(true)
-                    : null,
+              TranscriptFooter(
+                active: _transcript,
+                onToggle: _toggleTranscript,
+                challenge: challenge,
+                child: ChallengeButton(
+                  label: 'Continue to exercise',
+                  style: _buttonStyle,
+                  onPressed: _assignments.every((done) => done)
+                      ? () => _showExercise(true)
+                      : null,
+                ),
               )
             else if (exercise)
               Row(
@@ -232,7 +245,12 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                 ],
               )
             else
-              _primaryButton(challenge, dialogue),
+              TranscriptFooter(
+                active: _transcript,
+                onToggle: _toggleTranscript,
+                challenge: challenge,
+                child: _primaryButton(challenge, dialogue),
+              ),
           ],
         ),
       ),

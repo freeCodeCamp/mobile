@@ -18,78 +18,54 @@ class SceneTranscript extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
     final accent = FccDesignColors.of(context).accentText;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: colors.surface,
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: ExpansionTile(
-        title: const Text('Transcript'),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-        childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-        textColor: colors.onSurface,
-        collapsedTextColor: colors.onSurface,
-        iconColor: accent,
-        collapsedIconColor: colors.onSurfaceVariant,
-        shape: const Border(),
-        collapsedShape: const Border(),
-        children: [
-          Column(
-            spacing: 8,
-            children: [
-              for (final command in scene.commands)
-                if (command.dialogue case final line?)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color:
-                          activeLine?.character == command.character &&
-                              activeLine?.text == line.text
-                          ? accent.withValues(alpha: 0.18)
-                          : Colors.transparent,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        SizedBox(
-                          width: 46,
-                          child: Text(
-                            command.character,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.4,
-                              color: accent,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            line.text.replaceAll(RegExp('<[^>]*>'), ''),
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.4,
-                              color: colors.onSurface,
-                            ),
-                          ),
-                        ),
-                      ],
+    return Column(
+      spacing: 8,
+      children: [
+        for (final command in scene.commands)
+          if (command.dialogue case final line?)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color:
+                    activeLine?.character == command.character &&
+                        activeLine?.text == line.text
+                    ? accent.withValues(alpha: 0.18)
+                    : Colors.transparent,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  SizedBox(
+                    width: 46,
+                    child: Text(
+                      command.character,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
-            ],
-          ),
-        ],
-      ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      line.text.replaceAll(RegExp('<[^>]*>'), ''),
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: colors.onSurface,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      ],
     );
   }
 }

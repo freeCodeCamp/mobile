@@ -16,8 +16,8 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/questions.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/review_content.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/transcript_sheet.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
-import 'package:freecodecamp/learn/ui/widgets/scene/scene_transcript.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 
@@ -46,6 +46,9 @@ class _LessonViewState extends ConsumerState<LessonView> {
   }
 
   int? _current;
+  bool _transcript = false;
+
+  void _toggleTranscript() => setState(() => _transcript = !_transcript);
   bool _reviewed = false;
   bool get _assignmentsDone => _assignments.every((done) => done);
   bool get _passed => _questions.indexed.every(
@@ -154,7 +157,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
         review
             ? ReviewContent(nodules: challenge.nodules, controller: _review)
             : ExampleEditor(nodules: challenge.nodules),
-      if (challenge.transcript.isNotEmpty)
+      if (!languageTask && challenge.transcript.isNotEmpty)
         HtmlCard(
           title: 'Transcript',
           html: challenge.transcript,
@@ -162,10 +165,6 @@ class _LessonViewState extends ConsumerState<LessonView> {
         ),
       if (!languageTask && challenge.scene != null)
         SceneView(scene: challenge.scene!, title: challenge.title),
-      if (languageTask &&
-          challenge.transcript.isEmpty &&
-          challenge.scene != null)
-        SceneTranscript(scene: challenge.scene!, title: challenge.title),
       if (challenge.instructions.isNotEmpty) ParsedHtml(challenge.instructions),
       if (!languageTask && challenge.explanation.isNotEmpty)
         HtmlCard(
@@ -210,89 +209,109 @@ class _LessonViewState extends ConsumerState<LessonView> {
       body: SafeArea(
         bottom: false,
         child: LayoutBuilder(
-          builder: (context, constraints) => Column(
+          builder: (context, constraints) => Stack(
             children: [
-              if (current != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      // Keep short lectures compact; parent constraints shrink
-                      // the row safely if a lesson has many questions.
-                      width:
-                          _questions.length * 28 + (_questions.length - 1) * 6,
-                      child: QuestionProgress(
-                        total: _questions.length,
-                        current: current,
-                        answered: _checked,
-                        height: 6,
-                        spacing: 6,
-                        currentColor: colors.secondary,
-                        answeredColor: colors.primary,
+              Column(
+                children: [
+                  if (current != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          // Keep short lectures compact; parent constraints shrink
+                          // the row safely if a lesson has many questions.
+                          width:
+                              _questions.length * 28 +
+                              (_questions.length - 1) * 6,
+                          child: QuestionProgress(
+                            total: _questions.length,
+                            current: current,
+                            answered: _checked,
+                            height: 6,
+                            spacing: 6,
+                            currentColor: colors.secondary,
+                            answeredColor: colors.primary,
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (!languageTask)
+                    ListenableBuilder(
+                      listenable: _scroll,
+                      builder: (context, _) => LinearProgressIndicator(
+                        value: _readProgress,
+                        color: lectureColor,
+                        minHeight: 3,
                       ),
                     ),
-                  ),
-                )
-              else if (!languageTask)
-                ListenableBuilder(
-                  listenable: _scroll,
-                  builder: (context, _) => LinearProgressIndicator(
-                    value: _readProgress,
-                    color: lectureColor,
-                    minHeight: 3,
-                  ),
-                ),
-              if (current == null && review && _review.topicCount > 0)
-                ReviewTopics(controller: _review),
-              if (languageTask && challenge.description.isNotEmpty)
-                DescriptionPanel(
-                  key: ValueKey(challenge.id),
-                  html: challenge.description,
-                  availableHeight: constraints.maxHeight,
-                  visible: current == null,
-                ),
-              Expanded(
-                child: ListView(
-                  key: ValueKey(current),
-                  controller: _scroll,
-                  padding: languageTask && current == null
-                      ? EdgeInsets.zero
-                      : const EdgeInsets.all(16),
-                  children: [
-                    if (current == null) ...[
-                      if (languageTask && challenge.scene != null)
-                        SceneView(
-                          scene: challenge.scene!,
-                          title: challenge.title,
-                          edgeToEdge: true,
-                        ),
-                      if (languageTask)
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: readingContent,
+                  if (current == null && review && _review.topicCount > 0)
+                    ReviewTopics(controller: _review),
+                  if (languageTask && challenge.description.isNotEmpty)
+                    DescriptionPanel(
+                      key: ValueKey(challenge.id),
+                      html: challenge.description,
+                      availableHeight: constraints.maxHeight,
+                      visible: current == null,
+                    ),
+                  Expanded(
+                    child: ListView(
+                      key: ValueKey(current),
+                      controller: _scroll,
+                      padding: languageTask && current == null
+                          ? EdgeInsets.zero
+                          : const EdgeInsets.all(16),
+                      children: [
+                        if (current == null) ...[
+                          if (languageTask && challenge.scene != null)
+                            SceneView(
+                              scene: challenge.scene!,
+                              title: challenge.title,
+                              edgeToEdge: true,
+                            ),
+                          if (languageTask)
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: readingContent,
+                              ),
+                            )
+                          else
+                            ...readingContent,
+                        ] else
+                          Questions(
+                            questions: _questions,
+                            selected: _selected,
+                            currentIndex: current,
+                            validated: _checked[current],
+                            outlinedFeedbackCode: languageTask,
+                            explanation: languageTask
+                                ? challenge.explanation
+                                : '',
+                            onChanged: (question, answer) => setState(() {
+                              _selected[question] = answer;
+                              _checked[question] = false;
+                            }),
                           ),
-                        )
-                      else
-                        ...readingContent,
-                    ] else
-                      Questions(
-                        questions: _questions,
-                        selected: _selected,
-                        currentIndex: current,
-                        validated: _checked[current],
-                        outlinedFeedbackCode: languageTask,
-                        explanation: languageTask ? challenge.explanation : '',
-                        onChanged: (question, answer) => setState(() {
-                          _selected[question] = answer;
-                          _checked[question] = false;
-                        }),
-                      ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
+              if (_transcript &&
+                  hasTranscript(challenge) &&
+                  current == null &&
+                  languageTask)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: TranscriptPanel(
+                    challenge: challenge,
+                    availableHeight: constraints.maxHeight,
+                    visible: _transcript,
+                    onClose: _toggleTranscript,
+                  ),
+                ),
             ],
           ),
         ),
@@ -310,32 +329,40 @@ class _LessonViewState extends ConsumerState<LessonView> {
             if (current == null && hasConfirmations && !shortViewport)
               ..._reviewConfirmations(),
             if (current == null && _questions.isNotEmpty)
-              ChallengeButton(
-                label: 'Continue to questions',
-                style: _buttonStyle(context),
-                onPressed: _assignmentsDone
-                    ? () => _show(
-                        _questions.indexed
-                                .where(
-                                  (q) =>
-                                      !_checked[q.$1] ||
-                                      _selected[q.$1] != q.$2.solution,
-                                )
-                                .firstOrNull
-                                ?.$1 ??
-                            0,
-                      )
-                    : null,
+              _withTranscript(
+                languageTask,
+                ChallengeButton(
+                  label: 'Continue to questions',
+                  style: _buttonStyle(context),
+                  onPressed: _assignmentsDone
+                      ? () => _show(
+                          _questions.indexed
+                                  .where(
+                                    (q) =>
+                                        !_checked[q.$1] ||
+                                        _selected[q.$1] != q.$2.solution,
+                                  )
+                                  .firstOrNull
+                                  ?.$1 ??
+                              0,
+                        )
+                      : null,
+                ),
               )
             else if (current == null)
-              CompleteButton(
-                challenge: challenge,
-                block: widget.block,
-                label: 'Continue',
-                buttonStyle: _buttonStyle(context),
-                enabled:
-                    _assignmentsDone &&
-                    (!review || challenge.assignments.isNotEmpty || _reviewed),
+              _withTranscript(
+                languageTask,
+                CompleteButton(
+                  challenge: challenge,
+                  block: widget.block,
+                  label: 'Continue',
+                  buttonStyle: _buttonStyle(context),
+                  enabled:
+                      _assignmentsDone &&
+                      (!review ||
+                          challenge.assignments.isNotEmpty ||
+                          _reviewed),
+                ),
               )
             else
               LayoutBuilder(
@@ -410,6 +437,15 @@ class _LessonViewState extends ConsumerState<LessonView> {
       child: scaffold,
     );
   }
+
+  Widget _withTranscript(bool languageTask, Widget child) => languageTask
+      ? TranscriptFooter(
+          challenge: widget.challenge,
+          active: _transcript,
+          onToggle: _toggleTranscript,
+          child: child,
+        )
+      : child;
 
   Widget _questionNavigation(BuildContext context, int current) =>
       LayoutBuilder(
