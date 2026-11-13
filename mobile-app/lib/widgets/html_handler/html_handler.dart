@@ -189,11 +189,13 @@ class HTMLParser {
       // sentences get a higher limit so they keep the pill look.
       if (parsed.length > (monospace ? 24 : 60)) {
         return TextSpan(
-          text: parsed,
+          text: ' $parsed ',
           style: TextStyle(
             fontFamily: fontFamily,
             color: colors.onSurface,
-            backgroundColor: colors.surfaceContainer,
+            backgroundColor: outlinedInlineCode
+                ? colors.surface
+                : colors.surfaceContainer,
             fontSize: fontSize,
             letterSpacing: 0,
           ),
