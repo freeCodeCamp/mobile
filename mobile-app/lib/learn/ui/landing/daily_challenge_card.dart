@@ -91,6 +91,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
               const Text('Loading today’s challenge…'),
               const SizedBox(height: 12),
               const LinearProgressIndicator(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
                 semanticsLabel: 'Loading daily challenge',
               ),
             ],

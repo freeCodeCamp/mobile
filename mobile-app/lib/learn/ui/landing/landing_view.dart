@@ -235,6 +235,7 @@ class _ResumeCard extends ConsumerWidget {
               const Text('Finding your next step…'),
               const SizedBox(height: 12),
               LinearProgressIndicator(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
                 color: Theme.of(context).colorScheme.secondary,
                 backgroundColor: Colors.white24,
                 semanticsLabel: 'Loading your next step',
