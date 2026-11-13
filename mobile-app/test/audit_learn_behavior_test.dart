@@ -7,9 +7,10 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
+import 'package:freecodecamp/learn/models/resume_model.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_view.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
-import 'package:freecodecamp/learn/ui/landing/learning_resume.dart';
+import 'package:freecodecamp/learn/ui/landing/resume_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/module/module_view.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
 import 'package:freecodecamp/services/audio_service.dart';
@@ -65,6 +66,13 @@ class _Auth extends AuthNotifier {
       : null;
 }
 
+class _Resume extends LearningResumeNotifier {
+  _Resume(this.value);
+  final LearningResume? value;
+  @override
+  Future<LearningResume?> build() async => value;
+}
+
 class _Audio extends BaseAudioHandler implements AudioPlayerHandler {
   @override
   String? get codeRadioSongId => null;
@@ -113,12 +121,14 @@ Future<void> _pump(
           _course.dashedName,
         ).overrideWith((ref) async => _curriculum),
         learningResumeProvider.overrideWith(
-          (ref) async => LearningResume(
-            course: _course,
-            block: _block,
-            challenge: _block.challenges[returning ? 1 : 0],
-            completed: returning ? 1 : 0,
-            isReturning: returning,
+          () => _Resume(
+            LearningResume(
+              course: _course,
+              block: _block,
+              challenge: _block.challenges[returning ? 1 : 0],
+              completed: returning ? 1 : 0,
+              isReturning: returning,
+            ),
           ),
         ),
         dailyChallengeTodayProvider.overrideWith(

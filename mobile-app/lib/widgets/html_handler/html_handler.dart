@@ -10,6 +10,7 @@ import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/html_handler/code_block.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -39,9 +40,9 @@ final Map<String, Style> defaultStyles = {
     margin: Margins.only(left: 2, top: 32, right: 2),
     fontSize: FontSize.large,
   ),
-  '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-    fontSize: FontSize.xLarge,
-  ),
+  // highlighted-text is excluded so it inherits its parent's size.
+  '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.highlighted-text)':
+      Style(fontSize: FontSize.xLarge),
   'body': Style(
     fontFamily: 'Lato',
     padding: HtmlPaddings.only(left: 4, right: 4),
@@ -49,7 +50,12 @@ final Map<String, Style> defaultStyles = {
   'strong': Style(fontWeight: FontWeight.bold),
   'a': Style(textDecoration: TextDecoration.underline),
   'p': Style(fontSize: FontSize(20), margin: Margins.only(top: 8, bottom: 8)),
-  'li': Style(margin: Margins.only(top: 8), lineHeight: const LineHeight(1.5)),
+  'ol': Style(padding: HtmlPaddings.only(inlineStart: 24)),
+  'ul': Style(padding: HtmlPaddings.only(inlineStart: 24)),
+  'li': Style(margin: Margins.only(top: 4), lineHeight: const LineHeight(1.5)),
+  'li p': Style(margin: Margins.zero),
+  'li ol': Style(margin: Margins.zero),
+  'li ul': Style(margin: Margins.zero),
   'td': Style(padding: HtmlPaddings.all(12), fontSize: FontSize.medium),
   'th': Style(padding: HtmlPaddings.all(12)),
   'th strong': Style(fontSize: FontSize.medium),
@@ -58,6 +64,31 @@ final Map<String, Style> defaultStyles = {
   'code': Style(fontFamily: 'monospace', fontSize: FontSize.xLarge),
   'pre': Style(fontFamily: 'monospace'),
 };
+
+final _listTagWhitespace = RegExp(r'\s*(</?(?:ol|ul|li)(?:\s[^>]*)?>)\s*');
+
+// flutter_html lays out a nested list wrongly when it follows inline text in
+// the same li: the list can land beside the last line of text. Wrapping that
+// text in its own block keeps the text and the nested list as separate blocks.
+void _wrapLeadingItemText(dom.Document document) {
+  for (final item in document.querySelectorAll('li')) {
+    final listIndex = item.nodes.indexWhere(
+      (node) =>
+          node is dom.Element &&
+          (node.localName == 'ul' || node.localName == 'ol'),
+    );
+    if (listIndex <= 0) continue;
+    final leading = item.nodes.sublist(0, listIndex).toList();
+    for (final node in leading) {
+      node.remove();
+    }
+    final wrapper = dom.Element.tag('div');
+    for (final node in leading) {
+      wrapper.append(node);
+    }
+    item.insertBefore(wrapper, item.firstChild);
+  }
+}
 
 class HTMLParser {
   const HTMLParser({Key? key, required this.context});
@@ -72,7 +103,12 @@ class HTMLParser {
     bool outlinedInlineCode = false,
     bool enableTapActions = true,
   }) {
-    final result = parser.parse(html);
+    // Whitespace between list tags becomes inline text nodes that make list
+    // items flow like words and break their spacing.
+    final result = parser.parse(
+      html.replaceAllMapped(_listTagWhitespace, (match) => match[1]!),
+    );
+    _wrapLeadingItemText(result);
     if (!enableTapActions) {
       // flutter_html gives anchors their own tap recognizer even when its
       // onLinkTap callback is null. In answer choices, the card owns the tap.
@@ -136,8 +172,35 @@ class HTMLParser {
       // Backticks in en-US, es, and zh-CN challenges produce this class.
       'span.highlighted-text': Style(backgroundColor: colors.surfaceContainer),
     };
-    Widget inlineCode(ExtensionContext child, {bool copyable = true}) {
+    InlineSpan inlineCode(
+      ExtensionContext child, {
+      bool copyable = true,
+      bool monospace = true,
+    }) {
       final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      final fontFamily = monospace
+          ? customStyles['code']?.fontFamily ?? 'monospace'
+          : 'Lato';
+      final fontSize = monospace
+          ? customStyles['code']?.fontSize?.value ?? 16
+          : child.style?.fontSize?.value ?? FontSize.xLarge.value;
+      // A WidgetSpan is atomic and cannot wrap across lines, so long code
+      // becomes a plain text span that flows with the sentence. Highlighted
+      // sentences get a higher limit so they keep the pill look.
+      if (parsed.length > (monospace ? 24 : 60)) {
+        return TextSpan(
+          text: ' $parsed ',
+          style: TextStyle(
+            fontFamily: fontFamily,
+            color: colors.onSurface,
+            backgroundColor: outlinedInlineCode
+                ? colors.surface
+                : colors.surfaceContainer,
+            fontSize: fontSize,
+            letterSpacing: 0,
+          ),
+        );
+      }
       final borderRadius = BorderRadius.circular(outlinedInlineCode ? 4 : 6);
       final pill = Container(
         padding: EdgeInsets.symmetric(horizontal: outlinedInlineCode ? 4 : 3),
@@ -151,34 +214,76 @@ class HTMLParser {
         child: Text(
           parsed,
           style: TextStyle(
-            fontFamily: customStyles['code']?.fontFamily ?? 'monospace',
+            fontFamily: fontFamily,
             color: colors.onSurface,
-            fontSize: customStyles['code']?.fontSize?.value ?? 16,
+            fontSize: fontSize,
             letterSpacing: 0,
             height: 1.25,
           ),
         ),
       );
       if (!copyable) {
-        return pill;
+        return WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: pill,
+        );
       }
-      return InkWell(
-        onTap: !enableTapActions
-            ? null
-            : () {
-                Clipboard.setData(ClipboardData(text: parsed));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Copied to clipboard: $parsed',
-                      style: const TextStyle(fontSize: 20),
+      return WidgetSpan(
+        alignment: PlaceholderAlignment.baseline,
+        baseline: TextBaseline.alphabetic,
+        child: InkWell(
+          onTap: !enableTapActions
+              ? null
+              : () {
+                  Clipboard.setData(ClipboardData(text: parsed));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Copied to clipboard: $parsed',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      duration: const Duration(seconds: 1),
                     ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-        borderRadius: borderRadius,
-        child: pill,
+                  );
+                },
+          borderRadius: borderRadius,
+          child: pill,
+        ),
+      );
+    }
+
+    InlineSpan inlineKbd(ExtensionContext child) {
+      final parsed = parser.parseFragment(child.innerHtml).text ?? '';
+      // Monospace glyphs look taller than Lato at the same point size.
+      final fontSize =
+          (child.style?.fontSize?.value ?? FontSize.xLarge.value) * 0.9;
+      return WidgetSpan(
+        alignment: PlaceholderAlignment.baseline,
+        baseline: TextBaseline.alphabetic,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+          decoration: BoxDecoration(
+            color: colors.surfaceContainer,
+            border: Border(
+              top: BorderSide(color: colors.outline),
+              left: BorderSide(color: colors.outline),
+              right: BorderSide(color: colors.outline),
+              bottom: BorderSide(color: colors.outline, width: 2),
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            parsed,
+            style: TextStyle(
+              fontFamily: 'monospace',
+              color: colors.onSurface,
+              fontSize: fontSize,
+              letterSpacing: 0,
+              height: 1.25,
+            ),
+          ),
+        ),
       );
     }
 
@@ -248,13 +353,15 @@ class HTMLParser {
             return Container();
           },
         ),
-        TagExtension(tagsToExtend: {'code'}, builder: inlineCode),
+        TagExtension.inline(tagsToExtend: {'code'}, builder: inlineCode),
+        TagExtension.inline(tagsToExtend: {'kbd'}, builder: inlineKbd),
         if (outlinedInlineCode)
-          MatcherExtension(
+          MatcherExtension.inline(
             matcher: (child) =>
                 child.elementName == 'span' &&
                 child.classes.contains('highlighted-text'),
-            builder: (child) => inlineCode(child, copyable: false),
+            builder: (child) =>
+                inlineCode(child, copyable: false, monospace: false),
           ),
         TagExtension(
           tagsToExtend: {'img'},

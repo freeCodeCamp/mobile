@@ -16,6 +16,7 @@ class AssignmentTile extends StatelessWidget {
     type: MaterialType.transparency,
     child: CheckboxListTile(
       contentPadding: EdgeInsets.zero,
+      visualDensity: VisualDensity.compact,
       value: value,
       onChanged: (_) => onToggle(),
       controlAffinity: ListTileControlAffinity.leading,

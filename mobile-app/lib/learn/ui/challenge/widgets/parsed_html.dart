@@ -60,7 +60,8 @@ class _ParsedHtmlState extends State<ParsedHtml> {
       'h1': Style(fontSize: FontSize(26)),
       'h2': Style(fontSize: FontSize(24)),
       'h3': Style(fontSize: FontSize(20)),
-      'code': Style(fontSize: FontSize(16)),
+      'code': Style(fontSize: FontSize(14)),
+      'span.highlighted-text': Style(fontSize: FontSize(14)),
       'pre': Style(fontSize: FontSize(13)),
     };
     for (final entry in widget.customStyles.entries) {

@@ -4,10 +4,11 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/models/resume_model.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
 import 'package:freecodecamp/learn/ui/landing/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
-import 'package:freecodecamp/learn/ui/landing/learning_resume.dart';
+import 'package:freecodecamp/learn/ui/landing/resume_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/landing/superblock_button.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
@@ -62,7 +63,7 @@ class LearnLandingView extends ConsumerWidget {
                 const DailyChallengeCard(),
                 ...switch (stages) {
                   AsyncData(:final value) => [
-                    for (final stage in value) ..._stage(context, ref, stage),
+                    for (final stage in value) ..._stage(context, stage),
                   ],
                   AsyncError() => [
                     Padding(
@@ -85,13 +86,7 @@ class LearnLandingView extends ConsumerWidget {
     );
   }
 
-  List<Widget> _stage(
-    BuildContext context,
-    WidgetRef ref,
-    CurriculumStage stage,
-  ) {
-    final returning =
-        ref.watch(learningResumeProvider).value?.isReturning ?? false;
+  List<Widget> _stage(BuildContext context, CurriculumStage stage) {
     return [
       const SizedBox(height: 24),
       Text(
@@ -119,10 +114,6 @@ class LearnLandingView extends ConsumerWidget {
                     ? 'Temporarily unavailable'
                     : !superBlock.isPublic
                     ? 'Opens freecodecamp.org'
-                    : superBlock.dashedName.contains('responsive-web-design')
-                    ? returning
-                          ? 'In progress'
-                          : 'Start here'
                     : null,
                 isExternal:
                     !superBlock.isPublic && !superBlock.isDisabledByOverride,
@@ -173,7 +164,7 @@ class _ResumeCard extends ConsumerWidget {
     final guest = !auth.isLoggedIn;
     if (!returning) {
       return FirstVisitHero(
-        course: course,
+        course: next?.course ?? course,
         next: next,
         loading: resume.isLoading,
         onStart: next == null
@@ -206,10 +197,11 @@ class _ResumeCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              next?.course.title ?? course.title,
-              style: const TextStyle(fontSize: 14, height: 1.4),
-            ),
+            if (next != null || !resume.isLoading)
+              Text(
+                next?.course.title ?? course.title,
+                style: const TextStyle(fontSize: 14, height: 1.4),
+              ),
             if (next != null) ...[
               Text(
                 next.block.name,
@@ -244,6 +236,7 @@ class _ResumeCard extends ConsumerWidget {
               const Text('Finding your next step…'),
               const SizedBox(height: 12),
               LinearProgressIndicator(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
                 color: Theme.of(context).colorScheme.secondary,
                 backgroundColor: Colors.white24,
                 semanticsLabel: 'Loading your next step',
@@ -272,7 +265,7 @@ class _ResumeCard extends ConsumerWidget {
                       challengeId: next.challenge.id,
                     ).push<void>(context)
                   : resume.hasError
-                  ? () => retryLearningResume(ref)
+                  ? () => ref.read(learningResumeProvider.notifier).retry()
                   : () => LearnSuperBlockRoute(
                       superBlock: course.dashedName,
                     ).push<void>(context),

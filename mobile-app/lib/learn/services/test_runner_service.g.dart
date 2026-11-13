@@ -121,3 +121,88 @@ final class LearnTestRunnerServiceFamily extends $Family
   @override
   String toString() => r'learnTestRunnerServiceProvider';
 }
+
+@ProviderFor(learnTestRunnerSession)
+final learnTestRunnerSessionProvider = LearnTestRunnerSessionFamily._();
+
+final class LearnTestRunnerSessionProvider
+    extends
+        $FunctionalProvider<
+          LearnTestRunnerSession,
+          LearnTestRunnerSession,
+          LearnTestRunnerSession
+        >
+    with $Provider<LearnTestRunnerSession> {
+  LearnTestRunnerSessionProvider._({
+    required LearnTestRunnerSessionFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'learnTestRunnerSessionProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$learnTestRunnerSessionHash();
+
+  @override
+  String toString() {
+    return r'learnTestRunnerSessionProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<LearnTestRunnerSession> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  LearnTestRunnerSession create(Ref ref) {
+    final argument = this.argument as String;
+    return learnTestRunnerSession(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LearnTestRunnerSession value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LearnTestRunnerSession>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LearnTestRunnerSessionProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$learnTestRunnerSessionHash() =>
+    r'f8b8d08a6941fc742a087a2fb5634df415af99e8';
+
+final class LearnTestRunnerSessionFamily extends $Family
+    with $FunctionalFamilyOverride<LearnTestRunnerSession, String> {
+  LearnTestRunnerSessionFamily._()
+    : super(
+        retry: null,
+        name: r'learnTestRunnerSessionProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  LearnTestRunnerSessionProvider call(String challengeId) =>
+      LearnTestRunnerSessionProvider._(argument: challengeId, from: this);
+
+  @override
+  String toString() => r'learnTestRunnerSessionProvider';
+}

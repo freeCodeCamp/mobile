@@ -42,21 +42,6 @@ const _challenge = Challenge(
   ],
 );
 
-const _emailInput =
-    'sort(["jill@mail.com", "john@example.com", "jane@example.com"])';
-const _emailOutput =
-    '["jane@example.com", "john@example.com", "jill@mail.com"]';
-final _longExampleChallenge = _challenge.copyWith(
-  title: 'Email Sorter',
-  tests: [
-    const ChallengeTest(
-      text:
-          '<code>$_emailInput</code> should return <code>$_emailOutput</code>.',
-      testString: '',
-    ),
-  ],
-);
-
 class _TestAuth extends AuthNotifier {
   _TestAuth(this.user);
   final FccUserModel? user;
@@ -147,124 +132,16 @@ void main() {
         expect(find.text('Challenge 42'), findsOneWidget);
         expect(find.text('Daily coding challenge'), findsOneWidget);
         expect(find.text('Get help'), findsOneWidget);
-        expect(find.text('Double a number'), findsOneWidget);
-        expect(find.byTooltip('Reset code'), findsNothing);
-        expect(find.text('Tests'), findsNothing);
-        expect(find.text('Console'), findsNothing);
-        final check = find.widgetWithText(FilledButton, 'Check your code');
-        expect(check, findsOneWidget);
-        expect(tester.getSize(check).width, 336);
-        expect(tester.getSize(check).height, greaterThanOrEqualTo(50));
-        expect(
-          tester
-              .widget<DailyChallengeExample>(find.byType(DailyChallengeExample))
-              .test,
-          _challenge.tests.single,
-        );
-        final exampleCode = tester.widget<Text>(
-          find.descendant(
-            of: find.byType(DailyChallengeExample),
-            matching: find.text('double(3)'),
-          ),
-        );
-        expect(exampleCode.style?.fontFamily, 'JetBrains Mono');
-        expect(exampleCode.style?.fontSize, 13);
+        expect(find.byType(InstructionPanel), findsOneWidget);
+        expect(find.text('Tests'), findsOneWidget);
+        expect(find.text('Console'), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, 'Check'), findsOneWidget);
+        expect(find.text('Check your code'), findsNothing);
+        expect(find.text('Read more'), findsNothing);
         final editor = tester.widget<Editor>(find.byType(Editor));
         expect(editor.options.fontFamily, 'Hack');
         expect(editor.options.linebarBorderColor, Colors.transparent);
         expect(editor.options.linebarColor, theme.colorScheme.surface);
-        expect(tester.takeException(), isNull);
-
-        await tester.ensureVisible(find.text('Read more'));
-        await tester.tap(find.text('Read more'));
-        await tester.pump(const Duration(milliseconds: 300));
-        expect(find.byType(InstructionPanel), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      },
-    );
-  }
-
-  for (final keyboard in [false, true]) {
-    testWidgets(
-      'long daily example and editor stay reachable ${keyboard ? 'with keyboard at 360dp' : 'at normal height'}',
-      (tester) async {
-        tester.view.physicalSize = keyboard
-            ? const Size(360, 640)
-            : const Size(488, 1000);
-        tester.view.devicePixelRatio = 1;
-        tester.view.viewInsets = FakeViewPadding(bottom: keyboard ? 280 : 0);
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-        addTearDown(tester.view.resetViewInsets);
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              authProvider.overrideWith(() => _TestAuth(null)),
-              learnTestRunnerServiceProvider('javascript').overrideWith(
-                (ref) async => LearnTestRunnerService('javascript'),
-              ),
-            ],
-            child: MaterialApp(
-              theme: FccTheme.themeDark,
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.linear(keyboard ? 1.3 : 1)),
-                child: child!,
-              ),
-              home: EditorChallengeView(
-                challenge: _longExampleChallenge,
-                dailyChallengeNumber: 80,
-                selector: DailyChallengeLanguageSelector(
-                  selected: DailyChallengeLanguage.javascript,
-                  onSelected: (_) {},
-                ),
-              ),
-            ),
-          ),
-        );
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
-
-        final example = find.byType(DailyChallengeExample);
-        final input = find.text(_emailInput);
-        final output = find.text(_emailOutput);
-        final check = find.widgetWithText(FilledButton, 'Check your code');
-        final editor = find.byType(Editor);
-        if (example.evaluate().isEmpty) {
-          await tester.drag(
-            find.byType(CustomScrollView),
-            const Offset(0, -250),
-          );
-          await tester.pump();
-        }
-        expect(tester.getSize(example).height, greaterThan(20));
-        expect(tester.getSize(editor).height, greaterThanOrEqualTo(160));
-        expect(tester.getRect(input).left, greaterThanOrEqualTo(12));
-        expect(
-          tester.getRect(input).right,
-          lessThanOrEqualTo(tester.view.physicalSize.width - 12),
-        );
-        expect(
-          tester.getRect(output).bottom,
-          lessThanOrEqualTo(tester.getRect(example).bottom),
-        );
-        expect(
-          tester.getRect(example).bottom,
-          lessThan(tester.getRect(check).top),
-        );
-
-        if (keyboard) {
-          await tester.ensureVisible(check);
-          await tester.pump();
-        }
-        expect(check.hitTestable(), findsOneWidget);
-        expect(output.hitTestable(), findsOneWidget);
-        expect(tester.widget<FilledButton>(check).onPressed, isNotNull);
-
-        await tester.ensureVisible(editor);
-        await tester.pump();
-        expect(editor.hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );

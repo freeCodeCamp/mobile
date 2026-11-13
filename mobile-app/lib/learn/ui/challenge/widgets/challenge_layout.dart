@@ -90,25 +90,28 @@ class QuestionProgress extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Semantics(
       label: 'Question ${current + 1} of $total',
-      child: Row(
-        children: [
-          for (var i = 0; i < total; i++) ...[
-            if (i > 0) SizedBox(width: spacing),
-            Expanded(
-              child: Container(
-                height: height,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(height / 2),
-                  color: i == current
-                      ? currentColor ?? colors.primary
-                      : answered[i]
-                      ? answeredColor ?? colors.primary.withValues(alpha: .45)
-                      : colors.outlineVariant,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            for (var i = 0; i < total; i++) ...[
+              if (i > 0) SizedBox(width: spacing),
+              Expanded(
+                child: Container(
+                  height: height,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(height / 2),
+                    color: i == current
+                        ? currentColor ?? colors.primary
+                        : answered[i]
+                        ? answeredColor ?? colors.primary.withValues(alpha: .45)
+                        : colors.outlineVariant,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

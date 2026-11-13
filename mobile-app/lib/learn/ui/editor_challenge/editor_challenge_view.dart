@@ -11,12 +11,14 @@ import 'package:freecodecamp/learn/services/code_service.dart';
 import 'package:freecodecamp/learn/services/test_runner_service.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/tool_button.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_body.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/editor_panels.dart';
 import 'package:freecodecamp/learn/ui/editor_challenge/phone_ide_theme.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
+import 'package:freecodecamp/learn/ui/widgets/resizable_panel.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-import 'package:html/parser.dart' show parseFragment;
 import 'package:phone_ide/models/textfield_data.dart';
 import 'package:phone_ide/phone_ide.dart';
 
@@ -49,10 +51,10 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   ThemeData? _editorTheme;
   TextFieldData? _focused;
   _EditorSheet? _sheet;
-  bool _instructionsExpanded = true;
-  final _instructionBodyKey = GlobalKey();
-  double? _instructionHeight;
-  double? _instructionDragHeight;
+  final _instructionsPanel = ResizablePanelController();
+  final _fileSelectorKey = GlobalKey();
+  double? _selectorHeight;
+  double? _panelHeight;
   int _editorLoad = 0;
   int _codeEdit = 0;
 
@@ -95,9 +97,11 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.challenge != widget.challenge) {
       _sheet = null;
-      _instructionsExpanded = true;
-      _instructionHeight = null;
-      _instructionDragHeight = null;
+      // A daily challenge switching language keeps its instruction layout.
+      if (oldWidget.challenge.id != widget.challenge.id) {
+        _instructionsPanel.reset();
+        _panelHeight = null;
+      }
       _modifiedFiles.clear();
       _loadEditor(ref.read(_provider).file);
     }
@@ -106,6 +110,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   @override
   void dispose() {
     _cancelSubscriptions();
+    _instructionsPanel.dispose();
     super.dispose();
   }
 
@@ -119,10 +124,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   Future<void> _loadEditor(ChallengeFile file) async {
     final load = ++_editorLoad;
     _cancelSubscriptions();
-    setState(() {
-      _editor = null;
-      _focused = null;
-    });
+    // The previous editor stays on screen until the new one is ready, so a
+    // reload never flashes a spinner.
+    _focused = null;
     final challenge = widget.challenge;
     final resetCount = ref.read(_provider).resetCount;
     final contents = await ref
@@ -220,7 +224,9 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     }
     setState(() {
       _sheet = sheet;
-      if (sheet != null) _instructionsExpanded = false;
+      if (sheet != null) {
+        _instructionsPanel.update(expanded: false);
+      }
     });
   }
 
@@ -285,7 +291,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     if (!mounted || widget.challenge != challenge) return;
     setState(() {
       _sheet = null;
-      _instructionsExpanded = true;
+      _instructionsPanel.update(expanded: true);
       _modifiedFiles.clear();
     });
   }
@@ -303,8 +309,27 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
   }
 
+  void _measureFileSelector() {
+    if (!mounted) {
+      return;
+    }
+    final selector = _fileSelectorKey.currentContext?.size?.height;
+    if (selector != _selectorHeight) {
+      setState(() => _selectorHeight = selector);
+    }
+  }
+
+  // Sizes measured after layout avoid a gap; the estimate covers the first frame.
+  double _instructionsMaxHeight(double availableHeight) {
+    final scale = MediaQuery.textScalerOf(context);
+    final selector =
+        _selectorHeight ?? math.max(44.0, scale.scale(16) * 1.5 + 22);
+    return math.max(0.0, availableHeight - selector);
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureFileSelector());
     ref.listen(
       _provider.select((s) => (s.file, s.resetCount)),
       (_, next) => _loadEditor(next.$1),
@@ -323,82 +348,66 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
           padding: EdgeInsets.only(bottom: keyboard),
           child: SafeArea(
             top: false,
-            child: _daily
-                ? _dailyBody(state, keyboard > 0)
-                : Column(
-                    children: [
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) => Column(
-                            children: [
-                              _instructions(
-                                math.min(
-                                  keyboard > 0 ? 140 : 220,
-                                  constraints.maxHeight * .32,
-                                ),
-                                _instructionHeightLimit(constraints.maxHeight),
+            child: Column(
+              children: [
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Column(
+                          children: [
+                            ResizablePanel(
+                              controller: _instructionsPanel,
+                              title: 'Instructions',
+                              summaryHtml: widget.challenge.instructions,
+                              maxHeight: _instructionsMaxHeight(
+                                constraints.maxHeight,
                               ),
-                              _fileSelector(state),
-                              Expanded(child: _editorArea(state, keyboard > 0)),
-                            ],
-                          ),
+                              child: InstructionPanel(
+                                key: const ValueKey('editor-instructions-body'),
+                                challenge: widget.challenge,
+                              ),
+                            ),
+                            _fileSelector(state),
+                            Expanded(
+                              child: _editorArea(
+                                state,
+                                keyboard > 0,
+                                withPanel: false,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      _bottomBar(state, keyboard > 0),
-                    ],
+                        if (_sheet != null && keyboard == 0)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: _panel(state, constraints.maxHeight),
+                          ),
+                      ],
+                    ),
                   ),
+                ),
+                _bottomBar(state, keyboard > 0),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _dailyBody(EditorChallengeState state, bool keyboard) {
-    return CustomScrollView(
-      key: const ValueKey('daily-challenge-scroll'),
-      slivers: [
-        SliverToBoxAdapter(
-          child: DailyInstructionCard(
-            challenge: widget.challenge,
-            maxHeight: double.infinity,
-          ),
-        ),
-        SliverToBoxAdapter(child: _fileSelector(state)),
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Column(
-            children: [
-              Expanded(
-                // The editor keeps usable space when a long example or the
-                // keyboard makes the whole screen need to scroll.
-                child: SizedBox(
-                  height: 184,
-                  child: Container(
-                    margin: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: _editorArea(state, keyboard),
-                  ),
-                ),
-              ),
-              _bottomBar(state, keyboard),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _editorArea(EditorChallengeState state, bool keyboard) {
+  Widget _editorArea(
+    EditorChallengeState state,
+    bool keyboard, {
+    bool withPanel = true,
+  }) {
     return LayoutBuilder(
       builder: (context, editorSpace) => Stack(
         fit: StackFit.expand,
         children: [
           _editor ?? const Center(child: CircularProgressIndicator()),
-          if (_sheet != null && !keyboard)
+          if (withPanel && _sheet != null && !keyboard)
             Align(
               alignment: Alignment.bottomCenter,
               child: _panel(state, editorSpace.maxHeight),
@@ -421,6 +430,15 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         ? 'Step ${index + 1} of ${block!.challenges.length}'
         : widget.challenge.title;
     final scale = MediaQuery.textScalerOf(context);
+    final completed = ref.watch(
+      authProvider.select(
+        (auth) =>
+            auth.value?.completedChallenges.any(
+              (c) => c.id == widget.challenge.id,
+            ) ??
+            false,
+      ),
+    );
     return AppBar(
       leading: IconButton(
         tooltip: 'Back',
@@ -486,6 +504,17 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             ),
           )
         else ...[
+          if (completed)
+            const Padding(
+              padding: EdgeInsets.all(12),
+              child: Tooltip(
+                message: 'Step completed',
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: FittedBox(child: LearnStatus(complete: true)),
+                ),
+              ),
+            ),
           IconButton(
             tooltip: 'Reset code',
             onPressed:
@@ -505,182 +534,42 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
   }
 
-  double _instructionHeightLimit(double availableHeight) {
-    final scale = MediaQuery.textScalerOf(context);
-    // Reserve the header, file/language selector and at least 80px of editor.
-    final headerHeight = math.max(44, scale.scale(14) * 1.5 + 22);
-    final selectorHeight = math.max(44, scale.scale(16) * 1.5 + 22);
-    return math.max(
-      0,
-      math.min(
-        availableHeight * .65,
-        availableHeight - headerHeight - selectorHeight - 80,
-      ),
-    );
-  }
-
-  void _finishInstructionDrag(double limit) {
-    final height = _instructionDragHeight;
-    if (height == null) return;
-    setState(() {
-      _instructionsExpanded = height >= math.min(48, limit) && height > 0;
-      if (_instructionsExpanded) _instructionHeight = height;
-      _instructionDragHeight = null;
-    });
-  }
-
-  Widget _instructions(double defaultBodyHeight, double maxBodyHeight) {
-    if (_daily) {
-      return DailyInstructionCard(
-        challenge: widget.challenge,
-        maxHeight: defaultBodyHeight + 44,
-      );
-    }
-    final colors = Theme.of(context).colorScheme;
-    final customHeight = _instructionDragHeight ?? _instructionHeight;
-    final bodyHeight = (customHeight ?? defaultBodyHeight).clamp(
-      0.0,
-      maxBodyHeight,
-    );
-    final summary =
-        parseFragment(
-          widget.challenge.instructions,
-        ).text?.replaceAll(RegExp(r'\s+'), ' ').trim() ??
-        '';
-    return Material(
-      color: FccDesignColors.of(context).editorHighlight,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onVerticalDragStart: (_) {
-              _instructionDragHeight = _instructionsExpanded
-                  ? _instructionBodyKey.currentContext?.size?.height ??
-                        bodyHeight
-                  : 0;
-            },
-            onVerticalDragUpdate: (details) => setState(() {
-              _instructionDragHeight =
-                  ((_instructionDragHeight ?? 0) + details.delta.dy).clamp(
-                    0.0,
-                    maxBodyHeight,
-                  );
-              _instructionsExpanded = _instructionDragHeight! > 0;
-            }),
-            onVerticalDragEnd: (_) => _finishInstructionDrag(maxBodyHeight),
-            onVerticalDragCancel: () => _finishInstructionDrag(maxBodyHeight),
-            child: InkWell(
-              key: const ValueKey('editor-instructions-toggle'),
-              onTap: () => setState(
-                () => _instructionsExpanded = !_instructionsExpanded,
-              ),
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 44),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.symmetric(
-                    horizontal: BorderSide(color: colors.outlineVariant),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.menu_book_outlined,
-                      size: 18,
-                      color: colors.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        _instructionsExpanded || summary.isEmpty
-                            ? 'Instructions'
-                            : summary,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: _instructionsExpanded
-                              ? FontWeight.w700
-                              : FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _instructionsExpanded ? 'Hide' : 'Show',
-                      style: TextStyle(
-                        color: FccDesignColors.of(context).accentText,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      _instructionsExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: colors.primary,
-                      size: 18,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          if (_instructionsExpanded)
-            ConstrainedBox(
-              key: _instructionBodyKey,
-              constraints: BoxConstraints(
-                minHeight: customHeight == null ? 0 : bodyHeight,
-                maxHeight: bodyHeight,
-              ),
-              child: InstructionPanel(
-                key: const ValueKey('editor-instructions-body'),
-                challenge: widget.challenge,
-                block: widget.block,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget _fileSelector(EditorChallengeState state) {
-    if (_daily && widget.selector != null) return widget.selector!;
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final shadow = theme.colorScheme.shadow;
     return Stack(
+      key: _fileSelectorKey,
       children: [
         widget.selector ?? _fileTabs(state),
         // Paint after the opaque tabs so the instruction panel's shadow is visible.
-        if (_instructionsExpanded)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 20,
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0, .5, 1],
-                    colors: [
-                      shadow.withValues(alpha: dark ? .28 : .12),
-                      shadow.withValues(alpha: dark ? .08 : .035),
-                      shadow.withValues(alpha: 0),
-                    ],
+        ListenableBuilder(
+          listenable: _instructionsPanel,
+          builder: (context, _) => _instructionsPanel.expanded
+              ? Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 20,
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [0, .5, 1],
+                          colors: [
+                            shadow.withValues(alpha: dark ? .28 : .12),
+                            shadow.withValues(alpha: dark ? .08 : .035),
+                            shadow.withValues(alpha: 0),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }
@@ -778,12 +667,13 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final sheet = _sheet!;
     final colors = Theme.of(context).colorScheme;
     final scale = MediaQuery.textScalerOf(context).scale(1);
-    final desiredHeight = switch (sheet) {
-      _EditorSheet.console => 280.0,
-      _EditorSheet.preview => 360.0,
+    final maxHeight = availableHeight;
+    final minHeight = math.min(140.0, maxHeight);
+    final defaultHeight = switch (sheet) {
       _EditorSheet.pass => 430.0,
-      _EditorSheet.tests => 320.0,
+      _ => 320.0 * math.min(scale, 1.4),
     };
+    final height = (_panelHeight ?? defaultHeight).clamp(minHeight, maxHeight);
     final title = switch (sheet) {
       _EditorSheet.tests => 'Tests',
       _EditorSheet.pass => 'Tests',
@@ -797,10 +687,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         : colors.error;
     return Container(
       key: ValueKey('editor-sheet-${sheet.name}'),
-      height: math.min(
-        desiredHeight * math.min(scale, 1.4),
-        availableHeight * .88,
-      ),
+      height: height,
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -821,14 +708,25 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
             )
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: colors.outlineVariant,
-                      borderRadius: BorderRadius.circular(2),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onVerticalDragUpdate: (details) => setState(
+                    () => _panelHeight = (height - details.delta.dy).clamp(
+                      minHeight,
+                      maxHeight,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: colors.outlineVariant,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -970,47 +868,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
         ),
       ),
     );
-    if (_daily) {
-      final example = widget.challenge.tests.firstOrNull;
-      final dailyStyle = actionStyle.copyWith(
-        minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 50)),
-      );
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (example != null) ...[
-              DailyChallengeExample(test: example),
-              const SizedBox(height: 8),
-            ],
-            if (state.passed)
-              CompleteButton(
-                challenge: widget.challenge,
-                block: null,
-                label: nextLabel,
-                buttonStyle: dailyStyle,
-              )
-            else
-              FilledButton(
-                style: dailyStyle,
-                onPressed: busy
-                    ? null
-                    : failed
-                    ? () => _retryRunner(workerType)
-                    : _runTests,
-                child: Text(
-                  state.testsRunning
-                      ? 'Checking…'
-                      : failed
-                      ? 'Retry'
-                      : 'Check your code',
-                ),
-              ),
-          ],
-        ),
-      );
-    }
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -1030,7 +887,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _ToolButton(
+                        ToolButton(
                           label: 'Tests',
                           icon: Icons.checklist,
                           selectedIcon: Icons.checklist,
@@ -1053,7 +910,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                           ),
                         ),
                         if (workerType == 'dom')
-                          _ToolButton(
+                          ToolButton(
                             label: 'Preview',
                             icon: Icons.visibility_outlined,
                             selectedIcon: Icons.visibility,
@@ -1064,7 +921,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                                   : _EditorSheet.preview,
                             ),
                           ),
-                        _ToolButton(
+                        ToolButton(
                           label: 'Console',
                           icon: Icons.terminal_outlined,
                           selectedIcon: Icons.terminal_rounded,
@@ -1158,82 +1015,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       ],
                     ),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ToolButton extends StatelessWidget {
-  const _ToolButton({
-    required this.label,
-    required this.icon,
-    required this.selectedIcon,
-    required this.active,
-    required this.onPressed,
-    this.badge,
-    this.badgeColor,
-  });
-  final String label;
-  final IconData icon;
-  final IconData selectedIcon;
-  final bool active;
-  final VoidCallback onPressed;
-  final String? badge;
-  final Color? badgeColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return TextButton(
-      onPressed: onPressed,
-      style:
-          FccTheme.surfaceButtonStyle(
-            context,
-            fill: Colors.transparent,
-            foreground: active ? colors.onSurface : colors.onSurfaceVariant,
-          ).copyWith(
-            padding: const WidgetStatePropertyAll(
-              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            ),
-            minimumSize: const WidgetStatePropertyAll(Size(60, 64)),
-          ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Badge(
-            isLabelVisible: badge != null,
-            label: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                color: badgeColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  width: 2,
-                ),
-              ),
-              child: Text(
-                badge ?? '',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            padding: EdgeInsets.zero,
-            child: Icon(active ? selectedIcon : icon, size: 22),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: active ? FontWeight.w900 : FontWeight.w700,
-            ),
           ),
         ],
       ),

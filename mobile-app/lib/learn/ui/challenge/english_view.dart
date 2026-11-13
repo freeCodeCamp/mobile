@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/answer_feedback.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
-import 'package:freecodecamp/learn/ui/challenge/widgets/html_card.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/description_panel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/transcript_sheet.dart';
+import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/scene/scene_view.dart';
+import 'package:freecodecamp/services/auth_service.dart';
 import 'package:html/parser.dart';
 
 const _wordStyle = TextStyle(fontSize: 20, height: 1.8, letterSpacing: 0);
 
 String _plain(String html) => parseFragment(html).text ?? '';
 
-class EnglishView extends StatefulWidget {
+class EnglishView extends ConsumerStatefulWidget {
   const EnglishView({super.key, required this.challenge, required this.block});
 
   final Challenge challenge;
   final Block block;
 
   @override
-  State<EnglishView> createState() => _EnglishViewState();
+  ConsumerState<EnglishView> createState() => _EnglishViewState();
 }
 
-class _EnglishViewState extends State<EnglishView> {
+class _EnglishViewState extends ConsumerState<EnglishView> {
   late final _blanks = widget.challenge.fillInTheBlank?.blanks ?? const [];
   late final _inputs = [for (final _ in _blanks) TextEditingController()];
   late final _assignments = List.filled(
@@ -35,8 +38,16 @@ class _EnglishViewState extends State<EnglishView> {
     false,
   );
   List<bool>? _results;
+  bool _exercise = false;
+  bool _transcript = false;
+
+  void _toggleTranscript() => setState(() => _transcript = !_transcript);
 
   bool get _allCorrect => _results?.every((r) => r) ?? false;
+  bool get _split =>
+      widget.challenge.scene != null && widget.challenge.fillInTheBlank != null;
+
+  void _showExercise(bool value) => setState(() => _exercise = value);
 
   @override
   void dispose() {
@@ -56,145 +67,225 @@ class _EnglishViewState extends State<EnglishView> {
   @override
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
+    final completed = ref.watch(
+      authProvider.select(
+        (auth) =>
+            auth.value?.completedChallenges.any((c) => c.id == challenge.id) ??
+            false,
+      ),
+    );
     final firstWrong = _results?.indexOf(false) ?? -1;
     final feedback = firstWrong == -1 ? '' : _blanks[firstWrong].feedback;
     final dialogue = challenge.challengeType == 21;
-    // Fill-in-the-blank tasks carry their teaching note in description, while
-    // some curriculum versions also provide a separate explanation.
-    final explanation = {
-      if (!dialogue) challenge.description.trim(),
-      challenge.explanation.trim(),
-    }.where((html) => html.isNotEmpty).join('\n');
-    return Scaffold(
+    final exercise = _split && _exercise;
+    final showLesson = !exercise;
+    final showFill = !_split || exercise;
+    final shortViewport = MediaQuery.sizeOf(context).height < 600;
+    final confirmations = [
+      if (showLesson)
+        for (final (i, assignment) in challenge.assignments.indexed)
+          AssignmentTile(
+            label: assignment,
+            value: _assignments[i],
+            onToggle: () => setState(() => _assignments[i] = !_assignments[i]),
+          ),
+    ];
+    final scaffold = Scaffold(
       appBar: challengeAppBar(
         context,
         title: challenge.title,
-        subtitle: widget.block.name,
+        subtitle: exercise ? 'Fill in the blank' : widget.block.name,
+        leading: exercise
+            ? BackButton(onPressed: () => _showExercise(false))
+            : null,
+        actions: [
+          if (completed)
+            const Padding(
+              padding: EdgeInsets.all(12),
+              child: Tooltip(
+                message: 'Step completed',
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: FittedBox(child: LearnStatus(complete: true)),
+                ),
+              ),
+            ),
+        ],
       ),
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            if (challenge.scene case final scene?)
-              SceneView(scene: scene, title: challenge.title, edgeToEdge: true),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: LayoutBuilder(
+          builder: (context, constraints) => Stack(
+            children: [
+              Column(
                 children: [
-                  if (dialogue && challenge.description.isNotEmpty)
-                    ParsedHtml(challenge.description),
-                  if (challenge.instructions.isNotEmpty)
-                    ParsedHtml(challenge.instructions),
-                  if (challenge.assignments.isNotEmpty)
-                    ChallengeCard(
-                      title: 'Assignments',
-                      child: Column(
-                        children: [
-                          for (final (i, assignment)
-                              in challenge.assignments.indexed)
-                            AssignmentTile(
-                              label: assignment,
-                              value: _assignments[i],
-                              onToggle: () => setState(
-                                () => _assignments[i] = !_assignments[i],
-                              ),
-                            ),
-                        ],
-                      ),
+                  if (challenge.description.isNotEmpty)
+                    DescriptionPanel(
+                      key: ValueKey(challenge.id),
+                      html: challenge.description,
+                      availableHeight: constraints.maxHeight,
+                      visible: !exercise,
                     ),
-                  if (challenge.fillInTheBlank case final fill?) ...[
-                    if (challenge.instructions.isNotEmpty)
-                      const SizedBox(height: 12),
-                    Text(
-                      'Fill in the blank',
-                      style: TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: FccDesignColors.of(context).accentText,
-                      ),
-                    ),
-                    ..._sentences(fill.sentence),
-                    const SizedBox(height: 24),
-                  ],
-                  if (_results != null)
-                    AnswerFeedback(
-                      correct: _allCorrect,
-                      html: [_allCorrect ? explanation : feedback],
-                      fallback: _allCorrect
-                          ? null
-                          : 'Check the highlighted words and try again.',
-                      outlinedInlineCode: true,
-                    ),
-                  if (challenge.transcript.isNotEmpty)
-                    HtmlCard(
-                      title: 'Transcript',
-                      html: challenge.transcript,
-                      collapsible: !dialogue,
-                    )
-                  else if (dialogue && challenge.scene != null)
-                    ChallengeCard(
-                      title: 'Transcript',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (final command in challenge.scene!.commands)
-                            if (command.dialogue case final line?)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                  Expanded(
+                    child: ListView(
+                      key: ValueKey(exercise),
+                      padding: EdgeInsets.zero,
+                      children: [
+                        if (showLesson && challenge.scene != null)
+                          SceneView(
+                            scene: challenge.scene!,
+                            title: challenge.title,
+                            edgeToEdge: true,
+                          ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            showLesson && challenge.scene != null ? 0 : 16,
+                            16,
+                            16,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (showLesson) ...[
+                                if (challenge.instructions.isNotEmpty)
+                                  ParsedHtml(challenge.instructions),
+                                if (shortViewport) ...confirmations,
+                              ],
+                              if (showFill)
+                                if (challenge.fillInTheBlank
+                                    case final fill?) ...[
+                                  if (showLesson &&
+                                      challenge.instructions.isNotEmpty)
+                                    const SizedBox(height: 12),
+                                  if (!exercise)
                                     Text(
-                                      command.character,
+                                      'Fill in the blank',
                                       style: TextStyle(
+                                        fontFamily: 'Lato',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
                                         color: FccDesignColors.of(
                                           context,
                                         ).accentText,
-                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    ParsedHtml(line.text),
+                                  ..._sentences(fill.sentence),
+                                  const SizedBox(height: 24),
+                                ],
+                              if (_results != null)
+                                AnswerFeedback(
+                                  correct: _allCorrect,
+                                  html: [
+                                    _allCorrect
+                                        ? challenge.explanation
+                                        : feedback,
                                   ],
+                                  fallback: _allCorrect
+                                      ? null
+                                      : 'Check the highlighted words and try again.',
+                                  outlinedInlineCode: true,
                                 ),
-                              ),
-                        ],
-                      ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              if (hasTranscript(challenge) && showLesson)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: TranscriptPanel(
+                    challenge: challenge,
+                    availableHeight: constraints.maxHeight,
+                    visible: _transcript,
+                    onClose: _toggleTranscript,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: ChallengeFooter(
-        padding: const EdgeInsets.all(12),
-        child: _blanks.isEmpty || _allCorrect
-            ? CompleteButton(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (!shortViewport) ...confirmations,
+            if (_split && !exercise)
+              TranscriptFooter(
+                active: _transcript,
+                onToggle: _toggleTranscript,
                 challenge: challenge,
-                block: widget.block,
-                label: dialogue
-                    ? 'Start tasks'
-                    : _blanks.isEmpty
-                    ? 'Continue'
-                    : 'Next lesson',
-                buttonStyle: _buttonStyle,
-                enabled: _assignments.every((done) => done),
+                child: ChallengeButton(
+                  label: 'Continue to exercise',
+                  style: _buttonStyle,
+                  onPressed: _assignments.every((done) => done)
+                      ? () => _showExercise(true)
+                      : null,
+                ),
               )
-            : ChallengeButton(
-                label: _results == null ? 'Check answer' : 'Check again',
-                style: _buttonStyle,
-                onPressed:
-                    _inputs.every((input) => input.text.trim().isNotEmpty)
-                    ? _check
-                    : null,
+            else if (exercise)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ChallengeButton(
+                      label: 'Lesson',
+                      secondary: true,
+                      style: _buttonStyle,
+                      onPressed: () => _showExercise(false),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(flex: 2, child: _primaryButton(challenge, dialogue)),
+                ],
+              )
+            else
+              TranscriptFooter(
+                active: _transcript,
+                onToggle: _toggleTranscript,
+                challenge: challenge,
+                child: _primaryButton(challenge, dialogue),
               ),
+          ],
+        ),
       ),
     );
+    return PopScope(
+      canPop: !exercise,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _showExercise(false);
+        }
+      },
+      child: scaffold,
+    );
   }
+
+  Widget _primaryButton(Challenge challenge, bool dialogue) =>
+      _blanks.isEmpty || _allCorrect
+      ? CompleteButton(
+          challenge: challenge,
+          block: widget.block,
+          label: dialogue
+              ? 'Start tasks'
+              : _blanks.isEmpty
+              ? 'Continue'
+              : 'Next lesson',
+          buttonStyle: _buttonStyle,
+          enabled: _assignments.every((done) => done),
+        )
+      : ChallengeButton(
+          label: _results == null ? 'Check answer' : 'Check again',
+          style: _buttonStyle,
+          onPressed: _inputs.every((input) => input.text.trim().isNotEmpty)
+              ? _check
+              : null,
+        );
 
   ButtonStyle get _buttonStyle => FilledButton.styleFrom(
     minimumSize: const Size(double.infinity, 50),

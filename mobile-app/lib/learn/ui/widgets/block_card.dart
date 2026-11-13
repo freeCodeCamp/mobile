@@ -280,22 +280,24 @@ class BlockCard extends ConsumerWidget {
                   children: [
                     LearnProgress(done: done, total: total, color: color),
                     const SizedBox(height: 12),
-                    ...HTMLParser(context: context).parse(
-                      '<p>${block.description.join(' ')}</p>',
-                      isSelectable: false,
-                      customStyles: {
-                        'body': Style(
-                          margin: Margins.zero,
-                          padding: HtmlPaddings.zero,
-                        ),
-                        'p': Style(
-                          margin: Margins.zero,
-                          fontSize: FontSize(15),
-                          lineHeight: const LineHeight(1.45),
-                          color: colors.onSurfaceVariant,
-                        ),
-                      },
-                    ),
+                    if (block.description.isNotEmpty) ...[
+                      ...HTMLParser(context: context).parse(
+                        '<p>${block.description.join(' ')}</p>',
+                        isSelectable: false,
+                        customStyles: {
+                          'body': Style(
+                            margin: Margins.zero,
+                            padding: HtmlPaddings.zero,
+                          ),
+                          'p': Style(
+                            margin: Margins.zero,
+                            fontSize: FontSize(15),
+                            lineHeight: const LineHeight(1.45),
+                            color: colors.onSurfaceVariant,
+                          ),
+                        },
+                      ),
+                    ],
                     const SizedBox(height: 12),
                     if (total == 0)
                       const Text('No challenges available right now.')

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -50,6 +49,9 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   @override
   EditorChallengeState build(Challenge challenge) {
     _codeRevision++;
+    ref
+        .watch(learnTestRunnerSessionProvider(challenge.id))
+        .retain(workerTypeOf(challenge.challengeType));
     final files = challenge.challengeFiles;
     return EditorChallengeState(
       file:
@@ -113,10 +115,10 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
 
   Future<void> runTests() async {
     if (_running || _resetting) return;
+    final link = ref.keepAlive();
     _running = true;
     final revision = _codeRevision;
     bool isCurrent() => ref.mounted && revision == _codeRevision;
-    StreamSubscription<String>? logs;
     var runnerReady = false;
 
     state = state.copyWith(
@@ -131,15 +133,6 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       if (!isCurrent()) return;
       runnerReady = true;
       final code = ref.read(learnCodeServiceProvider);
-      logs = runner.consoleMessages.listen((message) {
-        if (!isCurrent()) return;
-        state = state.copyWith(
-          userConsole: [
-            ...state.userConsole,
-            '<p>${const HtmlEscape().convert(message)}</p>',
-          ],
-        );
-      });
       final String userCode;
       try {
         userCode = await code.userCode(
@@ -160,19 +153,6 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       }
       if (!isCurrent()) return;
 
-      if (runner.workerType == 'javascript') {
-        final error = await runner.evaluate(userCode);
-        if (!isCurrent()) return;
-        if (error != null) {
-          state = state.copyWith(
-            userConsole: [
-              ...state.userConsole,
-              '<p>${const HtmlEscape().convert(error)}</p>',
-            ],
-          );
-        }
-      }
-
       final combinedCode = await code.combinedCode(challenge);
       if (!isCurrent()) return;
       final editableContents = await code.editableContents(challenge);
@@ -183,6 +163,16 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         editableContents: editableContents,
         hooks: challenge.hooks,
         tests: challenge.tests,
+        evaluateUserCode: true,
+        onConsole: (message) {
+          if (!isCurrent()) return;
+          state = state.copyWith(
+            userConsole: [
+              ...state.userConsole,
+              '<p>${const HtmlEscape().convert(message)}</p>',
+            ],
+          );
+        },
       );
       if (!isCurrent()) return;
 
@@ -216,12 +206,10 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
       );
     } finally {
       try {
-        await logs?.cancel();
-      } finally {
-        // Reset invalidates results, but the shared native runner still has to
-        // finish before a new run can safely replace its working context.
         _running = false;
         if (ref.mounted) state = state.copyWith(testsRunning: false);
+      } finally {
+        link.close();
       }
     }
   }
