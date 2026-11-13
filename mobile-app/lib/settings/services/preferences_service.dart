@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/settings/models/app_preferences_model.dart';
 import 'package:freecodecamp/settings/repositories/preferences_repository.dart';
@@ -41,6 +43,23 @@ class SettingsPreferencesService {
   Future<bool> readDailyReminder() async =>
       (await _repo).readReminder() ?? false;
 
+  Future<bool> migrateDailyReminder() async {
+    final repo = await _repo;
+    final saved = repo.readReminder();
+    if (saved != null) return saved;
+    final allowed = await _reminders.osAllowsNotifications();
+    await repo.writeReminder(allowed);
+    return allowed;
+  }
+
+  Future<void> restoreDailyReminder() async {
+    try {
+      await _reminders.restore(readEnabled: readDailyReminder);
+    } catch (error) {
+      log('Daily learning reminder: could not restore ($error)');
+    }
+  }
+
   Future<void> saveTheme(ThemeMode mode) async =>
       (await _repo).writeTheme(mode.name);
 
@@ -56,7 +75,11 @@ class SettingsPreferencesService {
     }
   }
 
-  Future<void> clear() async => (await _repo).clear();
+  Future<void> clear() async {
+    final repo = await _repo;
+    await repo.clear();
+    await repo.writeReminder(false);
+  }
 
   Future<void> _applySchedule(bool enabled) {
     return enabled ? _reminders.enable() : _reminders.cancel();

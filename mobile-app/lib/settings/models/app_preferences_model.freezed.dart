@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'app_preferences_model.dart';
@@ -9,6 +9,7 @@ part of 'app_preferences_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AppPreferencesCopyWith<AppPreferences> get copyWith => _$AppPreferencesCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppPreferences&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.dailyReminder, dailyReminder) || other.dailyReminder == dailyReminder));
+  final _this = this as AppPreferences;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppPreferences&&(identical(other.themeMode, _this.themeMode) || other.themeMode == _this.themeMode)&&(identical(other.dailyReminder, _this.dailyReminder) || other.dailyReminder == _this.dailyReminder));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,themeMode,dailyReminder);
+int get hashCode {
+  final _this = this as AppPreferences;
+  return Object.hash(runtimeType,_this.themeMode,_this.dailyReminder);
+}
 
 @override
 String toString() {
-  return 'AppPreferences(themeMode: $themeMode, dailyReminder: $dailyReminder)';
+  final _this = this as AppPreferences;
+  return 'AppPreferences(themeMode: ${_this.themeMode}, dailyReminder: ${_this.dailyReminder})';
 }
 
 
@@ -63,7 +69,7 @@ class _$AppPreferencesCopyWithImpl<$Res>
 /// Create a copy of AppPreferences
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? themeMode = null,Object? dailyReminder = null,}) {
-  return _then(_self.copyWith(
+  return _then(AppPreferences(
 themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
 as ThemeMode,dailyReminder: null == dailyReminder ? _self.dailyReminder : dailyReminder // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -223,16 +229,18 @@ _$AppPreferencesCopyWith<_AppPreferences> get copyWith => __$AppPreferencesCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppPreferences&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.dailyReminder, dailyReminder) || other.dailyReminder == dailyReminder));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppPreferences&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.dailyReminder, dailyReminder) || other.dailyReminder == dailyReminder));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,themeMode,dailyReminder);
+int get hashCode {
+    return Object.hash(runtimeType,themeMode,dailyReminder);
+}
 
 @override
 String toString() {
-  return 'AppPreferences(themeMode: $themeMode, dailyReminder: $dailyReminder)';
+    return 'AppPreferences(themeMode: $themeMode, dailyReminder: $dailyReminder)';
 }
 
 

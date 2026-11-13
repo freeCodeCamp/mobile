@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:freecodecamp/settings/models/app_preferences_model.dart';
 import 'package:freecodecamp/settings/services/preferences_service.dart';
@@ -17,12 +19,27 @@ class AppPreferencesNotifier extends _$AppPreferencesNotifier {
     ref.read(settingsPreferencesServiceProvider).reload();
   }
 
+  Future<void> migrateDailyReminder() async {
+    final service = ref.read(settingsPreferencesServiceProvider);
+    try {
+      final current = await future;
+      final enabled = await service.migrateDailyReminder();
+      if (ref.mounted) {
+        final latest = state.value ?? current;
+        state = AsyncData(latest.copyWith(dailyReminder: enabled));
+      }
+    } catch (error) {
+      log('Daily learning reminder: could not migrate ($error)');
+    }
+  }
+
   Future<void> setTheme(ThemeMode mode) async {
     final current = await future;
     final service = ref.read(settingsPreferencesServiceProvider);
     await service.saveTheme(mode);
     if (ref.mounted) {
-      state = AsyncData(current.copyWith(themeMode: mode));
+      final latest = state.value ?? current;
+      state = AsyncData(latest.copyWith(themeMode: mode));
     }
   }
 
@@ -31,7 +48,8 @@ class AppPreferencesNotifier extends _$AppPreferencesNotifier {
     final service = ref.read(settingsPreferencesServiceProvider);
     await service.saveDailyReminder(enabled, previous: current.dailyReminder);
     if (ref.mounted) {
-      state = AsyncData(current.copyWith(dailyReminder: enabled));
+      final latest = state.value ?? current;
+      state = AsyncData(latest.copyWith(dailyReminder: enabled));
     }
   }
 }

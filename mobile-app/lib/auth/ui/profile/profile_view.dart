@@ -411,13 +411,13 @@ class _ProfileBody extends ConsumerWidget {
     final days = user.heatMapCal;
     final streak = ref.watch(profileStreakProvider);
     final visibility = user.profileUI;
-    final showActivity = visibility.showHeatMap;
+    final markPrivate = !preview && !visibility.isLocked;
+    bool shown(bool flag) => !preview || flag;
+    bool isPrivate(bool flag) => markPrivate && !flag;
     final statistics = [
-      if (visibility.showPoints) (user.points, 'Points'),
-      if (showActivity) ...[
-        (streak.current, 'Current streak'),
-        (streak.longest, 'Longest streak'),
-      ],
+      (user.points, 'Points'),
+      (streak.current, 'Current streak'),
+      (streak.longest, 'Longest streak'),
     ];
     return ListView(
       padding: EdgeInsets.fromLTRB(
@@ -432,9 +432,11 @@ class _ProfileBody extends ConsumerWidget {
           _PrivacyBanner(onPreview: onPreview),
           const SizedBox(height: 16),
         ],
-        _Header(user: user),
-        if (statistics.isNotEmpty) ...[
+        _Header(user: user, preview: preview, markPrivate: markPrivate),
+        if (shown(visibility.showPoints)) ...[
           const SizedBox(height: 16),
+          _SectionTitle('Stats', private: isPrivate(visibility.showPoints)),
+          const SizedBox(height: 8),
           _Section(
             radius: 14,
             padding: EdgeInsets.zero,
@@ -471,22 +473,28 @@ class _ProfileBody extends ConsumerWidget {
             ),
           ),
         ],
-        if (showActivity) ...[
+        if (shown(visibility.showHeatMap)) ...[
           const SizedBox(height: 16),
-          _Section(child: _Heatmap(days: days)),
-        ],
-        if (visibility.showCerts) ...[
-          const SizedBox(height: 16),
-          _Certifications(user: user, preview: preview),
-        ],
-        if (visibility.showPortfolio && user.portfolio.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Text(
-            'Portfolio',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
+          _Section(
+            child: _Heatmap(
+              days: days,
+              private: isPrivate(visibility.showHeatMap),
             ),
+          ),
+        ],
+        if (shown(visibility.showCerts)) ...[
+          const SizedBox(height: 16),
+          _Certifications(
+            user: user,
+            preview: preview,
+            private: isPrivate(visibility.showCerts),
+          ),
+        ],
+        if (shown(visibility.showPortfolio) && user.portfolio.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _SectionTitle(
+            'Portfolio',
+            private: isPrivate(visibility.showPortfolio),
           ),
           const SizedBox(height: 8),
           _Section(
@@ -501,14 +509,11 @@ class _ProfileBody extends ConsumerWidget {
             ),
           ),
         ],
-        if (visibility.showExperience && user.experience.isNotEmpty) ...[
+        if (shown(visibility.showExperience) && user.experience.isNotEmpty) ...[
           const SizedBox(height: 16),
-          Text(
+          _SectionTitle(
             'Experience',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-            ),
+            private: isPrivate(visibility.showExperience),
           ),
           const SizedBox(height: 8),
           _Section(
@@ -546,9 +551,60 @@ class _Section extends StatelessWidget {
   );
 }
 
+class _PrivateMark extends StatelessWidget {
+  const _PrivateMark({required this.label, this.color});
+  final String label;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    label: label,
+    child: ExcludeSemantics(
+      child: Icon(
+        Icons.lock_outline,
+        size: 16,
+        color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    ),
+  );
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title, {required this.private});
+  final String title;
+  final bool private;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Flexible(
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+      if (private) ...[
+        const SizedBox(width: 8),
+        const _PrivateMark(label: 'Private, only you can see this section'),
+      ],
+    ],
+  );
+}
+
 class _Header extends StatelessWidget {
-  const _Header({required this.user});
+  const _Header({
+    required this.user,
+    required this.preview,
+    required this.markPrivate,
+  });
   final FccUserModel user;
+  final bool preview;
+  final bool markPrivate;
 
   @override
   Widget build(BuildContext context) {
@@ -556,18 +612,23 @@ class _Header extends StatelessWidget {
     final colors = theme.colorScheme;
     final visibility = user.profileUI;
     final showName = visibility.showName;
-    final showDonation = visibility.showDonation;
-    final showSupporter = user.isDonating && showDonation;
-    final description = [
-      if (visibility.showAbout) ...[
-        if (user.about?.trim().isNotEmpty ?? false) user.about!.trim(),
-      ],
+    final showSupporter =
+        user.isDonating && (visibility.showDonation || !preview);
+    final supporterPrivate = markPrivate && !visibility.showDonation;
+    final showTopContributor = user.yearsTopContributor.isNotEmpty;
+    final meta = [
       if (visibility.showLocation &&
           (user.location?.trim().isNotEmpty ?? false))
         user.location!.trim(),
       if (visibility.showAbout)
         'Joined ${Jiffy.parseFromDateTime(user.joinDate).yMMMM}',
     ];
+    final about = visibility.showAbout ? (user.about?.trim() ?? '') : '';
+    final bodyStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontSize: 14,
+      height: 1.5,
+      color: colors.onSurfaceVariant,
+    );
     final links = [
       if (user.githubProfile?.trim().isNotEmpty ?? false)
         ('GitHub', user.githubProfile!),
@@ -618,30 +679,30 @@ class _Header extends StatelessWidget {
                         color: colors.onSurfaceVariant,
                       ),
                     ),
-                    if (showSupporter ||
-                        user.yearsTopContributor.isNotEmpty) ...[
+                    if (showSupporter || showTopContributor) ...[
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: showSupporter
-                              ? FccDesignColors.of(context).donateContainer
-                              : colors.primaryContainer,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          showSupporter ? 'Supporter' : 'Top contributor',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: showSupporter
-                                ? colors.tertiary
-                                : FccDesignColors.of(context).accentText,
-                          ),
-                        ),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          if (showSupporter)
+                            _Pill(
+                              label: 'Supporter',
+                              background: FccDesignColors.of(
+                                context,
+                              ).donateContainer,
+                              foreground: colors.tertiary,
+                              private: supporterPrivate,
+                            ),
+                          if (showTopContributor)
+                            _Pill(
+                              label: 'Top contributor',
+                              background: colors.primaryContainer,
+                              foreground: FccDesignColors.of(
+                                context,
+                              ).accentText,
+                            ),
+                        ],
                       ),
                     ],
                   ],
@@ -649,16 +710,13 @@ class _Header extends StatelessWidget {
               ),
             ],
           ),
-          if (description.isNotEmpty) ...[
+          if (meta.isNotEmpty || about.isNotEmpty) ...[
             const SizedBox(height: 14),
-            Text(
-              description.join(' · '),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 14,
-                height: 1.5,
-                color: colors.onSurfaceVariant,
-              ),
-            ),
+            if (meta.isNotEmpty) Text(meta.join(' · '), style: bodyStyle),
+            if (about.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(about, style: bodyStyle),
+            ],
           ],
           if (links.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -697,6 +755,50 @@ class _Header extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({
+    required this.label,
+    required this.background,
+    required this.foreground,
+    this.private = false,
+  });
+  final String label;
+  final Color background;
+  final Color foreground;
+  final bool private;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+    decoration: BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (private) ...[
+          _PrivateMark(
+            label: 'Private, only you can see this',
+            color: foreground,
+          ),
+          const SizedBox(width: 4),
+        ],
+        Flexible(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: foreground,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _Stat extends StatelessWidget {
@@ -754,8 +856,9 @@ class _Stat extends StatelessWidget {
 }
 
 class _Heatmap extends StatelessWidget {
-  const _Heatmap({required this.days});
+  const _Heatmap({required this.days, required this.private});
   final Map<DateTime, int> days;
+  final bool private;
 
   @override
   Widget build(BuildContext context) {
@@ -795,13 +898,7 @@ class _Heatmap extends StatelessWidget {
             spacing: 12,
             runSpacing: 4,
             children: [
-              Text(
-                'Activity',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
+              _SectionTitle('Activity', private: private),
               Text(
                 'Last 12 weeks',
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -888,9 +985,14 @@ class _Heatmap extends StatelessWidget {
 }
 
 class _Certifications extends StatelessWidget {
-  const _Certifications({required this.user, required this.preview});
+  const _Certifications({
+    required this.user,
+    required this.preview,
+    required this.private,
+  });
   final FccUserModel user;
   final bool preview;
+  final bool private;
 
   @override
   Widget build(BuildContext context) {
@@ -944,13 +1046,7 @@ class _Certifications extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Certifications',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
+        _SectionTitle('Certifications', private: private),
         const SizedBox(height: 8),
         if (current.isEmpty && legacy.isEmpty)
           _Section(
