@@ -157,10 +157,10 @@ packages:
     dependency: "direct main"
     description:
       name: auth0_flutter
-      sha256: ec1bb5c2f58fd884bdd5d857098a7ad9564c8865fc89fb2d2b73e3f6ada0c301
+      sha256: a4dfd5412108d40f6109da2d66dbe50fca5d070c52dd7f1b80b2909365b01e1b
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.2.0"
   auth0_flutter_platform_interface:
     dependency: transitive
     description:
