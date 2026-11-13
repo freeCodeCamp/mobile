@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 
 String podcastDuration(Duration? duration) {
   if (duration == null) return 'Play';
@@ -45,30 +43,4 @@ String podcastDate(DateTime date) {
     'Dec',
   ];
   return '${months[date.month - 1]} ${date.day}, ${date.year}';
-}
-
-Future<void> sharePodcast(
-  BuildContext context,
-  String title,
-  String url,
-) async {
-  final box = context.findRenderObject() as RenderBox?;
-  try {
-    await SharePlus.instance.share(
-      ShareParams(
-        text: '$title\n\n$url',
-        sharePositionOrigin: box == null
-            ? null
-            : box.localToGlobal(Offset.zero) & box.size,
-      ),
-    );
-  } catch (_) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to share right now. Please try again.'),
-        ),
-      );
-    }
-  }
 }
