@@ -56,7 +56,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
   double? _panelHeight;
   int _editorLoad = 0;
   int _codeEdit = 0;
-  final _warmRunners = <String>{};
 
   bool get _daily => widget.dailyChallengeNumber != null;
 
@@ -336,14 +335,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
     final state = ref.watch(_provider);
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    if (_daily) {
-      // Runners are auto-dispose and one exists per language, so keep every
-      // one used so far alive. Switching back then finds it ready.
-      _warmRunners.add(workerTypeOf(widget.challenge.challengeType));
-      for (final workerType in _warmRunners) {
-        ref.watch(learnTestRunnerServiceProvider(workerType));
-      }
-    }
     return PopScope(
       canPop: _sheet == null,
       onPopInvokedWithResult: (didPop, result) {
