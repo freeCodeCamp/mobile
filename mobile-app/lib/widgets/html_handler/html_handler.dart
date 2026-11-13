@@ -10,6 +10,7 @@ import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/widgets/html_handler/code_block.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -66,6 +67,29 @@ final Map<String, Style> defaultStyles = {
 
 final _listTagWhitespace = RegExp(r'\s*(</?(?:ol|ul|li)(?:\s[^>]*)?>)\s*');
 
+// flutter_html lays out a nested list wrongly when it follows inline text in
+// the same li: the list can land beside the last line of text. Wrapping that
+// text in its own block keeps the text and the nested list as separate blocks.
+void _wrapLeadingItemText(dom.Document document) {
+  for (final item in document.querySelectorAll('li')) {
+    final listIndex = item.nodes.indexWhere(
+      (node) =>
+          node is dom.Element &&
+          (node.localName == 'ul' || node.localName == 'ol'),
+    );
+    if (listIndex <= 0) continue;
+    final leading = item.nodes.sublist(0, listIndex).toList();
+    for (final node in leading) {
+      node.remove();
+    }
+    final wrapper = dom.Element.tag('div');
+    for (final node in leading) {
+      wrapper.append(node);
+    }
+    item.insertBefore(wrapper, item.firstChild);
+  }
+}
+
 class HTMLParser {
   const HTMLParser({Key? key, required this.context});
 
@@ -84,6 +108,7 @@ class HTMLParser {
     final result = parser.parse(
       html.replaceAllMapped(_listTagWhitespace, (match) => match[1]!),
     );
+    _wrapLeadingItemText(result);
     if (!enableTapActions) {
       // flutter_html gives anchors their own tap recognizer even when its
       // onLinkTap callback is null. In answer choices, the card owns the tap.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
@@ -10,6 +11,16 @@ const _html = '''<ol>
 <li>You should have a <code>body</code> element.</li>
 <li>You should have only one <code>h1</code> element.</li>
 </ol>''';
+
+const _nestedHtml = '''<ul>
+<li>The name should appear first, preceded by a prefix that depends on the first letter of the name. For names starting with (case-insensitive):
+<ul>
+<li><code>A-I</code>: Use <code>&gt;&gt;</code> as the prefix.</li>
+<li><code>J-R</code>: Use <code>--</code> as the prefix.</li>
+</ul>
+</li>
+<li>A comma and space should follow the name.</li>
+</ul>''';
 
 // The curriculum HTML has a newline between <li> tags, and a renderer can treat
 // that whitespace as text, which breaks the list layout. The fixture keeps
@@ -47,6 +58,35 @@ void main() {
           (rects[i].top - rects[i - 1].bottom).toStringAsFixed(1),
       };
       expect(gaps, hasLength(1));
+    },
+  );
+
+  testWidgets(
+    'should place a nested list below wrapped item text, indented one step',
+    (tester) async {
+      final lato = FontLoader('Lato')
+        ..addFont(rootBundle.load('assets/fonts/Lato-Regular.ttf'));
+      await lato.load();
+      await tester.binding.setSurfaceSize(const Size(360, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: FccTheme.themeDark,
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: ParsedHtml(_nestedHtml, outlinedInlineCode: true),
+            ),
+          ),
+        ),
+      );
+
+      final itemText = tester.getRect(find.textContaining('The name should'));
+      final nestedText = tester.getRect(
+        find.textContaining('as the prefix').first,
+      );
+
+      expect(nestedText.top, greaterThanOrEqualTo(itemText.bottom));
+      expect(nestedText.left - itemText.left, 24);
     },
   );
 }
