@@ -7,7 +7,7 @@ environment:
 dependencies:
   algolia_helper_flutter: 1.6.0
   audio_service: 0.18.19
-  auth0_flutter: 3.1.0
+  auth0_flutter: 3.2.0
   cached_network_image: 4.0.6
   collection: 1.19.1
   cupertino_icons: 2.0.0
