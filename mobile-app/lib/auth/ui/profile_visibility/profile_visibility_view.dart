@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/auth/ui/profile_visibility/profile_visibility_viewmodel.dart';
+import 'package:freecodecamp/auth/ui/widgets/profile_form.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/routing/auth.dart';
-import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
 import 'package:freecodecamp/widgets/segmented_tabs.dart';
-import 'package:go_router/go_router.dart';
 
 class ProfileVisibilityView extends ConsumerStatefulWidget {
   const ProfileVisibilityView({super.key});
@@ -20,15 +19,31 @@ class ProfileVisibilityView extends ConsumerStatefulWidget {
 }
 
 class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
-  Future<void> _save([ProfileUI? draft]) async {
-    final notifier = ref.read(profileVisibilityProvider.notifier);
-    if (draft != null) notifier.update(draft);
-    if (await notifier.save() && mounted) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Saved')));
+  final _scaffold = GlobalKey<ProfileFormScaffoldState>();
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final saved = await ref.read(profileVisibilityProvider.notifier).save();
+    if (!mounted) return;
+    if (saved) {
+      await _scaffold.currentState?.close();
+    } else if (_scroll.hasClients) {
+      await _scroll.animateTo(
+        0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
     }
   }
+
+  void _update(ProfileUI draft) =>
+      ref.read(profileVisibilityProvider.notifier).update(draft);
 
   @override
   Widget build(BuildContext context) {
@@ -43,196 +58,162 @@ class _ProfileVisibilityViewState extends ConsumerState<ProfileVisibilityView> {
     );
     final enabled = state != null && !state.saving && !state.needsRefresh;
     final locked = state?.draft.isLocked ?? false;
-    return PopScope(
-      canPop: !(state?.saving ?? false),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile visibility'),
-          leading: BackButton(
-            onPressed: state?.saving ?? false
-                ? null
-                : () => context.canPop()
-                      ? context.pop()
-                      : const SettingsRoute().go(context),
-          ),
-        ),
-        body: SafeArea(
-          top: false,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 640),
-              child: auth.isLoading && state == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : auth.hasError
-                  ? ErrorRetry(
-                      message: 'Unable to load your profile.',
-                      onRetry: () => ref.invalidate(authProvider),
-                    )
-                  : state == null
-                  ? Center(
-                      child: TextButton(
-                        onPressed: () => const LoginRoute().go(context),
-                        child: const Text('Sign in to edit your profile'),
-                      ),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.all(16),
+    return ProfileFormScaffold(
+      key: _scaffold,
+      title: 'Profile visibility',
+      showNavigation: false,
+      isDirty: state?.isDirty ?? false,
+      saving: state?.saving ?? false,
+      onSave: enabled && state.isDirty ? _save : null,
+      child: auth.isLoading && state == null
+          ? const Center(child: CircularProgressIndicator())
+          : auth.hasError
+          ? ErrorRetry(
+              message: 'Unable to load your profile.',
+              onRetry: () => ref.invalidate(authProvider),
+            )
+          : state == null
+          ? Center(
+              child: TextButton(
+                onPressed: () => const LoginRoute().go(context),
+                child: const Text('Sign in to edit your profile'),
+              ),
+            )
+          : ListView(
+              controller: _scroll,
+              padding: const EdgeInsets.all(16),
+              children: [
+                if (state.error != null) ...[
+                  ErrorRetry(
+                    margin: EdgeInsets.zero,
+                    message: state.error!,
+                    onRetry: state.saving
+                        ? null
+                        : () async {
+                            if (state.needsRefresh) {
+                              await notifier.refresh();
+                            } else {
+                              await _save();
+                            }
+                          },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                Card(
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (state.error != null) ...[
-                          ErrorRetry(
-                            margin: EdgeInsets.zero,
-                            message: state.error!,
-                            onRetry: state.saving
-                                ? null
-                                : () async {
-                                    if (state.needsRefresh) {
-                                      await notifier.refresh();
-                                    } else {
-                                      await _save();
-                                    }
-                                  },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        Card(
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Who can see your profile',
-                                  style: sectionTitle,
-                                ),
-                                const SizedBox(height: 12),
-                                SegmentedTabs<bool>(
-                                  tabs: const [
-                                    (
-                                      value: false,
-                                      label: 'Public',
-                                      icon: Icons.public,
+                        Text('Who can see your profile', style: sectionTitle),
+                        const SizedBox(height: 12),
+                        SegmentedTabs<bool>(
+                          tabs: const [
+                            (value: false, label: 'Public', icon: Icons.public),
+                            (
+                              value: true,
+                              label: 'Private',
+                              icon: Icons.lock_outline,
+                            ),
+                          ],
+                          selected: state.draft.isLocked,
+                          onSelected: enabled
+                              ? (isLocked) => _update(
+                                  state.draft.copyWith(isLocked: isLocked),
+                                )
+                              : null,
+                        ),
+                        const SizedBox(height: 12),
+                        if (state.draft.isLocked)
+                          Text(
+                            'Only you can see your profile.',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          )
+                        else
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final style = theme.textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  );
+                              return Text.rich(
+                                TextSpan(
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Anyone can see your profile at ',
                                     ),
-                                    (
-                                      value: true,
-                                      label: 'Private',
-                                      icon: Icons.lock_outline,
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: constraints.maxWidth,
+                                        ),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            'freecodecamp.org/${state.original.username}.',
+                                            style: style,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ],
-                                  selected: state.draft.isLocked,
-                                  onSelected: enabled
-                                      ? (isLocked) => _save(
-                                          state.draft.copyWith(
-                                            isLocked: isLocked,
-                                          ),
-                                        )
-                                      : null,
                                 ),
-                                const SizedBox(height: 12),
-                                if (state.draft.isLocked)
-                                  Text(
-                                    'Only you can see your profile.',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurfaceVariant,
-                                    ),
-                                  )
-                                else
-                                  LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      final style = theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: theme
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          );
-                                      return Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            const TextSpan(
-                                              text:
-                                                  'Anyone can see your profile at ',
-                                            ),
-                                            WidgetSpan(
-                                              alignment:
-                                                  PlaceholderAlignment.baseline,
-                                              baseline: TextBaseline.alphabetic,
-                                              child: ConstrainedBox(
-                                                constraints: BoxConstraints(
-                                                  maxWidth:
-                                                      constraints.maxWidth,
-                                                ),
-                                                child: FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Text(
-                                                    'freecodecamp.org/${state.original.username}.',
-                                                    style: style,
-                                                    maxLines: 1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        style: style,
-                                      );
-                                    },
-                                  ),
-                              ],
-                            ),
+                                style: style,
+                              );
+                            },
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'Show on your public profile',
-                          style: sectionTitle,
-                        ),
-                        if (state.draft.isLocked) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            'These choices apply when your profile is public. Switch to Public to change them.',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 13,
-                              height: 1.4,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                        for (final group in _visibilityGroups) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            group.title,
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          _VisibilityCard(
-                            children: [
-                              for (final (index, field)
-                                  in group.fields.indexed) ...[
-                                if (index > 0) const Divider(height: 1),
-                                _VisibilitySwitchRow(
-                                  label: field.label,
-                                  subtitle: field.subtitle,
-                                  locked: locked,
-                                  value: field.value(state.draft),
-                                  onChanged: enabled && !locked
-                                      ? (value) => _save(
-                                          field.update(state.draft, value),
-                                        )
-                                      : null,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ],
                       ],
                     ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text('Show on your public profile', style: sectionTitle),
+                if (state.draft.isLocked) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'These choices apply when your profile is public. Switch to Public to change them.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                for (final group in _visibilityGroups) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    group.title,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _VisibilityCard(
+                    children: [
+                      for (final (index, field) in group.fields.indexed) ...[
+                        if (index > 0) const Divider(height: 1),
+                        _VisibilitySwitchRow(
+                          label: field.label,
+                          subtitle: field.subtitle,
+                          locked: locked,
+                          value: field.value(state.draft),
+                          onChanged: enabled && !locked
+                              ? (value) =>
+                                    _update(field.update(state.draft, value))
+                              : null,
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ],
             ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -340,7 +321,7 @@ final List<_VisibilityGroup> _visibilityGroups = [
         update: (p, v) => p.copyWith(showName: v),
       ),
       (
-        label: 'Location',
+        label: 'Stated location',
         subtitle: null,
         value: (p) => p.showLocation,
         update: (p, v) => p.copyWith(showLocation: v),
