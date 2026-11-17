@@ -34,6 +34,23 @@ Future<LearnTestRunnerService> learnTestRunnerService(
   return service;
 }
 
+@riverpod
+LearnTestRunnerSession learnTestRunnerSession(Ref ref, String challengeId) =>
+    LearnTestRunnerSession((workerType) {
+      ref.listen(learnTestRunnerServiceProvider(workerType), (_, _) {});
+    });
+
+class LearnTestRunnerSession {
+  LearnTestRunnerSession(this._retain);
+
+  final void Function(String) _retain;
+  final _workers = <String>{};
+
+  void retain(String workerType) {
+    if (_workers.add(workerType)) _retain(workerType);
+  }
+}
+
 class BabelException implements Exception {
   BabelException(this.message);
 
@@ -51,6 +68,9 @@ class LearnTestRunnerService {
   final _babelReady = Completer<void>();
   final _runnerReady = Completer<void>();
   final _console = StreamController<String>.broadcast();
+  Future<void> _pending = Future.value();
+  Future<void>? _starting;
+  bool _disposed = false;
 
   late final _babel = HeadlessInAppWebView(
     initialData: InAppWebViewInitialData(
@@ -96,9 +116,9 @@ class LearnTestRunnerService {
     },
   );
 
-  Stream<String> get consoleMessages => _console.stream;
+  Future<void> start() => _starting ??= _start();
 
-  Future<void> start() async {
+  Future<void> _start() async {
     await _babel.run();
     await _runner.run();
     // NOTE: A webview that never finishes loading would otherwise hang here silently.
@@ -108,7 +128,18 @@ class LearnTestRunnerService {
     ).wait.timeout(const Duration(seconds: 30));
   }
 
+  Stream<String> get consoleMessages => _console.stream;
+
   Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
+    try {
+      await _starting;
+    } catch (e) {
+      log('Test runner: startup failed before disposal ($e)');
+    }
+    // NOTE: A timed-out evaluate never settles, so do not wait on it forever.
+    await _pending.timeout(const Duration(seconds: 5), onTimeout: () {});
     try {
       await _console.close();
       await _runner.dispose();
@@ -139,7 +170,9 @@ class LearnTestRunnerService {
     return value?['code'] as String? ?? code;
   }
 
-  Future<String?> evaluate(String code) async =>
+  Future<String?> evaluate(String code) => _enqueue(() => _evaluate(code));
+
+  Future<String?> _evaluate(String code) async =>
       (await _runner.webViewController!.callAsyncJavaScript(
         functionBody: code,
       ))?.error;
@@ -150,19 +183,45 @@ class LearnTestRunnerService {
     required String editableContents,
     required Hooks hooks,
     required List<ChallengeTest> tests,
-  }) async {
-    final controller = _runner.webViewController!;
-    await _createRunner(
-      controller,
-      userCode: userCode,
-      combinedCode: combinedCode,
-      editableContents: editableContents,
-      hooks: hooks,
-    );
+    bool evaluateUserCode = false,
+    void Function(String)? onConsole,
+  }) {
+    return _enqueue(() async {
+      final logs = onConsole == null ? null : _console.stream.listen(onConsole);
+      try {
+        if (evaluateUserCode && workerType == 'javascript') {
+          final error = await _evaluate(userCode);
+          if (error != null) onConsole?.call(error);
+        }
+        final controller = _runner.webViewController!;
+        await _createRunner(
+          controller,
+          userCode: userCode,
+          combinedCode: combinedCode,
+          editableContents: editableContents,
+          hooks: hooks,
+        );
 
-    return [
-      for (final test in tests) await _runTest(controller, test.testString),
-    ];
+        return [
+          for (final test in tests) await _runTest(controller, test.testString),
+        ];
+      } finally {
+        await logs?.cancel();
+      }
+    });
+  }
+
+  Future<T> _enqueue<T>(Future<T> Function() task) {
+    final operation = _pending.then((_) {
+      if (_disposed) throw StateError('Test runner has been disposed');
+      return task();
+    });
+    // A failed attempt must not prevent the next queued attempt from running.
+    _pending = operation.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return operation;
   }
 
   Future<TestResult> _runTest(

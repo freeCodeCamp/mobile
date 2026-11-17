@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:collection/collection.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
+import 'package:freecodecamp/learn/controllers/location_controller.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/models/location_model.dart';
 import 'package:freecodecamp/learn/services/code_service.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dart';
@@ -23,6 +26,11 @@ Future<ChallengeScreenData> challengeScreen(
   String block,
   String challengeId,
 ) async {
+  final userId = ref.watch(authProvider.select((auth) => auth.value?.id));
+  final location = userId == null || userId.isEmpty
+      ? null
+      : ref.watch(learningLocationProvider(userId).notifier);
+  final visitToken = location?.beginVisit();
   final (challenge, curriculum) = await (
     ref
         .watch(learnCurriculumServiceProvider)
@@ -39,6 +47,23 @@ Future<ChallengeScreenData> challengeScreen(
   };
   final found = blocks.firstWhereOrNull((b) => b.dashedName == block);
   if (found == null) throw StateError('Block $block not in $superBlock');
+
+  if (ref.mounted &&
+      location != null &&
+      challenge.challengeType != 28 &&
+      challenge.challengeType != 29 &&
+      found.challenges.any((entry) => entry.id == challenge.id)) {
+    unawaited(
+      location.remember(
+        LearnLocation(
+          superBlock: superBlock,
+          block: block,
+          challengeId: challenge.id,
+        ),
+        visitToken: visitToken,
+      ),
+    );
+  }
 
   return (challenge: challenge, block: found);
 }

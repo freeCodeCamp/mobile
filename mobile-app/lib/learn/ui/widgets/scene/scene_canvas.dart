@@ -15,7 +15,8 @@ class SceneCanvas extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(sceneProvider(scene, title));
     final assets = ref.watch(sceneAssetsProvider).value;
-    if (assets == null) return const ColoredBox(color: FccColors.gray75);
+    final colors = Theme.of(context).colorScheme;
+    if (assets == null) return ColoredBox(color: colors.surfaceContainer);
 
     final line = state.line;
     // NOTE: Lower z is further back, so it paints first.
@@ -30,10 +31,16 @@ class SceneCanvas extends ConsumerWidget {
             child: CachedNetworkImage(
               imageUrl: sceneBackgroundUrl(assets, state.background),
               fit: BoxFit.cover,
-              placeholder: (_, _) => const ColoredBox(color: FccColors.gray75),
-              errorWidget: (_, _, _) => const ColoredBox(
-                color: FccColors.gray75,
-                child: Center(child: Icon(Icons.broken_image, size: 48)),
+              placeholder: (_, _) => ColoredBox(color: colors.surfaceContainer),
+              errorWidget: (_, _, _) => ColoredBox(
+                color: colors.surfaceContainer,
+                child: Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    size: 48,
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
               ),
             ),
           ),
@@ -65,6 +72,7 @@ class _Caption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final overlay = FccTheme.themeDark;
     return Container(
       color: Colors.black.withValues(alpha: 0.7),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -76,8 +84,8 @@ class _Caption extends StatelessWidget {
         children: [
           Text(
             line.character,
-            style: const TextStyle(
-              color: FccColors.blue50,
+            style: TextStyle(
+              color: overlay.extension<FccDesignColors>()!.accentText,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -85,7 +93,10 @@ class _Caption extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             line.text,
-            style: const TextStyle(color: FccColors.gray00, fontSize: 14),
+            style: TextStyle(
+              color: overlay.colorScheme.onSurface,
+              fontSize: 14,
+            ),
           ),
         ],
       ),

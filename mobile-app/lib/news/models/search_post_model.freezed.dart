@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'search_post_model.dart';
@@ -9,6 +9,7 @@ part of 'search_post_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $SearchAuthorCopyWith<SearchAuthor> get copyWith => _$SearchAuthorCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchAuthor&&(identical(other.name, name) || other.name == name)&&(identical(other.profileImage, profileImage) || other.profileImage == profileImage));
+  final _this = this as SearchAuthor;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchAuthor&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.profileImage, _this.profileImage) || other.profileImage == _this.profileImage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,profileImage);
+int get hashCode {
+  final _this = this as SearchAuthor;
+  return Object.hash(runtimeType,_this.name,_this.profileImage);
+}
 
 @override
 String toString() {
-  return 'SearchAuthor(name: $name, profileImage: $profileImage)';
+  final _this = this as SearchAuthor;
+  return 'SearchAuthor(name: ${_this.name}, profileImage: ${_this.profileImage})';
 }
 
 
@@ -66,7 +72,7 @@ class _$SearchAuthorCopyWithImpl<$Res>
 /// Create a copy of SearchAuthor
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? profileImage = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SearchAuthor(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,profileImage: freezed == profileImage ? _self.profileImage : profileImage // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -229,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchAuthor&&(identical(other.name, name) || other.name == name)&&(identical(other.profileImage, profileImage) || other.profileImage == profileImage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchAuthor&&(identical(other.name, name) || other.name == name)&&(identical(other.profileImage, profileImage) || other.profileImage == profileImage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,profileImage);
+int get hashCode {
+    return Object.hash(runtimeType,name,profileImage);
+}
 
 @override
 String toString() {
-  return 'SearchAuthor(name: $name, profileImage: $profileImage)';
+    return 'SearchAuthor(name: $name, profileImage: $profileImage)';
 }
 
 
@@ -294,16 +302,21 @@ $SearchPostCopyWith<SearchPost> get copyWith => _$SearchPostCopyWithImpl<SearchP
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchPost&&(identical(other.objectID, objectID) || other.objectID == objectID)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.author, author) || other.author == author)&&(identical(other.featureImage, featureImage) || other.featureImage == featureImage)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
+  final _this = this as SearchPost;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchPost&&(identical(other.objectID, _this.objectID) || other.objectID == _this.objectID)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.author, _this.author) || other.author == _this.author)&&(identical(other.featureImage, _this.featureImage) || other.featureImage == _this.featureImage)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,objectID,title,url,author,featureImage,publishedAt);
+int get hashCode {
+  final _this = this as SearchPost;
+  return Object.hash(runtimeType,_this.objectID,_this.title,_this.url,_this.author,_this.featureImage,_this.publishedAt);
+}
 
 @override
 String toString() {
-  return 'SearchPost(objectID: $objectID, title: $title, url: $url, author: $author, featureImage: $featureImage, publishedAt: $publishedAt)';
+  final _this = this as SearchPost;
+  return 'SearchPost(objectID: ${_this.objectID}, title: ${_this.title}, url: ${_this.url}, author: ${_this.author}, featureImage: ${_this.featureImage}, publishedAt: ${_this.publishedAt})';
 }
 
 
@@ -332,7 +345,7 @@ class _$SearchPostCopyWithImpl<$Res>
 /// Create a copy of SearchPost
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? objectID = null,Object? title = null,Object? url = null,Object? author = null,Object? featureImage = freezed,Object? publishedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SearchPost(
 objectID: null == objectID ? _self.objectID : objectID // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -512,16 +525,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchPost&&(identical(other.objectID, objectID) || other.objectID == objectID)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.author, author) || other.author == author)&&(identical(other.featureImage, featureImage) || other.featureImage == featureImage)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchPost&&(identical(other.objectID, objectID) || other.objectID == objectID)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.author, author) || other.author == author)&&(identical(other.featureImage, featureImage) || other.featureImage == featureImage)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,objectID,title,url,author,featureImage,publishedAt);
+int get hashCode {
+    return Object.hash(runtimeType,objectID,title,url,author,featureImage,publishedAt);
+}
 
 @override
 String toString() {
-  return 'SearchPost(objectID: $objectID, title: $title, url: $url, author: $author, featureImage: $featureImage, publishedAt: $publishedAt)';
+    return 'SearchPost(objectID: $objectID, title: $title, url: $url, author: $author, featureImage: $featureImage, publishedAt: $publishedAt)';
 }
 
 

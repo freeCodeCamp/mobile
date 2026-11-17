@@ -9,23 +9,21 @@ class HtmlCard extends StatelessWidget {
     required this.html,
     this.collapsible = false,
   });
-
   final String title;
   final String html;
   final bool collapsible;
-
   @override
-  Widget build(BuildContext context) {
-    return ChallengeCard(
-      title: title,
-      child: collapsible
-          ? ExpansionTile(
-              title: const Text('Tap to expand'),
-              shape: const Border(),
-              collapsedShape: const Border(),
-              children: [ParsedHtml(html)],
-            )
-          : ParsedHtml(html),
-    );
-  }
+  Widget build(BuildContext context) => ChallengeCard(
+    title: collapsible ? '' : title,
+    child: collapsible
+        ? ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            childrenPadding: EdgeInsets.zero,
+            title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+            shape: const Border(),
+            collapsedShape: const Border(),
+            children: [ParsedHtml(html)],
+          )
+        : ParsedHtml(html),
+  );
 }

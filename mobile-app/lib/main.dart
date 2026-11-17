@@ -13,6 +13,7 @@ import 'package:freecodecamp/learn/services/daily_challenge_reminder_service.dar
 import 'package:freecodecamp/podcasts/services/library_service.dart';
 import 'package:freecodecamp/routing/router.dart';
 import 'package:freecodecamp/services/analytics_service.dart';
+import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/services/notification_service.dart';
@@ -120,7 +121,14 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp.router(
       routerConfig: router,
       title: 'freeCodeCamp',
-      theme: FccTheme.themeDark,
+      debugShowCheckedModeBanner: false,
+      theme: FccTheme.themeLight,
+      darkTheme: FccTheme.themeDark,
+      themeMode: ref.watch(
+        appPreferencesProvider.select(
+          (preferences) => preferences.value?.themeMode ?? ThemeMode.dark,
+        ),
+      ),
       builder: (context, child) => UpgradeAlert(
         navigatorKey: router.routerDelegate.navigatorKey,
         dialogStyle: Platform.isIOS

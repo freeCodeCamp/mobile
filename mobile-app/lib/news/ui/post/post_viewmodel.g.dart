@@ -19,7 +19,7 @@ final class NewsPostProvider
     required NewsPostFamily super.from,
     required String super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'newsPostProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -58,13 +58,13 @@ final class NewsPostProvider
   }
 }
 
-String _$newsPostHash() => r'f7390a9239ff0a618776dd692722c37adc28b846';
+String _$newsPostHash() => r'92c2d9a2b9d1a7852d63aa4f29a40da5221d8b0a';
 
 final class NewsPostFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Post>, String> {
   NewsPostFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'newsPostProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

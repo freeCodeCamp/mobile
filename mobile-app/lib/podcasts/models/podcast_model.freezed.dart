@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'podcast_model.dart';
@@ -9,6 +9,7 @@ part of 'podcast_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $PodcastCopyWith<Podcast> get copyWith => _$PodcastCopyWithImpl<Podcast>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Podcast&&(identical(other.id, id) || other.id == id)&&(identical(other.feedUrl, feedUrl) || other.feedUrl == feedUrl)&&(identical(other.podcastLink, podcastLink) || other.podcastLink == podcastLink)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageLink, imageLink) || other.imageLink == imageLink)&&(identical(other.copyright, copyright) || other.copyright == copyright)&&(identical(other.numOfEps, numOfEps) || other.numOfEps == numOfEps));
+  final _this = this as Podcast;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Podcast&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.feedUrl, _this.feedUrl) || other.feedUrl == _this.feedUrl)&&(identical(other.podcastLink, _this.podcastLink) || other.podcastLink == _this.podcastLink)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.imageLink, _this.imageLink) || other.imageLink == _this.imageLink)&&(identical(other.copyright, _this.copyright) || other.copyright == _this.copyright)&&(identical(other.numOfEps, _this.numOfEps) || other.numOfEps == _this.numOfEps));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,feedUrl,podcastLink,title,description,imageLink,copyright,numOfEps);
+int get hashCode {
+  final _this = this as Podcast;
+  return Object.hash(runtimeType,_this.id,_this.feedUrl,_this.podcastLink,_this.title,_this.description,_this.imageLink,_this.copyright,_this.numOfEps);
+}
 
 @override
 String toString() {
-  return 'Podcast(id: $id, feedUrl: $feedUrl, podcastLink: $podcastLink, title: $title, description: $description, imageLink: $imageLink, copyright: $copyright, numOfEps: $numOfEps)';
+  final _this = this as Podcast;
+  return 'Podcast(id: ${_this.id}, feedUrl: ${_this.feedUrl}, podcastLink: ${_this.podcastLink}, title: ${_this.title}, description: ${_this.description}, imageLink: ${_this.imageLink}, copyright: ${_this.copyright}, numOfEps: ${_this.numOfEps})';
 }
 
 
@@ -66,7 +72,7 @@ class _$PodcastCopyWithImpl<$Res>
 /// Create a copy of Podcast
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? feedUrl = null,Object? podcastLink = null,Object? title = null,Object? description = null,Object? imageLink = null,Object? copyright = null,Object? numOfEps = null,}) {
-  return _then(_self.copyWith(
+  return _then(Podcast(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,feedUrl: null == feedUrl ? _self.feedUrl : feedUrl // ignore: cast_nullable_to_non_nullable
 as String,podcastLink: null == podcastLink ? _self.podcastLink : podcastLink // ignore: cast_nullable_to_non_nullable
@@ -241,16 +247,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Podcast&&(identical(other.id, id) || other.id == id)&&(identical(other.feedUrl, feedUrl) || other.feedUrl == feedUrl)&&(identical(other.podcastLink, podcastLink) || other.podcastLink == podcastLink)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageLink, imageLink) || other.imageLink == imageLink)&&(identical(other.copyright, copyright) || other.copyright == copyright)&&(identical(other.numOfEps, numOfEps) || other.numOfEps == numOfEps));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Podcast&&(identical(other.id, id) || other.id == id)&&(identical(other.feedUrl, feedUrl) || other.feedUrl == feedUrl)&&(identical(other.podcastLink, podcastLink) || other.podcastLink == podcastLink)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.imageLink, imageLink) || other.imageLink == imageLink)&&(identical(other.copyright, copyright) || other.copyright == copyright)&&(identical(other.numOfEps, numOfEps) || other.numOfEps == numOfEps));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,feedUrl,podcastLink,title,description,imageLink,copyright,numOfEps);
+int get hashCode {
+    return Object.hash(runtimeType,id,feedUrl,podcastLink,title,description,imageLink,copyright,numOfEps);
+}
 
 @override
 String toString() {
-  return 'Podcast(id: $id, feedUrl: $feedUrl, podcastLink: $podcastLink, title: $title, description: $description, imageLink: $imageLink, copyright: $copyright, numOfEps: $numOfEps)';
+    return 'Podcast(id: $id, feedUrl: $feedUrl, podcastLink: $podcastLink, title: $title, description: $description, imageLink: $imageLink, copyright: $copyright, numOfEps: $numOfEps)';
 }
 
 

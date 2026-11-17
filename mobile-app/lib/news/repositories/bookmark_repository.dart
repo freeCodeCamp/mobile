@@ -8,22 +8,31 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bookmark_repository.g.dart';
 
-typedef BookmarkEntry = Map<String, String>;
+typedef BookmarkEntry = Map<String, dynamic>;
 
 const _fileName = 'bookmarked-articles.json';
 const _storeVersion = 1;
 
-@riverpod
+// All saves and resets must share the same file-write queue.
+@Riverpod(keepAlive: true)
 NewsBookmarkRepository newsBookmarkRepository(Ref ref) {
   return NewsBookmarkRepository();
 }
 
 class NewsBookmarkRepository {
   File? _file;
+  int _resetGeneration = 0;
+  int get resetGeneration => _resetGeneration;
 
   Future<File> _resolveFile() async {
     final baseDir = await getApplicationDocumentsDirectory();
     return _file ??= File(path.join(baseDir.path, 'storage', _fileName));
+  }
+
+  // Reset is serialized with saves so a pending file write cannot restore data.
+  Future<void> clearForReset() {
+    _resetGeneration++;
+    return _serialized(() => _write([]));
   }
 
   Future<List<BookmarkEntry>> readBookmarks() => _serialized(_read);

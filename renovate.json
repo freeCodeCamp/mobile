@@ -1,3 +1,4 @@
 {
- "extends": ["github>freecodecamp/renovate-config", ":dependencyDashboardApproval"]
+ "extends": ["github>freecodecamp/renovate-config"],
+ "constraints": { "flutter": "3.47.9" }
 }

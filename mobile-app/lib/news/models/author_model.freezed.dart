@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'author_model.dart';
@@ -9,6 +9,7 @@ part of 'author_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $BioCopyWith<Bio> get copyWith => _$BioCopyWithImpl<Bio>(this as Bio, _$identity
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bio&&(identical(other.text, text) || other.text == text));
+  final _this = this as Bio;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bio&&(identical(other.text, _this.text) || other.text == _this.text));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text);
+int get hashCode {
+  final _this = this as Bio;
+  return Object.hash(runtimeType,_this.text);
+}
 
 @override
 String toString() {
-  return 'Bio(text: $text)';
+  final _this = this as Bio;
+  return 'Bio(text: ${_this.text})';
 }
 
 
@@ -66,7 +72,7 @@ class _$BioCopyWithImpl<$Res>
 /// Create a copy of Bio
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? text = null,}) {
-  return _then(_self.copyWith(
+  return _then(Bio(
 text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -227,16 +233,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bio&&(identical(other.text, text) || other.text == text));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bio&&(identical(other.text, text) || other.text == text));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,text);
+int get hashCode {
+    return Object.hash(runtimeType,text);
+}
 
 @override
 String toString() {
-  return 'Bio(text: $text)';
+    return 'Bio(text: $text)';
 }
 
 
@@ -291,16 +299,21 @@ $SocialMediaLinksCopyWith<SocialMediaLinks> get copyWith => _$SocialMediaLinksCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SocialMediaLinks&&(identical(other.website, website) || other.website == website)&&(identical(other.twitter, twitter) || other.twitter == twitter)&&(identical(other.facebook, facebook) || other.facebook == facebook));
+  final _this = this as SocialMediaLinks;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SocialMediaLinks&&(identical(other.website, _this.website) || other.website == _this.website)&&(identical(other.twitter, _this.twitter) || other.twitter == _this.twitter)&&(identical(other.facebook, _this.facebook) || other.facebook == _this.facebook));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,website,twitter,facebook);
+int get hashCode {
+  final _this = this as SocialMediaLinks;
+  return Object.hash(runtimeType,_this.website,_this.twitter,_this.facebook);
+}
 
 @override
 String toString() {
-  return 'SocialMediaLinks(website: $website, twitter: $twitter, facebook: $facebook)';
+  final _this = this as SocialMediaLinks;
+  return 'SocialMediaLinks(website: ${_this.website}, twitter: ${_this.twitter}, facebook: ${_this.facebook})';
 }
 
 
@@ -329,7 +342,7 @@ class _$SocialMediaLinksCopyWithImpl<$Res>
 /// Create a copy of SocialMediaLinks
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? website = freezed,Object? twitter = freezed,Object? facebook = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SocialMediaLinks(
 website: freezed == website ? _self.website : website // ignore: cast_nullable_to_non_nullable
 as String?,twitter: freezed == twitter ? _self.twitter : twitter // ignore: cast_nullable_to_non_nullable
 as String?,facebook: freezed == facebook ? _self.facebook : facebook // ignore: cast_nullable_to_non_nullable
@@ -494,16 +507,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SocialMediaLinks&&(identical(other.website, website) || other.website == website)&&(identical(other.twitter, twitter) || other.twitter == twitter)&&(identical(other.facebook, facebook) || other.facebook == facebook));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SocialMediaLinks&&(identical(other.website, website) || other.website == website)&&(identical(other.twitter, twitter) || other.twitter == twitter)&&(identical(other.facebook, facebook) || other.facebook == facebook));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,website,twitter,facebook);
+int get hashCode {
+    return Object.hash(runtimeType,website,twitter,facebook);
+}
 
 @override
 String toString() {
-  return 'SocialMediaLinks(website: $website, twitter: $twitter, facebook: $facebook)';
+    return 'SocialMediaLinks(website: $website, twitter: $twitter, facebook: $facebook)';
 }
 
 
@@ -560,16 +575,21 @@ $AuthorCopyWith<Author> get copyWith => _$AuthorCopyWithImpl<Author>(this as Aut
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Author&&(identical(other.username, username) || other.username == username)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.location, location) || other.location == location)&&(identical(other.socialMediaLinks, socialMediaLinks) || other.socialMediaLinks == socialMediaLinks));
+  final _this = this as Author;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Author&&(identical(other.username, _this.username) || other.username == _this.username)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.profilePicture, _this.profilePicture) || other.profilePicture == _this.profilePicture)&&(identical(other.bio, _this.bio) || other.bio == _this.bio)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.socialMediaLinks, _this.socialMediaLinks) || other.socialMediaLinks == _this.socialMediaLinks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,username,id,name,profilePicture,bio,location,socialMediaLinks);
+int get hashCode {
+  final _this = this as Author;
+  return Object.hash(runtimeType,_this.username,_this.id,_this.name,_this.profilePicture,_this.bio,_this.location,_this.socialMediaLinks);
+}
 
 @override
 String toString() {
-  return 'Author(username: $username, id: $id, name: $name, profilePicture: $profilePicture, bio: $bio, location: $location, socialMediaLinks: $socialMediaLinks)';
+  final _this = this as Author;
+  return 'Author(username: ${_this.username}, id: ${_this.id}, name: ${_this.name}, profilePicture: ${_this.profilePicture}, bio: ${_this.bio}, location: ${_this.location}, socialMediaLinks: ${_this.socialMediaLinks})';
 }
 
 
@@ -598,7 +618,7 @@ class _$AuthorCopyWithImpl<$Res>
 /// Create a copy of Author
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? username = null,Object? id = null,Object? name = null,Object? profilePicture = freezed,Object? bio = freezed,Object? location = freezed,Object? socialMediaLinks = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Author(
 username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -795,16 +815,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Author&&(identical(other.username, username) || other.username == username)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.location, location) || other.location == location)&&(identical(other.socialMediaLinks, socialMediaLinks) || other.socialMediaLinks == socialMediaLinks));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Author&&(identical(other.username, username) || other.username == username)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.location, location) || other.location == location)&&(identical(other.socialMediaLinks, socialMediaLinks) || other.socialMediaLinks == socialMediaLinks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,username,id,name,profilePicture,bio,location,socialMediaLinks);
+int get hashCode {
+    return Object.hash(runtimeType,username,id,name,profilePicture,bio,location,socialMediaLinks);
+}
 
 @override
 String toString() {
-  return 'Author(username: $username, id: $id, name: $name, profilePicture: $profilePicture, bio: $bio, location: $location, socialMediaLinks: $socialMediaLinks)';
+    return 'Author(username: $username, id: $id, name: $name, profilePicture: $profilePicture, bio: $bio, location: $location, socialMediaLinks: $socialMediaLinks)';
 }
 
 

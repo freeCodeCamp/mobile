@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'episode_model.dart';
@@ -9,6 +9,7 @@ part of 'episode_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $EpisodeCopyWith<Episode> get copyWith => _$EpisodeCopyWithImpl<Episode>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Episode&&(identical(other.id, id) || other.id == id)&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.publicationDate, publicationDate) || other.publicationDate == publicationDate)&&(identical(other.audioUrl, audioUrl) || other.audioUrl == audioUrl)&&(identical(other.duration, duration) || other.duration == duration));
+  final _this = this as Episode;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Episode&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.podcastId, _this.podcastId) || other.podcastId == _this.podcastId)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.publicationDate, _this.publicationDate) || other.publicationDate == _this.publicationDate)&&(identical(other.audioUrl, _this.audioUrl) || other.audioUrl == _this.audioUrl)&&(identical(other.duration, _this.duration) || other.duration == _this.duration));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,podcastId,title,description,publicationDate,audioUrl,duration);
+int get hashCode {
+  final _this = this as Episode;
+  return Object.hash(runtimeType,_this.id,_this.podcastId,_this.title,_this.description,_this.publicationDate,_this.audioUrl,_this.duration);
+}
 
 @override
 String toString() {
-  return 'Episode(id: $id, podcastId: $podcastId, title: $title, description: $description, publicationDate: $publicationDate, audioUrl: $audioUrl, duration: $duration)';
+  final _this = this as Episode;
+  return 'Episode(id: ${_this.id}, podcastId: ${_this.podcastId}, title: ${_this.title}, description: ${_this.description}, publicationDate: ${_this.publicationDate}, audioUrl: ${_this.audioUrl}, duration: ${_this.duration})';
 }
 
 
@@ -66,7 +72,7 @@ class _$EpisodeCopyWithImpl<$Res>
 /// Create a copy of Episode
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? podcastId = null,Object? title = null,Object? description = null,Object? publicationDate = freezed,Object? audioUrl = null,Object? duration = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Episode(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,podcastId: null == podcastId ? _self.podcastId : podcastId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -239,16 +245,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Episode&&(identical(other.id, id) || other.id == id)&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.publicationDate, publicationDate) || other.publicationDate == publicationDate)&&(identical(other.audioUrl, audioUrl) || other.audioUrl == audioUrl)&&(identical(other.duration, duration) || other.duration == duration));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Episode&&(identical(other.id, id) || other.id == id)&&(identical(other.podcastId, podcastId) || other.podcastId == podcastId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.publicationDate, publicationDate) || other.publicationDate == publicationDate)&&(identical(other.audioUrl, audioUrl) || other.audioUrl == audioUrl)&&(identical(other.duration, duration) || other.duration == duration));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,podcastId,title,description,publicationDate,audioUrl,duration);
+int get hashCode {
+    return Object.hash(runtimeType,id,podcastId,title,description,publicationDate,audioUrl,duration);
+}
 
 @override
 String toString() {
-  return 'Episode(id: $id, podcastId: $podcastId, title: $title, description: $description, publicationDate: $publicationDate, audioUrl: $audioUrl, duration: $duration)';
+    return 'Episode(id: $id, podcastId: $podcastId, title: $title, description: $description, publicationDate: $publicationDate, audioUrl: $audioUrl, duration: $duration)';
 }
 
 

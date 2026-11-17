@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:freecodecamp/learn/models/challenge_file_model.dart';
@@ -21,7 +20,7 @@ const _consoleSettle = Duration(milliseconds: 100);
 const _timeoutMessage =
     'Your code took too long to run. Check for an infinite loop.';
 
-enum EditorPanel { instruction, hint, pass }
+enum EditorPanel { instruction, pass }
 
 enum EditorBody { editor, tests, preview, console }
 
@@ -33,7 +32,6 @@ abstract class EditorChallengeState with _$EditorChallengeState {
     @Default(EditorBody.editor) EditorBody body,
     @Default(false) bool testsRunning,
     @Default(false) bool passed,
-    @Default('') String hint,
     @Default([]) List<String> userConsole,
     // NOTE: Null until a run reaches the tests.
     List<bool>? testResults,
@@ -48,6 +46,10 @@ Future<MotivationalQuote> passQuote(Ref ref) =>
 
 @riverpod
 class EditorChallengeNotifier extends _$EditorChallengeNotifier {
+  int _codeRevision = 0;
+  bool _running = false;
+  bool _resetting = false;
+
   LearnTestRunnerServiceProvider get _runner =>
       learnTestRunnerServiceProvider(workerTypeOf(challenge.challengeType));
 
@@ -56,6 +58,10 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
 
   @override
   EditorChallengeState build(Challenge challenge) {
+    _codeRevision++;
+    ref
+        .watch(learnTestRunnerSessionProvider(challenge.id))
+        .retain(workerTypeOf(challenge.challengeType));
     ref.onDispose(() => _consoleTimer?.cancel());
     _scheduleConsole(delay: Duration.zero, showErrors: false);
     final files = challenge.challengeFiles;
@@ -78,7 +84,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   void showPanel(EditorPanel panel) => state = state.copyWith(panel: panel);
 
   Future<void> codeChanged(ChallengeFile file, String text) async {
-    if (state.passed) state = state.copyWith(passed: false);
+    _invalidateResults();
     await ref.read(learnCodeServiceProvider).save(challenge, file, text);
     if (!ref.mounted) return;
     _scheduleConsole();
@@ -140,12 +146,25 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   }
 
   Future<void> reset() async {
-    await ref.read(learnCodeServiceProvider).reset(challenge);
-    if (!ref.mounted) return;
-    state = EditorChallengeState(
-      file: state.file,
-      resetCount: state.resetCount + 1,
-    );
+    if (_resetting) return;
+    _resetting = true;
+    _invalidateResults();
+    try {
+      await ref.read(learnCodeServiceProvider).reset(challenge);
+      if (!ref.mounted) return;
+      state = EditorChallengeState(
+        file: state.file,
+        testsRunning: _running,
+        resetCount: state.resetCount + 1,
+      );
+    } finally {
+      _resetting = false;
+    }
+  }
+
+  void _invalidateResults() {
+    _codeRevision++;
+    state = state.copyWith(passed: false, testResults: null, userConsole: []);
   }
 
   Future<String> previewHtml() async {
@@ -159,22 +178,26 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
   }
 
   Future<void> runTests() async {
-    final runner = await ref.read(_runner.future);
-    final code = ref.read(learnCodeServiceProvider);
+    if (_running || _resetting) return;
+    final link = ref.keepAlive();
+    _running = true;
+    final revision = _codeRevision;
+    bool isCurrent() => ref.mounted && revision == _codeRevision;
+    var runnerReady = false;
 
     _consoleTimer?.cancel();
     _consoleRun++;
     state = state.copyWith(
       testsRunning: true,
+      passed: false,
       userConsole: [],
       testResults: null,
     );
-    final logs = runner.consoleMessages.listen((message) {
-      if (!ref.mounted) return;
-      state = state.copyWith(userConsole: [...state.userConsole, message]);
-    });
-
     try {
+      final runner = await ref.read(_runner.future);
+      if (!isCurrent()) return;
+      runnerReady = true;
+      final code = ref.read(learnCodeServiceProvider);
       final String userCode;
       try {
         userCode = await code.userCode(
@@ -182,56 +205,48 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
           (js) => runner.transpile(js, challengeId: challenge.id),
         );
       } on BabelException catch (e) {
-        if (!ref.mounted) return;
-        final hint = syntaxErrorHint(e);
-        state = state.copyWith(panel: EditorPanel.hint, hint: '<p>$hint</p>');
+        if (!isCurrent()) return;
+        state = state.copyWith(userConsole: [syntaxErrorHint(e)]);
         return;
       }
+      if (!isCurrent()) return;
 
-      if (runner.workerType == 'javascript') {
-        final error = await runner.evaluate(userCode);
-        if (!ref.mounted) return;
-        if (error != null) {
-          state = state.copyWith(userConsole: [...state.userConsole, error]);
-        }
-      }
-
+      final combinedCode = await code.combinedCode(challenge);
+      if (!isCurrent()) return;
+      final editableContents = await code.editableContents(challenge);
+      if (!isCurrent()) return;
       final results = await runner.run(
         userCode: userCode,
-        combinedCode: await code.combinedCode(challenge),
-        editableContents: await code.editableContents(challenge),
+        combinedCode: combinedCode,
+        editableContents: editableContents,
         hooks: challenge.hooks,
         tests: challenge.tests,
+        evaluateUserCode: true,
+        onConsole: (message) {
+          if (!isCurrent()) return;
+          state = state.copyWith(userConsole: [...state.userConsole, message]);
+        },
       );
-      if (!ref.mounted) return;
+      if (!isCurrent()) return;
 
-      final failures = [
-        for (final (i, result) in results.indexed)
-          if (!result.pass)
-            _fillPlaceholders(challenge.tests[i].text, result.err),
-      ];
-
+      final passed = results.every((result) => result.pass);
       state = state.copyWith(
         testResults: [for (final result in results) result.pass],
-        panel: failures.isEmpty ? EditorPanel.pass : EditorPanel.hint,
-        passed: failures.isEmpty,
-        hint: failures.firstOrNull ?? state.hint,
+        panel: passed ? EditorPanel.pass : EditorPanel.instruction,
+        passed: passed,
       );
     } catch (e, stack) {
       log('Editor: tests failed to run', error: e, stackTrace: stack);
-      if (!ref.mounted) return;
-      state = state.copyWith(
-        panel: EditorPanel.hint,
-        hint:
-            '<p>The tests could not run: ${const HtmlEscape().convert('$e')}</p>',
-      );
+      if (!isCurrent()) return;
+      if (!runnerReady) rethrow;
+      state = state.copyWith(userConsole: ['The tests could not run: $e']);
     } finally {
-      await logs.cancel();
-      if (ref.mounted) state = state.copyWith(testsRunning: false);
+      try {
+        _running = false;
+        if (ref.mounted) state = state.copyWith(testsRunning: false);
+      } finally {
+        link.close();
+      }
     }
   }
-
-  String _fillPlaceholders(String text, Map<dynamic, dynamic>? err) => text
-      .replaceAll('--fcc-expected--', '${err?['expected'] ?? ''}')
-      .replaceAll('--fcc-actual--', '${err?['actual'] ?? ''}');
 }

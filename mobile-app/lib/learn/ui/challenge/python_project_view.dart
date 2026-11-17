@@ -3,27 +3,34 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
+import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 
-final _fccRegex = RegExp(
-  r'codepen\.io\/freecodecamp|freecodecamp\.rocks|github\.com\/freecodecamp|\.freecodecamp\.org',
-  caseSensitive: false,
-);
-final _localhostRegex = RegExp(r'localhost:');
-final _httpRegex = RegExp(r'http(?!s|([^s]+?localhost))');
-
 String? _linkError(String link) {
-  if (!(Uri.tryParse(link)?.isAbsolute ?? false)) {
-    return 'Please enter a valid link.';
+  final uri = Uri.tryParse(link);
+  if (uri == null ||
+      uri.host.isEmpty ||
+      !['https', 'http'].contains(uri.scheme)) {
+    return 'Please enter a valid HTTPS link.';
   }
-  if (_fccRegex.hasMatch(link)) return 'Remember to submit your own work.';
-  if (_httpRegex.hasMatch(link)) {
-    return 'An unsecure (http) URL cannot be used.';
-  }
-  if (_localhostRegex.hasMatch(link)) {
+  final host = uri.host.toLowerCase();
+  if (host == 'localhost' ||
+      host.endsWith('.localhost') ||
+      host == '127.0.0.1' ||
+      host == '::1') {
     return 'Remember to submit a publicly visible app URL.';
+  }
+  if (uri.scheme != 'https') return 'Please use a secure (https) URL.';
+  if (host == 'freecodecamp.org' ||
+      host.endsWith('.freecodecamp.org') ||
+      host == 'freecodecamp.rocks' ||
+      host.endsWith('.freecodecamp.rocks') ||
+      (['github.com', 'codepen.io'].contains(host) &&
+          uri.pathSegments.firstOrNull?.toLowerCase() == 'freecodecamp')) {
+    return 'Remember to submit your own work.';
   }
   return null;
 }
@@ -58,75 +65,97 @@ class _PythonProjectViewState extends State<PythonProjectView> {
   @override
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
-    final border = BorderSide(
-      color: _valid ? Colors.green : FccColors.gray00,
-      width: 2,
-    );
-
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: Text(challenge.title)),
+      appBar: challengeAppBar(
+        context,
+        title: widget.block.name,
+        subtitle:
+            'Project ${widget.block.challenges.indexWhere((c) => c.id == challenge.id) + 1} of ${widget.block.challenges.length}',
+        actions: [
+          IconButton(
+            tooltip: 'Ask for help',
+            icon: const Icon(Icons.help_outline),
+            onPressed: () =>
+                showHelpDialog(context, challenge, widget.block.name),
+          ),
+        ],
+      ),
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 48),
+          padding: const EdgeInsets.all(16),
           children: [
-            ParsedHtml(challenge.description),
-            const Divider(color: FccColors.gray00),
-            ParsedHtml(challenge.instructions),
-            const Divider(color: FccColors.gray00),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
-              child: Text(
-                'Solution Link',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              challenge.title,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20),
+            ChallengeCard(
+              title: '1. Build it',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ParsedHtml(challenge.description),
+                  if (challenge.instructions.isNotEmpty)
+                    ParsedHtml(challenge.instructions),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: TextField(
-                controller: _link,
-                keyboardType: TextInputType.url,
-                autocorrect: false,
-                onChanged: (_) => setState(() {
-                  _checked = false;
-                  _error = null;
-                }),
-                decoration: InputDecoration(
-                  hintText: 'ex: https://replit.com/@camperbot/hello',
-                  errorText: _error,
-                  errorMaxLines: 5,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: border.copyWith(width: 1),
+            ChallengeCard(
+              title: '2. Submit it',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Paste a public link to your finished project.',
+                    style: TextStyle(color: colors.onSurfaceVariant),
                   ),
-                  focusedBorder: OutlineInputBorder(borderSide: border),
-                ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _link,
+                    keyboardType: TextInputType.url,
+                    autocorrect: false,
+                    onChanged: (_) => setState(() {
+                      _checked = false;
+                      _error = null;
+                    }),
+                    decoration: InputDecoration(
+                      labelText: 'Solution URL',
+                      hintText: 'https://your-project.example',
+                      errorText: _error,
+                      errorMaxLines: 5,
+                      suffixIcon: _valid
+                          ? Icon(
+                              Icons.check_circle_outline,
+                              color: FccDesignColors.of(context).success,
+                            )
+                          : null,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            if (_valid)
-              CompleteButton(
-                challenge: challenge,
-                block: widget.block,
-                label: 'Submit',
-                solution: _link.text,
-              )
-            else
-              ChallengeButton(
-                label: 'Check Link',
-                onPressed: _link.text.isEmpty
-                    ? null
-                    : () => setState(() {
-                        _checked = true;
-                        _error = _linkError(_link.text);
-                      }),
-              ),
-            ChallengeButton(
-              label: 'Ask for Help',
-              onPressed: () =>
-                  showHelpDialog(context, challenge, widget.block.name),
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: ChallengeFooter(
+        child: _valid
+            ? CompleteButton(
+                challenge: challenge,
+                block: widget.block,
+                label: 'Submit project',
+                solution: _link.text.trim(),
+              )
+            : ChallengeButton(
+                label: 'Check link',
+                onPressed: _link.text.trim().isEmpty
+                    ? null
+                    : () => setState(() {
+                        _checked = true;
+                        _error = _linkError(_link.text.trim());
+                      }),
+              ),
       ),
     );
   }

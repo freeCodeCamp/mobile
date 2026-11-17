@@ -8,7 +8,6 @@ import 'package:freecodecamp/news/ui/feed/feed_view.dart';
 import 'package:freecodecamp/news/ui/image/image_view.dart';
 import 'package:freecodecamp/news/ui/news_shell.dart';
 import 'package:freecodecamp/news/ui/post/post_view.dart';
-import 'package:freecodecamp/news/ui/search/search_view.dart';
 import 'package:freecodecamp/news/ui/tag_feed/tag_feed_view.dart';
 import 'package:go_router/go_router.dart';
 
@@ -59,19 +58,21 @@ class NewsSearchRoute extends GoRouteData with $NewsSearchRoute {
   const NewsSearchRoute();
 
   @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      const NoTransitionPage(child: NewsSearchView());
+  String redirect(BuildContext context, GoRouterState state) =>
+      const NewsFeedRoute().location;
 }
 
 @TypedGoRoute<NewsImageRoute>(path: newsImagePath)
 class NewsImageRoute extends GoRouteData with $NewsImageRoute {
-  const NewsImageRoute({required this.$extra});
+  const NewsImageRoute({required this.$extra, this.caption, this.alt});
 
   final String $extra;
+  final String? caption;
+  final String? alt;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      NewsImageView(imgUrl: $extra);
+      NewsImageView(imgUrl: $extra, caption: caption, alt: alt);
 }
 
 @TypedGoRoute<NewsTagFeedRoute>(path: newsTagFeedPath)

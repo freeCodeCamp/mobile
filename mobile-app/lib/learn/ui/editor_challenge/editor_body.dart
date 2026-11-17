@@ -12,34 +12,68 @@ class TestList extends StatelessWidget {
   final List<ChallengeTest> tests;
   final List<bool>? results;
 
-  static final _styles = {
-    '*:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)': Style(
-      color: FccColors.gray00,
-    ),
-    'p': Style(margin: Margins.zero),
-  };
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final styles = {
+      '*': Style(
+        color: colors.onSurface,
+        fontSize: FontSize(16),
+        lineHeight: const LineHeight(1.4),
+      ),
+      'p': Style(margin: Margins.zero),
+      'code': Style(fontSize: FontSize(16)),
+    };
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        for (var i = 0; i < tests.length; i++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _TestStatus(
+                  result: results != null && i < results!.length
+                      ? results![i]
+                      : null,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ParsedHtml(tests[i].text, customStyles: styles),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _TestStatus extends StatelessWidget {
+  const _TestStatus({required this.result});
+  final bool? result;
 
   @override
   Widget build(BuildContext context) {
-    final results = this.results;
-
-    return ListView.separated(
-      itemCount: tests.length,
-      separatorBuilder: (_, _) => const Divider(color: Colors.white, height: 1),
-      itemBuilder: (context, i) => Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Expanded(child: ParsedHtml(tests[i].text, customStyles: _styles)),
-            if (results != null && i < results.length) ...[
-              const SizedBox(width: 8),
-              Icon(
-                results[i] ? Icons.check_circle_rounded : Icons.cancel_rounded,
-              ),
-            ],
-          ],
-        ),
-      ),
+    final colors = Theme.of(context).colorScheme;
+    return Icon(
+      switch (result) {
+        true => Icons.check_circle_rounded,
+        false => Icons.cancel_rounded,
+        null => Icons.radio_button_unchecked,
+      },
+      size: 20,
+      color: switch (result) {
+        true => FccDesignColors.of(context).success,
+        false => colors.error,
+        null => colors.outline,
+      },
+      semanticLabel: switch (result) {
+        true => 'Passed',
+        false => 'Failed',
+        null => 'Not run',
+      },
     );
   }
 }
@@ -49,20 +83,33 @@ class ConsoleOutput extends StatelessWidget {
 
   final List<String> userConsole;
 
+  static final _errorPattern = RegExp(r'^(?:Uncaught\s+)?(?:\w*Error):');
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: [
-        for (final message in userConsole)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              message,
-              style: const TextStyle(color: FccColors.gray00),
+    final colors = Theme.of(context).colorScheme;
+    return ColoredBox(
+      color: colors.surface,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          for (final message in userConsole)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                message,
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 13,
+                  height: 1.5,
+                  color: _errorPattern.hasMatch(message.trim())
+                      ? colors.error
+                      : colors.onSurface,
+                ),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

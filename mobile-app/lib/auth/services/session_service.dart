@@ -24,11 +24,12 @@ class AuthSessionService {
 
   // NOTE: Only a 401/403 clears the stored tokens; any other failure rethrows and keeps them.
   Future<FccUserModel?> restoreSession() async {
-    if (await _repo.readTokens() == null) return null;
+    final tokens = await _repo.readTokens();
+    if (tokens == null) return null;
 
     Map<String, dynamic>? json;
     try {
-      json = await _repo.fetchSessionUser();
+      json = await _repo.fetchSessionUser(expectedTokens: tokens);
     } on SessionExpiredException {
       return null;
     } on DioException catch (e) {

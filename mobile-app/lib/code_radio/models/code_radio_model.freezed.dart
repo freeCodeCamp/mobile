@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'code_radio_model.dart';
@@ -9,6 +9,7 @@ part of 'code_radio_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $CodeRadioCopyWith<CodeRadio> get copyWith => _$CodeRadioCopyWithImpl<CodeRadio>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CodeRadio&&(identical(other.station, station) || other.station == station)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.nowPlaying, nowPlaying) || other.nowPlaying == nowPlaying)&&(identical(other.playingNext, playingNext) || other.playingNext == playingNext));
+  final _this = this as CodeRadio;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CodeRadio&&(identical(other.station, _this.station) || other.station == _this.station)&&(identical(other.listeners, _this.listeners) || other.listeners == _this.listeners)&&(identical(other.nowPlaying, _this.nowPlaying) || other.nowPlaying == _this.nowPlaying)&&(identical(other.playingNext, _this.playingNext) || other.playingNext == _this.playingNext));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,station,listeners,nowPlaying,playingNext);
+int get hashCode {
+  final _this = this as CodeRadio;
+  return Object.hash(runtimeType,_this.station,_this.listeners,_this.nowPlaying,_this.playingNext);
+}
 
 @override
 String toString() {
-  return 'CodeRadio(station: $station, listeners: $listeners, nowPlaying: $nowPlaying, playingNext: $playingNext)';
+  final _this = this as CodeRadio;
+  return 'CodeRadio(station: ${_this.station}, listeners: ${_this.listeners}, nowPlaying: ${_this.nowPlaying}, playingNext: ${_this.playingNext})';
 }
 
 
@@ -66,7 +72,7 @@ class _$CodeRadioCopyWithImpl<$Res>
 /// Create a copy of CodeRadio
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? station = null,Object? listeners = null,Object? nowPlaying = null,Object? playingNext = null,}) {
-  return _then(_self.copyWith(
+  return _then(CodeRadio(
 station: null == station ? _self.station : station // ignore: cast_nullable_to_non_nullable
 as Station,listeners: null == listeners ? _self.listeners : listeners // ignore: cast_nullable_to_non_nullable
 as Listeners,nowPlaying: null == nowPlaying ? _self.nowPlaying : nowPlaying // ignore: cast_nullable_to_non_nullable
@@ -269,16 +275,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CodeRadio&&(identical(other.station, station) || other.station == station)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.nowPlaying, nowPlaying) || other.nowPlaying == nowPlaying)&&(identical(other.playingNext, playingNext) || other.playingNext == playingNext));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CodeRadio&&(identical(other.station, station) || other.station == station)&&(identical(other.listeners, listeners) || other.listeners == listeners)&&(identical(other.nowPlaying, nowPlaying) || other.nowPlaying == nowPlaying)&&(identical(other.playingNext, playingNext) || other.playingNext == playingNext));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,station,listeners,nowPlaying,playingNext);
+int get hashCode {
+    return Object.hash(runtimeType,station,listeners,nowPlaying,playingNext);
+}
 
 @override
 String toString() {
-  return 'CodeRadio(station: $station, listeners: $listeners, nowPlaying: $nowPlaying, playingNext: $playingNext)';
+    return 'CodeRadio(station: $station, listeners: $listeners, nowPlaying: $nowPlaying, playingNext: $playingNext)';
 }
 
 
@@ -372,16 +380,21 @@ $StationCopyWith<Station> get copyWith => _$StationCopyWithImpl<Station>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Station&&(identical(other.listenUrl, listenUrl) || other.listenUrl == listenUrl));
+  final _this = this as Station;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Station&&(identical(other.listenUrl, _this.listenUrl) || other.listenUrl == _this.listenUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,listenUrl);
+int get hashCode {
+  final _this = this as Station;
+  return Object.hash(runtimeType,_this.listenUrl);
+}
 
 @override
 String toString() {
-  return 'Station(listenUrl: $listenUrl)';
+  final _this = this as Station;
+  return 'Station(listenUrl: ${_this.listenUrl})';
 }
 
 
@@ -410,7 +423,7 @@ class _$StationCopyWithImpl<$Res>
 /// Create a copy of Station
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? listenUrl = null,}) {
-  return _then(_self.copyWith(
+  return _then(Station(
 listenUrl: null == listenUrl ? _self.listenUrl : listenUrl // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -571,16 +584,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Station&&(identical(other.listenUrl, listenUrl) || other.listenUrl == listenUrl));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Station&&(identical(other.listenUrl, listenUrl) || other.listenUrl == listenUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,listenUrl);
+int get hashCode {
+    return Object.hash(runtimeType,listenUrl);
+}
 
 @override
 String toString() {
-  return 'Station(listenUrl: $listenUrl)';
+    return 'Station(listenUrl: $listenUrl)';
 }
 
 
@@ -635,16 +650,21 @@ $ListenersCopyWith<Listeners> get copyWith => _$ListenersCopyWithImpl<Listeners>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Listeners&&(identical(other.total, total) || other.total == total));
+  final _this = this as Listeners;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Listeners&&(identical(other.total, _this.total) || other.total == _this.total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,total);
+int get hashCode {
+  final _this = this as Listeners;
+  return Object.hash(runtimeType,_this.total);
+}
 
 @override
 String toString() {
-  return 'Listeners(total: $total)';
+  final _this = this as Listeners;
+  return 'Listeners(total: ${_this.total})';
 }
 
 
@@ -673,7 +693,7 @@ class _$ListenersCopyWithImpl<$Res>
 /// Create a copy of Listeners
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? total = null,}) {
-  return _then(_self.copyWith(
+  return _then(Listeners(
 total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -834,16 +854,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Listeners&&(identical(other.total, total) || other.total == total));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Listeners&&(identical(other.total, total) || other.total == total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,total);
+int get hashCode {
+    return Object.hash(runtimeType,total);
+}
 
 @override
 String toString() {
-  return 'Listeners(total: $total)';
+    return 'Listeners(total: $total)';
 }
 
 
@@ -898,16 +920,21 @@ $NowPlayingCopyWith<NowPlaying> get copyWith => _$NowPlayingCopyWithImpl<NowPlay
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NowPlaying&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.elapsed, elapsed) || other.elapsed == elapsed)&&(identical(other.song, song) || other.song == song));
+  final _this = this as NowPlaying;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NowPlaying&&(identical(other.duration, _this.duration) || other.duration == _this.duration)&&(identical(other.elapsed, _this.elapsed) || other.elapsed == _this.elapsed)&&(identical(other.song, _this.song) || other.song == _this.song));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,duration,elapsed,song);
+int get hashCode {
+  final _this = this as NowPlaying;
+  return Object.hash(runtimeType,_this.duration,_this.elapsed,_this.song);
+}
 
 @override
 String toString() {
-  return 'NowPlaying(duration: $duration, elapsed: $elapsed, song: $song)';
+  final _this = this as NowPlaying;
+  return 'NowPlaying(duration: ${_this.duration}, elapsed: ${_this.elapsed}, song: ${_this.song})';
 }
 
 
@@ -936,7 +963,7 @@ class _$NowPlayingCopyWithImpl<$Res>
 /// Create a copy of NowPlaying
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? duration = null,Object? elapsed = null,Object? song = null,}) {
-  return _then(_self.copyWith(
+  return _then(NowPlaying(
 duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,elapsed: null == elapsed ? _self.elapsed : elapsed // ignore: cast_nullable_to_non_nullable
 as int,song: null == song ? _self.song : song // ignore: cast_nullable_to_non_nullable
@@ -1110,16 +1137,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NowPlaying&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.elapsed, elapsed) || other.elapsed == elapsed)&&(identical(other.song, song) || other.song == song));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NowPlaying&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.elapsed, elapsed) || other.elapsed == elapsed)&&(identical(other.song, song) || other.song == song));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,duration,elapsed,song);
+int get hashCode {
+    return Object.hash(runtimeType,duration,elapsed,song);
+}
 
 @override
 String toString() {
-  return 'NowPlaying(duration: $duration, elapsed: $elapsed, song: $song)';
+    return 'NowPlaying(duration: $duration, elapsed: $elapsed, song: $song)';
 }
 
 
@@ -1185,16 +1214,21 @@ $PlayingNextCopyWith<PlayingNext> get copyWith => _$PlayingNextCopyWithImpl<Play
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayingNext&&(identical(other.song, song) || other.song == song));
+  final _this = this as PlayingNext;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayingNext&&(identical(other.song, _this.song) || other.song == _this.song));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,song);
+int get hashCode {
+  final _this = this as PlayingNext;
+  return Object.hash(runtimeType,_this.song);
+}
 
 @override
 String toString() {
-  return 'PlayingNext(song: $song)';
+  final _this = this as PlayingNext;
+  return 'PlayingNext(song: ${_this.song})';
 }
 
 
@@ -1223,7 +1257,7 @@ class _$PlayingNextCopyWithImpl<$Res>
 /// Create a copy of PlayingNext
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? song = null,}) {
-  return _then(_self.copyWith(
+  return _then(PlayingNext(
 song: null == song ? _self.song : song // ignore: cast_nullable_to_non_nullable
 as Song,
   ));
@@ -1393,16 +1427,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayingNext&&(identical(other.song, song) || other.song == song));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayingNext&&(identical(other.song, song) || other.song == song));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,song);
+int get hashCode {
+    return Object.hash(runtimeType,song);
+}
 
 @override
 String toString() {
-  return 'PlayingNext(song: $song)';
+    return 'PlayingNext(song: $song)';
 }
 
 
@@ -1466,16 +1502,21 @@ $SongCopyWith<Song> get copyWith => _$SongCopyWithImpl<Song>(this as Song, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Song&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.album, album) || other.album == album)&&(identical(other.art, art) || other.art == art));
+  final _this = this as Song;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Song&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.artist, _this.artist) || other.artist == _this.artist)&&(identical(other.album, _this.album) || other.album == _this.album)&&(identical(other.art, _this.art) || other.art == _this.art));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,artist,album,art);
+int get hashCode {
+  final _this = this as Song;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.artist,_this.album,_this.art);
+}
 
 @override
 String toString() {
-  return 'Song(id: $id, title: $title, artist: $artist, album: $album, art: $art)';
+  final _this = this as Song;
+  return 'Song(id: ${_this.id}, title: ${_this.title}, artist: ${_this.artist}, album: ${_this.album}, art: ${_this.art})';
 }
 
 
@@ -1504,7 +1545,7 @@ class _$SongCopyWithImpl<$Res>
 /// Create a copy of Song
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? artist = null,Object? album = null,Object? art = null,}) {
-  return _then(_self.copyWith(
+  return _then(Song(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,artist: null == artist ? _self.artist : artist // ignore: cast_nullable_to_non_nullable
@@ -1673,16 +1714,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Song&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.album, album) || other.album == album)&&(identical(other.art, art) || other.art == art));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Song&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.artist, artist) || other.artist == artist)&&(identical(other.album, album) || other.album == album)&&(identical(other.art, art) || other.art == art));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,artist,album,art);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,artist,album,art);
+}
 
 @override
 String toString() {
-  return 'Song(id: $id, title: $title, artist: $artist, album: $album, art: $art)';
+    return 'Song(id: $id, title: $title, artist: $artist, album: $album, art: $art)';
 }
 
 

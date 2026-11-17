@@ -55,8 +55,14 @@ class _FakeRunner extends LearnTestRunnerService {
     required String editableContents,
     required Hooks hooks,
     required List<ChallengeTest> tests,
+    bool evaluateUserCode = false,
+    void Function(String)? onConsole,
   }) async {
     runCalls++;
+    if (evaluateUserCode && workerType == 'javascript') {
+      final error = await evaluate(userCode);
+      if (error != null) onConsole?.call(error);
+    }
     return [];
   }
 }

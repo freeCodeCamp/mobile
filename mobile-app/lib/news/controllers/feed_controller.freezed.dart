@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'feed_controller.dart';
@@ -9,6 +9,7 @@ part of 'feed_controller.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$NewsFeedSource {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsFeedSource);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsFeedSource);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'NewsFeedSource()';
+    return 'NewsFeedSource()';
 }
 
 
@@ -191,7 +192,7 @@ class AllPosts implements NewsFeedSource {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AllPosts);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AllPosts);
 }
 
 
@@ -200,7 +201,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'NewsFeedSource.all()';
+    return 'NewsFeedSource.all()';
 }
 
 
@@ -228,16 +229,18 @@ $TagPostsCopyWith<TagPosts> get copyWith => _$TagPostsCopyWithImpl<TagPosts>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TagPosts&&(identical(other.slug, slug) || other.slug == slug));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is TagPosts&&(identical(other.slug, slug) || other.slug == slug));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,slug);
+int get hashCode {
+    return Object.hash(runtimeType,slug);
+}
 
 @override
 String toString() {
-  return 'NewsFeedSource.tag(slug: $slug)';
+    return 'NewsFeedSource.tag(slug: $slug)';
 }
 
 
@@ -294,16 +297,18 @@ $AuthorPostsCopyWith<AuthorPosts> get copyWith => _$AuthorPostsCopyWithImpl<Auth
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthorPosts&&(identical(other.id, id) || other.id == id));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthorPosts&&(identical(other.id, id) || other.id == id));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id);
+int get hashCode {
+    return Object.hash(runtimeType,id);
+}
 
 @override
 String toString() {
-  return 'NewsFeedSource.author(id: $id)';
+    return 'NewsFeedSource.author(id: $id)';
 }
 
 
@@ -355,16 +360,21 @@ $NewsFeedStateCopyWith<NewsFeedState> get copyWith => _$NewsFeedStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsFeedState&&const DeepCollectionEquality().equals(other.posts, posts)&&(identical(other.cursor, cursor) || other.cursor == cursor)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
+  final _this = this as NewsFeedState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsFeedState&&const DeepCollectionEquality().equals(other.posts, _this.posts)&&(identical(other.cursor, _this.cursor) || other.cursor == _this.cursor)&&(identical(other.hasNextPage, _this.hasNextPage) || other.hasNextPage == _this.hasNextPage)&&(identical(other.isLoadingMore, _this.isLoadingMore) || other.isLoadingMore == _this.isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, _this.loadMoreError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(posts),cursor,hasNextPage,isLoadingMore,const DeepCollectionEquality().hash(loadMoreError));
+int get hashCode {
+  final _this = this as NewsFeedState;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.posts),_this.cursor,_this.hasNextPage,_this.isLoadingMore,const DeepCollectionEquality().hash(_this.loadMoreError));
+}
 
 @override
 String toString() {
-  return 'NewsFeedState(posts: $posts, cursor: $cursor, hasNextPage: $hasNextPage, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError)';
+  final _this = this as NewsFeedState;
+  return 'NewsFeedState(posts: ${_this.posts}, cursor: ${_this.cursor}, hasNextPage: ${_this.hasNextPage}, isLoadingMore: ${_this.isLoadingMore}, loadMoreError: ${_this.loadMoreError})';
 }
 
 
@@ -393,7 +403,7 @@ class _$NewsFeedStateCopyWithImpl<$Res>
 /// Create a copy of NewsFeedState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? posts = null,Object? cursor = null,Object? hasNextPage = null,Object? isLoadingMore = null,Object? loadMoreError = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(NewsFeedState(
 posts: null == posts ? _self.posts : posts // ignore: cast_nullable_to_non_nullable
 as List<PostSummary>,cursor: null == cursor ? _self.cursor : cursor // ignore: cast_nullable_to_non_nullable
 as String,hasNextPage: null == hasNextPage ? _self.hasNextPage : hasNextPage // ignore: cast_nullable_to_non_nullable
@@ -539,7 +549,7 @@ return $default(_that.posts,_that.cursor,_that.hasNextPage,_that.isLoadingMore,_
 
 
 class _NewsFeedState implements NewsFeedState {
-  const _NewsFeedState({final  List<PostSummary> posts = const [], this.cursor = '', this.hasNextPage = true, this.isLoadingMore = false, this.loadMoreError}): _posts = posts;
+  const _NewsFeedState({ List<PostSummary> posts = const [], this.cursor = '', this.hasNextPage = true, this.isLoadingMore = false, this.loadMoreError}): _posts = posts;
   
 
  final  List<PostSummary> _posts;
@@ -564,16 +574,18 @@ _$NewsFeedStateCopyWith<_NewsFeedState> get copyWith => __$NewsFeedStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsFeedState&&const DeepCollectionEquality().equals(other._posts, _posts)&&(identical(other.cursor, cursor) || other.cursor == cursor)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsFeedState&&const DeepCollectionEquality().equals(other.posts, _posts)&&(identical(other.cursor, cursor) || other.cursor == cursor)&&(identical(other.hasNextPage, hasNextPage) || other.hasNextPage == hasNextPage)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&const DeepCollectionEquality().equals(other.loadMoreError, loadMoreError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_posts),cursor,hasNextPage,isLoadingMore,const DeepCollectionEquality().hash(loadMoreError));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_posts),cursor,hasNextPage,isLoadingMore,const DeepCollectionEquality().hash(loadMoreError));
+}
 
 @override
 String toString() {
-  return 'NewsFeedState(posts: $posts, cursor: $cursor, hasNextPage: $hasNextPage, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError)';
+    return 'NewsFeedState(posts: $posts, cursor: $cursor, hasNextPage: $hasNextPage, isLoadingMore: $isLoadingMore, loadMoreError: $loadMoreError)';
 }
 
 

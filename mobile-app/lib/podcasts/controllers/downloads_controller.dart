@@ -20,19 +20,36 @@ sealed class DownloadStatus with _$DownloadStatus {
 
 @riverpod
 class PodcastDownloadsNotifier extends _$PodcastDownloadsNotifier {
-  final _cancelTokens = <String, CancelToken>{};
+  final _pendingTransfers = <String, CancelToken>{};
+  int _buildGeneration = 0;
+
+  // Cancellation hides progress before the transfer, artwork, and storage settle.
+  bool hasPendingTransfers() => _pendingTransfers.isNotEmpty;
 
   // NOTE: Pinned only while transfers are in flight, so an idle notifier is disposed.
   KeepAliveLink? _link;
 
   @override
-  Map<String, DownloadStatus> build() => const {};
+  Map<String, DownloadStatus> build() {
+    _buildGeneration++;
+    _link?.close();
+    _link = _pendingTransfers.isEmpty ? null : ref.keepAlive();
+    ref.onDispose(() {
+      _link?.close();
+      _link = null;
+      for (final token in _pendingTransfers.values) {
+        token.cancel('download provider disposed');
+      }
+    });
+    return const {};
+  }
 
   Future<void> start(Podcast podcast, Episode episode) async {
-    if (_cancelTokens.containsKey(episode.id)) return;
+    if (!ref.mounted || _pendingTransfers.containsKey(episode.id)) return;
 
     final token = CancelToken();
-    _cancelTokens[episode.id] = token;
+    final generation = _buildGeneration;
+    _pendingTransfers[episode.id] = token;
     _link ??= ref.keepAlive();
     _set(episode.id, const DownloadStatus.running(0));
 
@@ -44,50 +61,70 @@ class PodcastDownloadsNotifier extends _$PodcastDownloadsNotifier {
             episode,
             cancelToken: token,
             onProgress: (progress) {
-              if (_cancelTokens.containsKey(episode.id)) {
+              if (_isCurrentTransfer(episode.id, token, generation) &&
+                  !token.isCancelled) {
                 _set(episode.id, DownloadStatus.running(progress));
               }
             },
           );
 
+      if (!_isCurrentTransfer(episode.id, token, generation)) return;
       _clear(episode.id);
 
       // The library owns "downloaded"; this notifier only reports progress.
       await ref.read(podcastLibraryProvider.notifier).refresh();
     } on DioException catch (e) {
-      if (CancelToken.isCancel(e)) {
+      if (!_isCurrentTransfer(episode.id, token, generation)) return;
+      if (CancelToken.isCancel(e) || token.isCancelled) {
         _clear(episode.id);
       } else {
         log('Podcast download failed for ${episode.id}: $e');
         _set(episode.id, const DownloadStatus.failed());
       }
     } catch (e) {
+      if (!_isCurrentTransfer(episode.id, token, generation) ||
+          token.isCancelled) {
+        return;
+      }
       log('Podcast download failed for ${episode.id}: $e');
       _set(episode.id, const DownloadStatus.failed());
     } finally {
-      _cancelTokens.remove(episode.id);
-      _releaseWhenIdle();
+      if (identical(_pendingTransfers[episode.id], token)) {
+        _pendingTransfers.remove(episode.id);
+        _releaseWhenIdle();
+      }
     }
   }
 
+  bool _isCurrentTransfer(
+    String episodeId,
+    CancelToken token,
+    int generation,
+  ) =>
+      ref.mounted &&
+      generation == _buildGeneration &&
+      identical(_pendingTransfers[episodeId], token);
+
   void _releaseWhenIdle() {
-    if (_cancelTokens.isNotEmpty) return;
+    if (_pendingTransfers.isNotEmpty) return;
 
     _link?.close();
     _link = null;
   }
 
   void cancel(String episodeId) {
-    _cancelTokens.remove(episodeId)?.cancel('cancelled by user');
+    _pendingTransfers[episodeId]?.cancel('cancelled by user');
     _clear(episodeId);
     _releaseWhenIdle();
   }
 
   void _set(String episodeId, DownloadStatus status) {
+    if (!ref.mounted) return;
     state = {...state, episodeId: status};
   }
 
   void _clear(String episodeId) {
+    if (!ref.mounted) return;
     state = {...state}..remove(episodeId);
   }
 }

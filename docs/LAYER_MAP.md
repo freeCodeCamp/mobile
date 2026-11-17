@@ -124,6 +124,7 @@ flowchart TD
   PVM["post_viewmodel"]:::vm
   AVM["author_feed_viewmodel"]:::vm
   SVM["search_viewmodel"]:::vm
+  FVM["feed_viewmodel"]:::vm
   FEED["feed_controller"]:::ctrl
   BOOK["bookmarks_controller"]:::ctrl
 
@@ -143,7 +144,9 @@ flowchart TD
   AVM --> APIS
   FEED --> APIS
   SVM --> SRS
+  FVM --> FEED
   BOOK --> BMS
+  BOOK -.->|read| APIS
 
   APIS --> APIR
   BMS --> BMR
@@ -162,8 +165,10 @@ flowchart TD
 
 **Screens:** `feed_view`, `tag_feed_view`, `author_feed_view`, `post_view`, `search_view`, `bookmark_feed_view`, `bookmark_post_view`, `image_view`, plus the `post_feed_list` and `bookmark_button` widgets.
 
-- **The reference implementation.** It has three independent stacks; each service owns exactly one repository and nothing crosses between them.
+- **Three data stacks.** Each service owns one repository. The bookmarks controller supplies an article loader from `api_service` when saving a summary; `bookmark_service` owns the save/remove decision, model mapping and reset checks.
 - **`feed_controller` is a family** keyed by the sealed `NewsFeedSource` (all / tag / author), so the main, tag and author feeds share one implementation.
+- **`feed_viewmodel` derives the main feed's topic choices.** The main, tag and author screens continue to use the shared feed controller for pagination.
+- **`bookmark_repository` is `keepAlive`**, so saves and resets share one serialised file-write queue. `bookmarks_controller` retains itself while a save is pending.
 - **No app-level services.** The API repository builds its own `GraphQLClient` rather than using `dioProvider`.
 
 ## Code Radio

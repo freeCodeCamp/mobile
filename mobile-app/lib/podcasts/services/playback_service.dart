@@ -55,10 +55,38 @@ class PodcastPlaybackService {
   Duration? _duration;
   Duration _lastWritten = Duration.zero;
   bool _wasPlaying = false;
+  bool _suspended = false;
+  Future<void> _pendingWrites = Future<void>.value();
+  final _positionChanges = StreamController<String>.broadcast();
+  final _savedPositions = <String, Duration>{};
+
+  Stream<String> get positionChanges => _positionChanges.stream;
+
+  // NOTE: Synchronous so list rows never render an empty frame between
+  // episodes.
+  Duration? savedPosition(String episodeId) => _savedPositions[episodeId];
+
+  // Stop new progress writes and drain existing writes before clearing prefs.
+  Future<void> suspendForReset() async {
+    _suspended = true;
+    await _pendingWrites;
+  }
 
   void start() {
     _positionSub ??= _handler.positionStream.listen(_onPosition);
     _stateSub ??= _handler.playbackState.listen(_onPlaybackState);
+    unawaited(_loadSavedPositions());
+  }
+
+  Future<void> _loadSavedPositions() async {
+    for (final id in await _repo.readRecentEpisodeIds()) {
+      final seconds = await _repo.readPosition(id);
+
+      if (seconds == null || _savedPositions.containsKey(id)) continue;
+
+      _savedPositions[id] = Duration(seconds: seconds);
+      _positionChanges.add(id);
+    }
   }
 
   Future<Duration?> readPosition(String episodeId) async {
@@ -112,11 +140,18 @@ class PodcastPlaybackService {
   }
 
   void _onPosition(Duration position) {
+    if (_suspended) return;
     final episodeId = _handler.episodeId;
 
     if (episodeId == null) return;
 
     if (episodeId != _episodeId) {
+      final previousId = _episodeId;
+      if (previousId != null) {
+        _lastWritten = _position;
+        _queueSave(previousId, _position, _duration);
+      }
+
       _episodeId = episodeId;
       _lastWritten = Duration.zero;
     }
@@ -127,10 +162,11 @@ class PodcastPlaybackService {
     if ((position - _lastWritten).abs() < _writeInterval) return;
 
     _lastWritten = position;
-    unawaited(_savePosition(episodeId, position, _duration));
+    _queueSave(episodeId, position, _duration);
   }
 
   void _onPlaybackState(PlaybackState state) {
+    if (_suspended) return;
     final wasPlaying = _wasPlaying;
     _wasPlaying = state.playing;
 
@@ -140,7 +176,33 @@ class PodcastPlaybackService {
     if (episodeId == null) return;
 
     _lastWritten = _position;
-    unawaited(_savePosition(episodeId, _position, _duration));
+    _queueSave(episodeId, _position, _duration);
+  }
+
+  bool _isComplete(Duration position, Duration? total) =>
+      total != null &&
+      total > Duration.zero &&
+      position >= total - _completionMargin;
+
+  void _updateSavedPosition(String id, Duration position, Duration? total) {
+    if (_isComplete(position, total)) {
+      _savedPositions.remove(id);
+    } else if (position >= _minimumSavedPosition) {
+      _savedPositions[id] = Duration(seconds: position.inSeconds);
+    } else {
+      return;
+    }
+
+    _positionChanges.add(id);
+  }
+
+  void _queueSave(String id, Duration position, Duration? duration) {
+    _updateSavedPosition(id, position, duration);
+    _pendingWrites = _pendingWrites
+        .then((_) => _savePosition(id, position, duration))
+        .catchError((Object error) {
+          log('Podcast playback: could not save progress ($error)');
+        });
   }
 
   Future<void> _savePosition(
@@ -148,9 +210,7 @@ class PodcastPlaybackService {
     Duration position,
     Duration? total,
   ) async {
-    if (total != null &&
-        total > Duration.zero &&
-        position >= total - _completionMargin) {
+    if (_isComplete(position, total)) {
       return _clearPosition(episodeId);
     }
 
@@ -181,6 +241,10 @@ class PodcastPlaybackService {
     if (updated.length > _recentEpisodeLimit) {
       final evicted = updated.sublist(0, updated.length - _recentEpisodeLimit);
       await _repo.clearPositions(evicted);
+      for (final id in evicted) {
+        _savedPositions.remove(id);
+        _positionChanges.add(id);
+      }
       updated.removeRange(0, evicted.length);
     }
 
@@ -192,5 +256,6 @@ class PodcastPlaybackService {
     _stateSub?.cancel();
     _positionSub = null;
     _stateSub = null;
+    _positionChanges.close();
   }
 }

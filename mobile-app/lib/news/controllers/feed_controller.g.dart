@@ -18,7 +18,7 @@ final class NewsFeedNotifierProvider
     required NewsFeedNotifierFamily super.from,
     required NewsFeedSource super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'newsFeedProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -50,7 +50,7 @@ final class NewsFeedNotifierProvider
   }
 }
 
-String _$newsFeedNotifierHash() => r'a485ea16eae289dee3a26758570aeaf736d47e0b';
+String _$newsFeedNotifierHash() => r'f3b7b22e5efc64f1ec15d37678437eee429652e1';
 
 final class NewsFeedNotifierFamily extends $Family
     with
@@ -63,7 +63,7 @@ final class NewsFeedNotifierFamily extends $Family
         > {
   NewsFeedNotifierFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'newsFeedProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

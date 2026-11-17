@@ -37,6 +37,23 @@ class CurriculumAudioConfig extends AudioTypeConfig {
   final String clipId;
 }
 
+// What mediaItem currently holds. Unlike AudioTypeConfig, which switches as a
+// load starts, this changes only when the new source is published.
+sealed class PublishedSource {
+  const PublishedSource();
+}
+
+class PublishedCodeRadio extends PublishedSource {
+  const PublishedCodeRadio();
+}
+
+class PublishedPodcast extends PublishedSource {
+  const PublishedPodcast(this.podcast, this.episode);
+
+  final Podcast podcast;
+  final Episode episode;
+}
+
 // NOTE: The handler is created before runApp and injected, so reading
 // this without that override is a wiring mistake rather than a lazy init.
 @Riverpod(keepAlive: true)
@@ -46,13 +63,13 @@ AudioPlayerHandler audioHandler(Ref ref) => throw UnimplementedError(
 
 Future<AudioPlayerHandler> initAudioService() => AudioService.init(
   builder: () => AudioPlayerHandler(),
-  config: const AudioServiceConfig(
+  config: AudioServiceConfig(
     androidNotificationChannelId: 'org.freecodecamp.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
     androidStopForegroundOnPause: true,
     androidNotificationIcon: 'drawable/notification_icon',
-    notificationColor: FccColors.gray90,
+    notificationColor: FccTheme.themeLight.colorScheme.onSurface,
   ),
 );
 
@@ -69,6 +86,12 @@ class AudioPlayerHandler extends BaseAudioHandler {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   AudioTypeConfig? _audioConfig;
+
+  // NOTE: Set together with mediaItem in _publish and cleared in stop, so the
+  // persistent player never sees a half-swapped source while a load runs.
+  PublishedSource? _published;
+
+  PublishedSource? get published => _published;
 
   Uri? _codeRadioUrl;
 
@@ -127,13 +150,15 @@ class AudioPlayerHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() async {
-    _loadId++;
+    final load = ++_loadId;
     _loading = false;
     _audioConfig = null;
+    _published = null;
     _codeRadioUrl = null;
     _resumeNeedsLiveEdge = false;
 
     await _audioPlayer.stop();
+    if (load != _loadId) return;
 
     playbackState.add(
       playbackState.value.copyWith(
@@ -164,7 +189,11 @@ class AudioPlayerHandler extends BaseAudioHandler {
   Future<void> rewind() => _seekBy(-_skipBackward);
 
   @override
-  Future<void> setSpeed(double speed) => _audioPlayer.setSpeed(speed);
+  Future<void> setSpeed(double speed) async {
+    await _audioPlayer.setSpeed(speed);
+    // just_audio emits no playback event for a speed change alone.
+    playbackState.add(playbackState.value.copyWith(speed: _audioPlayer.speed));
+  }
 
   @override
   Future<void> onTaskRemoved() async {
@@ -199,18 +228,20 @@ class AudioPlayerHandler extends BaseAudioHandler {
       await _audioPlayer.setAudioSource(AudioSource.uri(url));
       if (load != _loadId) return;
 
-      _publish(song);
+      _publish(song, const PublishedCodeRadio());
     } catch (e) {
       if (load != _loadId) return;
 
       _audioConfig = previous;
       log('loadCodeRadio: Cannot play audio: $e');
+      rethrow;
     } finally {
       if (load == _loadId) _loading = false;
     }
   }
 
-  void updateCodeRadioSong(Song song) => _publish(_toMediaItem(song));
+  void updateCodeRadioSong(Song song) =>
+      _publish(_toMediaItem(song), const PublishedCodeRadio());
 
   Future<void> _rejoinCodeRadioLiveEdge() async {
     final url = _codeRadioUrl;
@@ -253,14 +284,14 @@ class AudioPlayerHandler extends BaseAudioHandler {
       }
       if (load != _loadId) return false;
 
-      _publish(item);
+      _publish(item, PublishedPodcast(podcast, episode));
       return true;
     } catch (e) {
       if (load != _loadId) return false;
 
       log('loadEpisode: Cannot play audio: $e');
       await stop();
-      return false;
+      rethrow;
     } finally {
       if (load == _loadId) _loading = false;
     }
@@ -292,7 +323,7 @@ class AudioPlayerHandler extends BaseAudioHandler {
       );
       if (load != _loadId) return false;
 
-      _publish(item);
+      _publish(item, null);
       return true;
     } catch (e) {
       if (load != _loadId) return false;
@@ -313,7 +344,8 @@ class AudioPlayerHandler extends BaseAudioHandler {
     artUri: Uri.parse(song.art),
   );
 
-  void _publish(MediaItem song) {
+  void _publish(MediaItem song, PublishedSource? source) {
+    _published = source;
     queue.add([song]);
     mediaItem.add(song);
   }

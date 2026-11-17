@@ -66,7 +66,7 @@ final class ChallengeScreenProvider
   }
 }
 
-String _$challengeScreenHash() => r'aaa487fd4d644debd080b833ffb921d83db9fd1a';
+String _$challengeScreenHash() => r'a20e661d70ccf83b36b82193cfd9665e1086e0d1';
 
 final class ChallengeScreenFamily extends $Family
     with

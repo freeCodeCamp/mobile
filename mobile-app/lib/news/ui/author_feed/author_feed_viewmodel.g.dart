@@ -19,7 +19,7 @@ final class NewsAuthorProvider
     required NewsAuthorFamily super.from,
     required String super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'newsAuthorProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -58,13 +58,13 @@ final class NewsAuthorProvider
   }
 }
 
-String _$newsAuthorHash() => r'6393ad5923b855669e36c0e372aeb246477dce23';
+String _$newsAuthorHash() => r'a5e18cbf5dfab5e401c017bcd113b00b719a1094';
 
 final class NewsAuthorFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Author>, String> {
   NewsAuthorFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'newsAuthorProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
