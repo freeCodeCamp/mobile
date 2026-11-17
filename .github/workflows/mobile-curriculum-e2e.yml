@@ -25,8 +25,6 @@ jobs:
         gradle-version: [8.7]
         java-version: [17]
         android-api-level: [35]
-        node-version: [24]
-        pnpm-version: [10]
         flutter-version: ["3.47.x"]
 
     steps:
@@ -89,15 +87,12 @@ jobs:
         with:
           path: mobile
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+      - name: Setup Node.js and pnpm
+        uses: pnpm/setup@731dfb6463bbd11c11fd0ee11fe00ed0e36d48a1 # v3
         with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Setup pnpm - ${{ matrix.pnpm-version }}
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ matrix.pnpm-version }}
+          working-directory: freeCodeCamp
+          node-version-file: .nvmrc
+          install: false
 
       - name: Setup Flutter - ${{ matrix.flutter-version }}
         uses: subosito/flutter-action@e938fdf56512cc96ef2f93601a5a40bde3801046 # v2

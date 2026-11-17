@@ -17,14 +17,17 @@ workflows:
     environment:
       flutter: 3.47.9
       xcode: latest
-      cocoapods: default
+      vars:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
+        HOMEBREW_NO_ANALYTICS: 1
       groups:
         - Mobile
 
     cache:
       cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
-        - $HOME/Library/Caches/CocoaPods
+        - $HOME/.pub-cache
+        - $HOME/Library/Caches/org.swift.swiftpm
 
     working_directory: mobile-app
 
@@ -95,7 +98,10 @@ workflows:
     environment:
       flutter: 3.47.9
       xcode: latest
-      cocoapods: default
+      vars:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
+        HOMEBREW_NO_ANALYTICS: 1
       ios_signing:
         distribution_type: app_store
         bundle_identifier: org.freecodecamp.ios
@@ -104,8 +110,8 @@ workflows:
 
     cache:
       cache_paths:
-        - $FLUTTER_ROOT/.pub-cache
-        - $HOME/Library/Caches/CocoaPods
+        - $HOME/.pub-cache
+        - $HOME/Library/Caches/org.swift.swiftpm
 
     working_directory: mobile-app
 
