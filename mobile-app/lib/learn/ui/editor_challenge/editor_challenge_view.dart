@@ -336,61 +336,55 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
     final state = ref.watch(_provider);
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    return PopScope(
-      canPop: _sheet == null,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && _sheet != null) _showSheet(null);
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: _appBar(keyboard > 0),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: keyboard),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Column(
-                          children: [
-                            ResizablePanel(
-                              controller: _instructionsPanel,
-                              title: 'Instructions',
-                              summaryHtml: widget.challenge.instructions,
-                              maxHeight: _instructionsMaxHeight(
-                                constraints.maxHeight,
-                              ),
-                              child: InstructionPanel(
-                                key: const ValueKey('editor-instructions-body'),
-                                challenge: widget.challenge,
-                              ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: _appBar(keyboard > 0),
+      body: Padding(
+        padding: EdgeInsets.only(bottom: keyboard),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Column(
+                        children: [
+                          ResizablePanel(
+                            controller: _instructionsPanel,
+                            title: 'Instructions',
+                            summaryHtml: widget.challenge.instructions,
+                            maxHeight: _instructionsMaxHeight(
+                              constraints.maxHeight,
                             ),
-                            _fileSelector(state),
-                            Expanded(
-                              child: _editorArea(
-                                state,
-                                keyboard > 0,
-                                withPanel: false,
-                              ),
+                            child: InstructionPanel(
+                              key: const ValueKey('editor-instructions-body'),
+                              challenge: widget.challenge,
                             ),
-                          ],
-                        ),
-                        if (_sheet != null && keyboard == 0)
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: _panel(state, constraints.maxHeight),
                           ),
-                      ],
-                    ),
+                          _fileSelector(state),
+                          Expanded(
+                            child: _editorArea(
+                              state,
+                              keyboard > 0,
+                              withPanel: false,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_sheet != null && keyboard == 0)
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: _panel(state, constraints.maxHeight),
+                        ),
+                    ],
                   ),
                 ),
-                _bottomBar(state, keyboard > 0),
-              ],
-            ),
+              ),
+              _bottomBar(state, keyboard > 0),
+            ],
           ),
         ),
       ),
