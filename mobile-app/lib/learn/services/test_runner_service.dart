@@ -11,6 +11,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'test_runner_service.g.dart';
 
 typedef TestResult = ({bool pass, Map<dynamic, dynamic>? err});
+typedef PythonConsoleResult = ({List<String> logs, String? error});
+
+const consoleTimeoutMessage =
+    'Your code took too long to run. Check for an infinite loop.';
 
 // NOTE: No auto-retry; the editor offers a manual retry instead.
 // NOTE: keepAlive so the next challenge never races the previous one for port 8080.
@@ -177,6 +181,30 @@ class LearnTestRunnerService {
         functionBody: code,
       ))?.error;
 
+  Future<PythonConsoleResult> runPythonConsole(String code) =>
+      _enqueue(() => _runPythonConsole(code));
+
+  // NOTE: The worker runs the source and returns its print output as logs once a test string evaluates to { test }.
+  Future<PythonConsoleResult> _runPythonConsole(String code) async {
+    final controller = _runner.webViewController!;
+    await _createRunner(controller, userCode: code, combinedCode: code);
+    final res = await controller.callAsyncJavaScript(
+      functionBody: _testScript,
+      arguments: {'testStr': '({ test: () => {} })'},
+    );
+    if (res == null) throw StateError('Test runner returned no result');
+
+    final value = res.value as Map<dynamic, dynamic>?;
+    final logs = value?['logs'] as List<dynamic>? ?? const [];
+    final err = value?['err'] as Map<dynamic, dynamic>?;
+    return (
+      logs: [
+        for (final log in logs) '${(log as Map<dynamic, dynamic>)['msg']}',
+      ],
+      error: err == null ? null : '${err['message']}',
+    );
+  }
+
   Future<List<TestResult>> run({
     required String userCode,
     required String combinedCode,
@@ -192,6 +220,13 @@ class LearnTestRunnerService {
         if (evaluateUserCode && workerType == 'javascript') {
           final error = await _evaluate(userCode);
           if (error != null) onConsole?.call(error);
+        }
+        if (evaluateUserCode && workerType == 'python') {
+          final result = await _runPythonConsole(userCode);
+          result.logs.forEach(onConsole ?? (_) {});
+          if (result.error case final error?) {
+            onConsole?.call(pythonErrorHint(error));
+          }
         }
         final controller = _runner.webViewController!;
         await _createRunner(
@@ -282,6 +317,15 @@ String syntaxErrorHint(BabelException error) {
 
   final line = int.parse(match.group(1)!) - 1;
   return 'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
+}
+
+// NOTE: Pyodide tracebacks open with its own frames, so keep only the part from the user's code onward.
+String pythonErrorHint(String message) {
+  if (message == 'Test timed out') return consoleTimeoutMessage;
+  final lines = message.split('\n');
+  final start = lines.indexWhere((line) => line.contains('File "<exec>"'));
+  if (start == -1) return message.replaceFirst('PythonError: ', '').trim();
+  return lines.sublist(start).join('\n').trim();
 }
 
 String workerTypeOf(int challengeType) => switch (challengeType) {

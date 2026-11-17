@@ -30,6 +30,9 @@ class _FakeRunner extends LearnTestRunnerService {
   var runCalls = 0;
   Object? transpileError;
   Future<String?> Function(String code) onEvaluate = (_) async => null;
+  var pythonCalls = 0;
+  Future<PythonConsoleResult> Function(String code) onPython = (_) async =>
+      (logs: <String>[], error: null);
 
   @override
   Stream<String> get consoleMessages => messages.stream;
@@ -46,6 +49,12 @@ class _FakeRunner extends LearnTestRunnerService {
   Future<String?> evaluate(String code) {
     evaluateCalls++;
     return onEvaluate(code);
+  }
+
+  @override
+  Future<PythonConsoleResult> runPythonConsole(String code) {
+    pythonCalls++;
+    return onPython(code);
   }
 
   @override
@@ -67,6 +76,13 @@ class _FakeRunner extends LearnTestRunnerService {
   }
 }
 
+const _pyFile = ChallengeFile(
+  ext: Ext.py,
+  name: 'main',
+  contents: '',
+  fileKey: 'mainpy',
+);
+
 const _file = ChallengeFile(
   ext: Ext.js,
   name: 'script',
@@ -81,7 +97,7 @@ Challenge _challenge({int challengeType = 1}) => Challenge(
   title: 'title',
   dashedName: 'dashed-name',
   challengeType: challengeType,
-  challengeFiles: const [_file],
+  challengeFiles: [challengeType == 27 ? _pyFile : _file],
 );
 
 class _Harness {
@@ -111,7 +127,8 @@ class _Harness {
   EditorChallengeState get state =>
       container.read(editorChallengeProvider(challenge));
 
-  void type(String text) => unawaited(notifier.codeChanged(_file, text));
+  void type(String text) =>
+      unawaited(notifier.codeChanged(challenge.challengeFiles.first, text));
 
   void dispose() {
     container.dispose();
@@ -329,6 +346,75 @@ void main() {
 
         expect(harness.runner.runCalls, 1);
         expect(harness.runner.evaluateCalls, 1);
+      });
+    });
+  });
+
+  group('EditorChallengeNotifier python console', () {
+    void withPython(void Function(_Harness harness, FakeAsync async) body) =>
+        _withHarness(challengeType: 27, (harness, async) {
+          harness.runner.pythonCalls = 0;
+          body(harness, async);
+        });
+
+    test('should show print output after an edit', () {
+      withPython((harness, async) {
+        harness.runner.onPython = (_) async => (logs: ['a 1'], error: null);
+
+        harness.type('print("a", 1)');
+        async.elapse(const Duration(seconds: 1));
+
+        expect(harness.state.userConsole, ['a 1']);
+        expect(harness.runner.evaluateCalls, 0);
+      });
+    });
+
+    test('should trim a traceback to the user frame', () {
+      withPython((harness, async) {
+        harness.runner.onPython = (_) async => (
+          logs: ['before'],
+          error:
+              'Traceback (most recent call last):\n'
+              '  File "/lib/_pyodide/_base.py", line 1, in eval_code\n'
+              '  File "<exec>", line 3, in <module>\n'
+              "NameError: name 'x' is not defined",
+        );
+
+        harness.type('x');
+        async.elapse(const Duration(seconds: 1));
+
+        expect(harness.state.userConsole, [
+          'before',
+          'File "<exec>", line 3, in <module>\n'
+              "NameError: name 'x' is not defined",
+        ]);
+      });
+    });
+
+    test('should show the timeout message for a timed out worker', () {
+      withPython((harness, async) {
+        harness.runner.onPython = (_) async =>
+            (logs: <String>[], error: 'Test timed out');
+
+        harness.type('while True: pass');
+        async.elapse(const Duration(seconds: 1));
+
+        expect(harness.state.userConsole, [consoleTimeoutMessage]);
+      });
+    });
+
+    test('should hide the error of the seed code', () {
+      _withHarness(challengeType: 27, settleInitialRun: false, (
+        harness,
+        async,
+      ) {
+        harness.runner.onPython = (_) async =>
+            (logs: ['seed'], error: 'NameError');
+
+        harness.state;
+        async.elapse(const Duration(seconds: 2));
+
+        expect(harness.state.userConsole, ['seed']);
       });
     });
   });

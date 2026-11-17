@@ -17,8 +17,8 @@ const _consoleDebounce = Duration(milliseconds: 700);
 const _consoleTimeout = Duration(seconds: 5);
 // NOTE: The webview reports console output asynchronously, so wait briefly after evaluate returns.
 const _consoleSettle = Duration(milliseconds: 100);
-const _timeoutMessage =
-    'Your code took too long to run. Check for an infinite loop.';
+// NOTE: The Python worker enforces its own 5s test timeout, so this only guards a runner that never answers.
+const _pythonConsoleTimeout = Duration(seconds: 30);
 
 enum EditorPanel { instruction, pass }
 
@@ -94,7 +94,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     Duration delay = _consoleDebounce,
     bool showErrors = true,
   }) {
-    if (workerTypeOf(challenge.challengeType) != 'javascript') return;
+    if (workerTypeOf(challenge.challengeType) == 'dom') return;
     _consoleTimer?.cancel();
     _consoleTimer = Timer(delay, () => runConsole(showErrors: showErrors));
   }
@@ -109,6 +109,10 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
 
     try {
       final runner = await ref.read(_runner.future);
+      if (runner.workerType == 'python') {
+        await _runPythonConsole(runner, run, showErrors);
+        return;
+      }
       final String userCode;
       try {
         userCode = await ref
@@ -132,7 +136,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         await Future<void>.delayed(_consoleSettle);
         if (showErrors && error != null) output.add(error);
       } on TimeoutException {
-        if (showErrors) output.add(_timeoutMessage);
+        if (showErrors) output.add(consoleTimeoutMessage);
         ref.invalidate(_runner);
       } finally {
         unawaited(logs.cancel());
@@ -143,6 +147,34 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
     } catch (e, stack) {
       log('Editor: console failed to run', error: e, stackTrace: stack);
     }
+  }
+
+  Future<void> _runPythonConsole(
+    LearnTestRunnerService runner,
+    int run,
+    bool showErrors,
+  ) async {
+    final userCode = await ref
+        .read(learnCodeServiceProvider)
+        .userCode(challenge, (code) async => code);
+    if (!_isCurrentConsoleRun(run)) return;
+
+    final output = <String>[];
+    try {
+      final result = await runner
+          .runPythonConsole(userCode)
+          .timeout(_pythonConsoleTimeout);
+      output.addAll(result.logs);
+      if (showErrors && result.error != null) {
+        output.add(pythonErrorHint(result.error!));
+      }
+    } on TimeoutException {
+      if (showErrors) output.add(consoleTimeoutMessage);
+      ref.invalidate(_runner);
+    }
+
+    if (!_isCurrentConsoleRun(run)) return;
+    state = state.copyWith(userConsole: output);
   }
 
   Future<void> reset() async {
