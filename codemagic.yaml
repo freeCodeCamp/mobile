@@ -17,6 +17,10 @@ workflows:
     environment:
       flutter: 3.47.9
       xcode: latest
+      vars:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
+        HOMEBREW_NO_ANALYTICS: 1
       groups:
         - Mobile
 
@@ -94,6 +98,10 @@ workflows:
     environment:
       flutter: 3.47.9
       xcode: latest
+      vars:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
+        HOMEBREW_NO_ANALYTICS: 1
       ios_signing:
         distribution_type: app_store
         bundle_identifier: org.freecodecamp.ios
