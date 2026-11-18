@@ -1,4 +1,36 @@
 {
  "extends": ["github>freecodecamp/renovate-config"],
- "constraints": { "flutter": "3.47.9" }
+ "constraints": { "flutter": "3.47.9" },
+ "packageRules": [
+  {
+   "groupName": "Firebase",
+   "matchManagers": ["pub"],
+   "matchPackageNames": ["firebase_*"]
+  },
+  {
+   "groupName": "Riverpod",
+   "matchManagers": ["pub"],
+   "matchPackageNames": ["flutter_riverpod", "riverpod_annotation", "riverpod_generator"]
+  },
+  {
+   "groupName": "Freezed",
+   "matchManagers": ["pub"],
+   "matchPackageNames": ["freezed", "freezed_annotation"]
+  },
+  {
+   "groupName": "json_serializable",
+   "matchManagers": ["pub"],
+   "matchPackageNames": ["json_serializable", "json_annotation"]
+  },
+  {
+   "groupName": "go_router",
+   "matchManagers": ["pub"],
+   "matchPackageNames": ["go_router", "go_router_builder"]
+  },
+  {
+   "groupName": "flutter_html",
+   "matchManagers": ["pub"],
+   "matchPackageNames": ["flutter_html", "flutter_html_table"]
+  }
+ ]
 }
