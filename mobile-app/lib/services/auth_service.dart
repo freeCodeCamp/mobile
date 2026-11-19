@@ -1,4 +1,5 @@
 import 'package:freecodecamp/auth/models/user_model.dart';
+import 'package:freecodecamp/auth/repositories/session_repository.dart';
 import 'package:freecodecamp/auth/services/session_service.dart';
 import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,7 +53,10 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> deleteAccount() async {
-    await _session.deleteAccount();
+    final user = state.value;
+    if (user == null) throw SessionExpiredException();
+
+    await _session.deleteAccount(user.id);
     state = const AsyncData(null);
   }
 }

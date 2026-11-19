@@ -63,8 +63,8 @@ class AuthSessionService {
 
   Future<void> logout() => _repo.clearTokens();
 
-  Future<void> deleteAccount() async {
-    await _repo.deleteAccount();
+  Future<void> deleteAccount(String userId) async {
+    await _repo.deleteAccount(userId);
     await _repo.clearTokens();
   }
 

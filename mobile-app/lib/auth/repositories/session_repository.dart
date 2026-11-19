@@ -139,9 +139,9 @@ class AuthSessionRepository {
         as Map<String, dynamic>;
   }
 
-  Future<void> deleteAccount() async {
+  Future<void> deleteAccount(String userId) async {
     await authenticated(
-      (options) => _dio.post<void>('$apiUrl/account/delete', options: options),
+      (options) => _dio.delete<void>('$apiUrl/users/$userId', options: options),
     );
   }
 
