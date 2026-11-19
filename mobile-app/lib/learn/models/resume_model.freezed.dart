@@ -83,7 +83,7 @@ as bool,
 @override
 @pragma('vm:prefer-inline')
 $SuperBlockSummaryCopyWith<$Res> get course {
-
+  
   return $SuperBlockSummaryCopyWith<$Res>(_self.course, (value) {
     return _then(_self.copyWith(course: value));
   });
@@ -92,7 +92,7 @@ $SuperBlockSummaryCopyWith<$Res> get course {
 @override
 @pragma('vm:prefer-inline')
 $BlockCopyWith<$Res> get block {
-
+  
   return $BlockCopyWith<$Res>(_self.block, (value) {
     return _then(_self.copyWith(block: value));
   });
@@ -101,7 +101,7 @@ $BlockCopyWith<$Res> get block {
 @override
 @pragma('vm:prefer-inline')
 $ChallengeOrderCopyWith<$Res> get challenge {
-
+  
   return $ChallengeOrderCopyWith<$Res>(_self.challenge, (value) {
     return _then(_self.copyWith(challenge: value));
   });
@@ -244,7 +244,7 @@ return $default(_that.course,_that.block,_that.challenge,_that.completed,_that.i
 
 class _LearningResume extends LearningResume {
   const _LearningResume({required this.course, required this.block, required this.challenge, required this.completed, required this.isReturning}): super._();
-
+  
 
 @override final  SuperBlockSummary course;
 @override final  Block block;
@@ -317,7 +317,7 @@ as bool,
 @override
 @pragma('vm:prefer-inline')
 $SuperBlockSummaryCopyWith<$Res> get course {
-
+  
   return $SuperBlockSummaryCopyWith<$Res>(_self.course, (value) {
     return _then(_self.copyWith(course: value));
   });
@@ -326,7 +326,7 @@ $SuperBlockSummaryCopyWith<$Res> get course {
 @override
 @pragma('vm:prefer-inline')
 $BlockCopyWith<$Res> get block {
-
+  
   return $BlockCopyWith<$Res>(_self.block, (value) {
     return _then(_self.copyWith(block: value));
   });
@@ -335,7 +335,7 @@ $BlockCopyWith<$Res> get block {
 @override
 @pragma('vm:prefer-inline')
 $ChallengeOrderCopyWith<$Res> get challenge {
-
+  
   return $ChallengeOrderCopyWith<$Res>(_self.challenge, (value) {
     return _then(_self.copyWith(challenge: value));
   });

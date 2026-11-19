@@ -110,7 +110,7 @@ Installed apps already hold this data in the documents directory and SharedPrefe
 
 - No `///` doc comments. Use plain one-line `//` only where a reader would otherwise change the code and break it.
 - Strings are hardcoded English. There is no localisation.
-- No unit tests yet. The curriculum e2e (`integration_test/test_runner/curriculum_test.dart`, run via `dart integration_test_runner.dart --curriculum`) is the required test. Other e2e tests live in `integration_test/<feature>/`:
+- Unit tests live in `test/` (run `flutter test`) and cover viewmodels with fake services via provider overrides. Use `fake_async` for timers. The curriculum e2e (`integration_test/test_runner/curriculum_test.dart`, run via `dart integration_test_runner.dart --curriculum`) is the required test. Other e2e tests live in `integration_test/<feature>/`:
   - Use type-based finders (`find.byType`, `tester.widget<T>().field`). Widgets used as finders (e.g. `NewsPostHeader`) stay public.
   - Device stdout is lossy on long runs. Return results through `binding.reportData`.
 - Use `ErrorRetry` (`lib/widgets/error_retry.dart`) for async error states.
