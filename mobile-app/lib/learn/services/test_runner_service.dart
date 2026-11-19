@@ -307,17 +307,11 @@ const _skipBabelErrorChallengeIds = {
   '6a1c49231334592cc5a4c6b0', // step 5
 };
 
-String syntaxErrorHint(BabelException error) {
-  final match = RegExp(
-    r'SyntaxError:.*?\((\d+):(\d+)\)',
-  ).firstMatch(error.message);
-  if (match == null) {
-    return 'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
-  }
-
-  final line = int.parse(match.group(1)!) - 1;
-  return 'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
-}
+// NOTE: Babel names the missing filename "unknown: " and _transpileScript appends the location a second time; strip both and keep the code frame.
+String syntaxErrorMessage(BabelException error) => error.message
+    .replaceFirst(RegExp(r'^SyntaxError: unknown: '), 'SyntaxError: ')
+    .replaceFirst(RegExp(r' \(\d+:\d+\)$'), '')
+    .trimRight();
 
 // NOTE: Pyodide tracebacks open with its own frames, so keep only the part from the user's code onward.
 String pythonErrorHint(String message) {

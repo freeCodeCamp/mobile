@@ -288,15 +288,24 @@ void main() {
       });
     });
 
-    test('should show the syntax error hint in the console', () {
+    test('should show the syntax error in the console', () {
       _withHarness((harness, async) {
-        final error = BabelException('SyntaxError: Unexpected token (3:5)');
-        harness.runner.transpileError = error;
+        harness.runner.transpileError = BabelException(
+          'SyntaxError: unknown: Unexpected token, expected "," (1:17)\n'
+          '\n'
+          "> 1 | console.log('foo'\n"
+          '    |                  ^ (1:17)',
+        );
 
         harness.type("console.log('foo'");
         async.elapse(const Duration(seconds: 2));
 
-        expect(harness.state.userConsole, [syntaxErrorHint(error)]);
+        expect(harness.state.userConsole, [
+          'SyntaxError: Unexpected token, expected "," (1:17)\n'
+              '\n'
+              "> 1 | console.log('foo'\n"
+              '    |                  ^',
+        ]);
         expect(harness.runner.evaluateCalls, 0);
       });
     });

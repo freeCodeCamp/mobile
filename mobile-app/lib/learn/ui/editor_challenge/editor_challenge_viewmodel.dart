@@ -123,7 +123,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
             );
       } on BabelException catch (e) {
         if (showErrors && _isCurrentConsoleRun(run)) {
-          state = state.copyWith(userConsole: [syntaxErrorHint(e)]);
+          state = state.copyWith(userConsole: [syntaxErrorMessage(e)]);
         }
         return;
       }
@@ -238,7 +238,7 @@ class EditorChallengeNotifier extends _$EditorChallengeNotifier {
         );
       } on BabelException catch (e) {
         if (!isCurrent()) return;
-        state = state.copyWith(userConsole: [syntaxErrorHint(e)]);
+        state = state.copyWith(userConsole: [syntaxErrorMessage(e)]);
         return;
       }
       if (!isCurrent()) return;

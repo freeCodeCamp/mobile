@@ -83,7 +83,10 @@ class ConsoleOutput extends StatelessWidget {
 
   final List<String> userConsole;
 
-  static final _errorPattern = RegExp(r'^(?:Uncaught\s+)?(?:\w*Error):');
+  // NOTE: pythonErrorHint trims tracebacks to start at the user's frame, so those open with 'File "<exec>"'.
+  static final _errorPattern = RegExp(
+    r'^(?:(?:Uncaught\s+)?\w*Error:|File "<exec>", line \d+|Traceback \(most recent call last\):)',
+  );
 
   @override
   Widget build(BuildContext context) {
