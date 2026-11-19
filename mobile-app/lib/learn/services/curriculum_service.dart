@@ -142,6 +142,7 @@ class LearnCurriculumService {
       for (final paragraph in raw['intro'] as List? ?? const [])
         if (paragraph is String && paragraph.trim().isNotEmpty) paragraph,
     ];
+    final seenIds = <String>{};
 
     return Block(
       superBlock: superBlock,
@@ -155,7 +156,10 @@ class LearnCurriculumService {
           : description,
       challenges: [
         for (final challenge in meta['challengeOrder'] as List)
-          ChallengeOrder.fromJson(challenge as Map<String, dynamic>),
+          if (challenge is Map<String, dynamic> &&
+              challenge['id'] is String &&
+              seenIds.add(challenge['id'] as String))
+            ChallengeOrder.fromJson(challenge),
       ],
       isDisabledByOverride: isDisabled,
     );

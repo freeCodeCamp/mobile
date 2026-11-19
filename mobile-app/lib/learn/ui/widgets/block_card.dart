@@ -268,13 +268,17 @@ class _Progress extends StatelessWidget {
   Widget build(BuildContext context) {
     final total = block.challenges.length;
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
-    if (done == total) return _CompletedLabel(color: color);
+    if (total > 0 && done == total) return _CompletedLabel(color: color);
+
+    final progress = (total == 0 || done == 0)
+        ? 0.01
+        : (done / total).clamp(0.0, 1.0);
 
     return Padding(
       padding: const EdgeInsets.all(10),
       child: LinearProgressIndicator(
         minHeight: 12,
-        value: done == 0 ? 0.01 : done / total,
+        value: progress,
         valueColor: AlwaysStoppedAnimation<Color>(color),
         backgroundColor: _tileColor,
         borderRadius: BorderRadius.circular(10),

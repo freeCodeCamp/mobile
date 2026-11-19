@@ -201,6 +201,10 @@ class _BlockProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final total = block.challenges.length;
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
+    final progress = total == 0 ? 0.0 : (done / total).clamp(0.0, 1.0);
+    final percentage = total == 0
+        ? 0
+        : ((done * 100) / total).clamp(0, 100).round();
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -208,12 +212,12 @@ class _BlockProgress extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           LinearProgressIndicator(
-            value: done / total,
+            value: progress,
             minHeight: 7,
             backgroundColor: FccColors.gray75,
           ),
           const SizedBox(height: 16),
-          Text('${(done * 100 / total).round()}% Completed'),
+          Text('$percentage% Completed'),
         ],
       ),
     );
