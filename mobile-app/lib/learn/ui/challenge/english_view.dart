@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/ui/challenge/english_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/answer_feedback.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
@@ -32,22 +33,31 @@ class EnglishView extends ConsumerStatefulWidget {
 
 class _EnglishViewState extends ConsumerState<EnglishView> {
   late final _blanks = widget.challenge.fillInTheBlank?.blanks ?? const [];
-  late final _inputs = [for (final _ in _blanks) TextEditingController()];
-  late final _assignments = List.filled(
-    widget.challenge.assignments.length,
-    false,
-  );
-  List<bool>? _results;
-  bool _exercise = false;
+  EnglishChallengeNotifierProvider get _provider =>
+      englishChallengeProvider(widget.challenge);
+  EnglishChallengeState get _state => ref.read(_provider);
+  EnglishChallengeNotifier get _notifier => ref.read(_provider.notifier);
+  late final List<TextEditingController> _inputs;
+  List<bool> get _assignments => _state.assignments;
+  List<bool>? get _results => _state.results;
+  bool get _exercise => _state.exercise;
   bool _transcript = false;
 
   void _toggleTranscript() => setState(() => _transcript = !_transcript);
 
-  bool get _allCorrect => _results?.every((r) => r) ?? false;
+  bool get _allCorrect => _state.allCorrect;
   bool get _split =>
       widget.challenge.scene != null && widget.challenge.fillInTheBlank != null;
 
-  void _showExercise(bool value) => setState(() => _exercise = value);
+  void _showExercise(bool value) => _notifier.showExercise(value);
+
+  @override
+  void initState() {
+    super.initState();
+    _inputs = [
+      for (final answer in _state.answers) TextEditingController(text: answer),
+    ];
+  }
 
   @override
   void dispose() {
@@ -57,15 +67,11 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
     super.dispose();
   }
 
-  void _check() => setState(() {
-    _results = [
-      for (final (i, blank) in _blanks.indexed)
-        _inputs[i].text.trim().toLowerCase() == blank.answer.toLowerCase(),
-    ];
-  });
+  void _check() => _notifier.checkAnswers();
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(_provider);
     final challenge = widget.challenge;
     final completed = ref.watch(
       authProvider.select(
@@ -74,8 +80,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
             false,
       ),
     );
-    final firstWrong = _results?.indexOf(false) ?? -1;
-    final feedback = firstWrong == -1 ? '' : _blanks[firstWrong].feedback;
+    final feedback = _state.feedback;
     final dialogue = challenge.challengeType == 21;
     final exercise = _split && _exercise;
     final showLesson = !exercise;
@@ -87,7 +92,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
           AssignmentTile(
             label: assignment,
             value: _assignments[i],
-            onToggle: () => setState(() => _assignments[i] = !_assignments[i]),
+            onToggle: () => _notifier.toggleAssignment(i),
           ),
     ];
     final scaffold = Scaffold(
@@ -223,7 +228,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
                 child: ChallengeButton(
                   label: 'Continue to exercise',
                   style: _buttonStyle,
-                  onPressed: _assignments.every((done) => done)
+                  onPressed: _state.assignmentsDone
                       ? () => _showExercise(true)
                       : null,
                 ),
@@ -277,14 +282,12 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
               ? 'Continue'
               : 'Next lesson',
           buttonStyle: _buttonStyle,
-          enabled: _assignments.every((done) => done),
+          enabled: _state.assignmentsDone,
         )
       : ChallengeButton(
           label: _results == null ? 'Check answer' : 'Check again',
           style: _buttonStyle,
-          onPressed: _inputs.every((input) => input.text.trim().isNotEmpty)
-              ? _check
-              : null,
+          onPressed: _state.canCheck ? _check : null,
         );
 
   ButtonStyle get _buttonStyle => FilledButton.styleFrom(
@@ -373,7 +376,7 @@ class _EnglishViewState extends ConsumerState<EnglishView> {
         ),
         child: TextField(
           controller: _inputs[index],
-          onChanged: (_) => setState(() => _results = null),
+          onChanged: (value) => _notifier.updateAnswer(index, value),
           textInputAction: index == _inputs.length - 1
               ? TextInputAction.done
               : TextInputAction.next,
