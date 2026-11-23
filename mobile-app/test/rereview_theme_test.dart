@@ -201,77 +201,121 @@ void main() {
     );
   }
 
-  testWidgets(
-    'off switch dimensions, semantics, activation and native on state',
-    (tester) async {
-      final semantics = tester.ensureSemantics();
-      var value = false;
-      await pump(
-        tester,
-        StatefulBuilder(
-          builder: (context, setState) => FccSwitch(
-            value: value,
-            onChanged: (next) => setState(() => value = next),
-            semanticLabel: 'Daily challenge reminder',
-          ),
+  testWidgets('switch dimensions, semantics, activation and themed on state', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    var value = false;
+    await pump(
+      tester,
+      StatefulBuilder(
+        builder: (context, setState) => FccSwitch(
+          value: value,
+          onChanged: (next) => setState(() => value = next),
+          semanticLabel: 'Daily challenge reminder',
         ),
-      );
-      final track = find.byWidgetPredicate(
-        (widget) =>
-            widget is Container &&
-            widget.constraints?.maxWidth == 48 &&
-            widget.constraints?.maxHeight == 28,
-      );
-      final thumb = find.byWidgetPredicate(
-        (widget) =>
-            widget is Container &&
-            widget.constraints?.maxWidth == 22 &&
-            widget.constraints?.maxHeight == 22,
-      );
-      expect(tester.getSize(track), const Size(48, 28));
-      expect(tester.getSize(thumb), const Size(22, 22));
-      final decoration =
-          tester.widget<Container>(track).decoration! as BoxDecoration;
-      expect(decoration.color, const Color(0xff3f3557));
-      expect(
-        (decoration.border! as Border).top,
-        const BorderSide(color: Color(0xff7d709d)),
-      );
-      expect(
-        (tester.widget<Container>(thumb).decoration! as BoxDecoration).color,
-        const Color(0xffcabeea),
-      );
-      expect(
-        tester.getSize(find.byType(FccSwitch)).height,
-        greaterThanOrEqualTo(48),
-      );
-      expect(
-        tester.getSemantics(find.byType(FccSwitch)).flagsCollection.isToggled,
-        Tristate.isFalse,
-      );
-      await tester.tap(find.byType(FccSwitch));
-      await tester.pumpAndSettle();
-      expect(value, isTrue);
-      expect(
-        tester.getSemantics(find.byType(FccSwitch)).flagsCollection.isToggled,
-        Tristate.isTrue,
-      );
-      expect(find.byType(Switch), findsOneWidget);
-      final native = tester.widget<Switch>(find.byType(Switch));
-      expect(native.thumbColor, isNull);
-      expect(native.trackColor, isNull);
-      final theme = Theme.of(tester.element(find.byType(Switch))).switchTheme;
-      expect(
-        theme.trackColor!.resolve({WidgetState.selected}),
-        const Color(0xff9ea1fe),
-      );
-      expect(
-        theme.thumbColor!.resolve({WidgetState.selected}),
-        const Color(0xff2b2140),
-      );
-      semantics.dispose();
-    },
-  );
+      ),
+    );
+    final track = find.byWidgetPredicate(
+      (widget) =>
+          widget is Container &&
+          widget.constraints?.maxWidth == 48 &&
+          widget.constraints?.maxHeight == 28,
+    );
+    final thumb = find.byWidgetPredicate(
+      (widget) =>
+          widget is Container &&
+          widget.constraints?.maxWidth == 22 &&
+          widget.constraints?.maxHeight == 22,
+    );
+    expect(tester.getSize(track), const Size(48, 28));
+    expect(tester.getSize(thumb), const Size(22, 22));
+    final decoration =
+        tester
+                .widget<Container>(
+                  find
+                      .descendant(of: track, matching: find.byType(Container))
+                      .first,
+                )
+                .decoration!
+            as BoxDecoration;
+    expect(decoration.color, const Color(0xff3f3557));
+    expect(
+      (decoration.border! as Border).top,
+      const BorderSide(color: Color(0xff7d709d)),
+    );
+    expect(
+      (tester.widget<Container>(thumb).decoration! as BoxDecoration).color,
+      const Color(0xffcabeea),
+    );
+    expect(
+      tester.getSize(find.byType(FccSwitch)).height,
+      greaterThanOrEqualTo(48),
+    );
+    expect(
+      tester.getSemantics(find.byType(FccSwitch)).flagsCollection.isToggled,
+      Tristate.isFalse,
+    );
+    await tester.tap(find.byType(FccSwitch));
+    await tester.pumpAndSettle();
+    expect(value, isTrue);
+    expect(
+      tester.getSemantics(find.byType(FccSwitch)).flagsCollection.isToggled,
+      Tristate.isTrue,
+    );
+    expect(find.byType(Switch), findsNothing);
+    final onTheme = Theme.of(
+      tester.element(find.byType(FccSwitch)),
+    ).switchTheme;
+    expect(
+      (tester
+                  .widget<Container>(
+                    find
+                        .descendant(of: track, matching: find.byType(Container))
+                        .first,
+                  )
+                  .decoration!
+              as BoxDecoration)
+          .color,
+      onTheme.trackColor!.resolve({WidgetState.selected}),
+    );
+    expect(
+      (tester.widget<Container>(thumb).decoration! as BoxDecoration).color,
+      onTheme.thumbColor!.resolve({WidgetState.selected}),
+    );
+    semantics.dispose();
+  });
+
+  testWidgets('switch thumb slides between states instead of jumping', (
+    tester,
+  ) async {
+    var value = false;
+    await pump(
+      tester,
+      StatefulBuilder(
+        builder: (context, setState) => FccSwitch(
+          value: value,
+          onChanged: (next) => setState(() => value = next),
+          semanticLabel: 'Sound effects',
+        ),
+      ),
+    );
+    final thumb = find.byWidgetPredicate(
+      (widget) =>
+          widget is Container &&
+          widget.constraints?.maxWidth == 22 &&
+          widget.constraints?.maxHeight == 22,
+    );
+    final start = tester.getCenter(thumb).dx;
+    await tester.tap(find.byType(FccSwitch));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    final middle = tester.getCenter(thumb).dx;
+    await tester.pumpAndSettle();
+    final end = tester.getCenter(thumb).dx;
+    expect(middle, greaterThan(start));
+    expect(middle, lessThan(end));
+  });
 
   testWidgets('segments share track, pill and accessible targets at1.3scale', (
     tester,

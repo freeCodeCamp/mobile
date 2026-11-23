@@ -113,35 +113,6 @@ class PodcastEpisodeTile extends StatelessWidget {
                         episode: episode,
                         size: 19,
                       ),
-                      PopupMenuButton<String>(
-                        tooltip: 'Episode options',
-                        icon: Icon(
-                          Icons.more_horiz_rounded,
-                          size: 20,
-                          color: colors.onSurfaceVariant,
-                        ),
-                        padding: EdgeInsets.zero,
-                        onSelected: (value) {
-                          if (value == 'details') _open(context);
-                          if (value == 'share') {
-                            sharePodcast(
-                              context,
-                              episode.title,
-                              episode.audioUrl,
-                            );
-                          }
-                        },
-                        itemBuilder: (_) => const [
-                          PopupMenuItem(
-                            value: 'details',
-                            child: Text('Episode details'),
-                          ),
-                          PopupMenuItem(
-                            value: 'share',
-                            child: Text('Share episode'),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ],

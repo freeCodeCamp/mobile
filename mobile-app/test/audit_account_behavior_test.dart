@@ -339,7 +339,7 @@ void main() {
       final rect = tester.getRect(find.text('freecodecamp.org/audit-learner.'));
       expect(rect.right, lessThanOrEqualTo(374));
       expect(tester.takeException(), isNull);
-      await tester.tap(find.byType(BackButton));
+      await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
       expect(find.byType(SettingsView), findsOneWidget);
     },
@@ -463,14 +463,19 @@ void main() {
     expect(find.text('Use image URL'), findsOneWidget);
   });
 
-  testWidgets('should save visibility immediately and announce Saved', (
+  Future<void> pumpVisibility(WidgetTester tester, _MemoryAuth auth) async {
+    final router = await _pumpScreen(tester, const SizedBox.shrink(), auth);
+    unawaited(router.push(profileVisibilityPath));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('should save all visibility changes with one Save', (
     tester,
   ) async {
     final auth = _MemoryAuth();
-    await _pumpScreen(tester, const ProfileVisibilityView(), auth);
-    expect(find.byType(BackButton), findsOneWidget);
-    expect(find.text('Cancel'), findsNothing);
-    expect(find.text('Save'), findsNothing);
+    await pumpVisibility(tester, auth);
+    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text('Save'), findsOneWidget);
     expect(find.text('Only you can see your profile.'), findsOneWidget);
     expect(
       tester
@@ -480,8 +485,7 @@ void main() {
     );
     await tester.tap(find.text('Public'));
     await tester.pumpAndSettle();
-    expect(auth._saves, 1);
-    expect(find.text('Saved'), findsOneWidget);
+    expect(auth._saves, 0);
     expect(find.text('freecodecamp.org/audit-learner.'), findsOneWidget);
     expect(
       tester
@@ -491,19 +495,25 @@ void main() {
     );
     await tester.tap(_switch('Name'));
     await tester.pumpAndSettle();
-    expect(auth._saves, 2);
+    expect(auth._saves, 0);
     expect(tester.widget<FccSwitch>(_switch('Name')).value, isTrue);
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(auth._saves, 1);
+    expect(find.byType(ProfileVisibilityView), findsNothing);
   });
 
-  testWidgets('should retry a failed immediate save and not announce success', (
+  testWidgets('should keep the screen open and retry after a failed save', (
     tester,
   ) async {
     final auth = _MemoryAuth().._failSave = true;
-    await _pumpScreen(tester, const ProfileVisibilityView(), auth);
+    await pumpVisibility(tester, auth);
     await tester.tap(find.text('Public'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
     expect(auth._saves, 1);
-    expect(find.text('Saved'), findsNothing);
+    expect(find.byType(ProfileVisibilityView), findsOneWidget);
     expect(
       find.text('Could not save your visibility settings. Please try again.'),
       findsOneWidget,
@@ -512,7 +522,7 @@ void main() {
     await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
     expect(auth._saves, 2);
-    expect(find.text('Saved'), findsOneWidget);
+    expect(find.byType(ProfileVisibilityView), findsNothing);
   });
 
   testWidgets('should not show the bottom tab bar on Profile visibility', (
@@ -522,10 +532,12 @@ void main() {
     expect(find.byType(AppNavigationFooter), findsNothing);
   });
 
-  testWidgets('should list About you as Name, Location, About', (tester) async {
+  testWidgets('should list About you as Name, Stated location, About', (
+    tester,
+  ) async {
     await _pumpScreen(tester, const ProfileVisibilityView(), _MemoryAuth());
     final top = [
-      for (final label in ['Name', 'Location', 'About'])
+      for (final label in ['Name', 'Stated location', 'About'])
         tester.getTopLeft(_switch(label)).dy,
     ];
     expect(top, orderedEquals([...top]..sort()));
@@ -533,10 +545,13 @@ void main() {
 
   testWidgets('should disable repeated changes while saving', (tester) async {
     final auth = _MemoryAuth().._saveGate = Completer<void>();
-    await _pumpScreen(tester, const ProfileVisibilityView(), auth);
+    await pumpVisibility(tester, auth);
     await tester.tap(find.text('Public'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save'));
     await tester.pump();
     expect(auth._saves, 1);
+    expect(find.text('Saving'), findsOneWidget);
     expect(
       tester
           .widget<SegmentedTabs<bool>>(find.byType(SegmentedTabs<bool>))
@@ -545,7 +560,7 @@ void main() {
     );
     auth._saveGate!.complete();
     await tester.pumpAndSettle();
-    expect(find.text('Saved'), findsOneWidget);
+    expect(find.byType(ProfileVisibilityView), findsNothing);
   });
 
   testWidgets('should omit Socrates and Campfire and open Profile visibility', (

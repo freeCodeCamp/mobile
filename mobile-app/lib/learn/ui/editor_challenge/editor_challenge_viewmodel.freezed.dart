@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EditorChallengeState {
 
- ChallengeFile get file; EditorPanel get panel; EditorBody get body; bool get testsRunning; bool get passed; List<String> get testConsole; List<String> get userConsole; List<bool>? get testResults; int get resetCount;
+ ChallengeFile get file; EditorPanel get panel; EditorBody get body; bool get testsRunning; bool get passed; List<String> get userConsole; List<bool>? get testResults; int get resetCount;
 /// Create a copy of EditorChallengeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $EditorChallengeStateCopyWith<EditorChallengeState> get copyWith => _$EditorChal
 @override
 bool operator ==(Object other) {
   final _this = this as EditorChallengeState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditorChallengeState&&(identical(other.file, _this.file) || other.file == _this.file)&&(identical(other.panel, _this.panel) || other.panel == _this.panel)&&(identical(other.body, _this.body) || other.body == _this.body)&&(identical(other.testsRunning, _this.testsRunning) || other.testsRunning == _this.testsRunning)&&(identical(other.passed, _this.passed) || other.passed == _this.passed)&&const DeepCollectionEquality().equals(other.testConsole, _this.testConsole)&&const DeepCollectionEquality().equals(other.userConsole, _this.userConsole)&&const DeepCollectionEquality().equals(other.testResults, _this.testResults)&&(identical(other.resetCount, _this.resetCount) || other.resetCount == _this.resetCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EditorChallengeState&&(identical(other.file, _this.file) || other.file == _this.file)&&(identical(other.panel, _this.panel) || other.panel == _this.panel)&&(identical(other.body, _this.body) || other.body == _this.body)&&(identical(other.testsRunning, _this.testsRunning) || other.testsRunning == _this.testsRunning)&&(identical(other.passed, _this.passed) || other.passed == _this.passed)&&const DeepCollectionEquality().equals(other.userConsole, _this.userConsole)&&const DeepCollectionEquality().equals(other.testResults, _this.testResults)&&(identical(other.resetCount, _this.resetCount) || other.resetCount == _this.resetCount));
 }
 
 
 @override
 int get hashCode {
   final _this = this as EditorChallengeState;
-  return Object.hash(runtimeType,_this.file,_this.panel,_this.body,_this.testsRunning,_this.passed,const DeepCollectionEquality().hash(_this.testConsole),const DeepCollectionEquality().hash(_this.userConsole),const DeepCollectionEquality().hash(_this.testResults),_this.resetCount);
+  return Object.hash(runtimeType,_this.file,_this.panel,_this.body,_this.testsRunning,_this.passed,const DeepCollectionEquality().hash(_this.userConsole),const DeepCollectionEquality().hash(_this.testResults),_this.resetCount);
 }
 
 @override
 String toString() {
   final _this = this as EditorChallengeState;
-  return 'EditorChallengeState(file: ${_this.file}, panel: ${_this.panel}, body: ${_this.body}, testsRunning: ${_this.testsRunning}, passed: ${_this.passed}, testConsole: ${_this.testConsole}, userConsole: ${_this.userConsole}, testResults: ${_this.testResults}, resetCount: ${_this.resetCount})';
+  return 'EditorChallengeState(file: ${_this.file}, panel: ${_this.panel}, body: ${_this.body}, testsRunning: ${_this.testsRunning}, passed: ${_this.passed}, userConsole: ${_this.userConsole}, testResults: ${_this.testResults}, resetCount: ${_this.resetCount})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $EditorChallengeStateCopyWith<$Res>  {
   factory $EditorChallengeStateCopyWith(EditorChallengeState value, $Res Function(EditorChallengeState) _then) = _$EditorChallengeStateCopyWithImpl;
 @useResult
 $Res call({
- ChallengeFile file, EditorPanel panel, EditorBody body, bool testsRunning, bool passed, List<String> testConsole, List<String> userConsole, List<bool>? testResults, int resetCount
+ ChallengeFile file, EditorPanel panel, EditorBody body, bool testsRunning, bool passed, List<String> userConsole, List<bool>? testResults, int resetCount
 });
 
 
@@ -68,15 +68,14 @@ class _$EditorChallengeStateCopyWithImpl<$Res>
 
 /// Create a copy of EditorChallengeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? file = null,Object? panel = null,Object? body = null,Object? testsRunning = null,Object? passed = null,Object? testConsole = null,Object? userConsole = null,Object? testResults = freezed,Object? resetCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? file = null,Object? panel = null,Object? body = null,Object? testsRunning = null,Object? passed = null,Object? userConsole = null,Object? testResults = freezed,Object? resetCount = null,}) {
   return _then(EditorChallengeState(
 file: null == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
 as ChallengeFile,panel: null == panel ? _self.panel : panel // ignore: cast_nullable_to_non_nullable
 as EditorPanel,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
 as EditorBody,testsRunning: null == testsRunning ? _self.testsRunning : testsRunning // ignore: cast_nullable_to_non_nullable
 as bool,passed: null == passed ? _self.passed : passed // ignore: cast_nullable_to_non_nullable
-as bool,testConsole: null == testConsole ? _self.testConsole : testConsole // ignore: cast_nullable_to_non_nullable
-as List<String>,userConsole: null == userConsole ? _self.userConsole : userConsole // ignore: cast_nullable_to_non_nullable
+as bool,userConsole: null == userConsole ? _self.userConsole : userConsole // ignore: cast_nullable_to_non_nullable
 as List<String>,testResults: freezed == testResults ? _self.testResults : testResults // ignore: cast_nullable_to_non_nullable
 as List<bool>?,resetCount: null == resetCount ? _self.resetCount : resetCount // ignore: cast_nullable_to_non_nullable
 as int,
@@ -173,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChallengeFile file,  EditorPanel panel,  EditorBody body,  bool testsRunning,  bool passed,  List<String> testConsole,  List<String> userConsole,  List<bool>? testResults,  int resetCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChallengeFile file,  EditorPanel panel,  EditorBody body,  bool testsRunning,  bool passed,  List<String> userConsole,  List<bool>? testResults,  int resetCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EditorChallengeState() when $default != null:
-return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passed,_that.testConsole,_that.userConsole,_that.testResults,_that.resetCount);case _:
+return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passed,_that.userConsole,_that.testResults,_that.resetCount);case _:
   return orElse();
 
 }
@@ -194,10 +193,10 @@ return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChallengeFile file,  EditorPanel panel,  EditorBody body,  bool testsRunning,  bool passed,  List<String> testConsole,  List<String> userConsole,  List<bool>? testResults,  int resetCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChallengeFile file,  EditorPanel panel,  EditorBody body,  bool testsRunning,  bool passed,  List<String> userConsole,  List<bool>? testResults,  int resetCount)  $default,) {final _that = this;
 switch (_that) {
 case _EditorChallengeState():
-return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passed,_that.testConsole,_that.userConsole,_that.testResults,_that.resetCount);case _:
+return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passed,_that.userConsole,_that.testResults,_that.resetCount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -214,10 +213,10 @@ return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChallengeFile file,  EditorPanel panel,  EditorBody body,  bool testsRunning,  bool passed,  List<String> testConsole,  List<String> userConsole,  List<bool>? testResults,  int resetCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChallengeFile file,  EditorPanel panel,  EditorBody body,  bool testsRunning,  bool passed,  List<String> userConsole,  List<bool>? testResults,  int resetCount)?  $default,) {final _that = this;
 switch (_that) {
 case _EditorChallengeState() when $default != null:
-return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passed,_that.testConsole,_that.userConsole,_that.testResults,_that.resetCount);case _:
+return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passed,_that.userConsole,_that.testResults,_that.resetCount);case _:
   return null;
 
 }
@@ -229,7 +228,7 @@ return $default(_that.file,_that.panel,_that.body,_that.testsRunning,_that.passe
 
 
 class _EditorChallengeState implements EditorChallengeState {
-  const _EditorChallengeState({required this.file, this.panel = EditorPanel.instruction, this.body = EditorBody.editor, this.testsRunning = false, this.passed = false,  List<String> testConsole = const [],  List<String> userConsole = const [],  List<bool>? testResults, this.resetCount = 0}): _testConsole = testConsole,_userConsole = userConsole,_testResults = testResults;
+  const _EditorChallengeState({required this.file, this.panel = EditorPanel.instruction, this.body = EditorBody.editor, this.testsRunning = false, this.passed = false,  List<String> userConsole = const [],  List<bool>? testResults, this.resetCount = 0}): _userConsole = userConsole,_testResults = testResults;
   
 
 @override final  ChallengeFile file;
@@ -237,13 +236,6 @@ class _EditorChallengeState implements EditorChallengeState {
 @override@JsonKey() final  EditorBody body;
 @override@JsonKey() final  bool testsRunning;
 @override@JsonKey() final  bool passed;
- final  List<String> _testConsole;
-@override@JsonKey() List<String> get testConsole {
-  if (_testConsole is EqualUnmodifiableListView) return _testConsole;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_testConsole);
-}
-
  final  List<String> _userConsole;
 @override@JsonKey() List<String> get userConsole {
   if (_userConsole is EqualUnmodifiableListView) return _userConsole;
@@ -272,18 +264,18 @@ _$EditorChallengeStateCopyWith<_EditorChallengeState> get copyWith => __$EditorC
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditorChallengeState&&(identical(other.file, file) || other.file == file)&&(identical(other.panel, panel) || other.panel == panel)&&(identical(other.body, body) || other.body == body)&&(identical(other.testsRunning, testsRunning) || other.testsRunning == testsRunning)&&(identical(other.passed, passed) || other.passed == passed)&&const DeepCollectionEquality().equals(other.testConsole, _testConsole)&&const DeepCollectionEquality().equals(other.userConsole, _userConsole)&&const DeepCollectionEquality().equals(other.testResults, _testResults)&&(identical(other.resetCount, resetCount) || other.resetCount == resetCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EditorChallengeState&&(identical(other.file, file) || other.file == file)&&(identical(other.panel, panel) || other.panel == panel)&&(identical(other.body, body) || other.body == body)&&(identical(other.testsRunning, testsRunning) || other.testsRunning == testsRunning)&&(identical(other.passed, passed) || other.passed == passed)&&const DeepCollectionEquality().equals(other.userConsole, _userConsole)&&const DeepCollectionEquality().equals(other.testResults, _testResults)&&(identical(other.resetCount, resetCount) || other.resetCount == resetCount));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,file,panel,body,testsRunning,passed,const DeepCollectionEquality().hash(_testConsole),const DeepCollectionEquality().hash(_userConsole),const DeepCollectionEquality().hash(_testResults),resetCount);
+    return Object.hash(runtimeType,file,panel,body,testsRunning,passed,const DeepCollectionEquality().hash(_userConsole),const DeepCollectionEquality().hash(_testResults),resetCount);
 }
 
 @override
 String toString() {
-    return 'EditorChallengeState(file: $file, panel: $panel, body: $body, testsRunning: $testsRunning, passed: $passed, testConsole: $testConsole, userConsole: $userConsole, testResults: $testResults, resetCount: $resetCount)';
+    return 'EditorChallengeState(file: $file, panel: $panel, body: $body, testsRunning: $testsRunning, passed: $passed, userConsole: $userConsole, testResults: $testResults, resetCount: $resetCount)';
 }
 
 
@@ -294,7 +286,7 @@ abstract mixin class _$EditorChallengeStateCopyWith<$Res> implements $EditorChal
   factory _$EditorChallengeStateCopyWith(_EditorChallengeState value, $Res Function(_EditorChallengeState) _then) = __$EditorChallengeStateCopyWithImpl;
 @override @useResult
 $Res call({
- ChallengeFile file, EditorPanel panel, EditorBody body, bool testsRunning, bool passed, List<String> testConsole, List<String> userConsole, List<bool>? testResults, int resetCount
+ ChallengeFile file, EditorPanel panel, EditorBody body, bool testsRunning, bool passed, List<String> userConsole, List<bool>? testResults, int resetCount
 });
 
 
@@ -311,15 +303,14 @@ class __$EditorChallengeStateCopyWithImpl<$Res>
 
 /// Create a copy of EditorChallengeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? file = null,Object? panel = null,Object? body = null,Object? testsRunning = null,Object? passed = null,Object? testConsole = null,Object? userConsole = null,Object? testResults = freezed,Object? resetCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? file = null,Object? panel = null,Object? body = null,Object? testsRunning = null,Object? passed = null,Object? userConsole = null,Object? testResults = freezed,Object? resetCount = null,}) {
   return _then(_EditorChallengeState(
 file: null == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
 as ChallengeFile,panel: null == panel ? _self.panel : panel // ignore: cast_nullable_to_non_nullable
 as EditorPanel,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
 as EditorBody,testsRunning: null == testsRunning ? _self.testsRunning : testsRunning // ignore: cast_nullable_to_non_nullable
 as bool,passed: null == passed ? _self.passed : passed // ignore: cast_nullable_to_non_nullable
-as bool,testConsole: null == testConsole ? _self._testConsole : testConsole // ignore: cast_nullable_to_non_nullable
-as List<String>,userConsole: null == userConsole ? _self._userConsole : userConsole // ignore: cast_nullable_to_non_nullable
+as bool,userConsole: null == userConsole ? _self._userConsole : userConsole // ignore: cast_nullable_to_non_nullable
 as List<String>,testResults: freezed == testResults ? _self._testResults : testResults // ignore: cast_nullable_to_non_nullable
 as List<bool>?,resetCount: null == resetCount ? _self.resetCount : resetCount // ignore: cast_nullable_to_non_nullable
 as int,
