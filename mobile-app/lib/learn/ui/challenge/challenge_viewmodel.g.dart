@@ -26,7 +26,7 @@ final class ChallengeScreenProvider
     required ChallengeScreenFamily super.from,
     required (String, String, String) super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'challengeScreenProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -66,7 +66,7 @@ final class ChallengeScreenProvider
   }
 }
 
-String _$challengeScreenHash() => r'a20e661d70ccf83b36b82193cfd9665e1086e0d1';
+String _$challengeScreenHash() => r'306b813d6c450cc8eb94aa4f3cf461886bf66548';
 
 final class ChallengeScreenFamily extends $Family
     with
@@ -76,7 +76,7 @@ final class ChallengeScreenFamily extends $Family
         > {
   ChallengeScreenFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'challengeScreenProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

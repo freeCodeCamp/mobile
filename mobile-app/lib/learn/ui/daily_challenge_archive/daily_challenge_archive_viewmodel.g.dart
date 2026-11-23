@@ -26,7 +26,7 @@ final class DailyChallengeArchiveProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'dailyChallengeArchiveProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -49,4 +49,4 @@ final class DailyChallengeArchiveProvider
 }
 
 String _$dailyChallengeArchiveHash() =>
-    r'5d2c5c749cdd143306987cf2a129e8e3ef7f4693';
+    r'a9cbb9cdb238d21e7528544b48f7ed37f00c4220';

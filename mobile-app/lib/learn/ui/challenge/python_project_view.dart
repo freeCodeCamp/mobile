@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/ui/challenge/python_project_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_card.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
@@ -9,33 +11,7 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/help_dialog.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 
-String? _linkError(String link) {
-  final uri = Uri.tryParse(link);
-  if (uri == null ||
-      uri.host.isEmpty ||
-      !['https', 'http'].contains(uri.scheme)) {
-    return 'Please enter a valid HTTPS link.';
-  }
-  final host = uri.host.toLowerCase();
-  if (host == 'localhost' ||
-      host.endsWith('.localhost') ||
-      host == '127.0.0.1' ||
-      host == '::1') {
-    return 'Remember to submit a publicly visible app URL.';
-  }
-  if (uri.scheme != 'https') return 'Please use a secure (https) URL.';
-  if (host == 'freecodecamp.org' ||
-      host.endsWith('.freecodecamp.org') ||
-      host == 'freecodecamp.rocks' ||
-      host.endsWith('.freecodecamp.rocks') ||
-      (['github.com', 'codepen.io'].contains(host) &&
-          uri.pathSegments.firstOrNull?.toLowerCase() == 'freecodecamp')) {
-    return 'Remember to submit your own work.';
-  }
-  return null;
-}
-
-class PythonProjectView extends StatefulWidget {
+class PythonProjectView extends ConsumerStatefulWidget {
   const PythonProjectView({
     super.key,
     required this.challenge,
@@ -46,15 +22,16 @@ class PythonProjectView extends StatefulWidget {
   final Block block;
 
   @override
-  State<PythonProjectView> createState() => _PythonProjectViewState();
+  ConsumerState<PythonProjectView> createState() => _PythonProjectViewState();
 }
 
-class _PythonProjectViewState extends State<PythonProjectView> {
+class _PythonProjectViewState extends ConsumerState<PythonProjectView> {
   final _link = TextEditingController();
-  bool _checked = false;
-  String? _error;
-
-  bool get _valid => _checked && _error == null;
+  PythonProjectNotifierProvider get _provider =>
+      pythonProjectProvider(widget.challenge);
+  PythonProjectState get _state => ref.read(_provider);
+  PythonProjectNotifier get _notifier => ref.read(_provider.notifier);
+  bool get _valid => _state.valid;
 
   @override
   void dispose() {
@@ -64,6 +41,7 @@ class _PythonProjectViewState extends State<PythonProjectView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(_provider);
     final challenge = widget.challenge;
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
@@ -116,14 +94,11 @@ class _PythonProjectViewState extends State<PythonProjectView> {
                     controller: _link,
                     keyboardType: TextInputType.url,
                     autocorrect: false,
-                    onChanged: (_) => setState(() {
-                      _checked = false;
-                      _error = null;
-                    }),
+                    onChanged: _notifier.updateLink,
                     decoration: InputDecoration(
                       labelText: 'Solution URL',
                       hintText: 'https://your-project.example',
-                      errorText: _error,
+                      errorText: _state.error,
                       errorMaxLines: 5,
                       suffixIcon: _valid
                           ? Icon(
@@ -145,16 +120,11 @@ class _PythonProjectViewState extends State<PythonProjectView> {
                 challenge: challenge,
                 block: widget.block,
                 label: 'Submit project',
-                solution: _link.text.trim(),
+                solution: _state.link,
               )
             : ChallengeButton(
                 label: 'Check link',
-                onPressed: _link.text.trim().isEmpty
-                    ? null
-                    : () => setState(() {
-                        _checked = true;
-                        _error = _linkError(_link.text.trim());
-                      }),
+                onPressed: _state.canCheck ? _notifier.checkLink : null,
               ),
       ),
     );

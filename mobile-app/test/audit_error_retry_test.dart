@@ -4,6 +4,38 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 
 void main() {
+  testWidgets('error feedback fits an intrinsic-width completion control', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FccTheme.themeDark,
+        home: Scaffold(
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 240),
+              child: IntrinsicWidth(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const ErrorRetry(
+                      message: 'Your progress could not be saved.',
+                      detail: 'Check your connection and try again.',
+                    ),
+                    FilledButton(onPressed: () {}, child: const Text('Finish')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.byType(FilledButton).hitTestable(), findsOneWidget);
+  });
+
   testWidgets('error card preserves the error and invokes its retry action', (
     tester,
   ) async {

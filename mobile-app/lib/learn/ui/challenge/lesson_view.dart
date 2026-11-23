@@ -5,6 +5,8 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/models/question_model.dart';
+import 'package:freecodecamp/learn/ui/challenge/lesson_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/assignment_tile.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
@@ -30,13 +32,14 @@ class LessonView extends ConsumerStatefulWidget {
 }
 
 class _LessonViewState extends ConsumerState<LessonView> {
-  late final _questions = widget.challenge.questions.map(questionItem).toList();
-  late final _selected = List<int?>.filled(_questions.length, null);
-  late final _checked = List.filled(_questions.length, false);
-  late final _assignments = List.filled(
-    widget.challenge.assignments.length,
-    false,
-  );
+  LessonChallengeNotifierProvider get _provider =>
+      lessonChallengeProvider(widget.challenge);
+  LessonChallengeState get _state => ref.read(_provider);
+  LessonChallengeNotifier get _notifier => ref.read(_provider.notifier);
+  List<QuestionItem> get _questions => _state.questions;
+  List<int?> get _selected => _state.selected;
+  List<bool> get _checked => _state.checked;
+  List<bool> get _assignments => _state.assignments;
   var _scroll = ScrollController(keepScrollOffset: false);
   double _lessonOffset = 0;
   late final _review = ReviewController(widget.challenge.nodules)
@@ -45,15 +48,13 @@ class _LessonViewState extends ConsumerState<LessonView> {
     if (mounted) setState(() {});
   }
 
-  int? _current;
+  int? get _current => _state.current;
   bool _transcript = false;
 
   void _toggleTranscript() => setState(() => _transcript = !_transcript);
-  bool _reviewed = false;
-  bool get _assignmentsDone => _assignments.every((done) => done);
-  bool get _passed => _questions.indexed.every(
-    (q) => _checked[q.$1] && _selected[q.$1] == q.$2.solution,
-  );
+  bool get _reviewed => _state.reviewed;
+  bool get _assignmentsDone => _state.assignmentsDone;
+  bool get _passed => _state.passed;
   @override
   void dispose() {
     _review.dispose();
@@ -78,7 +79,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
     }
     final previous = _scroll;
     setState(() {
-      _current = index;
+      _notifier.showQuestion(index);
       // A fresh controller starts the new list at its offset on the first
       // frame, so the content never renders at the top and then jumps.
       _scroll = ScrollController(
@@ -100,7 +101,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
         AssignmentTile(
           label: assignment,
           value: _assignments[i],
-          onToggle: () => setState(() => _assignments[i] = !_assignments[i]),
+          onToggle: () => _notifier.toggleAssignment(i),
         )
     else
       CheckboxListTile(
@@ -108,12 +109,13 @@ class _LessonViewState extends ConsumerState<LessonView> {
         visualDensity: VisualDensity.compact,
         title: const Text('I have reviewed these concepts'),
         value: _reviewed,
-        onChanged: (value) => setState(() => _reviewed = value ?? false),
+        onChanged: (value) => _notifier.setReviewed(value ?? false),
       ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(_provider);
     final challenge = widget.challenge;
     final completed = ref.watch(
       authProvider.select(
@@ -289,10 +291,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                             explanation: languageTask
                                 ? challenge.explanation
                                 : '',
-                            onChanged: (question, answer) => setState(() {
-                              _selected[question] = answer;
-                              _checked[question] = false;
-                            }),
+                            onChanged: _notifier.selectAnswer,
                           ),
                       ],
                     ),
@@ -335,17 +334,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                   label: 'Continue to questions',
                   style: _buttonStyle(context),
                   onPressed: _assignmentsDone
-                      ? () => _show(
-                          _questions.indexed
-                                  .where(
-                                    (q) =>
-                                        !_checked[q.$1] ||
-                                        _selected[q.$1] != q.$2.solution,
-                                  )
-                                  .firstOrNull
-                                  ?.$1 ??
-                              0,
-                        )
+                      ? () => _show(_state.firstPendingQuestion)
                       : null,
                 ),
               )
@@ -357,11 +346,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                   block: widget.block,
                   label: 'Continue',
                   buttonStyle: _buttonStyle(context),
-                  enabled:
-                      _assignmentsDone &&
-                      (!review ||
-                          challenge.assignments.isNotEmpty ||
-                          _reviewed),
+                  enabled: _state.canCompleteReading,
                 ),
               )
             else
@@ -390,10 +375,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                         )
                       : ChallengeButton(
                           style: _buttonStyle(context),
-                          label:
-                              _checked[current] &&
-                                  _selected[current] ==
-                                      _questions[current].solution
+                          label: _state.results[current]
                               ? 'Answer checked'
                               : _checked[current]
                               ? 'Pick another answer'
@@ -401,7 +383,7 @@ class _LessonViewState extends ConsumerState<LessonView> {
                           onPressed:
                               _selected[current] == null || _checked[current]
                               ? null
-                              : () => setState(() => _checked[current] = true),
+                              : () => _notifier.checkAnswer(current),
                         );
                   if (constraints.maxWidth < 360 &&
                       MediaQuery.textScalerOf(context).scale(16) > 20) {

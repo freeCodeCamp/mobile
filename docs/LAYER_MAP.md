@@ -123,7 +123,6 @@ There are two graphs because the code is split the same way: audio on one side, 
 flowchart TD
   PVM["post_viewmodel"]:::vm
   AVM["author_feed_viewmodel"]:::vm
-  SVM["search_viewmodel"]:::vm
   FVM["feed_viewmodel"]:::vm
   FEED["feed_controller"]:::ctrl
   BOOK["bookmarks_controller"]:::ctrl
@@ -143,7 +142,6 @@ flowchart TD
   PVM --> APIS
   AVM --> APIS
   FEED --> APIS
-  SVM --> SRS
   FVM --> FEED
   BOOK --> BMS
   BOOK -.->|read| APIS
@@ -163,12 +161,13 @@ flowchart TD
   classDef ext fill:transparent,stroke:#585870,stroke-width:1px,stroke-dasharray:3 3,color:#9A9AA8
 ```
 
-**Screens:** `feed_view`, `tag_feed_view`, `author_feed_view`, `post_view`, `search_view`, `bookmark_feed_view`, `bookmark_post_view`, `image_view`, plus the `post_feed_list`, `bookmark_button` and `news_downloads_tab` widgets. `news_downloads_tab` watches `bookmarks_controller` and renders inside the Settings `downloads_view`.
+**Screens:** `feed_view`, `tag_feed_view`, `author_feed_view`, `post_view`, `bookmark_feed_view`, `bookmark_post_view`, `image_view`, plus the `post_feed_list`, `bookmark_button` and `news_downloads_tab` widgets. `news_downloads_tab` watches `bookmarks_controller` and renders inside the Settings `downloads_view`.
 
 - **Three data stacks.** Each service owns one repository. The bookmarks controller supplies an article loader from `api_service` when saving a summary; `bookmark_service` owns the save/remove decision, model mapping and reset checks.
 - **`feed_controller` is a family** keyed by the sealed `NewsFeedSource` (all / tag / author), so the main, tag and author feeds share one implementation.
 - **`feed_viewmodel` derives the main feed's topic choices.** The main, tag and author screens continue to use the shared feed controller for pagination.
 - **`bookmark_repository` is `keepAlive`**, so saves and resets share one serialised file-write queue. `bookmarks_controller` retains itself while a save is pending.
+- **Search is rendered by shared widgets.** `search_results` reads `search_service` directly; there is no separate search screen viewmodel.
 - **No app-level services.** The API repository builds its own `GraphQLClient` rather than using `dioProvider`.
 
 ## Code Radio
@@ -176,17 +175,20 @@ flowchart TD
 ```mermaid
 flowchart TD
   PVM["player_viewmodel"]:::vm
+  PCTRL["player_controller"]:::ctrl
   CRS["code_radio_service"]:::svc
   WSR["websocket_repository"]:::repo
   AUDIO["audio_service<br/>AudioPlayerHandler"]:::plat
   SRC(["AzuraCast live websocket"]):::ext
 
-  PVM --> CRS
+  PVM -->|read| PCTRL
+  PCTRL --> CRS
   CRS --> WSR
   PVM -.->|read| AUDIO
   CRS -.-> AUDIO
   WSR -.-> SRC
 
+  classDef ctrl fill:#2A2A40,stroke:#FFC300,stroke-width:1.5px,color:#F5F6F7
   classDef vm fill:#23233a,stroke:#B98F1F,stroke-width:1.5px,stroke-dasharray:4 3,color:#DFDFE2
   classDef svc fill:#22223a,stroke:#6B6B85,stroke-width:1.5px,color:#DFDFE2
   classDef repo fill:#1B1B32,stroke:#4A4A63,stroke-width:1.5px,color:#DFDFE2
@@ -197,7 +199,7 @@ flowchart TD
 **Screen:** `player_view`.
 
 - **The service drives the notification.** It holds a raw websocket subscription inside a keepAlive provider and pushes song changes to the audio handler, so the notification keeps updating off-screen.
-- **No `controllers/` folder.** There is one screen, so the state is a view-model beside it.
+- **Shared playback metadata lives in `player_controller`.** It provides now-playing and elapsed streams. `player_viewmodel` owns the screen's play/pause state and actions.
 
 ## Learn
 
@@ -263,6 +265,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   LVM["landing_viewmodel"]:::vm
+  DCT["daily_challenge_controller"]:::ctrl
   DVM["daily_challenge_viewmodel"]:::vm
   AVM["daily_challenge_archive_viewmodel"]:::vm
   CVM2["challenge_viewmodel"]:::vm
@@ -281,7 +284,7 @@ flowchart LR
   SRC5(["SharedPreferences"]):::ext
   SRC6(["motivational-quotes.json asset"]):::ext
 
-  LVM --> DCS
+  DCT --> DCS
   LVM --> QS2
   DVM --> DCS
   AVM --> DCS
@@ -298,6 +301,7 @@ flowchart LR
   DCR -.-> SESS2
   DCR -.-> DIO2
 
+  classDef ctrl fill:#2A2A40,stroke:#FFC300,stroke-width:1.5px,color:#F5F6F7
   classDef vm fill:#23233a,stroke:#B98F1F,stroke-width:1.5px,stroke-dasharray:4 3,color:#DFDFE2
   classDef svc fill:#22223a,stroke:#6B6B85,stroke-width:1.5px,color:#DFDFE2
   classDef repo fill:#1B1B32,stroke:#4A4A63,stroke-width:1.5px,color:#DFDFE2
@@ -311,9 +315,25 @@ The curriculum side and the daily-challenge side share no service. `challenge_vi
 **Screens:** `landing_view`, `superblock_view`, `module_view`, `challenge_view` (with its `english_view`, `lesson_view`, `quiz_view` and `python_project_view` bodies), `editor_challenge_view`, `daily_challenge_view`, `daily_challenge_archive_view`, `scene_fullscreen_view`, plus the `block_card`, `daily_challenge_card`, `complete_button`, `quiz_audio_player` and `scene/` widgets.
 
 - **`curriculum_controller` is the shared one.** The landing, superblock and module screens all watch it, and `challenge_viewmodel` watches its `superBlockProvider`.
+- **Today's challenge is shared.** `daily_challenge_controller` owns its state and one Chicago-midnight refresh timer for landing and archive. The shared `daily_challenge_card` renders it; disposal or rebuild cancels the timer.
 - **Both API repositories use auth's `session_repository`**, which supplies `apiUrl` and wraps signed-in requests. Any 401 signs the user out everywhere.
 - **`test_runner_service` is the only `keepAlive` in Learn.** It owns an `InAppLocalhostServer` on port 8080 plus headless web views (Babel and the test evaluator), so the next challenge never fights the previous one for the port.
 - **Some views skip their view-model:** `editor_challenge_view` reads `code_service` and the test-runner server, `daily_challenge_view` watches `daily_challenge_service`, and `quiz_audio_player` and `scene_controls` use the audio handler.
+
+### Quiz and lesson assessment
+
+```mermaid
+flowchart LR
+  QVM["quiz_viewmodel"]:::vm --> QS["quiz_service"]:::svc
+  EVM["english_viewmodel"]:::vm --> AS["assessment_service"]:::svc
+  LVM["lesson_viewmodel"]:::vm --> AS
+  PVM["python_project_viewmodel"]:::vm --> AS
+
+  classDef vm fill:#23233a,stroke:#B98F1F,stroke-width:1.5px,stroke-dasharray:4 3,color:#DFDFE2
+  classDef svc fill:#22223a,stroke:#6B6B85,stroke-width:1.5px,color:#DFDFE2
+```
+
+The services own quiz selection/shuffling, grading, assignment and review completion rules, and project-link validation. They operate on challenge models and need no repository. Each viewmodel is a family keyed by the immutable `Challenge` and owns answers, validation results and progression state. Views retain presentation concerns such as text/scroll controllers and dialogs. Resetting a quiz clears its answers and results while preserving its chosen question order.
 
 ## Auth & Settings
 

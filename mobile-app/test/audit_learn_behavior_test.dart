@@ -5,11 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
+import 'package:freecodecamp/learn/controllers/daily_challenge_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/models/resume_model.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_view.dart';
-import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/landing/resume_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/module/module_view.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
@@ -131,8 +131,8 @@ Future<void> _pump(
             ),
           ),
         ),
-        dailyChallengeTodayProvider.overrideWith(
-          (ref) async => DailyChallengeOverview(
+        dailyChallengeTodayProvider.overrideWithBuild(
+          (ref, notifier) async => DailyChallengeOverview(
             id: 'daily',
             challengeNumber: 1,
             date: DateTime(2026, 10, 29),

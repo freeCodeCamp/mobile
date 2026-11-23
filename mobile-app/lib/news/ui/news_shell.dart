@@ -49,17 +49,9 @@ class NewsShell extends StatelessWidget {
             108 >
         MediaQuery.sizeOf(context).width -
             MediaQuery.paddingOf(context).horizontal;
-    final viewBookmarks = OutlinedButton.icon(
-      onPressed: () => const NewsBookmarksRoute().push<void>(context),
-      icon: const Icon(Icons.bookmark_border_rounded, size: 20),
-      label: const Text('View bookmarks'),
-      style: FccTheme.compactOutlineStyle(context).copyWith(
-        minimumSize: WidgetStatePropertyAll(Size(44, bookmarkHeight)),
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        ),
-        textStyle: const WidgetStatePropertyAll(bookmarkStyle),
-      ),
+    final viewBookmarks = NewsBookmarksButton(
+      minimumHeight: bookmarkHeight,
+      textStyle: bookmarkStyle,
     );
 
     final scaffold = Scaffold(
@@ -119,4 +111,29 @@ class NewsShell extends StatelessWidget {
       child: scaffold,
     );
   }
+}
+
+class NewsBookmarksButton extends StatelessWidget {
+  const NewsBookmarksButton({
+    super.key,
+    required this.minimumHeight,
+    required this.textStyle,
+  });
+
+  final double minimumHeight;
+  final TextStyle textStyle;
+
+  @override
+  Widget build(BuildContext context) => OutlinedButton.icon(
+    onPressed: () => const NewsBookmarksRoute().push<void>(context),
+    icon: const Icon(Icons.bookmark_border_rounded, size: 20),
+    label: const Text('View bookmarks'),
+    style: FccTheme.compactOutlineStyle(context).copyWith(
+      minimumSize: WidgetStatePropertyAll(Size(44, minimumHeight)),
+      padding: const WidgetStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+      textStyle: WidgetStatePropertyAll(textStyle),
+    ),
+  );
 }

@@ -12,13 +12,14 @@ import 'package:freecodecamp/learn/services/code_service.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/utils/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'challenge_viewmodel.g.dart';
 
 typedef ChallengeScreenData = ({Challenge challenge, Block block});
 
-@riverpod
+@Riverpod(retry: noRetry)
 Future<ChallengeScreenData> challengeScreen(
   Ref ref,
   String superBlock,

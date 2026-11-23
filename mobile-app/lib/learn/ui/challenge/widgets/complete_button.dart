@@ -5,6 +5,7 @@ import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/challenge_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/routing/learn.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 
 class CompleteButton extends ConsumerWidget {
   const CompleteButton({
@@ -38,12 +39,10 @@ class CompleteButton extends ConsumerWidget {
         if (submit.hasError)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              'Your progress could not be saved. Check your connection and try again.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.error,
-              ),
+            child: const ErrorRetry(
+              margin: EdgeInsets.zero,
+              message: 'Your progress could not be saved.',
+              detail: 'Check your connection and try again.',
             ),
           ),
         ChallengeButton(

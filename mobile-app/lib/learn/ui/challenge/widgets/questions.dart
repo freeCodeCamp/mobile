@@ -2,22 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
+import 'package:freecodecamp/learn/models/question_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/answer_feedback.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_audio_player.dart';
-
-typedef QuestionItem = ({
-  String text,
-  List<Answer> answers,
-  int solution,
-  QuizAudioData? audioData,
-});
-QuestionItem questionItem(Question q) => (
-  text: q.text,
-  answers: q.answers,
-  solution: q.solution - 1,
-  audioData: null,
-);
 
 class Questions extends StatelessWidget {
   const Questions({
