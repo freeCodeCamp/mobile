@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
+import 'package:freecodecamp/learn/ui/challenge/quiz_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_button.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/challenge_layout.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/complete_button.dart';
@@ -15,30 +14,6 @@ import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_leave_dialog.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/quiz_result_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/services/auth_service.dart';
-
-// NOTE: The quiz picks one of its question sets at random and shuffles each question's answers.
-List<QuestionItem> _pickQuestions(List<Quiz> quizzes) {
-  if (quizzes.isEmpty) return const [];
-
-  final random = Random();
-  final quiz = quizzes[random.nextInt(quizzes.length)];
-
-  return [
-    for (final q in quiz.questions)
-      () {
-        final answers = [
-          for (final text in [...q.distractors, q.answer]) Answer(answer: text),
-        ]..shuffle(random);
-
-        return (
-          text: q.text,
-          answers: answers,
-          solution: answers.indexWhere((a) => a.answer == q.answer),
-          audioData: q.audioData,
-        );
-      }(),
-  ];
-}
 
 class QuizView extends ConsumerStatefulWidget {
   const QuizView({super.key, required this.challenge, required this.block});
@@ -51,19 +26,12 @@ class QuizView extends ConsumerStatefulWidget {
 }
 
 class _QuizViewState extends ConsumerState<QuizView> {
-  static const _passRate = .9;
-  late final _questions = _pickQuestions(widget.challenge.quizzes);
-  late List<int?> _selected = List.filled(_questions.length, null);
   final _scroll = ScrollController(keepScrollOffset: false);
-  int _current = 0;
-  bool _validated = false;
   bool _leaveDialogOpen = false;
   bool _allowLeave = false;
-  int get _correct =>
-      _questions.indexed.where((q) => _selected[q.$1] == q.$2.solution).length;
-  int get _required => (_questions.length * _passRate).ceil();
-  bool get _passed =>
-      _validated && _questions.isNotEmpty && _correct >= _required;
+
+  QuizNotifierProvider get _provider => quizProvider(widget.challenge);
+
   @override
   void dispose() {
     _scroll.dispose();
@@ -80,41 +48,35 @@ class _QuizViewState extends ConsumerState<QuizView> {
   }
 
   void _show(int index) {
-    setState(() => _current = index);
+    ref.read(_provider.notifier).show(index);
     _top();
   }
 
   void _check() {
-    final unanswered = _selected.indexOf(null);
-    if (unanswered != -1) {
-      _show(unanswered);
+    final submitted = ref.read(_provider.notifier).submit();
+    _top();
+    if (!submitted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Answer every question before submitting.'),
         ),
       );
-      return;
     }
-    setState(() => _validated = true);
-    _top();
   }
 
   void _reset() {
-    setState(() {
-      _selected = List.filled(_questions.length, null);
-      _validated = false;
-      _current = 0;
-    });
+    ref.read(_provider.notifier).reset();
     _top();
   }
 
   Future<void> _leave() async {
     if (_leaveDialogOpen) return;
     _leaveDialogOpen = true;
+    final quiz = ref.read(_provider);
     final leave = await showQuizLeaveDialog(
       context,
-      answered: _selected.whereType<int>().length,
-      total: _questions.length,
+      answered: quiz.answered,
+      total: quiz.questions.length,
     );
     _leaveDialogOpen = false;
     if (!leave || !mounted) return;
@@ -124,6 +86,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
   }
 
   Future<void> _jump() async {
+    final quiz = ref.read(_provider);
     final index = await showModalBottomSheet<int>(
       context: context,
       isScrollControlled: true,
@@ -147,7 +110,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      for (var i = 0; i < _questions.length; i++)
+                      for (var i = 0; i < quiz.questions.length; i++)
                         SizedBox(
                           width: 52,
                           height: 48,
@@ -157,14 +120,14 @@ class _QuizViewState extends ConsumerState<QuizView> {
                             ),
                             onPressed: () => Navigator.of(context).pop(i),
                             child: Semantics(
-                              selected: i == _current,
+                              selected: i == quiz.current,
                               label:
-                                  'Question ${i + 1}${_selected[i] != null ? ', answered' : ''}',
+                                  'Question ${i + 1}${quiz.selected[i] != null ? ', answered' : ''}',
                               excludeSemantics: true,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  if (_selected[i] != null) ...[
+                                  if (quiz.selected[i] != null) ...[
                                     const Icon(Icons.check, size: 14),
                                     const SizedBox(width: 4),
                                   ],
@@ -189,6 +152,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
   @override
   Widget build(BuildContext context) {
     final challenge = widget.challenge;
+    final quiz = ref.watch(_provider);
     final colors = Theme.of(context).colorScheme;
     final completed = ref.watch(
       authProvider.select(
@@ -206,11 +170,11 @@ class _QuizViewState extends ConsumerState<QuizView> {
         appBar: challengeAppBar(
           context,
           title: challenge.title,
-          subtitle: _validated
+          subtitle: quiz.validated
               ? 'Results'
-              : _questions.isEmpty
+              : quiz.questions.isEmpty
               ? 'Quiz'
-              : 'Question ${_current + 1} of ${_questions.length} · ${_selected.whereType<int>().length} answered',
+              : 'Question ${quiz.current + 1} of ${quiz.questions.length} · ${quiz.answered} answered',
           leading: IconButton(
             tooltip: 'Leave quiz',
             icon: const Icon(Icons.close),
@@ -228,7 +192,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   ),
                 ),
               ),
-            if (!_validated && _questions.isNotEmpty)
+            if (!quiz.validated && quiz.questions.isNotEmpty)
               IconButton(
                 tooltip: 'All questions',
                 icon: const Icon(Icons.grid_view_outlined),
@@ -240,31 +204,31 @@ class _QuizViewState extends ConsumerState<QuizView> {
           bottom: false,
           child: Column(
             children: [
-              if (!_validated && _questions.isNotEmpty)
+              if (!quiz.validated && quiz.questions.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: QuestionProgress(
-                    total: _questions.length,
+                    total: quiz.questions.length,
                     height: 6,
                     spacing: 3,
                     currentColor: colors.secondary,
                     answeredColor: colors.primary,
-                    current: _current,
-                    answered: _selected.map((a) => a != null).toList(),
+                    current: quiz.current,
+                    answered: quiz.selected.map((a) => a != null).toList(),
                   ),
                 ),
               Expanded(
                 child: ListView(
-                  key: ValueKey((_validated, _current)),
+                  key: ValueKey((quiz.validated, quiz.current)),
                   controller: _scroll,
                   padding: const EdgeInsets.all(16),
                   children: [
-                    if (_questions.isEmpty)
+                    if (quiz.questions.isEmpty)
                       const Text(
                         'This quiz has no questions available. Please return to the course and try again later.',
                       )
-                    else if (_validated)
-                      ..._results(context)
+                    else if (quiz.validated)
+                      ..._results(context, quiz)
                     else ...[
                       Align(
                         alignment: Alignment.centerLeft,
@@ -282,7 +246,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                             ),
                           ),
                           child: Text(
-                            'Pass with $_required of ${_questions.length} correct',
+                            'Pass with ${quiz.requiredCorrect} of ${quiz.questions.length} correct',
                             style: TextStyle(
                               fontSize: 14,
                               color: colors.onSurfaceVariant,
@@ -291,16 +255,17 @@ class _QuizViewState extends ConsumerState<QuizView> {
                           ),
                         ),
                       ),
-                      if (_current == 0 && challenge.instructions.isNotEmpty)
+                      if (quiz.current == 0 &&
+                          challenge.instructions.isNotEmpty)
                         ParsedHtml(challenge.instructions),
                       const SizedBox(height: 12),
                       Questions(
-                        questions: _questions,
+                        questions: quiz.questions,
                         plainCodeBlocks: true,
-                        selected: _selected,
-                        currentIndex: _current,
+                        selected: quiz.selected,
+                        currentIndex: quiz.current,
                         validated: false,
-                        onChanged: (q, a) => setState(() => _selected[q] = a),
+                        onChanged: ref.read(_provider.notifier).select,
                       ),
                     ],
                   ],
@@ -309,12 +274,12 @@ class _QuizViewState extends ConsumerState<QuizView> {
             ],
           ),
         ),
-        bottomNavigationBar: _questions.isEmpty
+        bottomNavigationBar: quiz.questions.isEmpty
             ? null
             : ChallengeFooter(
                 padding: const EdgeInsets.all(12),
-                child: _validated
-                    ? _passed
+                child: quiz.validated
+                    ? quiz.passed
                           ? CompleteButton(
                               challenge: challenge,
                               block: widget.block,
@@ -326,21 +291,21 @@ class _QuizViewState extends ConsumerState<QuizView> {
                               style: _buttonStyle(context),
                               onPressed: _reset,
                             )
-                    : _navigation(context),
+                    : _navigation(context, quiz),
               ),
       ),
     );
   }
 
-  List<Widget> _results(BuildContext context) {
+  List<Widget> _results(BuildContext context, QuizState quiz) {
     final colors = Theme.of(context).colorScheme;
     final success = FccDesignColors.of(context).success;
     return [
       QuizResultCard(
-        passed: _passed,
-        correct: _correct,
-        total: _questions.length,
-        requiredCorrect: _required,
+        passed: quiz.passed,
+        correct: quiz.correct,
+        total: quiz.questions.length,
+        requiredCorrect: quiz.requiredCorrect,
       ),
       const SizedBox(height: 20),
       Text(
@@ -355,7 +320,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
-            for (final (i, q) in _questions.indexed) ...[
+            for (final (i, q) in quiz.questions.indexed) ...[
               if (i > 0) const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.all(14),
@@ -363,18 +328,16 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Semantics(
-                      label: _selected[i] == q.solution
+                      label: quiz.results[i]
                           ? 'Correct answer'
                           : 'Incorrect answer',
                       child: CircleAvatar(
                         radius: 12,
-                        backgroundColor: _selected[i] == q.solution
+                        backgroundColor: quiz.results[i]
                             ? success
                             : colors.error,
                         child: Icon(
-                          _selected[i] == q.solution
-                              ? Icons.check
-                              : Icons.close,
+                          quiz.results[i] ? Icons.check : Icons.close,
                           color: colors.surface,
                           size: 17,
                         ),
@@ -395,7 +358,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                           ),
                           const SizedBox(height: 4),
                           _resultHtml(q.text),
-                          if (_selected[i] != q.solution) ...[
+                          if (!quiz.results[i]) ...[
                             const SizedBox(height: 8),
                             Text(
                               'Your answer:',
@@ -407,7 +370,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                             ),
                             const SizedBox(height: 4),
                             _resultHtml(
-                              q.answers[_selected[i]!].answer,
+                              q.answers[quiz.selected[i]!].answer,
                               color: colors.error,
                             ),
                           ],
@@ -434,25 +397,25 @@ class _QuizViewState extends ConsumerState<QuizView> {
         ),
       );
 
-  Widget _navigation(BuildContext context) => LayoutBuilder(
+  Widget _navigation(BuildContext context, QuizState quiz) => LayoutBuilder(
     builder: (context, constraints) {
       final previous = ChallengeButton(
         label: 'Previous',
         secondary: true,
         style: _buttonStyle(context, secondary: true),
-        onPressed: _current == 0 ? null : () => _show(_current - 1),
+        onPressed: quiz.current == 0 ? null : () => _show(quiz.current - 1),
       );
       final next = ChallengeButton(
-        label: _current == _questions.length - 1
+        label: quiz.current == quiz.questions.length - 1
             ? 'Submit quiz'
             : 'Next question',
         style: _buttonStyle(context),
-        trailingIcon: _current == _questions.length - 1
+        trailingIcon: quiz.current == quiz.questions.length - 1
             ? null
             : Icons.arrow_forward,
-        onPressed: _current == _questions.length - 1
+        onPressed: quiz.current == quiz.questions.length - 1
             ? _check
-            : () => _show(_current + 1),
+            : () => _show(quiz.current + 1),
       );
       // Keep full labels at enlarged text sizes without squeezing either action.
       if (constraints.maxWidth < 360 &&
