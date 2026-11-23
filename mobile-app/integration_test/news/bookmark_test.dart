@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/main.dart' as app;
 import 'package:freecodecamp/news/ui/bookmark_feed/bookmark_feed_view.dart';
+import 'package:freecodecamp/news/ui/news_shell.dart';
 import 'package:freecodecamp/news/ui/post/post_view.dart';
 import 'package:freecodecamp/news/ui/widgets/bookmark_button.dart';
 import 'package:freecodecamp/news/ui/widgets/post_tile.dart';
@@ -91,10 +92,7 @@ void main() {
 
     // Back to the feed, then open Saved articles
     await tester.tap(find.byType(BackButton));
-    final viewBookmarks = find.ancestor(
-      of: find.text('View bookmarks'),
-      matching: find.byWidgetPredicate((widget) => widget is OutlinedButton),
-    );
+    final viewBookmarks = find.byType(NewsBookmarksButton);
     await pumpUntilFound(tester, viewBookmarks.hitTestable());
     await tester.tap(viewBookmarks);
 

@@ -385,7 +385,40 @@ class HTMLParser {
                       ).push(context),
                 child: isDataUrl
                     ? Image.memory(base64Decode(imgUrl.split(',').last))
-                    : CachedNetworkImage(imageUrl: imgUrl),
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          final declaredWidth = double.tryParse(
+                            child.attributes['width'] ?? '',
+                          );
+                          final declaredHeight = double.tryParse(
+                            child.attributes['height'] ?? '',
+                          );
+                          final hasDimensions =
+                              declaredWidth != null &&
+                              declaredWidth.isFinite &&
+                              declaredWidth > 0 &&
+                              declaredHeight != null &&
+                              declaredHeight.isFinite &&
+                              declaredHeight > 0;
+                          final availableWidth = constraints.hasBoundedWidth
+                              ? constraints.maxWidth
+                              : MediaQuery.sizeOf(context).width;
+                          final width =
+                              hasDimensions && declaredWidth < availableWidth
+                              ? declaredWidth
+                              : availableWidth;
+                          // Undimensioned HTML images still reserve loading space.
+                          final ratio = hasDimensions
+                              ? declaredWidth / declaredHeight
+                              : 16 / 9;
+                          return CachedNetworkImage(
+                            imageUrl: imgUrl,
+                            width: width,
+                            height: width / ratio,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      ),
               ),
             );
           },
