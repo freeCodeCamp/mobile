@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freecodecamp/settings/ui/downloads/downloads_view.dart';
 import 'package:freecodecamp/settings/ui/settings/delete_account/delete_account_view.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_view.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ part 'settings.g.dart';
 
 const settingsPath = '/settings';
 const settingsDeleteAccountPath = '/settings/delete-account';
+const settingsDownloadsPath = '/settings/downloads';
 
 @TypedGoRoute<SettingsRoute>(path: settingsPath)
 class SettingsRoute extends GoRouteData with $SettingsRoute {
@@ -25,4 +27,13 @@ class SettingsDeleteAccountRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const DeleteAccountView();
+}
+
+@TypedGoRoute<DownloadsRoute>(path: settingsDownloadsPath)
+class DownloadsRoute extends GoRouteData with $DownloadsRoute {
+  const DownloadsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DownloadsView();
 }

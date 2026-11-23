@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/auth/ui/widgets/log_out_dialog.dart';
 import 'package:freecodecamp/routing/auth.dart';
-import 'package:freecodecamp/routing/podcasts.dart';
 import 'package:freecodecamp/routing/settings.dart';
 import 'package:freecodecamp/services/app_preferences_service.dart';
 import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/settings/ui/settings/settings_viewmodel.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
+import 'package:freecodecamp/utils/storage_format.dart';
 import 'package:freecodecamp/widgets/dialog/confirm_dialog.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:freecodecamp/widgets/fcc_switch.dart';
@@ -108,17 +108,16 @@ class SettingsView extends ConsumerWidget {
                         title: 'Storage',
                         children: [
                           _SettingsTile(
-                            title: 'Downloaded episodes',
+                            title: 'Downloads',
                             subtitle: storage.when(
                               data: (bytes) =>
                                   '${formatStorageBytes(bytes)} on this device',
                               loading: () => 'Calculating storage…',
-                              error: (_, _) => 'Manage episodes on this device',
+                              error: (_, _) =>
+                                  'Manage downloads on this device',
                             ),
                             onTap: () async {
-                              await const PodcastDownloadsRoute().push<void>(
-                                context,
-                              );
+                              await const DownloadsRoute().push<void>(context);
                               if (context.mounted) {
                                 ref.invalidate(downloadedStorageBytesProvider);
                               }
@@ -207,15 +206,6 @@ class SettingsView extends ConsumerWidget {
       ),
     );
   }
-}
-
-String formatStorageBytes(int bytes) {
-  if (bytes < 1024) return '$bytes B';
-  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-  if (bytes < 1024 * 1024 * 1024) {
-    return '${(bytes / 1024 / 1024).toStringAsFixed(1)} MB';
-  }
-  return '${(bytes / 1024 / 1024 / 1024).toStringAsFixed(1)} GB';
 }
 
 class _ThemeGroup extends ConsumerWidget {

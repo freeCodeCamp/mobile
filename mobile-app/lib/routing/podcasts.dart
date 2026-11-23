@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freecodecamp/podcasts/models/episode_model.dart';
 import 'package:freecodecamp/podcasts/models/podcast_model.dart';
 import 'package:freecodecamp/podcasts/ui/downloaded_episodes/downloaded_episodes_view.dart';
-import 'package:freecodecamp/podcasts/ui/downloads/downloads_view.dart';
 import 'package:freecodecamp/podcasts/ui/episode/episode_view.dart';
 import 'package:freecodecamp/podcasts/ui/episode_list/episode_list_view.dart';
 import 'package:freecodecamp/podcasts/ui/episode_list/episode_list_viewmodel.dart';
@@ -13,7 +12,6 @@ import 'package:go_router/go_router.dart';
 part 'podcasts.g.dart';
 
 const podcastListPath = '/podcasts';
-const podcastDownloadsPath = '/podcasts/downloads';
 const podcastEpisodeListPath = '/podcasts/:podcastId';
 const podcastEpisodePath = '/podcasts/:podcastId/:episodeId';
 
@@ -40,15 +38,6 @@ class PodcastListRoute extends GoRouteData with $PodcastListRoute {
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
       const NoTransitionPage(child: PodcastListView());
-}
-
-@TypedGoRoute<PodcastDownloadsRoute>(path: podcastDownloadsPath)
-class PodcastDownloadsRoute extends GoRouteData with $PodcastDownloadsRoute {
-  const PodcastDownloadsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const PodcastDownloadsView();
 }
 
 @TypedGoRoute<PodcastEpisodeListRoute>(path: podcastEpisodeListPath)

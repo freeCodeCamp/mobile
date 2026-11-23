@@ -13,6 +13,7 @@ abstract class BookmarkedPost with _$BookmarkedPost {
     required String text,
     String? coverImageUrl,
     DateTime? savedAt,
+    int? sizeBytes,
   }) = _BookmarkedPost;
 
   static BookmarkedPost fromPost(Post post) => BookmarkedPost(

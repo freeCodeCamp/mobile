@@ -61,7 +61,8 @@ class NewsTagButton extends StatelessWidget {
   }
 }
 
-// Keep the compact eyebrow stack while exposing a full-sized touch target.
+// Keep the compact eyebrow stack. The target is at least 48px wide and only
+// 4px taller than the text, so it never reaches the title below.
 class _EyebrowTapTarget extends SingleChildRenderObjectWidget {
   const _EyebrowTapTarget({required super.child});
 
@@ -80,12 +81,8 @@ class _EyebrowTargetBox extends RenderProxyBox {
   }
 
   @override
-  Rect get semanticBounds => Rect.fromLTWH(
-    0,
-    0,
-    size.width < 48 ? 48 : size.width,
-    size.height < 48 ? 48 : size.height,
-  );
+  Rect get semanticBounds =>
+      Rect.fromLTWH(0, 0, size.width < 48 ? 48 : size.width, size.height + 4);
 
   @override
   bool hitTest(BoxHitTestResult result, {required Offset position}) {
@@ -125,7 +122,7 @@ class _TagFirstColumn extends RenderFlex {
     final first = firstChild;
     if (first != null) {
       final data = first.parentData! as FlexParentData;
-      // The 48px eyebrow target takes precedence over the non-interactive title.
+      // The eyebrow target takes precedence over the non-interactive title.
       if (result.addWithPaintOffset(
         offset: data.offset,
         position: position,

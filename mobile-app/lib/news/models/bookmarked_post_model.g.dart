@@ -16,6 +16,7 @@ _BookmarkedPost _$BookmarkedPostFromJson(Map<String, dynamic> json) =>
       savedAt: json['savedAt'] == null
           ? null
           : DateTime.parse(json['savedAt'] as String),
+      sizeBytes: (json['sizeBytes'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$BookmarkedPostToJson(_BookmarkedPost instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$BookmarkedPostToJson(_BookmarkedPost instance) =>
       'text': instance.text,
       'coverImageUrl': instance.coverImageUrl,
       'savedAt': instance.savedAt?.toIso8601String(),
+      'sizeBytes': instance.sizeBytes,
     };

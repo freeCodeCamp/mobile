@@ -8,7 +8,6 @@ part of 'podcasts.dart';
 
 List<RouteBase> get $appRoutes => [
   $podcastsShellRoute,
-  $podcastDownloadsRoute,
   $podcastEpisodeListRoute,
   $podcastEpisodeRoute,
 ];
@@ -35,33 +34,6 @@ mixin $PodcastListRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/podcasts');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $podcastDownloadsRoute => GoRouteData.$route(
-  path: '/podcasts/downloads',
-  hasOverriddenOnExit: false,
-  factory: $PodcastDownloadsRoute._fromState,
-);
-
-mixin $PodcastDownloadsRoute on GoRouteData {
-  static PodcastDownloadsRoute _fromState(GoRouterState state) =>
-      const PodcastDownloadsRoute();
-
-  @override
-  String get location => GoRouteData.$location('/podcasts/downloads');
 
   @override
   void go(BuildContext context) => context.go(location);

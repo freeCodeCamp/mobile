@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BookmarkedPost {
 
- String get id; String get title; String get authorName; String get text; String? get coverImageUrl; DateTime? get savedAt;
+ String get id; String get title; String get authorName; String get text; String? get coverImageUrl; DateTime? get savedAt; int? get sizeBytes;
 /// Create a copy of BookmarkedPost
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $BookmarkedPostCopyWith<BookmarkedPost> get copyWith => _$BookmarkedPostCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as BookmarkedPost;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookmarkedPost&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.authorName, _this.authorName) || other.authorName == _this.authorName)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.coverImageUrl, _this.coverImageUrl) || other.coverImageUrl == _this.coverImageUrl)&&(identical(other.savedAt, _this.savedAt) || other.savedAt == _this.savedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookmarkedPost&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.authorName, _this.authorName) || other.authorName == _this.authorName)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.coverImageUrl, _this.coverImageUrl) || other.coverImageUrl == _this.coverImageUrl)&&(identical(other.savedAt, _this.savedAt) || other.savedAt == _this.savedAt)&&(identical(other.sizeBytes, _this.sizeBytes) || other.sizeBytes == _this.sizeBytes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as BookmarkedPost;
-  return Object.hash(runtimeType,_this.id,_this.title,_this.authorName,_this.text,_this.coverImageUrl,_this.savedAt);
+  return Object.hash(runtimeType,_this.id,_this.title,_this.authorName,_this.text,_this.coverImageUrl,_this.savedAt,_this.sizeBytes);
 }
 
 @override
 String toString() {
   final _this = this as BookmarkedPost;
-  return 'BookmarkedPost(id: ${_this.id}, title: ${_this.title}, authorName: ${_this.authorName}, text: ${_this.text}, coverImageUrl: ${_this.coverImageUrl}, savedAt: ${_this.savedAt})';
+  return 'BookmarkedPost(id: ${_this.id}, title: ${_this.title}, authorName: ${_this.authorName}, text: ${_this.text}, coverImageUrl: ${_this.coverImageUrl}, savedAt: ${_this.savedAt}, sizeBytes: ${_this.sizeBytes})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $BookmarkedPostCopyWith<$Res>  {
   factory $BookmarkedPostCopyWith(BookmarkedPost value, $Res Function(BookmarkedPost) _then) = _$BookmarkedPostCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String authorName, String text, String? coverImageUrl, DateTime? savedAt
+ String id, String title, String authorName, String text, String? coverImageUrl, DateTime? savedAt, int? sizeBytes
 });
 
 
@@ -71,7 +71,7 @@ class _$BookmarkedPostCopyWithImpl<$Res>
 
 /// Create a copy of BookmarkedPost
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? authorName = null,Object? text = null,Object? coverImageUrl = freezed,Object? savedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? authorName = null,Object? text = null,Object? coverImageUrl = freezed,Object? savedAt = freezed,Object? sizeBytes = freezed,}) {
   return _then(BookmarkedPost(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -79,7 +79,8 @@ as String,authorName: null == authorName ? _self.authorName : authorName // igno
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,coverImageUrl: freezed == coverImageUrl ? _self.coverImageUrl : coverImageUrl // ignore: cast_nullable_to_non_nullable
 as String?,savedAt: freezed == savedAt ? _self.savedAt : savedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,sizeBytes: freezed == sizeBytes ? _self.sizeBytes : sizeBytes // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -164,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String authorName,  String text,  String? coverImageUrl,  DateTime? savedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String authorName,  String text,  String? coverImageUrl,  DateTime? savedAt,  int? sizeBytes)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookmarkedPost() when $default != null:
-return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImageUrl,_that.savedAt);case _:
+return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImageUrl,_that.savedAt,_that.sizeBytes);case _:
   return orElse();
 
 }
@@ -185,10 +186,10 @@ return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImag
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String authorName,  String text,  String? coverImageUrl,  DateTime? savedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String authorName,  String text,  String? coverImageUrl,  DateTime? savedAt,  int? sizeBytes)  $default,) {final _that = this;
 switch (_that) {
 case _BookmarkedPost():
-return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImageUrl,_that.savedAt);case _:
+return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImageUrl,_that.savedAt,_that.sizeBytes);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -205,10 +206,10 @@ return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImag
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String authorName,  String text,  String? coverImageUrl,  DateTime? savedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String authorName,  String text,  String? coverImageUrl,  DateTime? savedAt,  int? sizeBytes)?  $default,) {final _that = this;
 switch (_that) {
 case _BookmarkedPost() when $default != null:
-return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImageUrl,_that.savedAt);case _:
+return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImageUrl,_that.savedAt,_that.sizeBytes);case _:
   return null;
 
 }
@@ -220,7 +221,7 @@ return $default(_that.id,_that.title,_that.authorName,_that.text,_that.coverImag
 @JsonSerializable()
 
 class _BookmarkedPost implements BookmarkedPost {
-  const _BookmarkedPost({required this.id, required this.title, required this.authorName, required this.text, this.coverImageUrl, this.savedAt});
+  const _BookmarkedPost({required this.id, required this.title, required this.authorName, required this.text, this.coverImageUrl, this.savedAt, this.sizeBytes});
   factory _BookmarkedPost.fromJson(Map<String, dynamic> json) => _$BookmarkedPostFromJson(json);
 
 @override final  String id;
@@ -229,6 +230,7 @@ class _BookmarkedPost implements BookmarkedPost {
 @override final  String text;
 @override final  String? coverImageUrl;
 @override final  DateTime? savedAt;
+@override final  int? sizeBytes;
 
 /// Create a copy of BookmarkedPost
 /// with the given fields replaced by the non-null parameter values.
@@ -243,18 +245,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookmarkedPost&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.text, text) || other.text == text)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookmarkedPost&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.text, text) || other.text == text)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt)&&(identical(other.sizeBytes, sizeBytes) || other.sizeBytes == sizeBytes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,title,authorName,text,coverImageUrl,savedAt);
+    return Object.hash(runtimeType,id,title,authorName,text,coverImageUrl,savedAt,sizeBytes);
 }
 
 @override
 String toString() {
-    return 'BookmarkedPost(id: $id, title: $title, authorName: $authorName, text: $text, coverImageUrl: $coverImageUrl, savedAt: $savedAt)';
+    return 'BookmarkedPost(id: $id, title: $title, authorName: $authorName, text: $text, coverImageUrl: $coverImageUrl, savedAt: $savedAt, sizeBytes: $sizeBytes)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$BookmarkedPostCopyWith<$Res> implements $BookmarkedPostCo
   factory _$BookmarkedPostCopyWith(_BookmarkedPost value, $Res Function(_BookmarkedPost) _then) = __$BookmarkedPostCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String authorName, String text, String? coverImageUrl, DateTime? savedAt
+ String id, String title, String authorName, String text, String? coverImageUrl, DateTime? savedAt, int? sizeBytes
 });
 
 
@@ -282,7 +284,7 @@ class __$BookmarkedPostCopyWithImpl<$Res>
 
 /// Create a copy of BookmarkedPost
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? authorName = null,Object? text = null,Object? coverImageUrl = freezed,Object? savedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? authorName = null,Object? text = null,Object? coverImageUrl = freezed,Object? savedAt = freezed,Object? sizeBytes = freezed,}) {
   return _then(_BookmarkedPost(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -290,7 +292,8 @@ as String,authorName: null == authorName ? _self.authorName : authorName // igno
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,coverImageUrl: freezed == coverImageUrl ? _self.coverImageUrl : coverImageUrl // ignore: cast_nullable_to_non_nullable
 as String?,savedAt: freezed == savedAt ? _self.savedAt : savedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,sizeBytes: freezed == sizeBytes ? _self.sizeBytes : sizeBytes // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

@@ -6,7 +6,11 @@ part of 'settings.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$settingsRoute, $settingsDeleteAccountRoute];
+List<RouteBase> get $appRoutes => [
+  $settingsRoute,
+  $settingsDeleteAccountRoute,
+  $downloadsRoute,
+];
 
 RouteBase get $settingsRoute => GoRouteData.$route(
   path: '/settings',
@@ -46,6 +50,33 @@ mixin $SettingsDeleteAccountRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/settings/delete-account');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $downloadsRoute => GoRouteData.$route(
+  path: '/settings/downloads',
+  hasOverriddenOnExit: false,
+  factory: $DownloadsRoute._fromState,
+);
+
+mixin $DownloadsRoute on GoRouteData {
+  static DownloadsRoute _fromState(GoRouterState state) =>
+      const DownloadsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/downloads');
 
   @override
   void go(BuildContext context) => context.go(location);
