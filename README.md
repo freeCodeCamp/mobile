@@ -13,6 +13,6 @@ To provide more flexibility, we have adapted the curriculum to a flutter based m
 ### Contributing
 The freeCodeCamp.org community is possible thanks to thousands of kind volunteers like you. We welcome all contributions to the community and are excited to welcome you aboard.
 
-> #### [Please follow these steps to contribute](https://contribute.freecodecamp.org/#/how-to-setup-freecodecamp-mobile-app-locally).
+> #### [Please follow these steps to contribute](https://contribute.freecodecamp.org/how-to-setup-freecodecamp-mobile-app-locally/).
 
 #### If you have any other issues getting started please contact us on the [freeCodeCamp Discord Server](https://discord.gg/Z7Fm39aNtZ).
