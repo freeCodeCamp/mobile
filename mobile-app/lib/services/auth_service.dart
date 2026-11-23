@@ -29,11 +29,13 @@ class AuthNotifier extends _$AuthNotifier {
   AuthSessionService get _session => ref.read(authSessionServiceProvider);
 
   Future<void> loginWithProvider(String connection) async {
-    state = AsyncData(await _session.loginWithProvider(connection));
+    final user = await _session.loginWithProvider(connection);
+    if (ref.mounted) state = AsyncData(user);
   }
 
   Future<void> loginWithEmailOtp(String email, String otp) async {
-    state = AsyncData(await _session.loginWithEmailOtp(email, otp));
+    final user = await _session.loginWithEmailOtp(email, otp);
+    if (ref.mounted) state = AsyncData(user);
   }
 
   Future<void> refresh() async {
@@ -56,7 +58,7 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> signOut() async {
     await _session.logout();
-    state = const AsyncData(null);
+    if (ref.mounted) state = const AsyncData(null);
   }
 
   Future<ProfileSaveResult> saveProfile({
@@ -82,6 +84,6 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> deleteAccount() async {
     await _session.deleteAccount();
-    state = const AsyncData(null);
+    if (ref.mounted) state = const AsyncData(null);
   }
 }
