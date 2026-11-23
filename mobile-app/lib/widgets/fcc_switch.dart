@@ -18,6 +18,8 @@ class FccSwitch extends StatefulWidget {
 }
 
 class _FccSwitchState extends State<FccSwitch> {
+  static const _duration = Duration(milliseconds: 200);
+
   final _focusNode = FocusNode();
 
   @override
@@ -37,23 +39,34 @@ class _FccSwitchState extends State<FccSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    // Preserve the existing Material on state; its off geometry is not configurable.
-    if (widget.value) {
-      return Semantics(
-        label: widget.semanticLabel,
-        child: Switch(
-          value: true,
-          onChanged: widget.onChanged,
-          focusNode: _focusNode,
-        ),
-      );
-    }
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final enabled = widget.onChanged != null;
-    void toggle() => widget.onChanged?.call(true);
+    final on = widget.value;
+    final states = {
+      if (on) WidgetState.selected,
+      if (!enabled) WidgetState.disabled,
+    };
+    final switchTheme = theme.switchTheme;
+    // The off state keeps its own colors. The on state follows the switch theme.
+    final trackColor = on
+        ? switchTheme.trackColor?.resolve(states) ?? colors.primary
+        : colors.surfaceContainer;
+    final outlineColor = on
+        ? switchTheme.trackOutlineColor?.resolve(states) ?? colors.primary
+        : colors.outline;
+    final thumbColor = on
+        ? switchTheme.thumbColor?.resolve(states) ?? colors.onPrimary
+        : enabled
+        ? colors.onSurfaceVariant
+        : colors.outline;
+    final duration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : _duration;
+    void toggle() => widget.onChanged?.call(!on);
     return Semantics(
       label: widget.semanticLabel,
-      toggled: false,
+      toggled: on,
       enabled: enabled,
       onTap: enabled ? toggle : null,
       child: InkWell(
@@ -66,28 +79,38 @@ class _FccSwitchState extends State<FccSwitch> {
           width: 60,
           height: 48,
           child: Center(
+            // The ring stays outside the animated track: FocusRingBorder
+            // ignores its ring in ==, so an implicit animation never updates it.
             child: Container(
               width: 48,
               height: 28,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              alignment: AlignmentDirectional.centerStart,
               foregroundDecoration: ShapeDecoration(
                 shape: FccTheme.focusShape(context, radius: 14).resolve({
                   if (_focusNode.hasFocus) WidgetState.focused,
                   if (!enabled) WidgetState.disabled,
                 })!,
               ),
-              decoration: BoxDecoration(
-                color: colors.surfaceContainer,
-                border: Border.all(color: colors.outline),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Container(
-                width: 22,
-                height: 22,
+              child: AnimatedContainer(
+                duration: duration,
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                alignment: on
+                    ? AlignmentDirectional.centerEnd
+                    : AlignmentDirectional.centerStart,
                 decoration: BoxDecoration(
-                  color: enabled ? colors.onSurfaceVariant : colors.outline,
-                  shape: BoxShape.circle,
+                  color: trackColor,
+                  border: Border.all(color: outlineColor),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: AnimatedContainer(
+                  duration: duration,
+                  curve: Curves.easeInOut,
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: thumbColor,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
             ),

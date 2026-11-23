@@ -53,6 +53,7 @@ class ProfileFormScaffold extends StatefulWidget {
     this.saving = false,
     this.onCancel,
     this.navigationDirty = false,
+    this.showNavigation = true,
   });
 
   final String title;
@@ -62,6 +63,7 @@ class ProfileFormScaffold extends StatefulWidget {
   final bool saving;
   final Future<bool> Function()? onCancel;
   final bool navigationDirty;
+  final bool showNavigation;
 
   @override
   State<ProfileFormScaffold> createState() => ProfileFormScaffoldState();
@@ -133,15 +135,34 @@ class ProfileFormScaffoldState extends State<ProfileFormScaffold> {
                 ),
               ).copyWith(shape: FccTheme.focusShape(context, radius: 999)),
               onPressed: widget.saving ? null : widget.onSave,
-              child: Text(widget.saving ? 'Saving…' : 'Save'),
+              child: widget.saving
+                  ? Builder(
+                      builder: (context) => Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 8,
+                        children: [
+                          SizedBox.square(
+                            dimension: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: DefaultTextStyle.of(context).style.color,
+                            ),
+                          ),
+                          const Text('Saving'),
+                        ],
+                      ),
+                    )
+                  : const Text('Save'),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: AppNavigationFooter(
-        selected: AppDestination.account,
-        beforeNavigate: () => _canLeave(navigation: true),
-      ),
+      bottomNavigationBar: widget.showNavigation
+          ? AppNavigationFooter(
+              selected: AppDestination.account,
+              beforeNavigate: () => _canLeave(navigation: true),
+            )
+          : null,
       body: SafeArea(
         top: false,
         bottom: false,
