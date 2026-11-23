@@ -37,10 +37,10 @@ const hiddenExamChapters = [
 ];
 
 // NOTE: Temporary. These two exam blocks sit in block-based superblocks and
-// have no blockType in the curriculum metadata. Adding it there would break
+// have no blockLabel in the curriculum metadata. Adding it there would break
 // the web display, so the parser treats them as BlockLabel.exam instead. Remove
 // this once both superblocks move to the chapter-based structure, where the
-// metadata carries blockType.
+// metadata carries blockLabel.
 const examBlocksWithoutLabel = {
   'a2-english-for-developers': 'en-a2-certification-exam',
   'b1-english-for-developers': 'en-b1-certification-exam',
