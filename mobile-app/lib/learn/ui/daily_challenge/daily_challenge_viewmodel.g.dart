@@ -24,7 +24,7 @@ final class DailyChallengeProvider
     required DailyChallengeFamily super.from,
     required String super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'dailyChallengeProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -64,13 +64,13 @@ final class DailyChallengeProvider
   }
 }
 
-String _$dailyChallengeHash() => r'2f2f76a7983dcc14f246cd87ced3be1074a6729e';
+String _$dailyChallengeHash() => r'b7653c96f7f7f441eb9cb86a5f15434c7c4dc6d5';
 
 final class DailyChallengeFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<DailyChallenge>, String> {
   DailyChallengeFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'dailyChallengeProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -98,7 +98,7 @@ final class DailyChallengeLanguageNotifierProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'dailyChallengeLanguageProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -114,7 +114,7 @@ final class DailyChallengeLanguageNotifierProvider
 }
 
 String _$dailyChallengeLanguageNotifierHash() =>
-    r'359d384996f5097bfac5e2453ad2bca379605ad2';
+    r'600b06ea9057e910095a0f01df454512d54bbecb';
 
 abstract class _$DailyChallengeLanguageNotifier
     extends $AsyncNotifier<DailyChallengeLanguage> {

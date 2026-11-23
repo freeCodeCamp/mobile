@@ -4,7 +4,7 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge_archive/daily_challenge_archive_viewmodel.dart';
-import 'package:freecodecamp/learn/ui/landing/daily_challenge_card.dart';
+import 'package:freecodecamp/learn/ui/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';

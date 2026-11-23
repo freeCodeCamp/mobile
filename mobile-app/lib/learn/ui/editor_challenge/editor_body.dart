@@ -5,6 +5,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 
 class TestList extends StatelessWidget {
   const TestList({super.key, required this.tests, required this.results});
@@ -127,20 +128,28 @@ class ProjectPreview extends StatefulWidget {
 }
 
 class _ProjectPreviewState extends State<ProjectPreview> {
-  late final Future<String> _html = widget.load();
+  late Future<String> _html = widget.load();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _html,
       builder: (context, snapshot) => switch (snapshot) {
-        AsyncSnapshot(:final data?) => InAppWebView(
-          initialData: InAppWebViewInitialData(data: data),
-          initialSettings: InAppWebViewSettings(isInspectable: kDebugMode),
-        ),
-        AsyncSnapshot(hasError: true) => const Center(
-          child: Text('The preview could not be built.'),
-        ),
+        AsyncSnapshot(connectionState: ConnectionState.done, :final data?) =>
+          InAppWebView(
+            initialData: InAppWebViewInitialData(data: data),
+            initialSettings: InAppWebViewSettings(isInspectable: kDebugMode),
+          ),
+        AsyncSnapshot(connectionState: ConnectionState.done, hasError: true) =>
+          ErrorRetry(
+            message: 'The preview could not be built.',
+            onRetry: () {
+              final html = widget.load();
+              setState(() {
+                _html = html;
+              });
+            },
+          ),
         _ => const Center(child: CircularProgressIndicator()),
       },
     );

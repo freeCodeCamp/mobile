@@ -1,58 +1,25 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
-import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
+import 'package:freecodecamp/learn/controllers/daily_challenge_controller.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/services/auth_service.dart';
+import 'package:freecodecamp/widgets/error_retry.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 enum DailyChallengeCardVariant { home, archive }
 
-class DailyChallengeCard extends ConsumerStatefulWidget {
+class DailyChallengeCard extends ConsumerWidget {
   const DailyChallengeCard({
     super.key,
     this.variant = DailyChallengeCardVariant.home,
   });
   final DailyChallengeCardVariant variant;
 
-  @override
-  ConsumerState<DailyChallengeCard> createState() => _DailyChallengeCardState();
-}
-
-class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
-  Timer? _refreshTimer;
-  bool get showArchiveLink => widget.variant == DailyChallengeCardVariant.home;
+  bool get showArchiveLink => variant == DailyChallengeCardVariant.home;
 
   @override
-  void initState() {
-    super.initState();
-    _scheduleRefresh();
-  }
-
-  void _scheduleRefresh() {
-    // A new challenge unlocks at midnight US Central time. Keep this refresh
-    // without displaying a countdown or rebuilding the card every second.
-    final chicago = tz.getLocation('America/Chicago');
-    final now = tz.TZDateTime.now(chicago);
-    final midnight = tz.TZDateTime(chicago, now.year, now.month, now.day + 1);
-    _refreshTimer = Timer(midnight.difference(now), () {
-      if (!mounted) return;
-      ref.invalidate(dailyChallengeTodayProvider);
-      _scheduleRefresh();
-    });
-  }
-
-  @override
-  void dispose() {
-    _refreshTimer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
     final today = ref.watch(dailyChallengeTodayProvider);
     final challenge = today.value;
@@ -74,19 +41,12 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
             ),
             const SizedBox(height: 12),
             if (today.hasError) ...[
-              const Text('Could not load today’s challenge.'),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  OutlinedButton(
-                    onPressed: () =>
-                        ref.invalidate(dailyChallengeTodayProvider),
-                    child: const Text('Try again'),
-                  ),
-                  if (showArchiveLink) const _ArchiveLink(),
-                ],
+              ErrorRetry(
+                margin: EdgeInsets.zero,
+                message: 'Could not load today’s challenge.',
+                onRetry: () => ref.invalidate(dailyChallengeTodayProvider),
               ),
+              if (showArchiveLink) const _ArchiveLink(),
             ] else ...[
               const Text('Loading today’s challenge…'),
               const SizedBox(height: 12),
