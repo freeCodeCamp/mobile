@@ -265,6 +265,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   LVM["landing_viewmodel"]:::vm
+  DCT["daily_challenge_controller"]:::ctrl
   DVM["daily_challenge_viewmodel"]:::vm
   AVM["daily_challenge_archive_viewmodel"]:::vm
   CVM2["challenge_viewmodel"]:::vm
@@ -283,7 +284,7 @@ flowchart LR
   SRC5(["SharedPreferences"]):::ext
   SRC6(["motivational-quotes.json asset"]):::ext
 
-  LVM --> DCS
+  DCT --> DCS
   LVM --> QS2
   DVM --> DCS
   AVM --> DCS
@@ -300,6 +301,7 @@ flowchart LR
   DCR -.-> SESS2
   DCR -.-> DIO2
 
+  classDef ctrl fill:#2A2A40,stroke:#FFC300,stroke-width:1.5px,color:#F5F6F7
   classDef vm fill:#23233a,stroke:#B98F1F,stroke-width:1.5px,stroke-dasharray:4 3,color:#DFDFE2
   classDef svc fill:#22223a,stroke:#6B6B85,stroke-width:1.5px,color:#DFDFE2
   classDef repo fill:#1B1B32,stroke:#4A4A63,stroke-width:1.5px,color:#DFDFE2
@@ -313,6 +315,7 @@ The curriculum side and the daily-challenge side share no service. `challenge_vi
 **Screens:** `landing_view`, `superblock_view`, `module_view`, `challenge_view` (with its `english_view`, `lesson_view`, `quiz_view` and `python_project_view` bodies), `editor_challenge_view`, `daily_challenge_view`, `daily_challenge_archive_view`, `scene_fullscreen_view`, plus the `block_card`, `daily_challenge_card`, `complete_button`, `quiz_audio_player` and `scene/` widgets.
 
 - **`curriculum_controller` is the shared one.** The landing, superblock and module screens all watch it, and `challenge_viewmodel` watches its `superBlockProvider`.
+- **Today's challenge is shared.** `daily_challenge_controller` owns its state and one Chicago-midnight refresh timer for landing and archive. The shared `daily_challenge_card` renders it; disposal or rebuild cancels the timer.
 - **Both API repositories use auth's `session_repository`**, which supplies `apiUrl` and wraps signed-in requests. Any 401 signs the user out everywhere.
 - **`test_runner_service` is the only `keepAlive` in Learn.** It owns an `InAppLocalhostServer` on port 8080 plus headless web views (Babel and the test evaluator), so the next challenge never fights the previous one for the port.
 - **Some views skip their view-model:** `editor_challenge_view` reads `code_service` and the test-runner server, `daily_challenge_view` watches `daily_challenge_service`, and `quiz_audio_player` and `scene_controls` use the audio handler.

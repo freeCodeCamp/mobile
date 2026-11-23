@@ -9,48 +9,6 @@ part of 'landing_viewmodel.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(dailyChallengeToday)
-final dailyChallengeTodayProvider = DailyChallengeTodayProvider._();
-
-final class DailyChallengeTodayProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<DailyChallengeOverview>,
-          DailyChallengeOverview,
-          FutureOr<DailyChallengeOverview>
-        >
-    with
-        $FutureModifier<DailyChallengeOverview>,
-        $FutureProvider<DailyChallengeOverview> {
-  DailyChallengeTodayProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'dailyChallengeTodayProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$dailyChallengeTodayHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<DailyChallengeOverview> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<DailyChallengeOverview> create(Ref ref) {
-    return dailyChallengeToday(ref);
-  }
-}
-
-String _$dailyChallengeTodayHash() =>
-    r'deb320db8627a5fdc11f65c4c8cd99c72a253765';
-
 @ProviderFor(motivationalQuote)
 final motivationalQuoteProvider = MotivationalQuoteProvider._();
 

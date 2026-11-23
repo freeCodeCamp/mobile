@@ -26,7 +26,7 @@ final class CurriculumStagesProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: noRetry,
         name: r'curriculumStagesProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -48,7 +48,7 @@ final class CurriculumStagesProvider
   }
 }
 
-String _$curriculumStagesHash() => r'4deed0b888f89433b7f5847f63d049a50644e201';
+String _$curriculumStagesHash() => r'6be95266c53363ce05098ff83b205333640704d7';
 
 @ProviderFor(superBlock)
 final superBlockProvider = SuperBlockFamily._();
@@ -65,7 +65,7 @@ final class SuperBlockProvider
     required SuperBlockFamily super.from,
     required String super.argument,
   }) : super(
-         retry: null,
+         retry: noRetry,
          name: r'superBlockProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -104,13 +104,13 @@ final class SuperBlockProvider
   }
 }
 
-String _$superBlockHash() => r'5d5a095729fd2638b80918c93fe6411e6cc4a53f';
+String _$superBlockHash() => r'18d2ae1f9b4aa3344d644a4cf7145368d680ff31';
 
 final class SuperBlockFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<SuperBlock>, String> {
   SuperBlockFamily._()
     : super(
-        retry: null,
+        retry: noRetry,
         name: r'superBlockProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

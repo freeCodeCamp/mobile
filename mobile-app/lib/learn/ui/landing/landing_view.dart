@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/constants/curriculum.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
+import 'package:freecodecamp/learn/controllers/daily_challenge_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/models/resume_model.dart';
 import 'package:freecodecamp/learn/services/curriculum_service.dart';
-import 'package:freecodecamp/learn/ui/landing/daily_challenge_card.dart';
-import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/landing/resume_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/landing/superblock_button.dart';
+import 'package:freecodecamp/learn/ui/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/learn/ui/widgets/learning_website.dart';
 import 'package:freecodecamp/learn/utils/learning_action.dart';
@@ -162,6 +162,13 @@ class _ResumeCard extends ConsumerWidget {
         next?.isReturning ??
         (auth.value?.completedChallenges.isNotEmpty ?? false);
     final guest = !auth.isLoggedIn;
+    if (resume.hasError && next == null && !resume.isLoading) {
+      return ErrorRetry(
+        margin: EdgeInsets.zero,
+        message: 'Could not load your next step.',
+        onRetry: () => ref.read(learningResumeProvider.notifier).retry(),
+      );
+    }
     if (!returning) {
       return FirstVisitHero(
         course: next?.course ?? course,
@@ -242,11 +249,7 @@ class _ResumeCard extends ConsumerWidget {
                 semanticsLabel: 'Loading your next step',
               ),
             ] else
-              Text(
-                resume.hasError
-                    ? 'Could not load your next step.'
-                    : 'Explore the curriculum to keep learning.',
-              ),
+              const Text('Explore the curriculum to keep learning.'),
             const SizedBox(height: 16),
             FilledButton.icon(
               style: FilledButton.styleFrom(
@@ -264,19 +267,13 @@ class _ResumeCard extends ConsumerWidget {
                       block: next.block.dashedName,
                       challengeId: next.challenge.id,
                     ).push<void>(context)
-                  : resume.hasError
-                  ? () => ref.read(learningResumeProvider.notifier).retry()
                   : () => LearnSuperBlockRoute(
                       superBlock: course.dashedName,
                     ).push<void>(context),
               iconAlignment: IconAlignment.end,
               icon: const Icon(Icons.arrow_forward, size: 18),
               label: Text(
-                next != null
-                    ? next.action.label()
-                    : resume.hasError
-                    ? 'Try again'
-                    : 'Explore course',
+                next != null ? next.action.label() : 'Explore course',
               ),
             ),
           ],

@@ -5,20 +5,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:freecodecamp/auth/models/user_model.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
+import 'package:freecodecamp/learn/controllers/daily_challenge_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/models/resume_model.dart';
 import 'package:freecodecamp/learn/services/resume_service.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge_archive/daily_challenge_archive_view.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge_archive/daily_challenge_archive_viewmodel.dart';
-import 'package:freecodecamp/learn/ui/landing/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/landing/landing_view.dart';
-import 'package:freecodecamp/learn/ui/landing/landing_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/landing/resume_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/module/module_view.dart';
 import 'package:freecodecamp/learn/ui/superblock/superblock_view.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
+import 'package:freecodecamp/learn/ui/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/dialogue_block_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/exam_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
@@ -159,7 +159,9 @@ Future<void> _pump(
         learningResumeProvider.overrideWith(
           () => _Resume(resolveLearningResume([(_course, _curriculum)], user)),
         ),
-        dailyChallengeTodayProvider.overrideWith((ref) async => _daily),
+        dailyChallengeTodayProvider.overrideWithBuild(
+          (ref, notifier) async => _daily,
+        ),
         dailyChallengeArchiveProvider.overrideWith(
           (ref) async => [
             (month: DateTime(2026, 11), challenges: [_daily]),
