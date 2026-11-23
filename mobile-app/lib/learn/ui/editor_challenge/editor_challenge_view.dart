@@ -336,61 +336,55 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     );
     final state = ref.watch(_provider);
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    return PopScope(
-      canPop: _sheet == null,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && _sheet != null) _showSheet(null);
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: _appBar(keyboard > 0),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: keyboard),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Column(
-                          children: [
-                            ResizablePanel(
-                              controller: _instructionsPanel,
-                              title: 'Instructions',
-                              summaryHtml: widget.challenge.instructions,
-                              maxHeight: _instructionsMaxHeight(
-                                constraints.maxHeight,
-                              ),
-                              child: InstructionPanel(
-                                key: const ValueKey('editor-instructions-body'),
-                                challenge: widget.challenge,
-                              ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: _appBar(keyboard > 0),
+      body: Padding(
+        padding: EdgeInsets.only(bottom: keyboard),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Column(
+                        children: [
+                          ResizablePanel(
+                            controller: _instructionsPanel,
+                            title: 'Instructions',
+                            summaryHtml: widget.challenge.instructions,
+                            maxHeight: _instructionsMaxHeight(
+                              constraints.maxHeight,
                             ),
-                            _fileSelector(state),
-                            Expanded(
-                              child: _editorArea(
-                                state,
-                                keyboard > 0,
-                                withPanel: false,
-                              ),
+                            child: InstructionPanel(
+                              key: const ValueKey('editor-instructions-body'),
+                              challenge: widget.challenge,
                             ),
-                          ],
-                        ),
-                        if (_sheet != null && keyboard == 0)
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: _panel(state, constraints.maxHeight),
                           ),
-                      ],
-                    ),
+                          _fileSelector(state),
+                          Expanded(
+                            child: _editorArea(
+                              state,
+                              keyboard > 0,
+                              withPanel: false,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_sheet != null && keyboard == 0)
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: _panel(state, constraints.maxHeight),
+                        ),
+                    ],
                   ),
                 ),
-                _bottomBar(state, keyboard > 0),
-              ],
-            ),
+              ),
+              _bottomBar(state, keyboard > 0),
+            ],
           ),
         ),
       ),
@@ -800,7 +794,6 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                       ),
                     ),
                     _EditorSheet.console => ConsoleOutput(
-                      testConsole: state.testConsole,
                       userConsole: state.userConsole,
                     ),
                   },
@@ -842,6 +835,7 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
     final design = FccDesignColors.of(context);
     final signedIn = ref.watch(authProvider).value != null;
     final workerType = workerTypeOf(widget.challenge.challengeType);
+    final hasConsole = widget.challenge.challengeFiles.any((f) => f.isScript);
     final runner = ref.watch(learnTestRunnerServiceProvider(workerType));
     final failed = runner.hasError && !runner.isLoading;
     final busy = state.testsRunning || (!runner.hasValue && !failed);
@@ -921,17 +915,18 @@ class _EditorChallengeViewState extends ConsumerState<EditorChallengeView> {
                                   : _EditorSheet.preview,
                             ),
                           ),
-                        ToolButton(
-                          label: 'Console',
-                          icon: Icons.terminal_outlined,
-                          selectedIcon: Icons.terminal_rounded,
-                          active: _sheet == _EditorSheet.console,
-                          onPressed: () => _showSheet(
-                            _sheet == _EditorSheet.console
-                                ? null
-                                : _EditorSheet.console,
+                        if (hasConsole)
+                          ToolButton(
+                            label: 'Console',
+                            icon: Icons.terminal_outlined,
+                            selectedIcon: Icons.terminal_rounded,
+                            active: _sheet == _EditorSheet.console,
+                            onPressed: () => _showSheet(
+                              _sheet == _EditorSheet.console
+                                  ? null
+                                  : _EditorSheet.console,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

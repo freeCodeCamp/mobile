@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
@@ -10,6 +11,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'test_runner_service.g.dart';
 
 typedef TestResult = ({bool pass, Map<dynamic, dynamic>? err});
+typedef PythonConsoleResult = ({List<String> logs, String? error});
+
+const consoleTimeoutMessage =
+    'Your code took too long to run. Check for an infinite loop.';
 
 // NOTE: No auto-retry; the editor offers a manual retry instead.
 // NOTE: keepAlive so the next challenge never races the previous one for port 8080.
@@ -97,6 +102,12 @@ class LearnTestRunnerService {
       isInspectable: kDebugMode,
       mediaPlaybackRequiresUserGesture: false,
     ),
+    initialUserScripts: UnmodifiableListView([
+      UserScript(
+        source: _formatConsoleScript,
+        injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+      ),
+    ]),
     onConsoleMessage: (_, message) {
       if (message.messageLevel == ConsoleMessageLevel.LOG &&
           !_console.isClosed) {
@@ -121,6 +132,8 @@ class LearnTestRunnerService {
     ).wait.timeout(const Duration(seconds: 30));
   }
 
+  Stream<String> get consoleMessages => _console.stream;
+
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
@@ -129,7 +142,8 @@ class LearnTestRunnerService {
     } catch (e) {
       log('Test runner: startup failed before disposal ($e)');
     }
-    await _pending;
+    // NOTE: A timed-out evaluate never settles, so do not wait on it forever.
+    await _pending.timeout(const Duration(seconds: 5), onTimeout: () {});
     try {
       await _console.close();
       await _runner.dispose();
@@ -160,10 +174,36 @@ class LearnTestRunnerService {
     return value?['code'] as String? ?? code;
   }
 
+  Future<String?> evaluate(String code) => _enqueue(() => _evaluate(code));
+
   Future<String?> _evaluate(String code) async =>
       (await _runner.webViewController!.callAsyncJavaScript(
         functionBody: code,
       ))?.error;
+
+  Future<PythonConsoleResult> runPythonConsole(String code) =>
+      _enqueue(() => _runPythonConsole(code));
+
+  // NOTE: The worker runs the source and returns its print output as logs once a test string evaluates to { test }.
+  Future<PythonConsoleResult> _runPythonConsole(String code) async {
+    final controller = _runner.webViewController!;
+    await _createRunner(controller, userCode: code, combinedCode: code);
+    final res = await controller.callAsyncJavaScript(
+      functionBody: _testScript,
+      arguments: {'testStr': '({ test: () => {} })'},
+    );
+    if (res == null) throw StateError('Test runner returned no result');
+
+    final value = res.value as Map<dynamic, dynamic>?;
+    final logs = value?['logs'] as List<dynamic>? ?? const [];
+    final err = value?['err'] as Map<dynamic, dynamic>?;
+    return (
+      logs: [
+        for (final log in logs) '${(log as Map<dynamic, dynamic>)['msg']}',
+      ],
+      error: err == null ? null : '${err['message']}',
+    );
+  }
 
   Future<List<TestResult>> run({
     required String userCode,
@@ -174,13 +214,19 @@ class LearnTestRunnerService {
     bool evaluateUserCode = false,
     void Function(String)? onConsole,
   }) {
-    final operation = _pending.then((_) async {
-      if (_disposed) throw StateError('Test runner has been disposed');
+    return _enqueue(() async {
       final logs = onConsole == null ? null : _console.stream.listen(onConsole);
       try {
         if (evaluateUserCode && workerType == 'javascript') {
           final error = await _evaluate(userCode);
           if (error != null) onConsole?.call(error);
+        }
+        if (evaluateUserCode && workerType == 'python') {
+          final result = await _runPythonConsole(userCode);
+          result.logs.forEach(onConsole ?? (_) {});
+          if (result.error case final error?) {
+            onConsole?.call(pythonErrorHint(error));
+          }
         }
         final controller = _runner.webViewController!;
         await _createRunner(
@@ -197,6 +243,13 @@ class LearnTestRunnerService {
       } finally {
         await logs?.cancel();
       }
+    });
+  }
+
+  Future<T> _enqueue<T>(Future<T> Function() task) {
+    final operation = _pending.then((_) {
+      if (_disposed) throw StateError('Test runner has been disposed');
+      return task();
     });
     // A failed attempt must not prevent the next queued attempt from running.
     _pending = operation.then<void>(
@@ -254,16 +307,19 @@ const _skipBabelErrorChallengeIds = {
   '6a1c49231334592cc5a4c6b0', // step 5
 };
 
-String syntaxErrorHint(BabelException error) {
-  final match = RegExp(
-    r'SyntaxError:.*?\((\d+):(\d+)\)',
-  ).firstMatch(error.message);
-  if (match == null) {
-    return 'There is a syntax error in your code. Please check for missing brackets, quotes, or other syntax issues.';
-  }
+// NOTE: Babel names the missing filename "unknown: " and _transpileScript appends the location a second time; strip both and keep the code frame.
+String syntaxErrorMessage(BabelException error) => error.message
+    .replaceFirst(RegExp(r'^SyntaxError: unknown: '), 'SyntaxError: ')
+    .replaceFirst(RegExp(r' \(\d+:\d+\)$'), '')
+    .trimRight();
 
-  final line = int.parse(match.group(1)!) - 1;
-  return 'There is a syntax error on line $line. Please check for missing brackets, quotes, or other syntax issues.';
+// NOTE: Pyodide tracebacks open with its own frames, so keep only the part from the user's code onward.
+String pythonErrorHint(String message) {
+  if (message == 'Test timed out') return consoleTimeoutMessage;
+  final lines = message.split('\n');
+  final start = lines.indexWhere((line) => line.contains('File "<exec>"'));
+  if (start == -1) return message.replaceFirst('PythonError: ', '').trim();
+  return lines.sublist(start).join('\n').trim();
 }
 
 String workerTypeOf(int challengeType) => switch (challengeType) {
@@ -271,6 +327,27 @@ String workerTypeOf(int challengeType) => switch (challengeType) {
   20 || 23 || 27 || 29 => 'python',
   _ => 'dom',
 };
+
+// NOTE: The webview stringifies console arguments with String(), which turns objects into "[object Object]".
+const _formatConsoleScript = '''
+(() => {
+  const format = (value) => {
+    if (typeof value === 'string') return value;
+    if (value instanceof Error) return value.stack || String(value);
+    if (typeof value === 'function' || typeof value === 'symbol' || typeof value === 'bigint' || value === undefined) return String(value);
+    if (typeof value === 'object' && value !== null) {
+      try {
+        return JSON.stringify(value, (_, v) => typeof v === 'bigint' ? String(v) : v, 2);
+      } catch (e) {
+        return String(value);
+      }
+    }
+    return String(value);
+  };
+  const log = console.log.bind(console);
+  console.log = (...args) => log(args.map(format).join(' '));
+})();
+''';
 
 const _transpileScript = '''
 try {

@@ -5,7 +5,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/models/challenge_model.dart';
 import 'package:freecodecamp/learn/ui/challenge/widgets/parsed_html.dart';
-import 'package:html/parser.dart' as html_parser;
 
 class TestList extends StatelessWidget {
   const TestList({super.key, required this.tests, required this.results});
@@ -80,69 +79,39 @@ class _TestStatus extends StatelessWidget {
 }
 
 class ConsoleOutput extends StatelessWidget {
-  const ConsoleOutput({
-    super.key,
-    required this.testConsole,
-    required this.userConsole,
-  });
+  const ConsoleOutput({super.key, required this.userConsole});
 
-  final List<String> testConsole;
   final List<String> userConsole;
+
+  // NOTE: pythonErrorHint trims tracebacks to start at the user's frame, so those open with 'File "<exec>"'.
+  static final _errorPattern = RegExp(
+    r'^(?:(?:Uncaught\s+)?\w*Error:|File "<exec>", line \d+|Traceback \(most recent call last\):)',
+  );
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return ColoredBox(
-      color: Theme.of(context).colorScheme.surface,
+      color: colors.surface,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          if (testConsole.isEmpty)
-            _message(context, '<p>// Your test output will go here</p>')
-          else
-            for (final message in testConsole)
-              _message(context, message, testOutput: true),
-          if (userConsole.isNotEmpty)
-            _message(context, '<p>// console output</p>'),
-          for (final message in userConsole) _message(context, message),
+          for (final message in userConsole)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                message,
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 13,
+                  height: 1.5,
+                  color: _errorPattern.hasMatch(message.trim())
+                      ? colors.error
+                      : colors.onSurface,
+                ),
+              ),
+            ),
         ],
-      ),
-    );
-  }
-
-  Widget _message(
-    BuildContext context,
-    String html, {
-    bool testOutput = false,
-  }) {
-    final colors = Theme.of(context).colorScheme;
-    final text = (html_parser.parseFragment(html).text ?? '').trim();
-    final comment = text.startsWith('//');
-    final error =
-        !comment &&
-        (testOutput ||
-            RegExp(r'^(?:Uncaught\s+)?(?:\w*Error):').hasMatch(text));
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: ParsedHtml(
-        html,
-        customStyles: {
-          '*': Style(
-            fontFamily: 'monospace',
-            fontSize: FontSize(13),
-            lineHeight: const LineHeight(1.5),
-            color: error
-                ? colors.error
-                : comment
-                ? colors.onSurfaceVariant
-                : colors.onSurface,
-          ),
-          'p': Style(margin: Margins.zero),
-          'code': Style(fontFamily: 'monospace', fontSize: FontSize(13)),
-          'ol': Style(
-            margin: Margins.zero,
-            padding: HtmlPaddings.only(inlineStart: 20),
-          ),
-        },
       ),
     );
   }
