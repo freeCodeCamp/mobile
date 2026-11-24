@@ -32,8 +32,6 @@ EditorOptions phoneIdeOptions(
     selectionHandleColor: colors.primary,
     activeLineColor: regionOptions == null ? highlight : null,
     activeLineBorderColor: regionOptions == null ? colors.primary : null,
-    diagnosticColor: colors.error,
-    diagnosticBackgroundColor: colors.error.withValues(alpha: 0.06),
     fontFamily: 'Hack',
     fontSize: 16,
     lineHeight: 1.5,
