@@ -148,10 +148,9 @@ class LearnCurriculumService {
       dashedName: meta['dashedName'] as String,
       name: meta['name'] as String,
       layout: BlockLayout.fromValue(meta['blockLayout']),
-      // NOTE: `blockType` is the older name for `blockLabel`.
       label: examBlocksWithoutLabel[superBlock] == meta['dashedName']
           ? BlockLabel.exam
-          : BlockLabel.fromValue(meta['blockLabel'] ?? meta['blockType']),
+          : BlockLabel.fromValue(meta['blockLabel']),
       description: description,
       challenges: [
         for (final challenge in meta['challengeOrder'] as List)
