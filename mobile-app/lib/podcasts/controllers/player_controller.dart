@@ -34,10 +34,21 @@ abstract class PodcastPlayerState with _$PodcastPlayerState {
 }
 
 // NOTE: Kept off PodcastPlayerState deliberately. This ticks up to 60x a
-// second
+// second. It starts from the last playback event so the first frame has a
+// position.
 @riverpod
-Stream<Duration> podcastPlaybackPosition(Ref ref) =>
-    ref.watch(audioHandlerProvider).positionStream;
+class PodcastPlaybackPositionNotifier
+    extends _$PodcastPlaybackPositionNotifier {
+  @override
+  Duration build() {
+    final handler = ref.watch(audioHandlerProvider);
+    final subscription = handler.positionStream.listen((position) {
+      if (ref.mounted) state = position;
+    });
+    ref.onDispose(subscription.cancel);
+    return handler.playbackState.value.position;
+  }
+}
 
 @riverpod
 Duration? podcastSavedPosition(Ref ref, String episodeId) {

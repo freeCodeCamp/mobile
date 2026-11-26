@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/controllers/completion_controller.dart';
 import 'package:freecodecamp/learn/models/daily_challenge_model.dart';
 import 'package:freecodecamp/learn/services/daily_challenge_service.dart';
 import 'package:freecodecamp/learn/ui/daily_challenge_archive/daily_challenge_archive_viewmodel.dart';
 import 'package:freecodecamp/learn/ui/widgets/daily_challenge_card.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
 import 'package:freecodecamp/routing/learn.dart';
-import 'package:freecodecamp/services/auth_service.dart';
 import 'package:freecodecamp/widgets/app_bottom_navigation.dart';
 import 'package:freecodecamp/widgets/chip_surface.dart';
 import 'package:freecodecamp/widgets/error_retry.dart';
@@ -37,11 +37,7 @@ class _DailyChallengeArchiveViewState
   @override
   Widget build(BuildContext context) {
     final archive = ref.watch(dailyChallengeArchiveProvider);
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedDailyCodingChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedDailyChallengeIdsProvider);
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: const AppNavigationFooter(

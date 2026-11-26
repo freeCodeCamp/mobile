@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/controllers/completion_controller.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
@@ -148,15 +149,13 @@ class ModuleActionBar extends ConsumerWidget {
   final List<Block> blocks;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final action = resolveLearningAction(
       blocks,
       completed,
-      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+      currentChallengeId: ref.watch(
+        authProvider.select((s) => s.value?.currentChallengeId),
+      ),
     );
     if (action == null) return const SizedBox.shrink();
     final colors = Theme.of(context).colorScheme;

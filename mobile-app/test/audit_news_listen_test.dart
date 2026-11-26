@@ -468,9 +468,7 @@ void main() {
                 _episode.id,
               ).overrideWith((ref) async => null),
               podcastDownloadsProvider.overrideWith(_Downloads.new),
-              podcastPlaybackPositionProvider.overrideWith(
-                (ref) => Stream.value(Duration.zero),
-              ),
+              podcastPlaybackPositionProvider.overrideWithValue(Duration.zero),
               podcastSavedPositionProvider.overrideWith(
                 (ref, episodeId) => null,
               ),

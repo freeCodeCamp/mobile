@@ -27,7 +27,6 @@ class MiniPlayer extends ConsumerWidget {
     }
     final colors = Theme.of(context).colorScheme;
     final accent = FccDesignColors.of(context).accentText;
-    final playback = player.playback;
     final isRadio = player.isRadio;
     final isBusy = player.isBusy;
     final episode = player.episode;
@@ -113,7 +112,7 @@ class MiniPlayer extends ConsumerWidget {
                       ),
                       const SizedBox(width: 8),
                       IconButton.outlined(
-                        tooltip: playback.playing
+                        tooltip: player.isPlaying
                             ? 'Pause audio'
                             : 'Resume audio',
                         onPressed: isBusy
@@ -151,7 +150,7 @@ class MiniPlayer extends ConsumerWidget {
                                 ),
                               )
                             : Icon(
-                                playback.playing
+                                player.isPlaying
                                     ? Icons.pause_rounded
                                     : Icons.play_arrow_rounded,
                               ),
@@ -252,9 +251,7 @@ class _MiniProgress extends ConsumerWidget {
       return _progress(context, duration <= 0 ? 0 : elapsed / duration);
     }
 
-    final position =
-        ref.watch(podcastPlaybackPositionProvider).value ??
-        player.playback.position;
+    final position = ref.watch(podcastPlaybackPositionProvider);
     final duration = player.duration;
     return _progress(
       context,
@@ -285,9 +282,7 @@ class _PodcastTime extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final duration = player.duration;
-    var position =
-        ref.watch(podcastPlaybackPositionProvider).value ??
-        player.playback.position;
+    var position = ref.watch(podcastPlaybackPositionProvider);
     if (position.isNegative) position = Duration.zero;
     if (duration != null && duration > Duration.zero && position > duration) {
       position = duration;

@@ -5,7 +5,7 @@ import 'package:freecodecamp/routing/auth.dart';
 import 'package:freecodecamp/routing/learn.dart';
 import 'package:freecodecamp/routing/news.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
-import 'package:freecodecamp/services/audio_service.dart';
+import 'package:freecodecamp/services/media_player_service.dart';
 import 'package:freecodecamp/utils/custom_tab.dart';
 import 'package:freecodecamp/widgets/mini_player.dart';
 
@@ -147,21 +147,15 @@ class AppNavigationFooter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final handler = ref.watch(audioHandlerProvider);
-    return StreamBuilder(
-      stream: handler.playbackState,
-      initialData: handler.playbackState.value,
-      builder: (context, _) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!hideRadioPlayer || handler.codeRadioSongId == null)
-            MiniPlayer(beforeNavigate: beforeNavigate),
-          AppBottomNavigation(
-            selected: selected,
-            beforeNavigate: beforeNavigate,
-          ),
-        ],
-      ),
+    final hideMiniPlayer =
+        hideRadioPlayer &&
+        ref.watch(mediaPlayerProvider.select((s) => s.isCodeRadioLoaded));
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!hideMiniPlayer) MiniPlayer(beforeNavigate: beforeNavigate),
+        AppBottomNavigation(selected: selected, beforeNavigate: beforeNavigate),
+      ],
     );
   }
 }

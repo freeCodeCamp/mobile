@@ -237,9 +237,7 @@ Future<GoRouter> _pumpRoutes(
         podcastEpisodesProvider(
           const PodcastEpisodeSource.remote('podcast'),
         ).overrideWith(_Episodes.new),
-        podcastPlaybackPositionProvider.overrideWith(
-          (ref) => Stream.value(Duration.zero),
-        ),
+        podcastPlaybackPositionProvider.overrideWithValue(Duration.zero),
         podcastSavedPositionProvider.overrideWith((ref, episodeId) => null),
         codeRadioNowPlayingProvider.overrideWith((ref) => Stream.value(_radio)),
         codeRadioElapsedProvider.overrideWith((ref) => Stream.value(30)),

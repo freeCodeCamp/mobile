@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/controllers/completion_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
 import 'package:freecodecamp/learn/ui/widgets/learn_presentation.dart';
@@ -47,16 +48,14 @@ class DialogueBlockCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final sections = _dialogues(block);
     final next = resolveLearningAction(
       [block],
       completed,
-      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+      currentChallengeId: ref.watch(
+        authProvider.select((s) => s.value?.currentChallengeId),
+      ),
     )?.next;
     final active =
         sections

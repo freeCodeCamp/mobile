@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MediaPlayerState {
 
- MediaItem? get item; PlaybackState get playback; bool get isRadio; (Podcast, Episode,)? get episode; Duration? get duration;
+ MediaItem? get item; bool get isPlaying; bool get isBusy; bool get isRadio; bool get isCodeRadioLoaded; (Podcast, Episode,)? get episode; Duration? get duration;
 /// Create a copy of MediaPlayerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $MediaPlayerStateCopyWith<MediaPlayerState> get copyWith => _$MediaPlayerStateCo
 @override
 bool operator ==(Object other) {
   final _this = this as MediaPlayerState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaPlayerState&&(identical(other.item, _this.item) || other.item == _this.item)&&(identical(other.playback, _this.playback) || other.playback == _this.playback)&&(identical(other.isRadio, _this.isRadio) || other.isRadio == _this.isRadio)&&(identical(other.episode, _this.episode) || other.episode == _this.episode)&&(identical(other.duration, _this.duration) || other.duration == _this.duration));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaPlayerState&&(identical(other.item, _this.item) || other.item == _this.item)&&(identical(other.isPlaying, _this.isPlaying) || other.isPlaying == _this.isPlaying)&&(identical(other.isBusy, _this.isBusy) || other.isBusy == _this.isBusy)&&(identical(other.isRadio, _this.isRadio) || other.isRadio == _this.isRadio)&&(identical(other.isCodeRadioLoaded, _this.isCodeRadioLoaded) || other.isCodeRadioLoaded == _this.isCodeRadioLoaded)&&(identical(other.episode, _this.episode) || other.episode == _this.episode)&&(identical(other.duration, _this.duration) || other.duration == _this.duration));
 }
 
 
 @override
 int get hashCode {
   final _this = this as MediaPlayerState;
-  return Object.hash(runtimeType,_this.item,_this.playback,_this.isRadio,_this.episode,_this.duration);
+  return Object.hash(runtimeType,_this.item,_this.isPlaying,_this.isBusy,_this.isRadio,_this.isCodeRadioLoaded,_this.episode,_this.duration);
 }
 
 @override
 String toString() {
   final _this = this as MediaPlayerState;
-  return 'MediaPlayerState(item: ${_this.item}, playback: ${_this.playback}, isRadio: ${_this.isRadio}, episode: ${_this.episode}, duration: ${_this.duration})';
+  return 'MediaPlayerState(item: ${_this.item}, isPlaying: ${_this.isPlaying}, isBusy: ${_this.isBusy}, isRadio: ${_this.isRadio}, isCodeRadioLoaded: ${_this.isCodeRadioLoaded}, episode: ${_this.episode}, duration: ${_this.duration})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $MediaPlayerStateCopyWith<$Res>  {
   factory $MediaPlayerStateCopyWith(MediaPlayerState value, $Res Function(MediaPlayerState) _then) = _$MediaPlayerStateCopyWithImpl;
 @useResult
 $Res call({
- MediaItem? item, PlaybackState playback, bool isRadio, (Podcast, Episode,)? episode, Duration? duration
+ MediaItem? item, bool isPlaying, bool isBusy, bool isRadio, bool isCodeRadioLoaded, (Podcast, Episode,)? episode, Duration? duration
 });
 
 
@@ -68,11 +68,13 @@ class _$MediaPlayerStateCopyWithImpl<$Res>
 
 /// Create a copy of MediaPlayerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? item = freezed,Object? playback = null,Object? isRadio = null,Object? episode = freezed,Object? duration = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? item = freezed,Object? isPlaying = null,Object? isBusy = null,Object? isRadio = null,Object? isCodeRadioLoaded = null,Object? episode = freezed,Object? duration = freezed,}) {
   return _then(MediaPlayerState(
 item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
-as MediaItem?,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
-as PlaybackState,isRadio: null == isRadio ? _self.isRadio : isRadio // ignore: cast_nullable_to_non_nullable
+as MediaItem?,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
+as bool,isBusy: null == isBusy ? _self.isBusy : isBusy // ignore: cast_nullable_to_non_nullable
+as bool,isRadio: null == isRadio ? _self.isRadio : isRadio // ignore: cast_nullable_to_non_nullable
+as bool,isCodeRadioLoaded: null == isCodeRadioLoaded ? _self.isCodeRadioLoaded : isCodeRadioLoaded // ignore: cast_nullable_to_non_nullable
 as bool,episode: freezed == episode ? _self.episode : episode // ignore: cast_nullable_to_non_nullable
 as (Podcast, Episode,)?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as Duration?,
@@ -160,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode,)? episode,  Duration? duration)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MediaItem? item,  bool isPlaying,  bool isBusy,  bool isRadio,  bool isCodeRadioLoaded,  (Podcast, Episode,)? episode,  Duration? duration)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MediaPlayerState() when $default != null:
-return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.duration);case _:
+return $default(_that.item,_that.isPlaying,_that.isBusy,_that.isRadio,_that.isCodeRadioLoaded,_that.episode,_that.duration);case _:
   return orElse();
 
 }
@@ -181,10 +183,10 @@ return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.dura
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode,)? episode,  Duration? duration)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MediaItem? item,  bool isPlaying,  bool isBusy,  bool isRadio,  bool isCodeRadioLoaded,  (Podcast, Episode,)? episode,  Duration? duration)  $default,) {final _that = this;
 switch (_that) {
 case _MediaPlayerState():
-return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.duration);case _:
+return $default(_that.item,_that.isPlaying,_that.isBusy,_that.isRadio,_that.isCodeRadioLoaded,_that.episode,_that.duration);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +203,10 @@ return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.dura
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MediaItem? item,  PlaybackState playback,  bool isRadio,  (Podcast, Episode,)? episode,  Duration? duration)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MediaItem? item,  bool isPlaying,  bool isBusy,  bool isRadio,  bool isCodeRadioLoaded,  (Podcast, Episode,)? episode,  Duration? duration)?  $default,) {final _that = this;
 switch (_that) {
 case _MediaPlayerState() when $default != null:
-return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.duration);case _:
+return $default(_that.item,_that.isPlaying,_that.isBusy,_that.isRadio,_that.isCodeRadioLoaded,_that.episode,_that.duration);case _:
   return null;
 
 }
@@ -216,12 +218,14 @@ return $default(_that.item,_that.playback,_that.isRadio,_that.episode,_that.dura
 
 
 class _MediaPlayerState extends MediaPlayerState {
-  const _MediaPlayerState({this.item, required this.playback, this.isRadio = false, this.episode, this.duration}): super._();
+  const _MediaPlayerState({this.item, this.isPlaying = false, this.isBusy = false, this.isRadio = false, this.isCodeRadioLoaded = false, this.episode, this.duration}): super._();
   
 
 @override final  MediaItem? item;
-@override final  PlaybackState playback;
+@override@JsonKey() final  bool isPlaying;
+@override@JsonKey() final  bool isBusy;
 @override@JsonKey() final  bool isRadio;
+@override@JsonKey() final  bool isCodeRadioLoaded;
 @override final  (Podcast, Episode,)? episode;
 @override final  Duration? duration;
 
@@ -235,18 +239,18 @@ _$MediaPlayerStateCopyWith<_MediaPlayerState> get copyWith => __$MediaPlayerStat
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaPlayerState&&(identical(other.item, item) || other.item == item)&&(identical(other.playback, playback) || other.playback == playback)&&(identical(other.isRadio, isRadio) || other.isRadio == isRadio)&&(identical(other.episode, episode) || other.episode == episode)&&(identical(other.duration, duration) || other.duration == duration));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaPlayerState&&(identical(other.item, item) || other.item == item)&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBusy, isBusy) || other.isBusy == isBusy)&&(identical(other.isRadio, isRadio) || other.isRadio == isRadio)&&(identical(other.isCodeRadioLoaded, isCodeRadioLoaded) || other.isCodeRadioLoaded == isCodeRadioLoaded)&&(identical(other.episode, episode) || other.episode == episode)&&(identical(other.duration, duration) || other.duration == duration));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,item,playback,isRadio,episode,duration);
+    return Object.hash(runtimeType,item,isPlaying,isBusy,isRadio,isCodeRadioLoaded,episode,duration);
 }
 
 @override
 String toString() {
-    return 'MediaPlayerState(item: $item, playback: $playback, isRadio: $isRadio, episode: $episode, duration: $duration)';
+    return 'MediaPlayerState(item: $item, isPlaying: $isPlaying, isBusy: $isBusy, isRadio: $isRadio, isCodeRadioLoaded: $isCodeRadioLoaded, episode: $episode, duration: $duration)';
 }
 
 
@@ -257,7 +261,7 @@ abstract mixin class _$MediaPlayerStateCopyWith<$Res> implements $MediaPlayerSta
   factory _$MediaPlayerStateCopyWith(_MediaPlayerState value, $Res Function(_MediaPlayerState) _then) = __$MediaPlayerStateCopyWithImpl;
 @override @useResult
 $Res call({
- MediaItem? item, PlaybackState playback, bool isRadio, (Podcast, Episode,)? episode, Duration? duration
+ MediaItem? item, bool isPlaying, bool isBusy, bool isRadio, bool isCodeRadioLoaded, (Podcast, Episode,)? episode, Duration? duration
 });
 
 
@@ -274,11 +278,13 @@ class __$MediaPlayerStateCopyWithImpl<$Res>
 
 /// Create a copy of MediaPlayerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? item = freezed,Object? playback = null,Object? isRadio = null,Object? episode = freezed,Object? duration = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? item = freezed,Object? isPlaying = null,Object? isBusy = null,Object? isRadio = null,Object? isCodeRadioLoaded = null,Object? episode = freezed,Object? duration = freezed,}) {
   return _then(_MediaPlayerState(
 item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
-as MediaItem?,playback: null == playback ? _self.playback : playback // ignore: cast_nullable_to_non_nullable
-as PlaybackState,isRadio: null == isRadio ? _self.isRadio : isRadio // ignore: cast_nullable_to_non_nullable
+as MediaItem?,isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
+as bool,isBusy: null == isBusy ? _self.isBusy : isBusy // ignore: cast_nullable_to_non_nullable
+as bool,isRadio: null == isRadio ? _self.isRadio : isRadio // ignore: cast_nullable_to_non_nullable
+as bool,isCodeRadioLoaded: null == isCodeRadioLoaded ? _self.isCodeRadioLoaded : isCodeRadioLoaded // ignore: cast_nullable_to_non_nullable
 as bool,episode: freezed == episode ? _self.episode : episode // ignore: cast_nullable_to_non_nullable
 as (Podcast, Episode,)?,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as Duration?,

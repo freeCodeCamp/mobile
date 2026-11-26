@@ -42,7 +42,7 @@ final class MediaPlayerNotifierProvider
 }
 
 String _$mediaPlayerNotifierHash() =>
-    r'4e23f4727cc4c6eca3aad32a021b0aca64d1c414';
+    r'5247968212dd59023df5735d088d1776ec439ad1';
 
 abstract class _$MediaPlayerNotifier extends $Notifier<MediaPlayerState> {
   MediaPlayerState build();
