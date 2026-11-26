@@ -17,6 +17,9 @@ abstract class MediaPlayerState with _$MediaPlayerState {
     @Default(false) bool isPlaying,
     @Default(false) bool isBusy,
     @Default(false) bool isRadio,
+    // NOTE: Set as soon as a Code Radio load starts, while isRadio waits
+    // until the stream is published.
+    @Default(false) bool isCodeRadioLoaded,
     (Podcast, Episode)? episode,
     Duration? duration,
   }) = _MediaPlayerState;
@@ -61,6 +64,7 @@ class MediaPlayerNotifier extends _$MediaPlayerNotifier {
       isPlaying: playback.playing,
       isBusy: isBusy,
       isRadio: published is PublishedCodeRadio,
+      isCodeRadioLoaded: handler.codeRadioSongId != null,
       episode: switch (published) {
         PublishedPodcast(:final podcast, :final episode) => (podcast, episode),
         _ => null,

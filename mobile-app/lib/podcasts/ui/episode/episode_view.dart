@@ -203,7 +203,7 @@ class _ScrubberState extends ConsumerState<_Scrubber> {
     final player = ref.watch(podcastPlayerProvider);
     final current = player.isCurrent(widget.episode.id);
     final livePosition = current
-        ? ref.watch(podcastPlaybackPositionProvider).value ?? Duration.zero
+        ? ref.watch(podcastPlaybackPositionProvider)
         : Duration.zero;
     final total = (current ? player.duration : null) ?? widget.episode.duration;
     final position = current ? _scrubbing ?? livePosition : Duration.zero;

@@ -72,7 +72,7 @@ class EpisodePlayButton extends ConsumerWidget {
 
     if (compact) {
       final position = current
-          ? ref.watch(podcastPlaybackPositionProvider).value ?? Duration.zero
+          ? ref.watch(podcastPlaybackPositionProvider)
           : ref.watch(podcastSavedPositionProvider(episode.id)) ??
                 Duration.zero;
       final duration = current

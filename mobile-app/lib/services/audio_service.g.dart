@@ -55,36 +55,3 @@ final class AudioHandlerProvider
 }
 
 String _$audioHandlerHash() => r'014f1951b3e255a5440d3a291bb0cf719c0a8e20';
-
-@ProviderFor(codeRadioLoaded)
-final codeRadioLoadedProvider = CodeRadioLoadedProvider._();
-
-final class CodeRadioLoadedProvider
-    extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
-    with $FutureModifier<bool>, $StreamProvider<bool> {
-  CodeRadioLoadedProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'codeRadioLoadedProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$codeRadioLoadedHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
-
-  @override
-  Stream<bool> create(Ref ref) {
-    return codeRadioLoaded(ref);
-  }
-}
-
-String _$codeRadioLoadedHash() => r'02c6a570dd3358fae2a2b9ddd05e3b23aa4aad10';

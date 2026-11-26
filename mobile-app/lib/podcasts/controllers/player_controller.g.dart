@@ -9,14 +9,13 @@ part of 'player_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(podcastPlaybackPosition)
-final podcastPlaybackPositionProvider = PodcastPlaybackPositionProvider._();
+@ProviderFor(PodcastPlaybackPositionNotifier)
+final podcastPlaybackPositionProvider =
+    PodcastPlaybackPositionNotifierProvider._();
 
-final class PodcastPlaybackPositionProvider
-    extends
-        $FunctionalProvider<AsyncValue<Duration>, Duration, Stream<Duration>>
-    with $FutureModifier<Duration>, $StreamProvider<Duration> {
-  PodcastPlaybackPositionProvider._()
+final class PodcastPlaybackPositionNotifierProvider
+    extends $NotifierProvider<PodcastPlaybackPositionNotifier, Duration> {
+  PodcastPlaybackPositionNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -28,21 +27,41 @@ final class PodcastPlaybackPositionProvider
       );
 
   @override
-  String debugGetCreateSourceHash() => _$podcastPlaybackPositionHash();
+  String debugGetCreateSourceHash() => _$podcastPlaybackPositionNotifierHash();
 
   @$internal
   @override
-  $StreamProviderElement<Duration> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+  PodcastPlaybackPositionNotifier create() => PodcastPlaybackPositionNotifier();
 
-  @override
-  Stream<Duration> create(Ref ref) {
-    return podcastPlaybackPosition(ref);
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Duration value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Duration>(value),
+    );
   }
 }
 
-String _$podcastPlaybackPositionHash() =>
-    r'16dbcaa698addbf6da17ae7a41caf71524e396c1';
+String _$podcastPlaybackPositionNotifierHash() =>
+    r'911c8c67e41e636af790183757abbabf584eb662';
+
+abstract class _$PodcastPlaybackPositionNotifier extends $Notifier<Duration> {
+  Duration build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Duration, Duration>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Duration, Duration>,
+              Duration,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
 
 @ProviderFor(podcastSavedPosition)
 final podcastSavedPositionProvider = PodcastSavedPositionFamily._();

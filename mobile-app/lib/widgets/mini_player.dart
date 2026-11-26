@@ -9,7 +9,6 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/podcasts/controllers/player_controller.dart';
 import 'package:freecodecamp/routing/code_radio.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
-import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/media_player_service.dart';
 
 // A view of the already loaded source. Observing it never starts playback.
@@ -252,9 +251,7 @@ class _MiniProgress extends ConsumerWidget {
       return _progress(context, duration <= 0 ? 0 : elapsed / duration);
     }
 
-    final position =
-        ref.watch(podcastPlaybackPositionProvider).value ??
-        ref.read(audioHandlerProvider).playbackState.value.position;
+    final position = ref.watch(podcastPlaybackPositionProvider);
     final duration = player.duration;
     return _progress(
       context,
@@ -285,9 +282,7 @@ class _PodcastTime extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final duration = player.duration;
-    var position =
-        ref.watch(podcastPlaybackPositionProvider).value ??
-        ref.read(audioHandlerProvider).playbackState.value.position;
+    var position = ref.watch(podcastPlaybackPositionProvider);
     if (position.isNegative) position = Duration.zero;
     if (duration != null && duration > Duration.zero && position > duration) {
       position = duration;

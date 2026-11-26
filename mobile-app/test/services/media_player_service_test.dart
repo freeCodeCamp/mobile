@@ -9,6 +9,9 @@ class _Audio extends BaseAudioHandler implements AudioPlayerHandler {
   PublishedSource? get published => null;
   @override
   Duration? get duration => null;
+  String? songId;
+  @override
+  String? get codeRadioSongId => songId;
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -56,5 +59,16 @@ void main() {
     );
     await pumpEventQueue();
     expect(updates.single.isBusy, isTrue);
+  });
+
+  test('reports Code Radio as loaded once its load starts', () async {
+    audio.songId = 'episode';
+    audio.playbackState.add(
+      audio.playbackState.value.copyWith(
+        processingState: AudioProcessingState.loading,
+      ),
+    );
+    await pumpEventQueue();
+    expect(updates.single.isCodeRadioLoaded, isTrue);
   });
 }
