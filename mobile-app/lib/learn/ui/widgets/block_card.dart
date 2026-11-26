@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freecodecamp/fcc_theme.dart';
+import 'package:freecodecamp/learn/controllers/completion_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/challenge_grid.dart';
 import 'package:freecodecamp/learn/ui/widgets/dialogue_block_card.dart';
@@ -53,15 +54,13 @@ class _BlockListState extends ConsumerState<BlockList> {
 
   @override
   Widget build(BuildContext context) {
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final action = resolveLearningAction(
       widget.blocks,
       completed,
-      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+      currentChallengeId: ref.watch(
+        authProvider.select((s) => s.value?.currentChallengeId),
+      ),
     );
     final headerCount = widget.header == null ? 0 : 1;
     return ListView.builder(
@@ -121,11 +120,7 @@ class BlockCard extends ConsumerWidget {
       return DialogueBlockCard(block: block, showAction: showAction);
     }
     final colors = Theme.of(context).colorScheme;
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final done = block.challenges.where((c) => completed.contains(c.id)).length;
     final total = block.challenges.length;
     final complete = total > 0 && done == total;

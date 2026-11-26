@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/learn/constants/curriculum.dart';
+import 'package:freecodecamp/learn/controllers/completion_controller.dart';
 import 'package:freecodecamp/learn/controllers/curriculum_controller.dart';
 import 'package:freecodecamp/learn/models/curriculum_model.dart';
 import 'package:freecodecamp/learn/ui/widgets/block_card.dart';
@@ -150,11 +151,7 @@ class _Chapters extends ConsumerWidget {
     final chapters = this.chapters
         .where((c) => !hiddenExamChapters.contains(c.dashedName))
         .toList();
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final available = chapters.where((c) => !_locked(c));
     final blocks = available
         .expand((c) => c.modules.where((m) => !m.comingSoon))
@@ -163,7 +160,9 @@ class _Chapters extends ConsumerWidget {
     final action = resolveLearningAction(
       blocks,
       completed,
-      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+      currentChallengeId: ref.watch(
+        authProvider.select((s) => s.value?.currentChallengeId),
+      ),
     );
     final active = available.firstWhereOrNull(
       (c) =>
@@ -221,18 +220,16 @@ class _CourseHero extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final available = blocks.where((b) => !b.isDisabledByOverride);
     final challenges = available.expand((b) => b.challenges).toList();
     final done = challenges.where((c) => completed.contains(c.id)).length;
     final action = resolveLearningAction(
       available,
       completed,
-      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+      currentChallengeId: ref.watch(
+        authProvider.select((s) => s.value?.currentChallengeId),
+      ),
     );
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -343,16 +340,14 @@ class _ChapterCardState extends ConsumerState<_ChapterCard> {
     final expanded = _expanded ?? (active && !isLocked);
 
     final colors = Theme.of(context).colorScheme;
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final modules = chapter.modules.where((m) => !m.comingSoon).toList();
     final action = resolveLearningAction(
       modules.expand((m) => m.blocks),
       completed,
-      currentChallengeId: ref.watch(authProvider).value?.currentChallengeId,
+      currentChallengeId: ref.watch(
+        authProvider.select((s) => s.value?.currentChallengeId),
+      ),
     );
     final current = modules.firstWhereOrNull(
       (m) => action?.next != null && m.blocks.contains(action?.block),
@@ -519,11 +514,7 @@ class _ModuleButton extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
     final blocks = module.blocks;
     final challenges = blocks.expand((b) => b.challenges).toList();
-    final completed = ref.watch(
-      authProvider.select(
-        (s) => {...?s.value?.completedChallenges.map((c) => c.id)},
-      ),
-    );
+    final completed = ref.watch(completedChallengeIdsProvider);
     final done = challenges.where((c) => completed.contains(c.id)).length;
     final complete = challenges.isNotEmpty && done == challenges.length;
     final isReview = blocks.firstOrNull?.label == BlockLabel.review;
