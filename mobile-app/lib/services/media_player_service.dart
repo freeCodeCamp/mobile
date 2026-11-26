@@ -12,7 +12,10 @@ part 'media_player_service.g.dart';
 abstract class MediaPlayerState with _$MediaPlayerState {
   const factory MediaPlayerState({
     MediaItem? item,
-    required PlaybackState playback,
+    // NOTE: Only the playback fields the mini player shows. The full
+    // PlaybackState changes on every buffering tick and would rebuild it.
+    @Default(false) bool isPlaying,
+    @Default(false) bool isBusy,
     @Default(false) bool isRadio,
     (Podcast, Episode)? episode,
     Duration? duration,
@@ -21,10 +24,6 @@ abstract class MediaPlayerState with _$MediaPlayerState {
   const MediaPlayerState._();
 
   bool get isVisible => item != null && (isRadio || episode != null);
-
-  bool get isBusy =>
-      playback.processingState == AudioProcessingState.loading ||
-      playback.processingState == AudioProcessingState.buffering;
 }
 
 @Riverpod(keepAlive: true)
@@ -48,14 +47,19 @@ class MediaPlayerNotifier extends _$MediaPlayerNotifier {
   MediaPlayerState _snapshot(AudioPlayerHandler handler) {
     final item = handler.mediaItem.value;
     final playback = handler.playbackState.value;
-    if (item == null) return MediaPlayerState(playback: playback);
+    final isLoading = playback.processingState == AudioProcessingState.loading;
+    final isBusy =
+        isLoading || playback.processingState == AudioProcessingState.buffering;
+    if (item == null) {
+      return MediaPlayerState(isPlaying: playback.playing, isBusy: isBusy);
+    }
 
     final published = handler.published;
-    final isLoading = playback.processingState == AudioProcessingState.loading;
 
     return MediaPlayerState(
       item: item,
-      playback: playback,
+      isPlaying: playback.playing,
+      isBusy: isBusy,
       isRadio: published is PublishedCodeRadio,
       episode: switch (published) {
         PublishedPodcast(:final podcast, :final episode) => (podcast, episode),

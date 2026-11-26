@@ -9,6 +9,7 @@ import 'package:freecodecamp/fcc_theme.dart';
 import 'package:freecodecamp/podcasts/controllers/player_controller.dart';
 import 'package:freecodecamp/routing/code_radio.dart';
 import 'package:freecodecamp/routing/podcasts.dart';
+import 'package:freecodecamp/services/audio_service.dart';
 import 'package:freecodecamp/services/media_player_service.dart';
 
 // A view of the already loaded source. Observing it never starts playback.
@@ -27,7 +28,6 @@ class MiniPlayer extends ConsumerWidget {
     }
     final colors = Theme.of(context).colorScheme;
     final accent = FccDesignColors.of(context).accentText;
-    final playback = player.playback;
     final isRadio = player.isRadio;
     final isBusy = player.isBusy;
     final episode = player.episode;
@@ -113,7 +113,7 @@ class MiniPlayer extends ConsumerWidget {
                       ),
                       const SizedBox(width: 8),
                       IconButton.outlined(
-                        tooltip: playback.playing
+                        tooltip: player.isPlaying
                             ? 'Pause audio'
                             : 'Resume audio',
                         onPressed: isBusy
@@ -151,7 +151,7 @@ class MiniPlayer extends ConsumerWidget {
                                 ),
                               )
                             : Icon(
-                                playback.playing
+                                player.isPlaying
                                     ? Icons.pause_rounded
                                     : Icons.play_arrow_rounded,
                               ),
@@ -254,7 +254,7 @@ class _MiniProgress extends ConsumerWidget {
 
     final position =
         ref.watch(podcastPlaybackPositionProvider).value ??
-        player.playback.position;
+        ref.read(audioHandlerProvider).playbackState.value.position;
     final duration = player.duration;
     return _progress(
       context,
@@ -287,7 +287,7 @@ class _PodcastTime extends ConsumerWidget {
     final duration = player.duration;
     var position =
         ref.watch(podcastPlaybackPositionProvider).value ??
-        player.playback.position;
+        ref.read(audioHandlerProvider).playbackState.value.position;
     if (position.isNegative) position = Duration.zero;
     if (duration != null && duration > Duration.zero && position > duration) {
       position = duration;

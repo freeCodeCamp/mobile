@@ -61,6 +61,16 @@ AudioPlayerHandler audioHandler(Ref ref) => throw UnimplementedError(
   'audioHandlerProvider must be overridden in main() with initAudioService()',
 );
 
+// The audio config changes when a load starts, so this follows playback
+// events, but only emits when the answer flips.
+@Riverpod(keepAlive: true)
+Stream<bool> codeRadioLoaded(Ref ref) {
+  final handler = ref.watch(audioHandlerProvider);
+  return handler.playbackState
+      .map((_) => handler.codeRadioSongId != null)
+      .distinct();
+}
+
 Future<AudioPlayerHandler> initAudioService() => AudioService.init(
   builder: () => AudioPlayerHandler(),
   config: AudioServiceConfig(

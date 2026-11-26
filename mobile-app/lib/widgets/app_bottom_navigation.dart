@@ -148,20 +148,16 @@ class AppNavigationFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final handler = ref.watch(audioHandlerProvider);
-    return StreamBuilder(
-      stream: handler.playbackState,
-      initialData: handler.playbackState.value,
-      builder: (context, _) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!hideRadioPlayer || handler.codeRadioSongId == null)
-            MiniPlayer(beforeNavigate: beforeNavigate),
-          AppBottomNavigation(
-            selected: selected,
-            beforeNavigate: beforeNavigate,
-          ),
-        ],
-      ),
+    final showMiniPlayer =
+        !hideRadioPlayer ||
+        !(ref.watch(codeRadioLoadedProvider).value ??
+            handler.codeRadioSongId != null);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showMiniPlayer) MiniPlayer(beforeNavigate: beforeNavigate),
+        AppBottomNavigation(selected: selected, beforeNavigate: beforeNavigate),
+      ],
     );
   }
 }
